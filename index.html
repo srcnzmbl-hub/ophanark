@@ -1521,8 +1521,10 @@ try{
     }
     if(has(t,['yıldız','yildiz','gökyüz','gokyuz','gezegen','planet',' star',' sky ','transit',' gök ','retro'])){doSky();return;}
     if(has(t,['burc','burç','burcu','burcum','horoscope','zodiac','günlük','gunluk',' daily ','fal'])){
-      var sg=detectSign(t);
-      if(sg<0 && window.__profile && window.__profile.date)sg=sunSign(window.__profile.date);
+      var named=detectSign(t);
+      var sg=-1;
+      if(window.__profile && window.__profile.date)sg=sunSign(window.__profile.date); /* önce profildeki doğum tarihinden burcu bul */
+      if(named>=0)sg=named;                                                           /* kullanıcı açıkça bir burç adı söylediyse onu kullan */
       if(sg<0){var a=askSignReply();bubble('op',a);speak(a);}
       else doHoroscope(sg);
       return;
