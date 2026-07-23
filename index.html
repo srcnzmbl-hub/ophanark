@@ -1449,8 +1449,21 @@ try{
       var img='<img class="oph-tcard'+(d.rev?' rev':'')+'" loading="lazy" src="cards/'+d.c.i+'.jpg" alt="'+nm+'">';
       return '<div class="oph-trow">'+img+'<div class="oph-tmeta"><b>'+pos[i]+' · '+nm+rv+'</b>'+mn+'</div></div>';
     }).join('');
-    var close=(lang==='tr')?'Kartlar birlikte fısıldıyor: geçmişten gelen iz bugünü, bugün attığın sabırlı adım da geleceğini çiziyor. Yüreğin ne diyorsa ona güven.'
-      :'Together the cards whisper: the past shapes today, and the patient step you take now draws your future. Trust what your heart already knows.';
+    var rc=draw.filter(function(d){return d.rev;}).length;
+    var cnt={}; draw.forEach(function(d){cnt[d.c.s]=(cnt[d.c.s]||0)+1;});
+    var dom=null,dv=0; for(var kk in cnt){if(cnt[kk]>dv){dv=cnt[kk];dom=kk;}}
+    var SUIT={tr:{cups:'Kupalar (duygular)',pentacles:'Tılsımlar (maddi hayat)',swords:'Kılıçlar (zihin)',wands:'Asalar (tutku)',major:'Büyük Arkana (kader)'},
+              en:{cups:'Cups (emotions)',pentacles:'Pentacles (material life)',swords:'Swords (mind)',wands:'Wands (passion)',major:'Major Arcana (destiny)'}};
+    var close;
+    if(lang==='tr'){
+      close='Geçmişini '+tCardName(draw[0].c,lang)+' ('+tMean(draw[0].c,draw[0].rev,lang)+') şekillendirmiş; şu an '+tCardName(draw[1].c,lang)+' ('+tMean(draw[1].c,draw[1].rev,lang)+') öne çıkıyor ve enerjini buraya vermelisin; gelecek ise '+tCardName(draw[2].c,lang)+' ('+tMean(draw[2].c,draw[2].rev,lang)+') ile açılıyor. ';
+      if(dv>=2)close+=SUIT.tr[dom]+' bu açılımda baskın. ';
+      close+=(rc>=2)?'Kartların çoğu ters — önce içindeki bir direnci çözmen yolu açacak.':(rc===0?'Üç kart da düz; enerji açık, harekete geçmek için iyi bir zaman.':'Sabırla atacağın adım seni ileri taşıyacak.');
+    } else {
+      close='Your past was shaped by '+tCardName(draw[0].c,lang)+' ('+tMean(draw[0].c,draw[0].rev,lang)+'); now '+tCardName(draw[1].c,lang)+' ('+tMean(draw[1].c,draw[1].rev,lang)+') stands out and deserves your energy; the future opens with '+tCardName(draw[2].c,lang)+' ('+tMean(draw[2].c,draw[2].rev,lang)+'). ';
+      if(dv>=2)close+=SUIT.en[dom]+' dominate this spread. ';
+      close+=(rc>=2)?'Most cards are reversed — clearing an inner resistance first will open the way.':(rc===0?'All upright; the energy is open, a good time to act.':'A patient step forward will carry you onward.');
+    }
     var voice=draw.map(function(d,i){return pos[i]+': '+tCardName(d.c,lang)+(d.rev?((lang==='tr')?' ters':' reversed'):'');}).join(', ');
     var html='<div class="oph-tarot">'+head+'<div class="oph-tspread">'+rows+'</div><div class="oph-tclose">'+close+'</div></div>';
     return {html:html, voice:head+' '+voice+'. '+close};
@@ -1686,6 +1699,36 @@ try{
     var out=[]; for(i=0;i<3&&i<pool.length;i++)out.push({idx:pool[i],rev:Math.random()<0.35});
     return out;
   }
+  var SUITNAME={tr:{cups:'Kupalar (duygular)',pentacles:'Tılsımlar (maddi hayat)',swords:'Kılıçlar (zihin)',wands:'Asalar (tutku)',major:'Büyük Arkana (kader)'},
+                en:{cups:'Cups (emotions)',pentacles:'Pentacles (material life)',swords:'Swords (mind)',wands:'Wands (passion)',major:'Major Arcana (destiny)'}};
+  function tarotStory(d, lg){
+    var c0=T[d[0].idx], c1=T[d[1].idx], c2=T[d[2].idx];
+    function nm(c){return (lg==='tr')?c.t:c.e;}
+    function mn(c,rev){return rev?((lg==='tr')?c.rt:c.re):((lg==='tr')?c.kt:c.ke);}
+    var rc=(d[0].rev?1:0)+(d[1].rev?1:0)+(d[2].rev?1:0);
+    var suits=[c0.s,c1.s,c2.s], counts={}; suits.forEach(function(s){counts[s]=(counts[s]||0)+1;});
+    var dom=null,dv=0; for(var k in counts){if(counts[k]>dv){dv=counts[k];dom=k;}}
+    if(lg==='tr'){
+      var rv=function(x){return x.rev?' (ters)':'';};
+      var s='Geçmişini '+nm(c0)+rv(d[0])+' temsil ediyor — '+mn(c0,d[0].rev)+'. Bu deneyim bugününü sessizce şekillendirmiş. ';
+      s+='Şu an ise '+nm(c1)+rv(d[1])+' öne çıkıyor: '+mn(c1,d[1].rev)+'. Asıl enerjini buraya vermelisin. ';
+      s+='Gelecek '+nm(c2)+rv(d[2])+' ile açılıyor — '+mn(c2,d[2].rev)+'. ';
+      if(dv>=2)s+='Açılımda '+SUITNAME.tr[dom]+' baskın; bu alan şu dönem hayatının merkezinde. ';
+      if(rc>=2)s+='Kartların çoğu ters geldi — önce içindeki bir direnci ya da korkuyu çözmen, yolu açacak.';
+      else if(rc===0)s+='Üç kart da düz geldi; enerji açık ve akışta, harekete geçmek için elverişli bir dönem.';
+      else s+='Kartlar dengeli bir tablo çiziyor; sabırla atacağın adım seni ileri taşıyacak.';
+      return s;
+    }
+    var rve=function(x){return x.rev?' (reversed)':'';};
+    var e='Your past is shown by '+nm(c0)+rve(d[0])+' — '+mn(c0,d[0].rev)+'. This quietly shaped who you are today. ';
+    e+='Right now '+nm(c1)+rve(d[1])+' stands out: '+mn(c1,d[1].rev)+'. This is where your energy truly belongs. ';
+    e+='The future opens with '+nm(c2)+rve(d[2])+' — '+mn(c2,d[2].rev)+'. ';
+    if(dv>=2)e+=SUITNAME.en[dom]+' dominate this spread; that area is central for you now. ';
+    if(rc>=2)e+='Most cards are reversed — clearing an inner resistance or fear first will open the way.';
+    else if(rc===0)e+='All three cards are upright; the energy is open and flowing, a good time to act.';
+    else e+='The cards form a balanced picture; a patient step forward will carry you onward.';
+    return e;
+  }
   var lastVoice='';
   function draw(){
     stopV();
@@ -1697,9 +1740,7 @@ try{
         '<div class="tr-cn">'+nameOf(c)+(x.rev?' <span class="rv">'+l.rev.toLowerCase()+'</span>':'')+'</div>'+
         '<div class="tr-cm">'+meanOf(c,x.rev)+'</div></div>';
     }).join('');
-    var combined=(lang()==='tr')
-      ? 'Bu üç kart birlikte tek bir hikâye anlatır: geçmişin izleri bugünü şekillendiriyor, bugün attığın adım ise geleceğini çiziyor. Kartların mesajını kendi hayatınla birlikte oku.'
-      : 'Together these three cards tell one story: the past shapes today, and the step you take now draws your future. Read their message alongside your own life.';
+    var combined=tarotStory(d, lang());
     el('trResult').innerHTML=
       '<div class="tr-spread">'+slots+'</div>'+
       '<div class="tr-combined">'+combined+'</div>'+
