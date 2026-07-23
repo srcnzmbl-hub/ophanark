@@ -400,84 +400,89 @@ img{display:block}
 #reading:not(.reading) .rd-mute,#reading:not(.reading) .rd-voice,#reading:not(.reading) .rd-backc{display:none}
 
 /* ===== TAROT PAGE ===== */
-#tarot{position:fixed;inset:0;z-index:65;display:none;background:radial-gradient(120% 90% at 50% 12%,#1a0608,#080203)}
+#tarot{position:fixed;inset:0;z-index:65;display:none;background:#0a0304}
 #tarot.on{display:flex;flex-direction:column}
-.tr-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px;flex:0 0 auto}
+.tr-splash{position:absolute;inset:0;z-index:0;background:#160406 radial-gradient(120% 80% at 50% 42%,#7a1518 0%,#3c0a10 45%,#160406 78%,#0a0304 100%);opacity:.95}
+.tr-splash.img{background:#0a0304;background-image:url('cards/splash.jpg');background-size:cover;background-position:center}
+.tr-splash::after{content:'';position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 45%,rgba(255,120,90,.28),transparent 70%);mix-blend-mode:screen}
+.tr-splash.dim{opacity:.32;transition:opacity .6s}
+.tr-head{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:14px 16px 6px;flex:0 0 auto}
 .tr-head .tr-back{width:34px;height:34px;border-radius:50%;border:1px solid rgba(232,190,96,.6);color:var(--gold2);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;background:rgba(20,7,4,.5)}
 .tr-ttl{color:var(--gold2);font-size:20px;letter-spacing:.22em;font-family:'Cinzel',serif}
-.tr-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 16px 46px;position:relative}
-.tr-lead{color:#e9d6ad;text-align:center;font-family:'Spectral',Georgia,serif;font-size:15px;line-height:1.6;margin:10px 6px 18px}
-/* spread selection */
-.tr-choices{display:flex;justify-content:center;gap:11px;margin-top:6px}
-.tr-choice{flex:1 1 0;min-width:0;max-width:150px;cursor:pointer;text-align:center;transition:transform .15s}
-.tr-choice:active{transform:scale(.96)}
-.tr-choice-title{color:var(--gold2);font-family:'Cinzel',serif;font-size:12px;letter-spacing:.02em;margin-bottom:8px;min-height:2.6em;display:flex;align-items:flex-end;justify-content:center;line-height:1.25}
-.tr-choice-card{width:100%;aspect-ratio:.563;border-radius:9px;overflow:hidden;border:1px solid rgba(232,190,96,.6);box-shadow:0 8px 22px rgba(0,0,0,.55),0 0 16px rgba(230,182,74,.18)}
-.tr-choice-card img{width:100%;height:100%;object-fit:cover;display:block}
-.tr-choice-sub{color:#cbb488;font-size:11px;margin-top:7px;font-family:'Spectral',serif}
-/* shuffle overlay */
-.tr-shuffle{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:9;background:radial-gradient(circle at 50% 42%,rgba(20,6,6,.4),rgba(8,2,3,.75))}
-.tr-shuffle.on{display:flex}
-.tr-shuffle .sc{position:absolute;width:86px;aspect-ratio:.563;border-radius:9px;overflow:hidden;border:1px solid rgba(232,190,96,.5);box-shadow:0 8px 20px rgba(0,0,0,.55);transition:transform .55s cubic-bezier(.4,.05,.2,1),opacity .4s}
-.tr-shuffle .sc img{width:100%;height:100%;object-fit:cover}
-.tr-shuffle-txt{position:absolute;bottom:24%;color:var(--gold2);font-family:'Cinzel',serif;letter-spacing:.16em;font-size:12.5px;text-shadow:0 0 10px rgba(230,182,74,.5)}
-/* pick */
-.tr-pick-info{color:#e9d6ad;text-align:center;font-family:'Spectral',serif;font-size:14px;margin:2px 6px 4px;line-height:1.5}
-.tr-pick-count{color:var(--gold2);font-family:'Cinzel',serif;font-size:12px;letter-spacing:.08em;text-align:center;margin-bottom:6px}
-.tr-fan{position:relative;height:250px;margin:2px 0 6px;touch-action:none;-ms-touch-action:none}
-.tr-fancard{position:absolute;left:50%;top:6px;width:70px;aspect-ratio:.563;margin-left:-35px;border-radius:8px;overflow:hidden;border:1px solid rgba(232,190,96,.45);box-shadow:0 6px 14px rgba(0,0,0,.5);transform-origin:50% 230px;cursor:pointer;transition:transform .18s,box-shadow .18s;will-change:transform;user-select:none;-webkit-user-select:none}
-.tr-fancard img{width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
-.tr-fancard.lift{box-shadow:0 16px 32px rgba(0,0,0,.6),0 0 20px rgba(230,182,74,.55);z-index:30}
-.tr-fancard.gone{opacity:0;pointer-events:none;transition:opacity .45s,transform .45s}
-.tr-picked-row{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;min-height:60px;margin-top:2px}
-.tr-picked-row .pk{width:40px;aspect-ratio:.563;border-radius:5px;overflow:hidden;border:1px solid rgba(232,190,96,.5);animation:trReveal .35s ease both}
-.tr-picked-row .pk img{width:100%;height:100%;object-fit:cover}
+.tr-mute{width:34px;height:34px;border-radius:50%;border:1px solid rgba(232,190,96,.5);background:rgba(20,7,4,.5);color:var(--gold2);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.tr-mute svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tr-body{position:relative;z-index:2;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 16px 46px}
+.tr-lead{color:#f0dcb4;text-align:center;font-family:'Spectral',Georgia,serif;font-size:15px;line-height:1.6;margin:12px 6px 20px;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+/* spread buttons */
+.tr-btns{display:flex;flex-direction:column;gap:12px;max-width:340px;margin:0 auto}
+.tr-btn{opacity:0;transform:translateY(14px);animation:trBtnIn .5s ease forwards;padding:15px 16px;border-radius:14px;border:1px solid rgba(232,190,96,.55);background:linear-gradient(180deg,rgba(58,26,10,.72),rgba(22,7,5,.82));color:var(--gold2);font-family:'Cinzel',serif;font-size:14.5px;letter-spacing:.02em;text-align:center;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.45),inset 0 0 16px rgba(230,182,74,.08)}
+.tr-btn:active{transform:scale(.98)}
+.tr-btn small{display:block;font-family:'Spectral',serif;font-size:11px;color:#cbb488;letter-spacing:0;margin-top:3px}
+.tr-btn.deck{background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;border-color:transparent;margin-top:6px;box-shadow:0 8px 22px rgba(230,150,40,.35)}
+.tr-btn.deck small{color:#5a3410}
+@keyframes trBtnIn{to{opacity:1;transform:none}}
+/* scatter */
+.tr-scatter{position:relative;width:100%;height:62vh;min-height:380px;touch-action:manipulation}
+.tr-scard{position:absolute;width:38px;aspect-ratio:.563;border-radius:5px;overflow:hidden;border:1px solid rgba(232,190,96,.4);box-shadow:0 4px 10px rgba(0,0,0,.55);cursor:pointer;top:-130px;transition:top cubic-bezier(.3,.7,.4,1),left .3s,transform .3s}
+.tr-scard img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.tr-scard:active{transform:scale(1.25);z-index:99}
+.tr-shufbtn{display:block;margin:12px auto 4px;width:auto;padding:13px 26px}
+/* pick grid 6x13 */
+.tr-deckgrid{display:grid;grid-template-columns:repeat(13,1fr);gap:3px;margin:6px 0 8px;animation:trReveal .5s ease both}
+.tr-gcard{aspect-ratio:.563;border-radius:3px;overflow:hidden;border:1px solid rgba(232,190,96,.4);box-shadow:0 2px 5px rgba(0,0,0,.5);cursor:pointer;transition:transform .18s,box-shadow .18s}
+.tr-gcard img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.tr-gcard.sel{transform:translateY(-8px) scale(1.06);box-shadow:0 10px 18px rgba(0,0,0,.6),0 0 12px rgba(230,182,74,.8);border-color:var(--gold2)}
+.tr-pickinfo{color:#f0dcb4;text-align:center;font-family:'Spectral',serif;font-size:13.5px;margin:4px 6px 2px}
+.tr-pickcount{color:var(--gold2);font-family:'Cinzel',serif;font-size:12px;letter-spacing:.06em;text-align:center;margin-bottom:8px}
+.tr-pickedmini{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;min-height:44px;margin-bottom:6px}
+.tr-pickedmini .m{width:30px;aspect-ratio:.563;border-radius:4px;overflow:hidden;border:1px solid rgba(232,190,96,.5);animation:trReveal .3s ease both}
+.tr-pickedmini .m img{width:100%;height:100%;object-fit:cover}
 /* reading */
-.tr-spread{display:flex;justify-content:center;gap:8px;margin:2px 0 12px}
-.tr-slot{flex:1 1 0;min-width:0;max-width:150px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.tr-spread{display:flex;justify-content:center;gap:8px;margin:2px 0 12px;flex-wrap:wrap}
+.tr-slot{flex:0 0 auto;width:96px;display:flex;flex-direction:column;align-items:center;text-align:center}
 .tr-single{max-width:200px;margin:2px auto 12px}
-.tr-pos{color:var(--gold);font-family:'Cinzel',serif;font-size:11px;letter-spacing:.06em;margin-bottom:6px;min-height:2.2em;display:flex;align-items:flex-end;justify-content:center;line-height:1.2}
-.tr-flipcard{width:100%;border-radius:8px;overflow:hidden;border:1px solid rgba(232,190,96,.55);box-shadow:0 6px 16px rgba(0,0,0,.5);animation:trReveal .6s ease both}
+.tr-pos{color:var(--gold);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:.04em;margin-bottom:5px;min-height:2.2em;display:flex;align-items:flex-end;justify-content:center;line-height:1.2}
+.tr-flipcard{width:100%;border-radius:7px;overflow:hidden;border:1px solid rgba(232,190,96,.55);box-shadow:0 6px 16px rgba(0,0,0,.5);animation:trReveal .55s ease both}
 .tr-face{display:block;width:100%;height:auto}
 .tr-face.rev{transform:rotate(180deg)}
-.tr-cn{color:var(--gold2);font-family:'Spectral',serif;font-size:12.5px;margin-top:7px;line-height:1.25}
-.tr-cn .rv{color:#d98b6a;font-style:italic;font-size:11px}
+.tr-cn{color:var(--gold2);font-family:'Spectral',serif;font-size:12px;margin-top:6px;line-height:1.2}
+.tr-cn .rv{color:#d98b6a;font-style:italic;font-size:10.5px}
 @keyframes trReveal{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
-/* detailed long reading list */
-.tr-read{margin:6px 0 8px}
+.tr-layout{position:relative;width:330px;max-width:100%;margin:4px auto 10px}
+.tr-layout .lc{position:absolute;width:46px;height:82px;border-radius:5px;overflow:hidden;border:1px solid rgba(232,190,96,.5);box-shadow:0 4px 10px rgba(0,0,0,.55);animation:trReveal .5s ease both}
+.tr-layout .lc img{width:100%;height:100%;object-fit:cover}
+.tr-layout .lc .num{position:absolute;top:1px;left:3px;color:#ffeecb;font-size:9px;font-family:'Cinzel',serif;text-shadow:0 0 4px #000;z-index:2}
+.tr-gyp{display:flex;flex-direction:column;gap:7px;align-items:center;margin:4px 0 10px}
+.tr-gyp .row{display:flex;gap:7px}
+.tr-gyp .row .gc{width:62px;border-radius:6px;overflow:hidden;border:1px solid rgba(232,190,96,.5);box-shadow:0 4px 10px rgba(0,0,0,.5);animation:trReveal .5s ease both}
+.tr-gyp .row .gc img{width:100%;display:block}
+.tr-read{margin:8px 0 8px}
 .tr-ritem{display:flex;gap:12px;padding:13px 2px;border-bottom:1px solid rgba(232,190,96,.14);animation:trReveal .5s ease both}
-.tr-rimg{width:62px;aspect-ratio:.563;flex:0 0 auto;border-radius:7px;overflow:hidden;border:1px solid rgba(232,190,96,.5);box-shadow:0 4px 10px rgba(0,0,0,.45)}
+.tr-rimg{width:60px;aspect-ratio:.563;flex:0 0 auto;border-radius:7px;overflow:hidden;border:1px solid rgba(232,190,96,.5)}
 .tr-rimg img{width:100%;height:100%;object-fit:cover}
 .tr-rimg img.rev{transform:rotate(180deg)}
 .tr-rtext{flex:1;min-width:0}
-.tr-rpos{color:var(--gold);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase}
+.tr-rpos{color:var(--gold);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase}
 .tr-rname{color:var(--gold2);font-family:'Spectral',serif;font-size:14.5px;margin:2px 0 5px}
 .tr-rname .rv{color:#d98b6a;font-style:italic;font-size:12px}
 .tr-rbody{color:#e4d3ac;font-size:12.8px;line-height:1.58;font-family:'Spectral',serif}
-/* celtic schematic */
-.tr-cc{position:relative;width:330px;max-width:100%;height:346px;margin:4px auto 8px}
-.tr-cc .cc{position:absolute;width:46px;height:82px;border-radius:5px;overflow:hidden;border:1px solid rgba(232,190,96,.5);box-shadow:0 4px 10px rgba(0,0,0,.55)}
-.tr-cc .cc img{width:100%;height:100%;object-fit:cover}
-.tr-cc .cc .num{position:absolute;top:1px;left:3px;color:#ffeecb;font-size:10px;font-family:'Cinzel',serif;text-shadow:0 0 4px #000,0 0 2px #000;z-index:2}
 .tr-combined{color:#f0e2c0;font-family:'Spectral',Georgia,serif;font-size:14px;line-height:1.68;text-align:center;padding:13px 8px;border-top:1px solid rgba(232,190,96,.22);border-bottom:1px solid rgba(232,190,96,.22);margin:8px 2px 14px}
 .tr-actions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
 .tr-actions .gold-btn,.tr-actions .ghost-btn{margin-top:0;width:auto;padding:10px 16px;font-size:13px}
 .tr-natal{margin:10px 2px 6px;text-align:center}
-.rd-natal{margin-top:16px;padding-top:13px;border-top:1px solid rgba(232,190,96,.25);text-align:center}
 .rd-natal-note,.tr-natal .rd-natal-note{color:#d9c6a0;font-size:12.5px;line-height:1.5;font-family:'Spectral',serif;margin-bottom:9px}
-.rd-natal-btn,.tr-natal-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:22px;border:1px solid rgba(232,190,96,.8);background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:.03em;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.4)}
-.rd-natal-btn::before,.tr-natal-btn::before{content:'\1FA90';font-size:14px}
-.tr-gh{color:var(--gold2);font-family:'Cinzel',serif;font-size:14px;letter-spacing:.14em;text-align:center;margin:24px 0 12px;padding-top:16px;border-top:1px solid rgba(232,190,96,.2)}
+.tr-natal-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:22px;border:1px solid rgba(232,190,96,.8);background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;font-family:'Cinzel',serif;font-size:12.5px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.tr-natal-btn::before{content:'\1FA90';font-size:14px}
+.tr-gh{color:var(--gold2);font-family:'Cinzel',serif;font-size:14px;letter-spacing:.14em;text-align:center;margin:12px 0 12px}
 .tr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .tr-cell{cursor:pointer;text-align:center}
 .tr-cell img{width:100%;height:auto;border-radius:7px;border:1px solid rgba(232,190,96,.45);box-shadow:0 4px 12px rgba(0,0,0,.45);display:block}
 .tr-cell span{display:block;color:#cbb488;font-size:10.5px;margin-top:5px;line-height:1.2;font-family:'Spectral',serif}
-.tr-cell:active img{transform:scale(.97)}
 .tr-modal{position:fixed;inset:0;z-index:72;display:none;align-items:center;justify-content:center;padding:24px}
 .tr-modal.on{display:flex}
 .tr-mveil{position:absolute;inset:0;background:rgba(6,2,3,.82);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
-.tr-mcard{position:relative;z-index:2;max-width:340px;width:100%;max-height:92vh;overflow-y:auto;background:linear-gradient(180deg,#1c0a08,#0e0403);border:1px solid rgba(232,190,96,.6);border-radius:16px;padding:16px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7)}
-.tr-mimg{width:60%;max-width:190px;height:auto;border-radius:9px;border:1px solid rgba(232,190,96,.5);margin:0 auto 12px;display:block}
+.tr-mcard{position:relative;z-index:2;max-width:340px;width:100%;max-height:92vh;overflow-y:auto;background:linear-gradient(180deg,#1c0a08,#0e0403);border:1px solid rgba(232,190,96,.6);border-radius:16px;padding:16px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7);animation:trReveal .3s ease both}
+.tr-mimg{width:62%;max-width:200px;height:auto;border-radius:9px;border:1px solid rgba(232,190,96,.5);margin:0 auto 12px;display:block}
 .tr-mname{color:var(--gold2);font-size:18px;letter-spacing:.05em;margin-bottom:10px}
 .tr-mrow{color:#e4d3ac;font-size:13px;line-height:1.55;text-align:left;margin:8px 0;font-family:'Spectral',serif}
 .tr-mrow b{color:var(--gold2);font-weight:500;display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;font-family:'Cinzel',serif}
@@ -535,7 +540,7 @@ img{display:block}
     <div class="home-head">
       <img class="hh-logo" src="app-icon-192.png" alt="">
       <div class="hh-title cin">OPHANARK</div>
-      <div class="hh-sub">DIVINE GALGALIMS</div>
+      <div class="hh-sub">DIVINE GALGALIM</div>
     </div>
     <div class="carousel" id="carousel"></div>
     <div class="home-gap"></div>
@@ -642,30 +647,37 @@ img{display:block}
 
   <!-- TAROT PAGE -->
   <div id="tarot">
+    <div class="tr-splash" id="trSplash"></div>
     <div class="tr-head">
       <div class="tr-back" id="trBack">&lsaquo;</div>
       <div class="tr-ttl">TAROT</div>
-      <div style="width:34px"></div>
+      <div class="tr-mute" id="trMute" title="Sesi durdur"><svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.6"></rect></svg></div>
     </div>
     <div class="tr-body" id="trBody">
       <div id="trSelect">
-        <p class="tr-lead" id="trSelLead">Bir soru dusun, niyetini kalbinde tut ve bir acilim sec.</p>
-        <div class="tr-choices" id="trChoices"></div>
+        <p class="tr-lead" id="trSelLead">Bir soru düşün, niyetini kalbinde tut ve bir dizilim seç.</p>
+        <div class="tr-btns" id="trBtns"></div>
+      </div>
+      <div id="trScatterWrap" style="display:none">
+        <div class="tr-scatter" id="trScatter"></div>
+        <div style="text-align:center"><button class="gold-btn tr-shufbtn" id="trShufBtn">Kartları Karıştır</button></div>
       </div>
       <div id="trPick" style="display:none">
-        <div class="tr-pick-info" id="trPickInfo"></div>
-        <div class="tr-pick-count" id="trPickCount"></div>
-        <div class="tr-fan" id="trFan"></div>
-        <div class="tr-picked-row" id="trPickedRow"></div>
+        <div class="tr-pickinfo" id="trPickInfo"></div>
+        <div class="tr-pickcount" id="trPickCount"></div>
+        <div class="tr-pickedmini" id="trPickedMini"></div>
+        <div class="tr-deckgrid" id="trDeckGrid"></div>
       </div>
       <div class="tr-result" id="trResult"></div>
-      <div class="tr-gh" id="trGH">TUM DESTE</div>
-      <div class="tr-grid" id="trGrid"></div>
-      <div class="tr-shuffle" id="trShuffle"></div>
+      <div id="trDeckView" style="display:none">
+        <div class="tr-gh" id="trGH">TÜM DESTE</div>
+        <div class="tr-grid" id="trGrid"></div>
+      </div>
     </div>
     <div class="tr-modal" id="trModal"><div class="tr-mveil" id="trMveil"></div><div class="tr-mcard" id="trMcard"></div></div>
   </div>
 
+  <!-- SETTINGS SHEET -->
   <!-- SETTINGS SHEET -->
   <!-- SETTINGS SHEET -->
   <div class="sheet" id="sheet">
@@ -1697,254 +1709,192 @@ try{
   var el=function(id){return document.getElementById(id);};
   var T=window.__TAROT||[];
   function lang(){return window.__lang||'en';}
-  var LV={en:'en-US',tr:'tr-TR'};
   function tr(){return lang()==='tr';}
+  var LV={en:'en-US',tr:'tr-TR'};
   function nameOf(c){return tr()?c.t:c.e;}
   function meanOf(c,rev){return rev?(tr()?c.rt:c.re):(tr()?c.kt:c.ke);}
   function stopV(){try{window.speechSynthesis.cancel();}catch(e){}}
-  var SUITNAME={tr:{cups:'Kupalar (duygular, ilişkiler)',pentacles:'Tılsımlar (para, iş, beden)',swords:'Kılıçlar (zihin, iletişim)',wands:'Asalar (tutku, hareket)',major:'Büyük Arkana (kader, hayat dersleri)'},
-                en:{cups:'Cups (emotions, relationships)',pentacles:'Pentacles (money, work, body)',swords:'Swords (mind, communication)',wands:'Wands (passion, action)',major:'Major Arcana (destiny, life lessons)'}};
-  var SUITSHORT={tr:{cups:'duygular ve ilişkiler',pentacles:'maddi hayat, iş ve sağlık',swords:'zihin, kararlar ve iletişim',wands:'tutku, enerji ve girişim',major:'hayatının büyük bir dönüm noktası'},
-                 en:{cups:'emotions and relationships',pentacles:'material life, work and health',swords:'the mind, decisions and communication',wands:'passion, energy and initiative',major:'a major turning point in your life'}};
+  var SUITSHORT={cups:{tr:'duygular ve ilişkiler',en:'emotions and relationships'},pentacles:{tr:'maddi hayat, iş ve sağlık',en:'material life, work and health'},swords:{tr:'zihin, kararlar ve iletişim',en:'the mind, decisions and communication'},wands:{tr:'tutku, enerji ve girişim',en:'passion, energy and initiative'},major:{tr:'hayatının büyük bir dönüm noktası',en:'a major turning point in your life'}};
+  var SUITNAME={cups:{tr:'Kupalar',en:'Cups'},pentacles:{tr:'Tılsımlar',en:'Pentacles'},swords:{tr:'Kılıçlar',en:'Swords'},wands:{tr:'Asalar',en:'Wands'},major:{tr:'Büyük Arkana',en:'Major Arcana'}};
 
+  function P(t,e,dt,de){return {t:t,e:e,dt:dt,de:de};}
   var SPREADS={
-    single:{count:1,fann:15,label:{tr:'Tekli Açılım',en:'Single Card'},sub:{tr:'1 kart',en:'1 card'},
-      info:{tr:'Bir soru düşün ve tek kartını seç — bugünün rehberi o olacak.',en:'Hold a question and pick one card — it will be your guide today.'},
-      pos:[{t:'Senin Kartın',e:'Your Card',dt:'bugün senin için en güçlü rehberlik ve odaklanman gereken tema',de:'the strongest guidance for you today and the theme to focus on'}]},
-    three:{count:3,fann:16,label:{tr:'Üçlü Açılım',en:'Three Cards'},sub:{tr:'Geçmiş · Şimdi · Gelecek',en:'Past · Present · Future'},
-      info:{tr:'Sırayla üç kart seç: geçmiş, şimdi ve gelecek.',en:'Pick three cards in turn: past, present and future.'},
-      pos:[{t:'Geçmiş',e:'Past',dt:'seni bugüne taşıyan kökler, geçmiş deneyimler ve geride bıraktığın etkiler',de:'the roots, past experiences and influences you are leaving behind'},
-           {t:'Şimdi',e:'Present',dt:'şu an içinde bulunduğun enerji ve karşılaştığın ana durum',de:'the energy you are in now and the core situation you face'},
-           {t:'Gelecek',e:'Future',dt:'bu yolda ilerlersen önümüzdeki dönemde açılacak olası gelecek',de:'the likely future opening ahead if you continue on this path'}]},
-    celtic:{count:10,fann:20,label:{tr:'Kelt Haçı',en:'Celtic Cross'},sub:{tr:'10 kart · derin okuma',en:'10 cards · deep reading'},
-      info:{tr:'Klasik Kelt Haçı: sırayla on kart seç. Ophan her pozisyonu tek tek yorumlayacak.',en:'The classic Celtic Cross: pick ten cards in turn. Ophan reads each position.'},
-      pos:[{t:'Şimdiki Durum',e:'Present Situation',dt:'şu anda karşı karşıya olduğun temel enerji ve meselenin kalbi',de:'the core energy you face now and the heart of the matter'},
-           {t:'Engel / Zorluk',e:'The Obstacle',dt:'yolunu kesen ya da seni sınayan güç; bazen gizli bir destek de olabilir',de:'the force blocking or testing you, sometimes even a hidden support'},
-           {t:'Bilinçaltı Temeli',e:'Subconscious Foundation',dt:'durumun altında yatan gizli duygular, korkular ve gerçek motivasyonun',de:'the hidden emotions, fears and true motivation beneath the situation'},
-           {t:'Yakın Geçmiş',e:'Recent Past',dt:'şu anki duruma yol açan yakın olaylar ve geride bırakmakta olduğun etki',de:'recent events that led here and an influence now fading'},
-           {t:'Bilinç / Hedef',e:'Conscious Goal',dt:'bu konudaki bilinçli amacın ve en iyi ihtimalle ulaşabileceğin nokta',de:'your conscious aim and the best you can reach in this matter'},
-           {t:'Yakın Gelecek',e:'Near Future',dt:'önümüzdeki günlerde sahneye çıkacak etki ve bir sonraki adım',de:'the influence entering soon and your next step'},
-           {t:'Kendin',e:'Yourself',dt:'bu durumdaki tavrın, öz-algın ve oynadığın rol',de:'your attitude, self-perception and the role you play'},
-           {t:'Dış Etkiler',e:'External Influences',dt:'çevren, diğer insanlar ve kontrolün dışındaki koşullar',de:'your environment, other people and forces beyond your control'},
-           {t:'Umutlar ve Korkular',e:'Hopes and Fears',dt:'sonuca dair en derin arzun ve aynı anda en büyük kaygın',de:'your deepest hope and, at once, your greatest fear about the outcome'},
-           {t:'Sonuç',e:'Outcome',dt:'mevcut koşullar sürerse ulaşılacak olası sonuç ve meselenin varacağı yer',de:'the probable outcome if things continue as they are'}]}
+    single:{n:1,label:{tr:'Tek Kart (Günlük)',en:'Single Card (Daily)'},sub:{tr:'1 kart',en:'1 card'},layout:'single',
+      pos:[P('Günlük Kart','Daily Card','bugun senin icin en guclu rehberlik ve odaklanman gereken tema','the strongest guidance for you today')]},
+    three:{n:3,label:{tr:'Temel Üç Kart',en:'Three Cards'},sub:{tr:'Geçmiş · Şimdi · Gelecek',en:'Past · Present · Future'},layout:'row',
+      pos:[P('Geçmiş','Past','seni bugüne taşıyan kökler ve geçmiş etkiler','the roots and past that brought you here'),
+           P('Şimdiki Zaman','Present','şu an içinde bulunduğun enerji ve durum','the energy and situation you are in now'),
+           P('Gelecek','Future','bu yolda ilerlersen açılacak olası gelecek','the likely future if you continue on this path')]},
+    horseshoe:{n:7,label:{tr:'Yedi Kartlı At Nalı',en:'Seven Card Horseshoe'},sub:{tr:'7 kart · geniş okuma',en:'7 cards'},layout:'arc',
+      pos:[P('Geçmiş','Past','seni bu noktaya getiren geçmiş etkiler','past influences that brought you here'),
+           P('Şimdiki Zaman','Present','şu an içinde bulunduğun durum','your present situation'),
+           P('Gizli Etkiler','Hidden Influences','farkında olmadığın, perde arkasındaki etkenler','hidden factors behind the scenes'),
+           P('Sen','The Person','bu meseledeki tavrın ve konumun','your own attitude and stance'),
+           P('Çevrenin Tutumu','Others','çevrendekilerin ve ilgili kişilerin yaklaşımı','the attitudes of others around you'),
+           P('Ne Yapmalısın','Advice','atman gereken en doğru adım, tavsiye','the wisest step to take'),
+           P('Muhtemel Sonuç','Outcome','mevcut gidişatın olası sonucu','the likely outcome of the current path')]},
+    pentagram:{n:5,label:{tr:'Pentagram Dizilimi',en:'Pentagram Spread'},sub:{tr:'5 kart · beş element',en:'5 cards · five elements'},layout:'star',
+      pos:[P('Ruh','Spirit','meselenin özü ve sana verilen ana mesaj','the essence and core message'),
+           P('Su — Duygular','Water','duygularının, ilişkilerinin ve iç dünyanın','your emotions and relationships'),
+           P('Ateş — Tutku','Fire','tutkun, iraden ve enerjin','your passion, will and drive'),
+           P('Toprak — Madde','Earth','maddi durumun, bedenin ve pratik hayatın','your material life and body'),
+           P('Hava — Zihin','Air','zihnin, düşüncelerin ve iletişimin','your mind, thoughts and communication')]},
+    gypsy:{n:9,label:{tr:'Çingene Dizilimi',en:'Gypsy Spread'},sub:{tr:'9 kart · üç satır',en:'9 cards · three rows'},layout:'gyp',
+      pos:[P('Geçmiş 1','Past 1','geçmişin bir yüzü','a face of the past'),P('Geçmiş 2','Past 2','geçmişin bir yüzü','a face of the past'),P('Geçmiş 3','Past 3','geçmişin bir yüzü','a face of the past'),
+           P('Şimdi 1','Present 1','şu anın bir yüzü','a face of the present'),P('Şimdi 2','Present 2','şu anın bir yüzü','a face of the present'),P('Şimdi 3','Present 3','şu anın bir yüzü','a face of the present'),
+           P('Gelecek 1','Future 1','geleceğin bir yüzü','a face of the future'),P('Gelecek 2','Future 2','geleceğin bir yüzü','a face of the future'),P('Gelecek 3','Future 3','geleceğin bir yüzü','a face of the future')]},
+    celtic:{n:10,label:{tr:'Kelt Haçı',en:'Celtic Cross'},sub:{tr:'10 kart · derin okuma',en:'10 cards · deep reading'},layout:'celtic',
+      pos:[P('Şimdiki Durum','Present','şu anda karşı karşıya olduğun temel enerji ve meselenin kalbi','the core energy you face now'),
+           P('Engel / Zorluk','Obstacle','yolunu kesen ya da seni sınayan güç','the force blocking or testing you'),
+           P('Bilinçaltı Temeli','Foundation','durumun altında yatan gizli duygular ve motivasyon','the hidden emotions beneath the situation'),
+           P('Yakın Geçmiş','Recent Past','şu anki duruma yol açan yakın olaylar','recent events that led here'),
+           P('Bilinç / Hedef','Goal','bu konudaki bilinçli amacın','your conscious aim'),
+           P('Yakın Gelecek','Near Future','önümüzdeki günlerde sahneye çıkacak etki','the influence coming soon'),
+           P('Kendin','Yourself','bu durumdaki tavrın ve rolün','your attitude and role'),
+           P('Dış Etkiler','External','çevren ve kontrolün dışındaki koşullar','your environment and outside forces'),
+           P('Umutlar ve Korkular','Hopes/Fears','sonuca dair en derin arzun ve kaygın','your deepest hope and fear'),
+           P('Sonuç','Outcome','mevcut koşullar sürerse olası sonuç','the probable outcome')]}
   };
-  var CC_POS=[{l:118,t:150},{l:118,t:150,r:1},{l:118,t:246},{l:56,t:150},{l:118,t:54},{l:180,t:150},{l:274,t:262},{l:274,t:180},{l:274,t:98},{l:274,t:16}];
+  var LAYOUTS={
+    arc:{h:210,c:[{l:4,t:112},{l:44,t:58},{l:100,t:22},{l:147,t:8},{l:194,t:22},{l:250,t:58},{l:290,t:112}]},
+    star:{h:300,c:[{l:128,t:2},{l:236,t:92},{l:192,t:214},{l:64,t:214},{l:20,t:92}]},
+    celtic:{h:346,c:[{l:118,t:150},{l:118,t:150,r:1},{l:118,t:246},{l:56,t:150},{l:118,t:54},{l:180,t:150},{l:274,t:262},{l:274,t:180},{l:274,t:98},{l:274,t:16}]}
+  };
 
-  /* ---- long, real-tarot interpretation per card+position ---- */
-  function longRead(c, rev, pos){
-    var nm=nameOf(c), mean=meanOf(c,rev), rvw=rev?(tr()?' (ters)':' (reversed)'):'';
-    var suit=tr()?SUITSHORT.tr[c.s]:SUITSHORT.en[c.s];
+  function longRead(c,rev,pos){
+    var nm=nameOf(c),mean=meanOf(c,rev),rvw=rev?(tr()?' (ters)':' (reversed)'):'';
+    var suit=SUITSHORT[c.s][tr()?'tr':'en'];
     if(tr()){
       var s='Bu konum '+pos.dt+'. Burada '+nm+rvw+' beliriyor — anahtar temalar: '+mean+'. ';
       s+='Kart özünde '+suit+' ile ilgilidir. ';
-      s+= rev
-        ? 'Ters gelmesi, bu enerjiyi şu an içe dönük ya da engellenmiş yaşadığını gösterir; bu düğümü önce çözersen bu başlık lehine döner.'
-        : 'Düz gelmesi, enerjinin bu alanda açık aktığını ve bu temaya güvenle yaslanabileceğini gösterir.';
+      s+=rev?'Ters gelmesi, bu enerjiyi şu an içe dönük ya da engellenmiş yaşadığını gösterir; bu düğümü önce çözersen bu başlık lehine döner.':'Düz gelmesi, enerjinin bu alanda açık aktığını ve bu temaya güvenle yaslanabileceğini gösterir.';
       return s;
     }
-    var e='This position reflects '+pos.de+'. Here '+nm+rvw+' appears — key themes: '+mean+'. ';
-    e+='At its core this card concerns '+suit+'. ';
-    e+= rev
-      ? 'Reversed, you are living this energy inwardly or feel it blocked; untangle that first and this position turns in your favour.'
-      : 'Upright, the energy flows freely here and you can lean on this theme with confidence.';
+    var e='This position reflects '+pos.de+'. Here '+nm+rvw+' appears — key themes: '+mean+'. It concerns '+suit+'. ';
+    e+=rev?'Reversed, you live this energy inwardly or feel it blocked; untangle that first.':'Upright, the energy flows freely here.';
     return e;
   }
   function synth(picks){
     var rc=0,cnt={}; for(var i=0;i<picks.length;i++){if(picks[i].rev)rc++;var s=T[picks[i].idx].s;cnt[s]=(cnt[s]||0)+1;}
     var dom=null,dv=0; for(var k in cnt){if(cnt[k]>dv){dv=cnt[k];dom=k;}}
-    var frac=rc/picks.length;
-    if(tr()){
-      var o='Genel tablo: ';
-      if(dv>=Math.ceil(picks.length/2)&&dom)o+=SUITNAME.tr[dom]+' bu açılıma damga vuruyor; şu dönem hayatının merkezinde bu alan var. ';
-      o+= (frac>=0.5)?'Kartların çoğu ters — bu, önce içindeki bir direnci, korkuyu ya da erteleneni çözmen gerektiğini fısıldıyor; asıl dönüşüm oradan gelecek.'
-                     :(frac===0?'Kartların hepsi düz geldi; enerji açık ve akışta, cesaretle adım atmak için elverişli bir dönem.'
-                                :'Kartlar dengeli bir hikâye anlatıyor; sabırla ve niyetle atacağın adım seni ileri taşıyacak.');
-      return o;
-    }
-    var oe='Overall: ';
-    if(dv>=Math.ceil(picks.length/2)&&dom)oe+=SUITNAME.en[dom]+' marks this spread; that area is central for you now. ';
-    oe+=(frac>=0.5)?'Most cards are reversed — clear an inner resistance or fear first; that is where the real change begins.'
-                   :(frac===0?'All cards are upright; the energy is open and flowing, a good time to step forward.'
-                              :'The cards tell a balanced story; a patient, intentional step will carry you onward.');
-    return oe;
+    var frac=rc/picks.length, L=tr();
+    var o=L?'Genel tablo: ':'Overall: ';
+    if(dv>=Math.ceil(picks.length/2)&&dom)o+=(L?(SUITNAME[dom].tr+' bu açılıma damga vuruyor; şu dönem hayatının merkezinde bu alan var. '):(SUITNAME[dom].en+' mark this spread. '));
+    o+=frac>=0.5?(L?'Kartların çoğu ters — önce içindeki bir direnci ya da korkuyu çözmen gerekiyor; asıl dönüşüm oradan gelecek.':'Most cards are reversed — clear an inner block first.'):(frac===0?(L?'Kartların hepsi düz; enerji açık ve akışta, cesaretle adım atmak için elverişli bir dönem.':'All upright; a good time to act.'):(L?'Kartlar dengeli bir hikâye anlatıyor; sabırla ve niyetle atacağın adım seni ileri taşıyacak.':'A balanced story; a patient step carries you onward.'));
+    return o;
   }
 
-  /* ---- gallery (full deck) ---- */
-  function buildGrid(){
-    var g=el('trGrid'); if(!g)return;
-    if(g.__built){relabel();return;}
-    g.__built=true;
-    T.forEach(function(c,idx){
-      var d=document.createElement('div'); d.className='tr-cell';
-      d.innerHTML='<img loading="lazy" src="cards/'+c.i+'.jpg" alt="'+nameOf(c)+'"><span>'+nameOf(c)+'</span>';
-      d.addEventListener('click',function(){showCard(idx);});
-      g.appendChild(d);
-    });
-  }
-  function relabel(){var g=el('trGrid'); if(!g||!g.__built)return; var cs=g.querySelectorAll('.tr-cell'); for(var k=0;k<cs.length;k++){var s=cs[k].querySelector('span'); if(s)s.textContent=nameOf(T[k]);}}
-  function showCard(idx){
-    var c=T[idx];
-    el('trMcard').innerHTML=
-      '<img class="tr-mimg" src="cards/'+c.i+'.jpg" alt="'+nameOf(c)+'">'+
+  /* gallery */
+  function buildGallery(){var g=el('trGrid'); if(!g||g.__b)return; g.__b=1;
+    T.forEach(function(c,idx){var d=document.createElement('div'); d.className='tr-cell';
+      d.innerHTML='<img loading="lazy" src="cards/'+c.i+'.jpg" alt=""><span>'+nameOf(c)+'</span>';
+      d.addEventListener('click',function(){showCard(idx);}); g.appendChild(d);});}
+  function showCard(idx){var c=T[idx];
+    el('trMcard').innerHTML='<img class="tr-mimg" src="cards/'+c.i+'.jpg" alt="">'+
       '<div class="tr-mname cin">'+nameOf(c)+'</div>'+
-      '<div class="tr-mrow"><b>'+(tr()?'Düz':'Upright')+'</b>'+meanOf(c,false)+'</div>'+
+      '<div class="tr-mrow"><b>'+(tr()?'Duz':'Upright')+'</b>'+meanOf(c,false)+'</div>'+
       '<div class="tr-mrow rr"><b>'+(tr()?'Ters':'Reversed')+'</b>'+meanOf(c,true)+'</div>'+
       '<button class="ghost-btn tr-mclose" id="trMclose">✕</button>';
-    el('trModal').classList.add('on');
-    var b=el('trMclose'); if(b)b.addEventListener('click',hideCard);
-  }
+    el('trModal').classList.add('on'); var b=el('trMclose'); if(b)b.addEventListener('click',hideCard);}
   function hideCard(){el('trModal').classList.remove('on');}
 
-  /* ---- flow state ---- */
-  var curKey=null, deck=[], picks=[], need=0, lastVoice='';
+  var curKey=null, deckAll=[], picks=[], need=0, lastVoice='';
   function shuffleArr(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+  function makeDeck(){deckAll=shuffleArr(T.map(function(_,i){return i;})).map(function(idx){return {idx:idx,rev:Math.random()<0.35};});}
 
-  function buildChoices(){
-    var box=el('trChoices'); if(!box)return; box.innerHTML='';
-    ['single','three','celtic'].forEach(function(key){
-      var sp=SPREADS[key];
-      var d=document.createElement('div'); d.className='tr-choice';
-      d.innerHTML='<div class="tr-choice-title">'+(tr()?sp.label.tr:sp.label.en)+'</div>'+
-        '<div class="tr-choice-card"><img src="cards/back.jpg" alt=""></div>'+
-        '<div class="tr-choice-sub">'+(tr()?sp.sub.tr:sp.sub.en)+'</div>';
-      d.addEventListener('click',function(){chooseSpread(key);});
-      box.appendChild(d);
-    });
-  }
+  function hideAllStages(){el('trSelect').style.display='none';el('trScatterWrap').style.display='none';el('trPick').style.display='none';el('trResult').innerHTML='';el('trDeckView').style.display='none';}
 
-  function chooseSpread(key){
-    curKey=key; need=SPREADS[key].count; picks=[];
-    el('trSelect').style.display='none';
-    el('trResult').innerHTML='';
-    startShuffle(function(){ prepareDeck(); showPick(); });
-  }
+  function buildButtons(){var box=el('trBtns'); if(!box)return; box.innerHTML='';
+    var keys=['single','three','horseshoe','pentagram','gypsy','celtic'], d=0;
+    keys.forEach(function(key){var sp=SPREADS[key]; var b=document.createElement('div'); b.className='tr-btn'; b.style.animationDelay=(d+=0.08)+'s';
+      b.innerHTML=(tr()?sp.label.tr:sp.label.en)+'<small>'+(tr()?sp.sub.tr:sp.sub.en)+'</small>';
+      b.addEventListener('click',function(){chooseSpread(key);}); box.appendChild(b);});
+    var dv=document.createElement('div'); dv.className='tr-btn deck'; dv.style.animationDelay=(d+=0.08)+'s';
+    dv.innerHTML=(tr()?'DESTEYİ GÖR':'SEE THE DECK')+'<small>'+(tr()?'78 kartın tamamı':'all 78 cards')+'</small>';
+    dv.addEventListener('click',showDeckView); box.appendChild(dv);}
 
-  function startShuffle(cb){
-    var ov=el('trShuffle'); if(!ov){cb();return;} ov.innerHTML=''; ov.classList.add('on');
-    var n=7, cards=[], i;
-    for(i=0;i<n;i++){var c=document.createElement('div'); c.className='sc'; c.innerHTML='<img src="cards/back.jpg" alt="">';
-      c.style.left='50%'; c.style.top='44%'; c.style.transform='translate(-50%,-50%) rotate(0deg)'; ov.appendChild(c); cards.push(c);}
-    var txt=document.createElement('div'); txt.className='tr-shuffle-txt'; txt.textContent=tr()?'Kartlar karıştırılıyor…':'Shuffling the cards…'; ov.appendChild(txt);
-    setTimeout(function(){cards.forEach(function(c,k){var off=(k-(n-1)/2); c.style.transform='translate(-50%,-50%) translateX('+(off*34)+'px) rotate('+(off*13)+'deg)';});},70);
-    setTimeout(function(){cards.forEach(function(c,k){var off=(k-(n-1)/2); c.style.transform='translate(-50%,-50%) translateX('+(off*6)+'px) rotate('+(off*3)+'deg)';});},760);
-    setTimeout(function(){cards.forEach(function(c){c.style.transform='translate(-50%,-50%) translate(-120px,-160px) rotate(-9deg) scale(.66)';});},1180);
-    setTimeout(function(){cards.forEach(function(c){c.style.opacity='0';});},1520);
-    setTimeout(function(){ov.classList.remove('on');ov.innerHTML='';cb();},1820);
-  }
+  function showDeckView(){hideAllStages(); buildGallery(); el('trDeckView').style.display=''; el('trBody').scrollTop=0;}
 
-  function prepareDeck(){
-    var order=shuffleArr(T.map(function(_,i){return i;}));
-    var fann=SPREADS[curKey].fann;
-    deck=[]; for(var i=0;i<fann;i++){deck.push({idx:order[i],rev:Math.random()<0.35});}
-  }
+  function chooseSpread(key){curKey=key; need=SPREADS[key].n; picks=[]; makeDeck(); hideAllStages();
+    var sp=el('trSplash'); if(sp)sp.classList.add('dim');
+    el('trScatterWrap').style.display=''; startScatter(); el('trBody').scrollTop=0;}
 
-  function showPick(){
-    var sp=SPREADS[curKey];
-    el('trSelect').style.display='none';
-    el('trPick').style.display='';
-    el('trPickInfo').textContent=tr()?sp.info.tr:sp.info.en;
+  function startScatter(){var box=el('trScatter'); box.innerHTML=''; var W=box.clientWidth||360, H=box.clientHeight||420;
+    deckAll.forEach(function(card,i){var s=document.createElement('div'); s.className='tr-scard';
+      s.innerHTML='<img src="cards/'+card.i? '' :'';
+      s.innerHTML='<img src="cards/back.jpg" alt="">';
+      var lx=Math.random()*(W-40); s.style.left=lx+'px'; s.style.top='-130px';
+      s.style.transitionDuration=(0.45+Math.random()*0.7)+'s';
+      s.addEventListener('click',function(){showCard(card.idx);});
+      box.appendChild(s);
+      (function(el2){setTimeout(function(){var ty=20+Math.random()*(H-90); el2.style.top=ty+'px'; el2.style.transform='rotate('+((Math.random()*40)-20)+'deg)';}, i*11);})(s);
+    });}
+
+  function doShuffle(){var box=el('trScatter'); var cards=box.querySelectorAll('.tr-scard'); var W=box.clientWidth||360;
+    for(var i=0;i<cards.length;i++){(function(c,k){c.style.transitionDuration='.4s'; setTimeout(function(){c.style.left=(W/2-19)+'px'; c.style.top='40px'; c.style.transform='rotate('+((k%2?1:-1)*(3+k%7))+'deg)';}, k*4);})(cards[i],i);}
+    setTimeout(function(){ for(var i=0;i<cards.length;i++){cards[i].style.transform='translateY(-10px) rotate('+((Math.random()*10)-5)+'deg)';} },520);
+    setTimeout(function(){ el('trScatterWrap').style.display='none'; makeDeck(); showPickGrid(); },1150);}
+
+  function showPickGrid(){el('trPick').style.display=''; el('trPickedMini').innerHTML=''; updateCount();
+    el('trPickInfo').textContent=tr()?'Desteden '+need+' kart seç — istediğine dokun.':'Pick '+need+' cards — tap any you feel.';
+    var g=el('trDeckGrid'); g.innerHTML='';
+    deckAll.forEach(function(card,i){var d=document.createElement('div'); d.className='tr-gcard'; d.innerHTML='<img src="cards/back.jpg" alt="">';
+      d.addEventListener('click',function(){togglePick(d,i);}); g.appendChild(d);});
+    el('trBody').scrollTop=0;}
+  function updateCount(){el('trPickCount').textContent=tr()?('Kalan seçim: '+(need-picks.length)+' / '+need):('Cards to pick: '+(need-picks.length)+' / '+need);}
+  function togglePick(d,i){
+    if(d.__sel){return;}
+    if(picks.length>=need)return;
+    d.__sel=1; d.classList.add('sel'); picks.push(deckAll[i]);
+    var m=document.createElement('div'); m.className='m'; m.innerHTML='<img src="cards/back.jpg" alt="">'; el('trPickedMini').appendChild(m);
     updateCount();
-    el('trPickedRow').innerHTML='';
-    var fan=el('trFan'); fan.innerHTML='';
-    var N=deck.length, step=(N<=16?8:6.2), mid=(N-1)/2;
-    for(var i=0;i<N;i++){
-      var ang=(i-mid)*step;
-      var card=document.createElement('div'); card.className='tr-fancard';
-      card.innerHTML='<img src="cards/back.jpg" alt="">';
-      card.__base='rotate('+ang+'deg)';
-      card.style.transform=card.__base;
-      card.style.zIndex=i;
-      attachPick(card,i);
-      fan.appendChild(card);
-    }
-    el('trBody').scrollTop=0;
-  }
-  function updateCount(){
-    var left=need-picks.length;
-    el('trPickCount').textContent=tr()?('Kalan seçim: '+left+' / '+need):('Cards to pick: '+left+' / '+need);
-  }
-  function attachPick(cardEl, deckIndex){
-    var startY=0, dy=0, dragging=false, moved=false;
-    function down(e){ if(cardEl.__used)return; dragging=true; moved=false; startY=(e.touches?e.touches[0].clientY:e.clientY); dy=0; cardEl.classList.add('lift'); if(cardEl.setPointerCapture&&e.pointerId!=null){try{cardEl.setPointerCapture(e.pointerId);}catch(_){}}}
-    function move(e){ if(!dragging)return; var y=(e.touches?e.touches[0].clientY:e.clientY); dy=startY-y; if(dy<0)dy=0; if(dy>6)moved=true; cardEl.style.transform=cardEl.__base+' translateY(-'+dy+'px)'; if(e.cancelable)e.preventDefault(); }
-    function up(e){ if(!dragging)return; dragging=false; cardEl.classList.remove('lift');
-      if(dy>36 || !moved){ selectCard(cardEl,deckIndex); }
-      else { cardEl.style.transform=cardEl.__base; }
-      dy=0;
-    }
-    if(window.PointerEvent){ cardEl.addEventListener('pointerdown',down); cardEl.addEventListener('pointermove',move); cardEl.addEventListener('pointerup',up); cardEl.addEventListener('pointercancel',up); }
-    else { cardEl.addEventListener('touchstart',down,{passive:true}); cardEl.addEventListener('touchmove',move,{passive:false}); cardEl.addEventListener('touchend',up); cardEl.addEventListener('mousedown',down); window.addEventListener('mousemove',move); window.addEventListener('mouseup',up); }
-  }
-  function selectCard(cardEl, deckIndex){
-    if(cardEl.__used || picks.length>=need)return; cardEl.__used=true;
-    cardEl.classList.add('gone'); cardEl.style.transform=cardEl.__base+' translateY(-140px) scale(.5)';
-    picks.push(deck[deckIndex]);
-    var pk=document.createElement('div'); pk.className='pk'; pk.innerHTML='<img src="cards/back.jpg" alt="">';
-    el('trPickedRow').appendChild(pk);
-    updateCount();
-    if(picks.length>=need){ setTimeout(function(){ showReading(); },520); }
+    if(picks.length>=need){ setTimeout(showReading,480); }
   }
 
-  function cardHTML(c,rev,cls){return '<img class="'+(cls||'tr-face')+(rev?' rev':'')+'" src="cards/'+c.i+'.jpg" alt="'+nameOf(c)+'">';}
+  function faceHTML(c,rev,cls){return '<img class="'+(cls||'tr-face')+(rev?' rev':'')+'" src="cards/'+c.i+'.jpg" alt="">';}
+  function absLayout(name){var L=LAYOUTS[name], out='<div class="tr-layout" style="height:'+L.h+'px">';
+    for(var i=0;i<picks.length;i++){var c=T[picks[i].idx],cp=L.c[i]; var st='left:'+cp.l+'px;top:'+cp.t+'px;'+(cp.r?'transform:rotate(90deg);':'');
+      out+='<div class="lc" style="'+st+'"><span class="num">'+(i+1)+'</span>'+faceHTML(c,picks[i].rev,'')+'</div>';}
+    return out+'</div>';}
 
-  function showReading(){
-    stopV();
-    el('trPick').style.display='none';
-    var sp=SPREADS[curKey], pos=sp.pos, top='';
-    if(curKey==='single'){
-      var c=T[picks[0].idx];
-      top='<div class="tr-single"><div class="tr-flipcard">'+cardHTML(c,picks[0].rev)+'</div>'+
-          '<div class="tr-cn" style="text-align:center">'+nameOf(c)+(picks[0].rev?' <span class="rv">'+(tr()?'ters':'reversed')+'</span>':'')+'</div></div>';
-    } else if(curKey==='three'){
-      top='<div class="tr-spread">'+picks.map(function(x,i){var c=T[x.idx];
-        return '<div class="tr-slot"><div class="tr-pos">'+(tr()?pos[i].t:pos[i].e)+'</div>'+
-          '<div class="tr-flipcard">'+cardHTML(c,x.rev)+'</div>'+
-          '<div class="tr-cn">'+nameOf(c)+(x.rev?' <span class="rv">'+(tr()?'ters':'reversed')+'</span>':'')+'</div></div>';
-      }).join('')+'</div>';
-    } else {
-      top='<div class="tr-cc">'+picks.map(function(x,i){var c=T[x.idx];var cp=CC_POS[i];
-        var st='left:'+cp.l+'px;top:'+cp.t+'px;'+(cp.r?'transform:rotate(90deg);':'');
-        return '<div class="cc" style="'+st+'"><span class="num">'+(i+1)+'</span>'+cardHTML(c,x.rev,'')+'</div>';
-      }).join('')+'</div>';
-    }
-    var list='<div class="tr-read">'+picks.map(function(x,i){var c=T[x.idx];var pp=pos[i];
-      return '<div class="tr-ritem"><div class="tr-rimg"><img class="'+(x.rev?'rev':'')+'" src="cards/'+c.i+'.jpg" alt=""></div>'+
-        '<div class="tr-rtext"><div class="tr-rpos">'+(i+1)+'. '+(tr()?pp.t:pp.e)+'</div>'+
-        '<div class="tr-rname">'+nameOf(c)+(x.rev?' <span class="rv">'+(tr()?'ters':'reversed')+'</span>':'')+'</div>'+
-        '<div class="tr-rbody">'+longRead(c,x.rev,pp)+'</div></div></div>';
+  function showReading(){stopV(); el('trPick').style.display='none'; var sp=SPREADS[curKey], pos=sp.pos, top='';
+    if(sp.layout==='single'){var c=T[picks[0].idx]; top='<div class="tr-single"><div class="tr-flipcard">'+faceHTML(c,picks[0].rev)+'</div><div class="tr-cn" style="text-align:center">'+nameOf(c)+(picks[0].rev?' <span class="rv">'+(tr()?'ters':'reversed')+'</span>':'')+'</div></div>';}
+    else if(sp.layout==='row'){top='<div class="tr-spread">'+picks.map(function(x,i){var c=T[x.idx];return '<div class="tr-slot"><div class="tr-pos">'+(tr()?pos[i].t:pos[i].e)+'</div><div class="tr-flipcard">'+faceHTML(c,x.rev)+'</div><div class="tr-cn">'+nameOf(c)+(x.rev?' <span class="rv">'+(tr()?'ters':'reversed')+'</span>':'')+'</div></div>';}).join('')+'</div>';}
+    else if(sp.layout==='gyp'){var rows=['','',''];for(var i=0;i<9;i++){var c=T[picks[i].idx];rows[Math.floor(i/3)]+='<div class="gc">'+faceHTML(c,picks[i].rev,'')+'</div>';}top='<div class="tr-gyp"><div class="row">'+rows[0]+'</div><div class="row">'+rows[1]+'</div><div class="row">'+rows[2]+'</div></div>';}
+    else{top=absLayout(sp.layout);}
+    var list='<div class="tr-read">'+picks.map(function(x,i){var c=T[x.idx],pp=pos[i];
+      return '<div class="tr-ritem"><div class="tr-rimg"><img class="'+(x.rev?'rev':'')+'" src="cards/'+c.i+'.jpg" alt=""></div><div class="tr-rtext"><div class="tr-rpos">'+(i+1)+'. '+(tr()?pp.t:pp.e)+'</div><div class="tr-rname">'+nameOf(c)+(x.rev?' <span class="rv">'+(tr()?'ters':'reversed')+'</span>':'')+'</div><div class="tr-rbody">'+longRead(c,x.rev,pp)+'</div></div></div>';
     }).join('')+'</div>';
-    var overall='<div class="tr-combined">'+synth(picks)+'</div>';
-    var l={again:tr()?'Yeni Açılım':'New Reading',listen:tr()?'🔊 Sesli Dinle':'🔊 Listen',mute:tr()?'⏹ Sustur':'⏹ Stop',
-           natal:tr()?'Gezegen konumlarınızı ve hangi evde olduklarını bilmiyorsanız, natal haritanızı çıkarmak için dokunun.':'If you do not know your planetary positions and houses, tap to create your natal chart.',
-           natalBtn:tr()?'Natal Haritam':'My Natal Chart'};
-    el('trResult').innerHTML=top+list+overall+
-      '<div class="tr-actions"><button class="gold-btn" id="trAgain">'+l.again+'</button>'+
-      '<button class="ghost-btn" id="trVoice">'+l.listen+'</button><button class="ghost-btn" id="trMute">'+l.mute+'</button></div>'+
+    var l={again:tr()?'Yeni Dizilim':'New Reading',listen:tr()?'🔊 Sesli Dinle':'🔊 Listen',mute:tr()?'⏹ Sustur':'⏹ Stop',
+           natal:tr()?'Gezegen konumlarınızı ve hangi evde olduklarını bilmiyorsanız, natal haritanızı çıkarmak için dokunun.':'If you do not know your planetary positions and houses, tap to create your natal chart.',natalBtn:tr()?'Natal Haritam':'My Natal Chart'};
+    el('trResult').innerHTML=top+list+'<div class="tr-combined">'+synth(picks)+'</div>'+
+      '<div class="tr-actions"><button class="gold-btn" id="trAgain">'+l.again+'</button><button class="ghost-btn" id="trVoice">'+l.listen+'</button><button class="ghost-btn" id="trMute2">'+l.mute+'</button></div>'+
       '<div class="tr-natal"><div class="rd-natal-note">'+l.natal+'</div><button class="tr-natal-btn" id="trNatal">'+l.natalBtn+'</button></div>';
     lastVoice=picks.map(function(x,i){var c=T[x.idx];return (tr()?pos[i].t:pos[i].e)+': '+nameOf(c)+(x.rev?(tr()?' ters':' reversed'):'')+'. '+longRead(c,x.rev,pos[i]);}).join(' ')+' '+synth(picks);
     var a=el('trAgain'); if(a)a.addEventListener('click',backToSelect);
     var v=el('trVoice'); if(v)v.addEventListener('click',speakReading);
-    var m=el('trMute'); if(m)m.addEventListener('click',stopV);
+    var m=el('trMute2'); if(m)m.addEventListener('click',stopV);
     var n=el('trNatal'); if(n)n.addEventListener('click',function(){if(window.__goNatal)window.__goNatal();});
-    el('trBody').scrollTop=0;
-  }
-  function speakReading(){ if(!window.speechSynthesis||!lastVoice)return; stopV(); var u=new SpeechSynthesisUtterance(lastVoice.replace(/<[^>]+>/g,'')); u.lang=LV[lang()]||'en-US'; u.rate=.97; window.speechSynthesis.speak(u); }
+    el('trBody').scrollTop=0;}
+  function speakReading(){if(!window.speechSynthesis||!lastVoice)return; stopV(); var u=new SpeechSynthesisUtterance(lastVoice.replace(/<[^>]+>/g,'')); u.lang=LV[lang()]||'en-US'; u.rate=.97; window.speechSynthesis.speak(u);}
 
-  function backToSelect(){ stopV(); el('trPick').style.display='none'; el('trResult').innerHTML=''; el('trSelect').style.display=''; curKey=null; picks=[]; }
+  function backToSelect(){stopV(); hideAllStages(); var sp=el('trSplash'); if(sp)sp.classList.remove('dim'); el('trSelect').style.display=''; curKey=null; picks=[]; el('trBody').scrollTop=0;}
 
-  function applyText(){ if(el('trSelLead'))el('trSelLead').textContent=tr()?'Bir soru düşün, niyetini kalbinde tut ve bir açılım seç.':'Hold a question, keep your intention, and choose a spread.'; if(el('trGH'))el('trGH').textContent=tr()?'TÜM DESTE':'FULL DECK'; buildChoices(); }
-  function open(){ applyText(); buildGrid(); el('trResult').innerHTML=''; el('trPick').style.display='none'; el('trSelect').style.display=''; el('tarot').classList.add('on'); el('trBody').scrollTop=0; }
-  function close(){ stopV(); el('tarot').classList.remove('on'); }
+  function applyText(){if(el('trSelLead'))el('trSelLead').textContent=tr()?'Bir soru düşün, niyetini kalbinde tut ve bir dizilim seç.':'Hold a question and choose a spread.'; if(el('trGH'))el('trGH').textContent=tr()?'TÜM DESTE':'FULL DECK'; buildButtons();}
+  function open(){applyText(); var sp=el('trSplash'); if(sp){sp.classList.add('img'); sp.classList.remove('dim');} hideAllStages(); el('trSelect').style.display=''; el('tarot').classList.add('on'); el('trBody').scrollTop=0;}
+  function close(){stopV(); el('tarot').classList.remove('on');}
   window.openTarot=open;
 
-  function goNatal(){ var nc=null; if(window.CATS){for(var k=0;k<window.CATS.length;k++){if(window.CATS[k].id==='natal')nc=window.CATS[k];}} stopV(); var t=el('tarot'); if(t)t.classList.remove('on'); var rd=el('reading'); if(rd){rd.classList.remove('on');rd.classList.remove('reading');} if(nc&&window.openDetail)window.openDetail(nc); }
+  function goNatal(){var nc=null; if(window.CATS){for(var k=0;k<window.CATS.length;k++){if(window.CATS[k].id==='natal')nc=window.CATS[k];}} stopV(); var t=el('tarot'); if(t)t.classList.remove('on'); var rd=el('reading'); if(rd){rd.classList.remove('on');rd.classList.remove('reading');} if(nc&&window.openDetail)window.openDetail(nc);}
   window.__goNatal=goNatal;
 
-  var tb=el('trBack'); if(tb)tb.addEventListener('click',function(){ if(el('trPick').style.display!=='none'||el('trResult').innerHTML){ backToSelect(); } else { close(); } });
+  var tb=el('trBack'); if(tb)tb.addEventListener('click',function(){ if(el('trSelect').style.display==='none'){ backToSelect(); } else { close(); } });
+  var mu=el('trMute'); if(mu)mu.addEventListener('click',stopV);
   var mv=el('trMveil'); if(mv)mv.addEventListener('click',hideCard);
+  var sb=el('trShufBtn'); if(sb)sb.addEventListener('click',doShuffle);
 })();
 
+/* service worker */
 /* service worker */
 /* service worker */
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
