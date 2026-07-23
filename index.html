@@ -383,7 +383,7 @@ img{display:block}
 .rd-title{font-family:'Cinzel',serif;color:var(--gold2);font-size:19px;letter-spacing:.05em;text-align:center;margin-bottom:6px}
 .rd-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 8px 16px;
   display:flex;flex-direction:column;justify-content:safe center;text-align:center}
-.rd-body{color:#f6e9c8;font-size:16.5px;line-height:1.78;font-family:'Spectral',Georgia,serif;
+.rd-body{color:#f6e9c8;font-size:18px;line-height:1.78;font-family:'Spectral',Georgia,serif;
   text-align:left;text-shadow:0 1px 3px rgba(0,0,0,.5);white-space:pre-line;font-style:normal;font-weight:400;
   letter-spacing:.005em}
 .rd-body b,.rd-body strong{color:var(--gold2);font-weight:500}
@@ -398,6 +398,61 @@ img{display:block}
 .rd-cbtn:active{transform:scale(.93)}
 .rd-cbtn.rd-voice.on{background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;border-color:transparent}
 #reading:not(.reading) .rd-mute,#reading:not(.reading) .rd-voice,#reading:not(.reading) .rd-backc{display:none}
+
+/* ===== TAROT PAGE ===== */
+#tarot{position:fixed;inset:0;z-index:65;display:none;background:radial-gradient(120% 90% at 50% 12%,#1a0608,#080203)}
+#tarot.on{display:flex;flex-direction:column}
+.tr-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px;flex:0 0 auto}
+.tr-head .tr-back{width:34px;height:34px;border-radius:50%;border:1px solid rgba(232,190,96,.6);color:var(--gold2);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;background:rgba(20,7,4,.5)}
+.tr-ttl{color:var(--gold2);font-size:20px;letter-spacing:.22em;font-family:'Cinzel',serif}
+.tr-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 16px 44px}
+.tr-lead{color:#e9d6ad;text-align:center;font-family:'Spectral',Georgia,serif;font-size:15px;line-height:1.6;margin:8px 6px 16px}
+.tr-deck3{display:flex;justify-content:center;gap:12px;margin:6px 0 20px}
+.tr-cb{width:76px;aspect-ratio:.57;border-radius:9px;border:1px solid rgba(232,190,96,.7);background:linear-gradient(160deg,#2a0e0a,#140604);box-shadow:0 6px 18px rgba(0,0,0,.5),inset 0 0 18px rgba(230,182,74,.12);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:20px}
+.tr-cb::after{content:'✦';opacity:.8}
+.tr-cb:nth-child(1){transform:rotate(-6deg)}.tr-cb:nth-child(3){transform:rotate(6deg)}
+.tr-spread{display:flex;justify-content:space-between;gap:8px;margin:2px 0 14px}
+.tr-slot{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center}
+.tr-pos{color:var(--gold);font-family:'Cinzel',serif;font-size:11px;letter-spacing:.1em;margin-bottom:6px}
+.tr-flipcard{width:100%;border-radius:8px;overflow:hidden;border:1px solid rgba(232,190,96,.55);box-shadow:0 6px 16px rgba(0,0,0,.5);animation:trReveal .6s ease both}
+.tr-face{display:block;width:100%;height:auto}
+.tr-face.rev{transform:rotate(180deg)}
+.tr-cn{color:var(--gold2);font-family:'Spectral',serif;font-size:12.5px;margin-top:7px;line-height:1.25}
+.tr-cn .rv{color:#d98b6a;font-style:italic;font-size:11px}
+.tr-cm{color:#d9c6a0;font-size:11.5px;line-height:1.42;margin-top:4px}
+@keyframes trReveal{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+.tr-combined{color:#f0e2c0;font-family:'Spectral',Georgia,serif;font-size:14.5px;line-height:1.7;text-align:center;padding:12px 8px;border-top:1px solid rgba(232,190,96,.22);border-bottom:1px solid rgba(232,190,96,.22);margin:6px 2px 14px}
+.tr-actions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+.tr-actions .gold-btn,.tr-actions .ghost-btn{margin-top:0;width:auto;padding:10px 16px;font-size:13px}
+.tr-natal{margin:10px 2px 6px;text-align:center}
+.rd-natal{margin-top:16px;padding-top:13px;border-top:1px solid rgba(232,190,96,.25);text-align:center}
+.rd-natal-note,.tr-natal .rd-natal-note{color:#d9c6a0;font-size:12.5px;line-height:1.5;font-family:'Spectral',serif;margin-bottom:9px}
+.rd-natal-btn,.tr-natal-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:22px;border:1px solid rgba(232,190,96,.8);background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:.03em;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.rd-natal-btn::before,.tr-natal-btn::before{content:'🪐';font-size:14px}
+.tr-gh{color:var(--gold2);font-family:'Cinzel',serif;font-size:14px;letter-spacing:.14em;text-align:center;margin:24px 0 12px;padding-top:16px;border-top:1px solid rgba(232,190,96,.2)}
+.tr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tr-cell{cursor:pointer;text-align:center}
+.tr-cell img{width:100%;height:auto;border-radius:7px;border:1px solid rgba(232,190,96,.45);box-shadow:0 4px 12px rgba(0,0,0,.45);display:block}
+.tr-cell span{display:block;color:#cbb488;font-size:10.5px;margin-top:5px;line-height:1.2;font-family:'Spectral',serif}
+.tr-cell:active img{transform:scale(.97)}
+.tr-modal{position:fixed;inset:0;z-index:72;display:none;align-items:center;justify-content:center;padding:24px}
+.tr-modal.on{display:flex}
+.tr-mveil{position:absolute;inset:0;background:rgba(6,2,3,.82);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.tr-mcard{position:relative;z-index:2;max-width:340px;width:100%;max-height:92vh;overflow-y:auto;background:linear-gradient(180deg,#1c0a08,#0e0403);border:1px solid rgba(232,190,96,.6);border-radius:16px;padding:16px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7)}
+.tr-mimg{width:60%;max-width:190px;height:auto;border-radius:9px;border:1px solid rgba(232,190,96,.5);margin:0 auto 12px;display:block}
+.tr-mname{color:var(--gold2);font-size:18px;letter-spacing:.05em;margin-bottom:10px}
+.tr-mrow{color:#e4d3ac;font-size:13px;line-height:1.55;text-align:left;margin:8px 0;font-family:'Spectral',serif}
+.tr-mrow b{color:var(--gold2);font-weight:500;display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;font-family:'Cinzel',serif}
+.tr-mrow.rr b{color:#d98b6a}
+.tr-mclose{margin-top:12px;width:auto;padding:9px 22px}
+/* ophan chat tarot cards */
+.oph-tspread{margin:8px 0 4px}
+.oph-trow{display:flex;gap:10px;align-items:flex-start;margin:9px 0}
+.oph-tcard{width:52px;aspect-ratio:.57;object-fit:cover;border-radius:6px;border:1px solid rgba(232,190,96,.5);flex:0 0 auto}
+.oph-tcard.rev{transform:rotate(180deg)}
+.oph-tmeta{font-size:12.5px;line-height:1.45}
+.oph-tmeta b{display:block;color:var(--gold2);margin-bottom:2px}
+.oph-tclose{margin-top:6px;font-style:italic;opacity:.92}
 </style>
 </head>
 <body>
@@ -472,6 +527,7 @@ img{display:block}
         <input class="oph-in" id="ophIn" placeholder="Ask Ophan…" aria-label="Ask Ophan" autocomplete="off">
         <button class="oph-send" id="ophSend" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 8 6 8z"/></svg></button>
         <button class="oph-mic" id="ophMic" aria-label="Speak to Ophan"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg></button>
+        <button class="oph-mic oph-stop" id="ophStop" aria-label="Stop voice" title="Sesi durdur"><svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.6"/></svg></button>
       </div>
     </div>
   </section>
@@ -532,7 +588,7 @@ img{display:block}
           <div class="feathers" id="rdFeathers"></div>
           <div class="rd-inner">
             <div class="rd-title" id="rdTitle">Aries · Daily</div>
-            <div class="rd-scroll"><div class="rd-body" id="rdBody">…</div></div>
+            <div class="rd-scroll"><div class="rd-body" id="rdBody">…</div><div class="rd-natal" id="rdNatal"></div></div>
           </div>
         </div>
       </div>
@@ -544,6 +600,26 @@ img{display:block}
         <button class="rd-cbtn rd-backc" id="rdBack2" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
       </div>
     </div>
+  </div>
+
+  <!-- TAROT PAGE -->
+  <div id="tarot">
+    <div class="tr-head">
+      <div class="tr-back" id="trBack">‹</div>
+      <div class="tr-ttl">TAROT</div>
+      <div style="width:34px"></div>
+    </div>
+    <div class="tr-body" id="trBody">
+      <div class="tr-intro" id="trIntro">
+        <p class="tr-lead" id="trLead">Bir soru düşün, niyetini kalbinde tut ve üç kartını aç.</p>
+        <div class="tr-deck3"><div class="tr-cb"></div><div class="tr-cb"></div><div class="tr-cb"></div></div>
+        <div style="text-align:center"><button class="gold-btn" id="trDraw" style="width:auto;padding:12px 28px">Üç Kart Aç</button></div>
+      </div>
+      <div class="tr-result" id="trResult"></div>
+      <div class="tr-gh" id="trGH">TÜM DESTE</div>
+      <div class="tr-grid" id="trGrid"></div>
+    </div>
+    <div class="tr-modal" id="trModal"><div class="tr-mveil" id="trMveil"></div><div class="tr-mcard" id="trMcard"></div></div>
   </div>
 
   <!-- SETTINGS SHEET -->
@@ -775,6 +851,7 @@ function makeWheel(el,cards,opts){
 /* ---------- category detail ---------- */
 function openDetail(c){
   if(c.id==='sky'){ if(window.openSky)window.openSky(); return; }
+  if(c.id==='tarot'){ if(window.openTarot)window.openTarot(); return; }
   var det=$('detail');
   $('dbg').style.backgroundImage="url('"+c.img+".jpg')";
   $('dttl').textContent=c.title;
@@ -1066,6 +1143,14 @@ try{
     rd.classList.add('reading');
     fetchHoro(period,curSign,window.__lang||'en',function(data){
       body.textContent=(data&&data.body)?data.body:'This reading will arrive shortly.';
+      var nn=$('rdNatal');
+      if(nn){
+        var tr=(window.__lang==='tr');
+        var note=tr?'Gezegen konumlarınızı ve hangi evde olduklarını bilmiyorsanız, natal haritanızı çıkarmak için dokunun.':'If you do not know your planetary positions and which houses they fall in, tap to create your natal chart.';
+        var bt=tr?'Natal Haritam':'My Natal Chart';
+        nn.innerHTML='<div class="rd-natal-note">'+note+'</div><button class="rd-natal-btn" id="rdNatalBtn">'+bt+'</button>';
+        var nb=$('rdNatalBtn'); if(nb)nb.addEventListener('click',function(){ if(window.__goNatal)window.__goNatal(); });
+      }
     });
   }
   [].forEach.call(document.querySelectorAll('.rd-pb'),function(btn){
@@ -1229,7 +1314,9 @@ try{
     if(!dateStr)return -1; var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(dateStr); if(!m)return -1;
     var mo=+m[2], d=+m[3];
     var lim=[20,19,21,20,21,21,23,23,23,23,22,22]; /* her ayın burç geçiş günü */
-    var idx=(d< lim[mo-1])?(mo-2):(mo-1); if(idx<0)idx=11; return ((idx%12)+12)%12;
+    var start=((mo-3)+12)%12;                 /* o ayda başlayan burcun index'i */
+    var idx=(d<lim[mo-1])?(start-1):start;    /* geçiş gününden önce -> önceki burç */
+    return ((idx%12)+12)%12;
   }
   /* metinde burç adı ara (tr+en) */
   function detectSign(t){
@@ -1262,46 +1349,111 @@ try{
   }
   window.__ophSpeak=speak;
 
-  /* ---- content: tarot (Major Arcana) ---- */
-  var TAROT=[
-    {en:'The Fool',tr:'Deli',mEn:'new beginnings, a leap of faith, freedom',mTr:'yeni başlangıçlar, cesur bir adım, özgürlük'},
-    {en:'The Magician',tr:'Büyücü',mEn:'willpower, skill, making things happen',mTr:'irade, yetenek, harekete geçme gücü'},
-    {en:'The High Priestess',tr:'Azize',mEn:'intuition, secrets, inner voice',mTr:'sezgi, sırlar, iç ses'},
-    {en:'The Empress',tr:'İmparatoriçe',mEn:'abundance, nurturing, creativity',mTr:'bolluk, şefkat, yaratıcılık'},
-    {en:'The Emperor',tr:'İmparator',mEn:'structure, authority, stability',mTr:'düzen, otorite, istikrar'},
-    {en:'The Hierophant',tr:'Aziz',mEn:'tradition, guidance, learning',mTr:'gelenek, rehberlik, öğrenme'},
-    {en:'The Lovers',tr:'Aşıklar',mEn:'love, choices, union',mTr:'aşk, seçimler, birleşme'},
-    {en:'The Chariot',tr:'Savaş Arabası',mEn:'determination, victory, drive',mTr:'kararlılık, zafer, azim'},
-    {en:'Strength',tr:'Güç',mEn:'courage, patience, inner strength',mTr:'cesaret, sabır, iç güç'},
-    {en:'The Hermit',tr:'Ermiş',mEn:'reflection, solitude, wisdom',mTr:'iç bakış, yalnızlık, bilgelik'},
-    {en:'Wheel of Fortune',tr:'Kader Çarkı',mEn:'change, luck, turning points',mTr:'değişim, şans, dönüm noktaları'},
-    {en:'Justice',tr:'Adalet',mEn:'fairness, truth, balance',mTr:'adalet, gerçek, denge'},
-    {en:'The Hanged Man',tr:'Asılan Adam',mEn:'pause, new perspective, surrender',mTr:'duraklama, yeni bakış, teslimiyet'},
-    {en:'Death',tr:'Ölüm',mEn:'endings, transformation, rebirth',mTr:'bitişler, dönüşüm, yeniden doğuş'},
-    {en:'Temperance',tr:'Denge',mEn:'balance, patience, harmony',mTr:'denge, sabır, uyum'},
-    {en:'The Devil',tr:'Şeytan',mEn:'temptation, attachment, breaking free',mTr:'baştan çıkma, bağımlılık, özgürleşme'},
-    {en:'The Tower',tr:'Kule',mEn:'sudden change, awakening, release',mTr:'ani değişim, uyanış, arınma'},
-    {en:'The Star',tr:'Yıldız',mEn:'hope, healing, inspiration',mTr:'umut, şifa, ilham'},
-    {en:'The Moon',tr:'Ay',mEn:'dreams, intuition, the unseen',mTr:'rüyalar, sezgi, görünmeyen'},
-    {en:'The Sun',tr:'Güneş',mEn:'joy, success, vitality',mTr:'neşe, başarı, canlılık'},
-    {en:'Judgement',tr:'Mahkeme',mEn:'renewal, calling, reckoning',mTr:'yenilenme, çağrı, hesaplaşma'},
-    {en:'The World',tr:'Dünya',mEn:'completion, achievement, wholeness',mTr:'tamamlanma, başarı, bütünlük'}
-  ];
+  /* ---- content: tarot (78-card deck) ---- */
+  var TAROT=(window.__TAROT=[
+{i:"maj_00",e:"The Fool",t:"Deli",s:"major",kt:"yeni ba\u015flang\u0131\u00e7lar, masumiyet, cesur bir ad\u0131m",ke:"new beginnings, innocence, a leap of faith",rt:"aceleci kararlar, teredd\u00fct, bilinmeze duyulan korku",re:"recklessness, hesitation, fear of the unknown"},
+{i:"maj_01",e:"The Magician",t:"B\u00fcy\u00fcc\u00fc",s:"major",kt:"irade g\u00fcc\u00fc, yetenek, hayata ge\u00e7irme",ke:"manifestation, willpower, skill",rt:"yetene\u011fi bo\u015fa harcama, manip\u00fclasyon, \u00f6z \u015f\u00fcphe",re:"wasted talent, manipulation, self-doubt"},
+{i:"maj_02",e:"The High Priestess",t:"Azize",s:"major",kt:"sezgi, gizem, i\u00e7 ses",ke:"intuition, mystery, inner voice",rt:"bast\u0131r\u0131lan sezgi, saklanan s\u0131rlar, kafa kar\u0131\u015f\u0131kl\u0131\u011f\u0131",re:"ignored intuition, hidden secrets, confusion"},
+{i:"maj_03",e:"The Empress",t:"\u0130mparatori\u00e7e",s:"major",kt:"bolluk, bereket, \u015fefkat",ke:"abundance, fertility, nurturing",rt:"yarat\u0131c\u0131 t\u0131kanma, ba\u011f\u0131ml\u0131l\u0131k, ihmal",re:"creative block, dependence, neglect"},
+{i:"maj_04",e:"The Emperor",t:"\u0130mparator",s:"major",kt:"otorite, d\u00fczen, istikrar",ke:"authority, structure, stability",rt:"kat\u0131l\u0131k, a\u015f\u0131r\u0131 kontrol, bask\u0131",re:"rigidity, control issues, domination"},
+{i:"maj_05",e:"The Hierophant",t:"Aziz",s:"major",kt:"gelenek, rehberlik, inan\u00e7",ke:"tradition, guidance, belief",rt:"ba\u015fkald\u0131r\u0131, al\u0131\u015f\u0131lmad\u0131k yol, kal\u0131plar\u0131 k\u0131rma",re:"rebellion, unconventional path, breaking norms"},
+{i:"maj_06",e:"The Lovers",t:"A\u015f\u0131klar",s:"major",kt:"a\u015fk, birle\u015fme, \u00f6nemli bir se\u00e7im",ke:"love, union, a meaningful choice",rt:"uyumsuzluk, dengesizlik, yanl\u0131\u015f se\u00e7im",re:"disharmony, imbalance, wrong choice"},
+{i:"maj_07",e:"The Chariot",t:"Sava\u015f Arabas\u0131",s:"major",kt:"kararl\u0131l\u0131k, zafer, kontrol",ke:"determination, victory, control",rt:"y\u00f6n kayb\u0131, da\u011f\u0131n\u0131kl\u0131k, kontrol\u00fc yitirme",re:"lack of direction, loss of control"},
+{i:"maj_08",e:"Strength",t:"G\u00fc\u00e7",s:"major",kt:"cesaret, sab\u0131r, i\u00e7sel g\u00fc\u00e7",ke:"courage, patience, inner strength",rt:"\u00f6z \u015f\u00fcphe, k\u0131r\u0131lganl\u0131k, ham duygular",re:"self-doubt, weakness, raw emotion"},
+{i:"maj_09",e:"The Hermit",t:"Ermi\u015f",s:"major",kt:"i\u00e7 bak\u0131\u015f, yaln\u0131zl\u0131k, bilgelik",ke:"introspection, solitude, inner wisdom",rt:"yaln\u0131zla\u015fma, kopukluk, geri \u00e7ekilme",re:"isolation, loneliness, withdrawal"},
+{i:"maj_10",e:"Wheel of Fortune",t:"Kader \u00c7ark\u0131",s:"major",kt:"de\u011fi\u015fim, d\u00f6ng\u00fcler, \u015fans",ke:"change, cycles, luck",rt:"talihsizlik, de\u011fi\u015fime diren\u00e7, gecikme",re:"bad luck, resistance to change, delay"},
+{i:"maj_11",e:"Justice",t:"Adalet",s:"major",kt:"adalet, ger\u00e7ek, sebep-sonu\u00e7",ke:"fairness, truth, cause and effect",rt:"adaletsizlik, d\u00fcr\u00fcst olmama, dengesizlik",re:"injustice, dishonesty, imbalance"},
+{i:"maj_12",e:"The Hanged Man",t:"As\u0131lan Adam",s:"major",kt:"teslimiyet, yeni bak\u0131\u015f a\u00e7\u0131s\u0131, duraklama",ke:"surrender, new perspective, a pause",rt:"oyalanma, diren\u00e7, karars\u0131zl\u0131k",re:"stalling, resistance, indecision"},
+{i:"maj_13",e:"Death",t:"\u00d6l\u00fcm",s:"major",kt:"biti\u015fler, d\u00f6n\u00fc\u015f\u00fcm, yeniden do\u011fu\u015f",ke:"endings, transformation, rebirth",rt:"de\u011fi\u015fime diren\u00e7, t\u0131kanma, ge\u00e7mi\u015fe tutunma",re:"resistance to change, stagnation, clinging"},
+{i:"maj_14",e:"Temperance",t:"Denge",s:"major",kt:"denge, \u00f6l\u00e7\u00fcl\u00fcl\u00fck, sab\u0131r",ke:"balance, moderation, patience",rt:"a\u015f\u0131r\u0131l\u0131k, dengesizlik, acele",re:"excess, imbalance, haste"},
+{i:"maj_15",e:"The Devil",t:"\u015eeytan",s:"major",kt:"ba\u011f\u0131ml\u0131l\u0131k, tutku esareti, maddiyat",ke:"attachment, temptation, materialism",rt:"zincirleri k\u0131rma, \u00f6zg\u00fcrle\u015fme, g\u00fcc\u00fc geri alma",re:"breaking free, release, reclaiming power"},
+{i:"maj_16",e:"The Tower",t:"Kule",s:"major",kt:"ani de\u011fi\u015fim, sars\u0131nt\u0131, ayd\u0131nlanma",ke:"sudden change, upheaval, revelation",rt:"felaketi savu\u015fturma, de\u011fi\u015fimden korkma",re:"avoiding disaster, fear of change"},
+{i:"maj_17",e:"The Star",t:"Y\u0131ld\u0131z",s:"major",kt:"umut, inan\u00e7, \u015fifa",ke:"hope, faith, healing",rt:"umutsuzluk, kopukluk, inanc\u0131 yitirme",re:"despair, disconnection, lost faith"},
+{i:"maj_18",e:"The Moon",t:"Ay",s:"major",kt:"yan\u0131lsama, sezgi, bilin\u00e7alt\u0131",ke:"illusion, intuition, the subconscious",rt:"sisin da\u011f\u0131lmas\u0131, korkular\u0131n serbest b\u0131rak\u0131lmas\u0131",re:"confusion lifting, releasing fear"},
+{i:"maj_19",e:"The Sun",t:"G\u00fcne\u015f",s:"major",kt:"ne\u015fe, ba\u015far\u0131, canl\u0131l\u0131k",ke:"joy, success, vitality",rt:"ge\u00e7ici karamsarl\u0131k, ertelenen mutluluk",re:"temporary gloom, blocked happiness"},
+{i:"maj_20",e:"Judgement",t:"Mahkeme",s:"major",kt:"yeniden do\u011fu\u015f, hesapla\u015fma, uyan\u0131\u015f",ke:"rebirth, reckoning, awakening",rt:"\u00f6z \u015f\u00fcphe, \u00e7a\u011fr\u0131ya kulak t\u0131kama",re:"self-doubt, ignoring the call"},
+{i:"maj_21",e:"The World",t:"D\u00fcnya",s:"major",kt:"tamamlanma, ba\u015far\u0131, b\u00fct\u00fcnl\u00fck",ke:"completion, fulfillment, wholeness",rt:"yar\u0131m kalma, gecikme, kapan\u0131\u015f aray\u0131\u015f\u0131",re:"incompletion, delay, seeking closure"},
+{i:"cup_01",e:"Ace of Cups",t:"Kupa As\u0131",s:"cups",kt:"yeni a\u015fk, duygusal ba\u015flang\u0131\u00e7, \u015fefkat",ke:"new love, emotional beginning, compassion",rt:"bast\u0131r\u0131lm\u0131\u015f duygular, bo\u015fluk, kapanma",re:"blocked emotions, emptiness, withdrawal"},
+{i:"cup_02",e:"Two of Cups",t:"Kupa \u0130kilisi",s:"cups",kt:"ortakl\u0131k, kar\u015f\u0131l\u0131kl\u0131 \u00e7ekim, uyum",ke:"partnership, mutual attraction, union",rt:"dengesizlik, kopan ba\u011f, anla\u015fmazl\u0131k",re:"imbalance, broken bond, discord"},
+{i:"cup_03",e:"Three of Cups",t:"Kupa \u00dc\u00e7l\u00fcs\u00fc",s:"cups",kt:"dostluk, kutlama, topluluk",ke:"friendship, celebration, community",rt:"a\u015f\u0131r\u0131ya ka\u00e7ma, dedikodu, yaln\u0131zla\u015fma",re:"overindulgence, gossip, isolation"},
+{i:"cup_04",e:"Four of Cups",t:"Kupa D\u00f6rtl\u00fcs\u00fc",s:"cups",kt:"tatminsizlik, i\u00e7e kapan\u0131\u015f, f\u0131rsat\u0131 g\u00f6rmeme",ke:"apathy, contemplation, missed chances",rt:"yeni fark\u0131ndal\u0131k, ilgiyi geri kazanma",re:"new awareness, renewed interest"},
+{i:"cup_05",e:"Five of Cups",t:"Kupa Be\u015flisi",s:"cups",kt:"kay\u0131p, pi\u015fmanl\u0131k, yas",ke:"loss, regret, grief",rt:"kabulleni\u015f, iyile\u015fme, ba\u011f\u0131\u015flama",re:"acceptance, recovery, forgiveness"},
+{i:"cup_06",e:"Six of Cups",t:"Kupa Alt\u0131l\u0131s\u0131",s:"cups",kt:"nostalji, \u00e7ocukluk, masumiyet",ke:"nostalgia, childhood, innocence",rt:"ge\u00e7mi\u015fte tak\u0131l\u0131 kalma, ileriye bakamama",re:"stuck in the past, unable to move on"},
+{i:"cup_07",e:"Seven of Cups",t:"Kupa Yedilisi",s:"cups",kt:"se\u00e7enekler, hayaller, yan\u0131lsama",ke:"choices, illusion, wishful thinking",rt:"netlik, karar, odaklanma",re:"clarity, decision, focus"},
+{i:"cup_08",e:"Eight of Cups",t:"Kupa Sekizlisi",s:"cups",kt:"geride b\u0131rakma, daha derin anlam aray\u0131\u015f\u0131",ke:"walking away, seeking deeper meaning",rt:"de\u011fi\u015fimden korkma, t\u0131kan\u0131p kalma",re:"fear of change, staying stuck"},
+{i:"cup_09",e:"Nine of Cups",t:"Kupa Dokuzlusu",s:"cups",kt:"memnuniyet, tatmin, dile\u011fin ger\u00e7ekle\u015fmesi",ke:"contentment, satisfaction, wishes fulfilled",rt:"tatminsizlik, hep daha fazlas\u0131n\u0131 isteme",re:"dissatisfaction, always wanting more"},
+{i:"cup_10",e:"Ten of Cups",t:"Kupa Onlusu",s:"cups",kt:"huzur, aile, kal\u0131c\u0131 mutluluk",ke:"harmony, family, lasting happiness",rt:"kopan ba\u011flar, da\u011f\u0131lan yuva",re:"broken bonds, disconnection"},
+{i:"cup_11",e:"Page of Cups",t:"Kupa Prensi",s:"cups",kt:"yarat\u0131c\u0131 haber, merak, yeni duygular",ke:"creative message, curiosity, new feelings",rt:"duygusal olgunla\u015famama, t\u0131kanan yarat\u0131c\u0131l\u0131k",re:"emotional immaturity, blocked creativity"},
+{i:"cup_12",e:"Knight of Cups",t:"Kupa \u015e\u00f6valyesi",s:"cups",kt:"romantizm, \u00e7ekicilik, kalbin pe\u015finden gitme",ke:"romance, charm, following the heart",rt:"de\u011fi\u015fken ruh hali, ger\u00e7ek\u00e7i olmayan hayaller",re:"moodiness, unrealistic ideals"},
+{i:"cup_13",e:"Queen of Cups",t:"Kupa Krali\u00e7esi",s:"cups",kt:"\u015fefkat, duygusal g\u00fcven, sezgi",ke:"compassion, emotional security, intuition",rt:"duygusal bo\u011fulma, a\u015f\u0131r\u0131 ba\u011f\u0131ml\u0131l\u0131k",re:"emotional overwhelm, dependence"},
+{i:"cup_14",e:"King of Cups",t:"Kupa Kral\u0131",s:"cups",kt:"duygusal denge, diplomasi, s\u00fckunet",ke:"emotional balance, diplomacy, calm",rt:"manip\u00fclasyon, dengesiz duygular",re:"manipulation, moodiness"},
+{i:"pen_01",e:"Ace of Pentacles",t:"T\u0131ls\u0131m As\u0131",s:"pentacles",kt:"yeni f\u0131rsat, bolluk, somut kazan\u00e7",ke:"new opportunity, prosperity, manifestation",rt:"ka\u00e7an f\u0131rsat, g\u00fcvensizlik",re:"missed chance, insecurity"},
+{i:"pen_02",e:"Two of Pentacles",t:"T\u0131ls\u0131m \u0130kilisi",s:"pentacles",kt:"denge, uyum sa\u011flama, sorumluluklar\u0131 y\u00f6netme",ke:"balance, adaptability, juggling priorities",rt:"da\u011f\u0131n\u0131kl\u0131k, y\u00fck\u00fcn alt\u0131nda ezilme",re:"overwhelm, disorganization"},
+{i:"pen_03",e:"Three of Pentacles",t:"T\u0131ls\u0131m \u00dc\u00e7l\u00fcs\u00fc",s:"pentacles",kt:"ekip \u00e7al\u0131\u015fmas\u0131, ustal\u0131k, i\u015f birli\u011fi",ke:"teamwork, skill, collaboration",rt:"uyumsuz ekip, \u00f6zensiz i\u015f",re:"poor teamwork, low quality"},
+{i:"pen_04",e:"Four of Pentacles",t:"T\u0131ls\u0131m D\u00f6rtl\u00fcs\u00fc",s:"pentacles",kt:"g\u00fcvence, biriktirme, kontrol",ke:"security, saving, control",rt:"cimrilik, tutunma, kaybetme korkusu",re:"greed, clinging, fear of loss"},
+{i:"pen_05",e:"Five of Pentacles",t:"T\u0131ls\u0131m Be\u015flisi",s:"pentacles",kt:"zorluk, kay\u0131p, g\u00fcvensizlik",ke:"hardship, loss, insecurity",rt:"toparlanma, gelen yard\u0131m, umut",re:"recovery, help arriving, hope"},
+{i:"pen_06",e:"Six of Pentacles",t:"T\u0131ls\u0131m Alt\u0131l\u0131s\u0131",s:"pentacles",kt:"c\u00f6mertlik, vermek ve almak, yard\u0131m",ke:"generosity, giving and receiving, charity",rt:"ko\u015fullu yard\u0131m, e\u015fitsizlik",re:"strings attached, inequality"},
+{i:"pen_07",e:"Seven of Pentacles",t:"T\u0131ls\u0131m Yedilisi",s:"pentacles",kt:"sab\u0131r, uzun vadeli bak\u0131\u015f, eme\u011fin kar\u015f\u0131l\u0131\u011f\u0131",ke:"patience, long-term view, investment",rt:"sab\u0131rs\u0131zl\u0131k, d\u00fc\u015f\u00fck getiri",re:"impatience, poor return"},
+{i:"pen_08",e:"Eight of Pentacles",t:"T\u0131ls\u0131m Sekizlisi",s:"pentacles",kt:"emek, \u00f6zen, ustala\u015fma",ke:"diligence, skill, mastery",rt:"m\u00fckemmeliyet\u00e7ilik, odak kayb\u0131",re:"perfectionism, lack of focus"},
+{i:"pen_09",e:"Nine of Pentacles",t:"T\u0131ls\u0131m Dokuzlusu",s:"pentacles",kt:"bolluk, \u00f6z-yeterlilik, konfor",ke:"abundance, self-sufficiency, comfort",rt:"a\u015f\u0131r\u0131 \u00e7al\u0131\u015fma, maddi ba\u011f\u0131ml\u0131l\u0131k",re:"overwork, financial dependence"},
+{i:"pen_10",e:"Ten of Pentacles",t:"T\u0131ls\u0131m Onlusu",s:"pentacles",kt:"zenginlik, miras, aile g\u00fcvencesi",ke:"wealth, legacy, family security",rt:"maddi kay\u0131p, istikrars\u0131zl\u0131k",re:"financial loss, instability"},
+{i:"pen_11",e:"Page of Pentacles",t:"T\u0131ls\u0131m Prensi",s:"pentacles",kt:"\u00f6\u011frenme, hedef, yeni giri\u015fim",ke:"study, ambition, a new venture",rt:"erteleme, ilerleyememe",re:"procrastination, lack of progress"},
+{i:"pen_12",e:"Knight of Pentacles",t:"T\u0131ls\u0131m \u015e\u00f6valyesi",s:"pentacles",kt:"\u00e7al\u0131\u015fkanl\u0131k, istikrar, g\u00fcvenilirlik",ke:"hard work, routine, reliability",rt:"dura\u011fanl\u0131k, s\u0131k\u0131\u015f\u0131p kalma",re:"stagnation, boredom"},
+{i:"pen_13",e:"Queen of Pentacles",t:"T\u0131ls\u0131m Krali\u00e7esi",s:"pentacles",kt:"besleyicilik, pratiklik, bolluk",ke:"nurturing, practicality, abundance",rt:"i\u015f-ya\u015fam dengesizli\u011fi, \u00f6z-ihmal",re:"work-life imbalance, self-neglect"},
+{i:"pen_14",e:"King of Pentacles",t:"T\u0131ls\u0131m Kral\u0131",s:"pentacles",kt:"refah, liderlik, g\u00fcvence",ke:"prosperity, leadership, security",rt:"a\u00e7g\u00f6zl\u00fcl\u00fck, a\u015f\u0131r\u0131 maddiyat",re:"greed, materialism"},
+{i:"swo_01",e:"Ace of Swords",t:"K\u0131l\u0131\u00e7 As\u0131",s:"swords",kt:"netlik, ger\u00e7ek, zihinsel at\u0131l\u0131m",ke:"clarity, truth, breakthrough",rt:"kafa kar\u0131\u015f\u0131kl\u0131\u011f\u0131, g\u00fcc\u00fcn k\u00f6t\u00fcye kullan\u0131m\u0131",re:"confusion, misused power"},
+{i:"swo_02",e:"Two of Swords",t:"K\u0131l\u0131\u00e7 \u0130kilisi",s:"swords",kt:"zor bir se\u00e7im, \u00e7\u0131kmaz, ka\u00e7\u0131nma",ke:"difficult choice, stalemate, avoidance",rt:"karars\u0131zl\u0131\u011f\u0131n \u00e7\u00f6z\u00fclmesi, netle\u015fme",re:"indecision resolved, clarity"},
+{i:"swo_03",e:"Three of Swords",t:"K\u0131l\u0131\u00e7 \u00dc\u00e7l\u00fcs\u00fc",s:"swords",kt:"kalp k\u0131r\u0131kl\u0131\u011f\u0131, keder, ac\u0131 ger\u00e7ek",ke:"heartbreak, sorrow, painful truth",rt:"iyile\u015fme, ac\u0131y\u0131 serbest b\u0131rakma",re:"healing, releasing pain"},
+{i:"swo_04",e:"Four of Swords",t:"K\u0131l\u0131\u00e7 D\u00f6rtl\u00fcs\u00fc",s:"swords",kt:"dinlenme, toparlanma, tefekk\u00fcr",ke:"rest, recovery, contemplation",rt:"huzursuzluk, t\u00fckenmi\u015flik",re:"restlessness, burnout"},
+{i:"swo_05",e:"Five of Swords",t:"K\u0131l\u0131\u00e7 Be\u015flisi",s:"swords",kt:"\u00e7at\u0131\u015fma, yenilgi, gerginlik",ke:"conflict, defeat, tension",rt:"uzla\u015fma, geride b\u0131rakma",re:"reconciliation, moving on"},
+{i:"swo_06",e:"Six of Swords",t:"K\u0131l\u0131\u00e7 Alt\u0131l\u0131s\u0131",s:"swords",kt:"ge\u00e7i\u015f, ileriye gitme, iyile\u015fme",ke:"transition, moving forward, recovery",rt:"diren\u00e7, tamamlanmam\u0131\u015f i\u015fler",re:"resistance, unfinished business"},
+{i:"swo_07",e:"Seven of Swords",t:"K\u0131l\u0131\u00e7 Yedilisi",s:"swords",kt:"aldatma, strateji, tek ba\u015f\u0131na hareket",ke:"deception, strategy, acting alone",rt:"itiraf, do\u011fruyu s\u00f6yleme",re:"confession, coming clean"},
+{i:"swo_08",e:"Eight of Swords",t:"K\u0131l\u0131\u00e7 Sekizlisi",s:"swords",kt:"kapana k\u0131s\u0131lm\u0131\u015fl\u0131k, k\u0131s\u0131tlama, korku",ke:"feeling trapped, restriction, fear",rt:"\u00f6zg\u00fcrle\u015fme, yeni bak\u0131\u015f a\u00e7\u0131s\u0131",re:"freedom, new perspective"},
+{i:"swo_09",e:"Nine of Swords",t:"K\u0131l\u0131\u00e7 Dokuzlusu",s:"swords",kt:"kayg\u0131, endi\u015fe, kabuslar",ke:"anxiety, worry, nightmares",rt:"umut, korkudan s\u0131yr\u0131lma",re:"hope, recovery from fear"},
+{i:"swo_10",e:"Ten of Swords",t:"K\u0131l\u0131\u00e7 Onlusu",s:"swords",kt:"ac\u0131 bir son, dibe vurma",ke:"painful ending, rock bottom",rt:"toparlanma, hayatta kalma, diren\u00e7",re:"recovery, survival, resilience"},
+{i:"swo_11",e:"Page of Swords",t:"K\u0131l\u0131\u00e7 Prensi",s:"swords",kt:"merak, yeni fikirler, tetikte olma",ke:"curiosity, new ideas, vigilance",rt:"da\u011f\u0131n\u0131k d\u00fc\u015f\u00fcnceler, dedikodu",re:"scattered thoughts, gossip"},
+{i:"swo_12",e:"Knight of Swords",t:"K\u0131l\u0131\u00e7 \u015e\u00f6valyesi",s:"swords",kt:"h\u0131rs, at\u0131lganl\u0131k, h\u0131zl\u0131 hareket",ke:"ambition, drive, fast action",rt:"pervas\u0131zl\u0131k, sab\u0131rs\u0131zl\u0131k",re:"recklessness, impatience"},
+{i:"swo_13",e:"Queen of Swords",t:"K\u0131l\u0131\u00e7 Krali\u00e7esi",s:"swords",kt:"berrak d\u00fc\u015f\u00fcnce, d\u00fcr\u00fcstl\u00fck, ba\u011f\u0131ms\u0131zl\u0131k",ke:"clear thinking, honesty, independence",rt:"so\u011fukluk, sert yarg\u0131",re:"coldness, harsh judgment"},
+{i:"swo_14",e:"King of Swords",t:"K\u0131l\u0131\u00e7 Kral\u0131",s:"swords",kt:"otorite, ger\u00e7ek, ak\u0131l",ke:"authority, truth, intellect",rt:"manip\u00fclasyon, g\u00fcc\u00fcn k\u00f6t\u00fcye kullan\u0131m\u0131",re:"manipulation, misuse of power"},
+{i:"wan_01",e:"Ace of Wands",t:"Asa As\u0131",s:"wands",kt:"ilham, yeni tutku, potansiyel",ke:"inspiration, new passion, potential",rt:"gecikmeler, y\u00f6n eksikli\u011fi",re:"delays, lack of direction"},
+{i:"wan_02",e:"Two of Wands",t:"Asa \u0130kilisi",s:"wands",kt:"planlama, kararlar, gelecek vizyonu",ke:"planning, decisions, future vision",rt:"de\u011fi\u015fimden korkma, g\u00fcvenli oynamak",re:"fear of change, playing safe"},
+{i:"wan_03",e:"Three of Wands",t:"Asa \u00dc\u00e7l\u00fcs\u00fc",s:"wands",kt:"geni\u015fleme, ilerleme, \u00f6ng\u00f6r\u00fc",ke:"expansion, progress, foresight",rt:"gecikmeler, engeller",re:"delays, obstacles"},
+{i:"wan_04",e:"Four of Wands",t:"Asa D\u00f6rtl\u00fcs\u00fc",s:"wands",kt:"kutlama, uyum, yuva",ke:"celebration, harmony, home",rt:"ge\u00e7i\u015f d\u00f6nemi, destek eksikli\u011fi",re:"transition, lack of support"},
+{i:"wan_05",e:"Five of Wands",t:"Asa Be\u015flisi",s:"wands",kt:"rekabet, \u00e7eki\u015fme, anla\u015fmazl\u0131k",ke:"competition, conflict, rivalry",rt:"\u00e7at\u0131\u015fmadan ka\u00e7\u0131nma, uzla\u015fma",re:"avoiding conflict, resolution"},
+{i:"wan_06",e:"Six of Wands",t:"Asa Alt\u0131l\u0131s\u0131",s:"wands",kt:"zafer, takdir, ba\u015far\u0131",ke:"victory, recognition, success",rt:"geri ad\u0131m, takdir g\u00f6rmeme",re:"setback, lack of recognition"},
+{i:"wan_07",e:"Seven of Wands",t:"Asa Yedilisi",s:"wands",kt:"savunma, azim, dik durma",ke:"defense, perseverance, standing ground",rt:"bunalma, pes etme",re:"overwhelm, giving up"},
+{i:"wan_08",e:"Eight of Wands",t:"Asa Sekizlisi",s:"wands",kt:"h\u0131z, hareket, h\u0131zl\u0131 geli\u015fmeler",ke:"speed, movement, swift action",rt:"gecikmeler, engellenmi\u015flik",re:"delays, frustration"},
+{i:"wan_09",e:"Nine of Wands",t:"Asa Dokuzlusu",s:"wands",kt:"dayan\u0131kl\u0131l\u0131k, azim, son bir gayret",ke:"resilience, persistence, a last push",rt:"t\u00fckenmi\u015flik, a\u015f\u0131r\u0131 savunmac\u0131l\u0131k",re:"exhaustion, defensiveness"},
+{i:"wan_10",e:"Ten of Wands",t:"Asa Onlusu",s:"wands",kt:"y\u00fck, sorumluluk, a\u011f\u0131r i\u015f",ke:"burden, responsibility, hard work",rt:"y\u00fck\u00fc b\u0131rakma, payla\u015fma",re:"releasing burden, delegation"},
+{i:"wan_11",e:"Page of Wands",t:"Asa Prensi",s:"wands",kt:"co\u015fku, ke\u015fif, yeni bir fikir",ke:"enthusiasm, exploration, a new idea",rt:"teredd\u00fct, y\u00f6n eksikli\u011fi",re:"hesitation, lack of direction"},
+{i:"wan_12",e:"Knight of Wands",t:"Asa \u015e\u00f6valyesi",s:"wands",kt:"enerji, tutku, macera",ke:"energy, passion, adventure",rt:"d\u00fc\u015f\u00fcncesizlik, pervas\u0131zl\u0131k",re:"impulsiveness, recklessness"},
+{i:"wan_13",e:"Queen of Wands",t:"Asa Krali\u00e7esi",s:"wands",kt:"\u00f6zg\u00fcven, s\u0131cakl\u0131k, kararl\u0131l\u0131k",ke:"confidence, warmth, determination",rt:"g\u00fcvensizlik, k\u0131skan\u00e7l\u0131k",re:"insecurity, jealousy"},
+{i:"wan_14",e:"King of Wands",t:"Asa Kral\u0131",s:"wands",kt:"liderlik, vizyon, cesaret",ke:"leadership, vision, boldness",rt:"atakl\u0131k, bask\u0131c\u0131l\u0131k",re:"impulsiveness, domineering"}
+]);
   var POS={en:['Past','Present','Future'],tr:['Geçmiş','Şimdi','Gelecek']};
-  function drawTarot(){
-    var idx=[],pool=TAROT.slice();
-    for(var k=0;k<3;k++){var r=Math.floor((Date.now()/(k+1)+Math.random()*pool.length))%pool.length;idx.push(pool.splice(r,1)[0]);}
-    return idx;
+  function tCardName(c,lang){return (lang==='tr')?c.t:c.e;}
+  function tMean(c,rev,lang){return rev?((lang==='tr')?c.rt:c.re):((lang==='tr')?c.kt:c.ke);}
+  function drawTarot(n){
+    n=n||3; var pool=[],i;
+    for(i=0;i<TAROT.length;i++)pool.push(i);
+    for(i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}
+    var out=[]; for(i=0;i<n&&i<pool.length;i++)out.push({c:TAROT[pool[i]],rev:Math.random()<0.35});
+    return out;
   }
   function tarotReply(){
-    var lang=lang0(), pos=POS[lang]||POS.en, cards=drawTarot();
+    var lang=lang0(), pos=POS[lang]||POS.en, draw=drawTarot(3);
     var head=(lang==='tr')?'Ophan senin için üç kart çekti:':'Ophan drew three cards for you:';
-    var lines=cards.map(function(c,i){var nm=(lang==='tr')?c.tr:c.en, mn=(lang==='tr')?c.mTr:c.mEn;
-      return '<b>'+pos[i]+' · '+nm+'</b> — '+mn;}).join('\n');
-    var close=(lang==='tr')?'\nKartlar birlikte, sabırla atılan bir adımın seni ileriye taşıdığını fısıldıyor. Yüreğin ne diyorsa ona güven.'
-      :'\nTogether the cards whisper that a patient step forward is carrying you onward. Trust what your heart already knows.';
-    var voice=cards.map(function(c,i){return pos[i]+': '+((lang==='tr')?c.tr:c.en);}).join(', ');
-    return {html:head+'\n'+lines+close, voice:head+' '+voice+'.'};
+    var rows=draw.map(function(d,i){
+      var nm=tCardName(d.c,lang), mn=tMean(d.c,d.rev,lang);
+      var rv=d.rev?((lang==='tr')?' (ters)':' (reversed)'):'';
+      var img='<img class="oph-tcard'+(d.rev?' rev':'')+'" loading="lazy" src="cards/'+d.c.i+'.jpg" alt="'+nm+'">';
+      return '<div class="oph-trow">'+img+'<div class="oph-tmeta"><b>'+pos[i]+' · '+nm+rv+'</b>'+mn+'</div></div>';
+    }).join('');
+    var close=(lang==='tr')?'Kartlar birlikte fısıldıyor: geçmişten gelen iz bugünü, bugün attığın sabırlı adım da geleceğini çiziyor. Yüreğin ne diyorsa ona güven.'
+      :'Together the cards whisper: the past shapes today, and the patient step you take now draws your future. Trust what your heart already knows.';
+    var voice=draw.map(function(d,i){return pos[i]+': '+tCardName(d.c,lang)+(d.rev?((lang==='tr')?' ters':' reversed'):'');}).join(', ');
+    var html='<div class="oph-tarot">'+head+'<div class="oph-tspread">'+rows+'</div><div class="oph-tclose">'+close+'</div></div>';
+    return {html:html, voice:head+' '+voice+'. '+close};
   }
   /* ---- dream symbols ---- */
   var DREAM=[
@@ -1340,7 +1492,7 @@ try{
       typing(false);
       var body=(data&&data.body)?data.body:((lang==='tr')?'Bugünün yorumu birazdan hazır olacak.':'Today\'s reading will be ready shortly.');
       var head=(lang==='tr')?('İşte '+nm+' için bugünün yorumu:'):('Here is today\'s reading for '+nm+':');
-      bubble('op','<b>'+head+'</b>\n'+body);
+      bubble('op','<b>'+head+'</b><br>'+String(body).replace(/\n/g,'<br>'));
       speak(head+' '+body);
     });
   }
@@ -1466,6 +1618,7 @@ try{
   document.getElementById('ophSend').addEventListener('click',sendFromInput);
   document.getElementById('ophIn').addEventListener('keydown',function(e){if(e.key==='Enter')sendFromInput();});
   document.getElementById('ophMic').addEventListener('click',startListen);
+  (function(){var st=document.getElementById('ophStop');if(st)st.addEventListener('click',function(){try{window.speechSynthesis.cancel();}catch(e){}});})();
   document.getElementById('wakeTog').addEventListener('click',function(){wakeOn?stopWake():startWake();});
   document.getElementById('wakeTog').addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){wakeOn?stopWake():startWake();}});
 
@@ -1477,6 +1630,124 @@ try{
       else{try{if(TTS)TTS.cancel();}catch(e){} if(listening&&rec){try{rec.stop();}catch(e){}}}
     });
   });
+})();
+
+/* ================= TAROT PAGE MODULE ================= */
+(function(){
+  var el=function(id){return document.getElementById(id);};
+  var T=window.__TAROT||[];
+  function lang(){return window.__lang||'en';}
+  var POS={en:['Past','Present','Future'],tr:['Geçmiş','Şimdi','Gelecek']};
+  var TXT={
+    tr:{lead:'Bir soru düşün, niyetini kalbinde tut ve üç kartını aç.',draw:'Üç Kart Aç',again:'Yeniden Aç',listen:'🔊 Sesli Dinle',mute:'⏹ Sustur',deck:'TÜM DESTE',up:'Düz',rev:'Ters',vhead:'İşte senin üç kartın.',natal:'Gezegen konumlarınızı ve hangi evde olduklarını bilmiyorsanız, natal haritanızı çıkarmak için dokunun.',natalBtn:'Natal Haritam'},
+    en:{lead:'Think of a question, hold your intention, and draw your three cards.',draw:'Draw Three Cards',again:'Draw Again',listen:'🔊 Listen',mute:'⏹ Stop',deck:'FULL DECK',up:'Upright',rev:'Reversed',vhead:'Here are your three cards.',natal:'If you do not know your planetary positions and which houses they fall in, tap to create your natal chart.',natalBtn:'My Natal Chart'}
+  };
+  function L(){return TXT[lang()]||TXT.en;}
+  function nameOf(c){return (lang()==='tr')?c.t:c.e;}
+  function meanOf(c,rev){return rev?((lang()==='tr')?c.rt:c.re):((lang()==='tr')?c.kt:c.ke);}
+  function posArr(){return POS[lang()]||POS.en;}
+  function stopV(){try{window.speechSynthesis.cancel();}catch(e){}}
+  var LV={en:'en-US',tr:'tr-TR'};
+
+  function buildGrid(){
+    var g=el('trGrid'); if(!g)return;
+    if(g.__built){relabel();return;}
+    g.__built=true;
+    T.forEach(function(c,idx){
+      var d=document.createElement('div'); d.className='tr-cell';
+      d.innerHTML='<img loading="lazy" src="cards/'+c.i+'.jpg" alt="'+nameOf(c)+'"><span>'+nameOf(c)+'</span>';
+      d.addEventListener('click',function(){showCard(idx);});
+      g.appendChild(d);
+    });
+  }
+  function relabel(){
+    var g=el('trGrid'); if(!g||!g.__built)return;
+    var cells=g.querySelectorAll('.tr-cell');
+    for(var k=0;k<cells.length;k++){var s=cells[k].querySelector('span');if(s)s.textContent=nameOf(T[k]);}
+  }
+  function showCard(idx){
+    var c=T[idx], l=L();
+    el('trMcard').innerHTML=
+      '<img class="tr-mimg" src="cards/'+c.i+'.jpg" alt="'+nameOf(c)+'">'+
+      '<div class="tr-mname cin">'+nameOf(c)+'</div>'+
+      '<div class="tr-mrow"><b>'+l.up+'</b>'+meanOf(c,false)+'</div>'+
+      '<div class="tr-mrow rr"><b>'+l.rev+'</b>'+meanOf(c,true)+'</div>'+
+      '<button class="ghost-btn tr-mclose" id="trMclose">✕</button>';
+    el('trModal').classList.add('on');
+    var b=el('trMclose'); if(b)b.addEventListener('click',hideCard);
+  }
+  function hideCard(){el('trModal').classList.remove('on');}
+
+  function shuffle3(){
+    var pool=[],i; for(i=0;i<T.length;i++)pool.push(i);
+    for(i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}
+    var out=[]; for(i=0;i<3&&i<pool.length;i++)out.push({idx:pool[i],rev:Math.random()<0.35});
+    return out;
+  }
+  var lastVoice='';
+  function draw(){
+    stopV();
+    var l=L(), p=posArr(), d=shuffle3();
+    var slots=d.map(function(x,i){
+      var c=T[x.idx];
+      return '<div class="tr-slot"><div class="tr-pos">'+p[i]+'</div>'+
+        '<div class="tr-flipcard"><img class="tr-face'+(x.rev?' rev':'')+'" src="cards/'+c.i+'.jpg" alt="'+nameOf(c)+'"></div>'+
+        '<div class="tr-cn">'+nameOf(c)+(x.rev?' <span class="rv">'+l.rev.toLowerCase()+'</span>':'')+'</div>'+
+        '<div class="tr-cm">'+meanOf(c,x.rev)+'</div></div>';
+    }).join('');
+    var combined=(lang()==='tr')
+      ? 'Bu üç kart birlikte tek bir hikâye anlatır: geçmişin izleri bugünü şekillendiriyor, bugün attığın adım ise geleceğini çiziyor. Kartların mesajını kendi hayatınla birlikte oku.'
+      : 'Together these three cards tell one story: the past shapes today, and the step you take now draws your future. Read their message alongside your own life.';
+    el('trResult').innerHTML=
+      '<div class="tr-spread">'+slots+'</div>'+
+      '<div class="tr-combined">'+combined+'</div>'+
+      '<div class="tr-actions"><button class="gold-btn" id="trAgain">'+l.again+'</button>'+
+        '<button class="ghost-btn" id="trVoice">'+l.listen+'</button>'+
+        '<button class="ghost-btn" id="trMute">'+l.mute+'</button></div>'+
+      '<div class="tr-natal"><div class="rd-natal-note">'+l.natal+'</div><button class="tr-natal-btn" id="trNatal">'+l.natalBtn+'</button></div>';
+    var intro=el('trIntro'); if(intro)intro.style.display='none';
+    lastVoice=l.vhead+' '+d.map(function(x,i){return p[i]+': '+nameOf(T[x.idx])+(x.rev?(' '+l.rev.toLowerCase()):'');}).join(', ')+'. '+combined;
+    var a=el('trAgain'); if(a)a.addEventListener('click',draw);
+    var v=el('trVoice'); if(v)v.addEventListener('click',speakReading);
+    var m=el('trMute'); if(m)m.addEventListener('click',stopV);
+    var n=el('trNatal'); if(n)n.addEventListener('click',function(){ if(window.__goNatal)window.__goNatal(); });
+    var body=el('trBody'); if(body)body.scrollTop=0;
+  }
+  function speakReading(){
+    if(!window.speechSynthesis||!lastVoice)return;
+    stopV();
+    var u=new SpeechSynthesisUtterance(lastVoice.replace(/<[^>]+>/g,''));
+    u.lang=LV[lang()]||'en-US'; u.rate=.97;
+    window.speechSynthesis.speak(u);
+  }
+
+  function applyText(){
+    var l=L();
+    if(el('trLead'))el('trLead').textContent=l.lead;
+    if(el('trDraw'))el('trDraw').textContent=l.draw;
+    if(el('trGH'))el('trGH').textContent=l.deck;
+  }
+  function open(){
+    applyText(); buildGrid();
+    var intro=el('trIntro'); if(intro)intro.style.display='';
+    el('trResult').innerHTML='';
+    el('tarot').classList.add('on');
+  }
+  function close(){ stopV(); el('tarot').classList.remove('on'); }
+  window.openTarot=open;
+
+  function goNatal(){
+    var nc=null; if(window.CATS){for(var k=0;k<window.CATS.length;k++){if(window.CATS[k].id==='natal')nc=window.CATS[k];}}
+    stopV();
+    var tr=el('tarot'); if(tr)tr.classList.remove('on');
+    var rd=el('reading'); if(rd){rd.classList.remove('on');rd.classList.remove('reading');}
+    if(nc&&window.openDetail)window.openDetail(nc);
+  }
+  window.__goNatal=goNatal;
+
+  var tb=el('trBack'); if(tb)tb.addEventListener('click',close);
+  var tdw=el('trDraw'); if(tdw)tdw.addEventListener('click',draw);
+  var mv=el('trMveil'); if(mv)mv.addEventListener('click',hideCard);
 })();
 
 /* service worker */
