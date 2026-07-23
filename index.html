@@ -925,12 +925,14 @@ function openDetail(c){
   var b=$('dbody'); b.scrollTop=0;
   det.classList.add('on');   /* önce görünür yap ki kartlar doğru ölçülsün */
   if(c.id==='burc'){ b.innerHTML=zodiacHTML(); requestAnimationFrame(wireZodiac); }
-  else if(c.id==='natal' && window.profileComplete && !window.profileComplete()){
-    b.innerHTML='<p class="lead">Natal Chart.</p>'+
-      '<div class="glasscard">Please update your personal information first — we need your <b>birth date</b>, <b>birth place</b> and <b>birth time</b> to create your natal chart.</div>'+
-      '<button class="gold-btn" id="natalUpdate">Update my info</button>'+
-      '<button class="ghost-btn" onclick="closeDetail()">Back</button>';
-    var nu=$('natalUpdate'); if(nu)nu.addEventListener('click',function(){closeDetail();if(window.goProfile)window.goProfile();});
+  else if(c.id==='natal'){
+    if(window.profileComplete && !window.profileComplete()){
+      b.innerHTML='<p class="lead">Natal Chart.</p>'+
+        '<div class="glasscard">Please update your personal information first — we need your <b>birth date</b>, <b>birth place</b> and <b>birth time</b> to create your natal chart.</div>'+
+        '<button class="gold-btn" id="natalUpdate">Update my info</button>'+
+        '<button class="ghost-btn" onclick="closeDetail()">Back</button>';
+      var nu=$('natalUpdate'); if(nu)nu.addEventListener('click',function(){closeDetail();if(window.goProfile)window.goProfile();});
+    } else { closeDetail(); if(window.__openNatal)window.__openNatal(); }
   }
   else{
     b.innerHTML='<p class="lead">'+c.cap+'.</p>'+
@@ -1090,7 +1092,7 @@ $('topbar').style.display='none';   /* açılışta ana ekran: üst bar gizli */
   function openSheet(t,h){$('sheetTitle').textContent=t;$('sheetBody').innerHTML=h;sheet.classList.add('on');}
   function closeSheet(){sheet.classList.remove('on');}
   function esc(s){return (s||'').replace(/"/g,'&quot;');}
-  function openEdit(){
+  function openEdit(onSave){
     var p=window.__profile;
     var h='<div class="efield"><label>Full Name</label><input id="eName" value="'+esc(p.name)+'" placeholder="Name Surname"></div>'+
       '<div class="efield"><label>Birth Place</label><input id="ePlace" value="'+esc(p.place)+'" placeholder="City, Country"></div>'+
@@ -1104,9 +1106,11 @@ $('topbar').style.display='none';   /* açılışta ana ekran: üst bar gizli */
       ls('oph_name',name);ls('oph_place',place);ls('oph_date',date);ls('oph_time',time);
       fillDisplay();closeSheet();
       if(window.__sb){window.__sb.auth.updateUser({data:{full_name:name,birth_place:place,birth_date:date,birth_time:time}}).catch(function(){});}
+      if(typeof onSave==='function')onSave();
     });
   }
-  if($('editInfo'))$('editInfo').addEventListener('click',openEdit);
+  if($('editInfo'))$('editInfo').addEventListener('click',function(){openEdit();});
+  window.__openEditProfile=openEdit;
   window.loadProfile(null);   /* misafir/ilk yükleme: localStorage'dan */
 })();
 
@@ -1970,6 +1974,274 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
     }
   });
 })();
+</script>
+<script>
+/* ============================ OPHANARK — NATAL HARITA ============================ */
+(function(){
+ try{
+  var D2R=Math.PI/180,R2D=180/Math.PI;
+  function rev(x){x=x%360;if(x<0)x+=360;return x;}
+  function sind(x){return Math.sin(x*D2R);}function cosd(x){return Math.cos(x*D2R);}
+  function tand(x){return Math.tan(x*D2R);}function atan2d(y,x){return Math.atan2(y,x)*R2D;}
+  function dayNo(y,m,D,UT){var d=367*y-Math.floor(7*(y+Math.floor((m+9)/12))/4)+Math.floor(275*m/9)+D-730530;return d+UT/24;}
+  function oblEcl(d){return 23.4393-3.563E-7*d;}
+  function sunPos(d){var w=282.9404+4.70935E-5*d,e=0.016709-1.151E-9*d,M=rev(356.0470+0.9856002585*d);
+    var E=M+e*R2D*sind(M)*(1+e*cosd(M));var xv=cosd(E)-e,yv=Math.sqrt(1-e*e)*sind(E);
+    var v=atan2d(yv,xv),r=Math.sqrt(xv*xv+yv*yv);return {lon:rev(v+w),r:r,M:M,L:rev(M+w)};}
+  function planetHelio(el,d){var N=el.N(d),i=el.i(d),w=el.w(d),a=el.a(d),e=el.e(d),M=rev(el.M(d));
+    var E=M+e*R2D*sind(M)*(1+e*cosd(M));for(var k=0;k<8;k++){E=E-(E-e*R2D*sind(E)-M)/(1-e*cosd(E));}
+    var xv=a*(cosd(E)-e),yv=a*Math.sqrt(1-e*e)*sind(E);var v=atan2d(yv,xv),r=Math.sqrt(xv*xv+yv*yv);
+    var xh=r*(cosd(N)*cosd(v+w)-sind(N)*sind(v+w)*cosd(i));
+    var yh=r*(sind(N)*cosd(v+w)+cosd(N)*sind(v+w)*cosd(i));return {xh:xh,yh:yh,r:r};}
+  var EL={
+   mercury:{N:function(d){return 48.3313+3.24587E-5*d;},i:function(d){return 7.0047+5.00E-8*d;},w:function(d){return 29.1241+1.01444E-5*d;},a:function(){return 0.387098;},e:function(d){return 0.205635+5.59E-10*d;},M:function(d){return 168.6562+4.0923344368*d;}},
+   venus:{N:function(d){return 76.6799+2.46590E-5*d;},i:function(d){return 3.3946+2.75E-8*d;},w:function(d){return 54.8910+1.38374E-5*d;},a:function(){return 0.723330;},e:function(d){return 0.006773-1.302E-9*d;},M:function(d){return 48.0052+1.6021302244*d;}},
+   mars:{N:function(d){return 49.5574+2.11081E-5*d;},i:function(d){return 1.8497-1.78E-8*d;},w:function(d){return 286.5016+2.92961E-5*d;},a:function(){return 1.523688;},e:function(d){return 0.093405+2.516E-9*d;},M:function(d){return 18.6021+0.5240207766*d;}},
+   jupiter:{N:function(d){return 100.4542+2.76854E-5*d;},i:function(d){return 1.3030-1.557E-7*d;},w:function(d){return 273.8777+1.64505E-5*d;},a:function(){return 5.20256;},e:function(d){return 0.048498+4.469E-9*d;},M:function(d){return 19.8950+0.0830853001*d;}},
+   saturn:{N:function(d){return 113.6634+2.38980E-5*d;},i:function(d){return 2.4886-1.081E-7*d;},w:function(d){return 339.3939+2.97661E-5*d;},a:function(){return 9.55475;},e:function(d){return 0.055546-9.499E-9*d;},M:function(d){return 316.9670+0.0334442282*d;}},
+   uranus:{N:function(d){return 74.0005+1.3978E-5*d;},i:function(d){return 0.7733+1.9E-8*d;},w:function(d){return 96.6612+3.0565E-5*d;},a:function(d){return 19.18171-1.55E-8*d;},e:function(d){return 0.047318+7.45E-9*d;},M:function(d){return 142.5905+0.011725806*d;}},
+   neptune:{N:function(d){return 131.7806+3.0173E-5*d;},i:function(d){return 1.7700-2.55E-7*d;},w:function(d){return 272.8461-6.027E-6*d;},a:function(d){return 30.05826+3.313E-8*d;},e:function(d){return 0.008606+2.15E-9*d;},M:function(d){return 260.2471+0.005995147*d;}},
+   pluto:{N:function(d){var T=d/36525;return 110.30393684-0.01183482*T;},i:function(d){var T=d/36525;return 17.14001206+0.00004818*T;},w:function(d){var T=d/36525;return 113.76497945-0.0287946*T;},a:function(d){var T=d/36525;return 39.48211675-0.00031596*T;},e:function(d){var T=d/36525;return 0.24882730+0.00005170*T;},M:function(d){var T=d/36525;return 14.86012204+145.24843457*T;}}
+  };
+  function moonPos(d,sun){var N=rev(125.1228-0.0529538083*d),i=5.1454,w=rev(318.0634+0.1643573223*d),a=60.2666,e=0.054900,M=rev(115.3654+13.0649929509*d);
+    var E=M+e*R2D*sind(M)*(1+e*cosd(M));for(var k=0;k<6;k++){E=E-(E-e*R2D*sind(E)-M)/(1-e*cosd(E));}
+    var xv=a*(cosd(E)-e),yv=a*Math.sqrt(1-e*e)*sind(E);var v=atan2d(yv,xv),r=Math.sqrt(xv*xv+yv*yv);
+    var xh=r*(cosd(N)*cosd(v+w)-sind(N)*sind(v+w)*cosd(i));var yh=r*(sind(N)*cosd(v+w)+cosd(N)*sind(v+w)*cosd(i));
+    var lon=atan2d(yh,xh);var Ls=sun.L,Lm=rev(N+w+M),Ms=sun.M,Mm=M,Dp=rev(Lm-Ls),F=rev(Lm-N);
+    var dl=-1.274*sind(Mm-2*Dp)+0.658*sind(2*Dp)-0.186*sind(Ms)-0.059*sind(2*Mm-2*Dp)-0.057*sind(Mm-2*Dp+Ms)+0.053*sind(Mm+2*Dp)+0.046*sind(2*Dp-Ms)+0.041*sind(Mm-Ms)-0.035*sind(Dp)-0.031*sind(Mm+Ms);
+    return {lon:rev(lon+dl)};}
+  function geoLon(ph,sun){var xs=sun.r*cosd(sun.lon),ys=sun.r*sind(sun.lon);return rev(atan2d(ph.yh+ys,ph.xh+xs));}
+  function computeChart(y,mo,D,UT,lat,lon){
+    var d=dayNo(y,mo,D,UT),ecl=oblEcl(d),sun=sunPos(d),pos={};
+    pos.sun=sun.lon;pos.moon=moonPos(d,sun).lon;
+    ['mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto'].forEach(function(p){pos[p]=geoLon(planetHelio(EL[p],d),sun);});
+    var gmst=rev(sun.L+180),lst=rev(gmst+UT*15.04107+lon),ramc=lst;
+    var mc=rev(atan2d(sind(ramc),cosd(ramc)*cosd(ecl)));
+    var asc=rev(atan2d(cosd(ramc),-(sind(ramc)*cosd(ecl)+tand(lat)*sind(ecl))));
+    return {pos:pos,asc:asc,mc:mc};}
+  window.__natalCompute=computeChart;
+
+  /* ---------- geocode + timezone ---------- */
+  function tzOffsetMin(tz,y,mo,D,h,mi){
+    try{var guess=Date.UTC(y,mo-1,D,h,mi);
+      var dtf=new Intl.DateTimeFormat('en-US',{timeZone:tz,hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      var ps={};dtf.formatToParts(new Date(guess)).forEach(function(p){ps[p.type]=p.value;});
+      var asUTC=Date.UTC(+ps.year,+ps.month-1,+ps.day,+(ps.hour==='24'?0:ps.hour),+ps.minute,+ps.second);
+      return (asUTC-guess)/60000;
+    }catch(e){return 0;}
+  }
+  function geocode(place,cb){
+    var key='oph_geo_'+place.toLowerCase().replace(/\s+/g,'_');
+    try{var c=localStorage.getItem(key);if(c){cb(JSON.parse(c));return;}}catch(e){}
+    var url='https://geocoding-api.open-meteo.com/v1/search?count=1&language='+(window.__lang||'en')+'&name='+encodeURIComponent(place.split(',')[0].trim());
+    fetch(url).then(function(r){return r.json();}).then(function(j){
+      if(j&&j.results&&j.results.length){var g={lat:j.results[0].latitude,lon:j.results[0].longitude,tz:j.results[0].timezone,name:j.results[0].name};
+        try{localStorage.setItem(key,JSON.stringify(g));}catch(e){}cb(g);}
+      else cb(null);
+    }).catch(function(){cb(null);});
+  }
+
+  /* ---------- content ---------- */
+  var SIGNS_TR=['Koç','Boğa','İkizler','Yengeç','Aslan','Başak','Terazi','Akrep','Yay','Oğlak','Kova','Balık'];
+  var SIGNS_EN=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  var PSYM={sun:'☉',moon:'☾',mercury:'☿',venus:'♀',mars:'♂',jupiter:'♃',saturn:'♄',uranus:'♅',neptune:'♆',pluto:'♇'};
+  var PORDER=['sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto'];
+  var C={
+   tr:{
+    pname:{sun:'Güneş',moon:'Ay',mercury:'Merkür',venus:'Venüs',mars:'Mars',jupiter:'Jüpiter',saturn:'Satürn',uranus:'Uranüs',neptune:'Neptün',pluto:'Plüton'},
+    core:{sun:'özün, kimliğin ve hayat gücün; nasıl parladığın ve neyle var olduğun',moon:'duyguların, iç dünyan ve güvende hissetme biçimin',mercury:'zihnin, konuşma–öğrenme tarzın ve kararlarını kurma şeklin',venus:'sevgi, güzellik ve değer anlayışın; nasıl bağ kurduğun',mars:'arzun, öfken ve harekete geçme gücün',jupiter:'şansın, büyüme–genişleme alanın ve inancın',saturn:'sorumlulukların, sınırların ve olgunlaşma dersin',uranus:'özgürlüğün, ani değişimlerin ve seni sıra dışı kılan yanın',neptune:'hayallerin, sezgin ve ruhsal–sanatsal yönün',pluto:'derin dönüşümün, gücün ve yeniden doğuşun'},
+    flavor:['cesur, öncü ve doğrudan bir tavırla ifade buluyor; beklemeden harekete geçiyorsun','sabırlı, istikrarlı ve somut bir biçimde çalışıyor; kalıcı olanı inşa ediyorsun','meraklı, çok yönlü ve iletişimci bir renk alıyor; fikirler arasında hızla dolaşıyorsun','duygusal, koruyucu ve sezgisel bir derinlik kazanıyor; kalbinle hareket ediyorsun','gururlu, cömert ve sahne alan bir ışıkla parlıyor; fark edilmek istiyorsun','titiz, analitik ve hizmet odaklı bir düzenle işliyor; inceliği önemsiyorsun','uyumlu, adil ve ilişki merkezli bir zarafetle akıyor; dengeyi arıyorsun','yoğun, tutkulu ve dönüştürücü bir güçle derinleşiyor; yüzeyle yetinmiyorsun','özgür, iyimser ve arayışçı bir genişlikle uzanıyor; ufkunu büyütüyorsun','disiplinli, hırslı ve stratejik bir ciddiyetle ilerliyor; zirveyi hedefliyorsun','özgün, yenilikçi ve topluluk bilinçli bir bakışla ayrışıyor; kalıpları sorguluyorsun','şefkatli, hayalperest ve sınırsız bir duyarlılıkla eriyor; sezgine güveniyorsun'],
+    house:['kimliğin, dış görünüşün ve dünyaya ilk adımını atma biçimin','paran, sahip oldukların ve kendi değerini hissetme biçimin','iletişimin, kardeşlerin, yakın çevren ve öğrenme tarzın','evin, ailen, köklerin ve içsel güvenlik duygun','yaratıcılığın, aşkın, çocukların ve kendini ifade etme neşen','işin, günlük rutinlerin, sağlığın ve hizmet alanın','ortaklıkların, evliliğin ve birebir ilişkilerin','dönüşümün, ortak kaynakların, mahremiyetin ve derin bağların','inançların, uzun yolculukların, yüksek öğrenimin ve hayat felsefen','kariyerin, toplumsal statün ve dünyada bıraktığın iz','arkadaşlıkların, hayallerin ve ait olduğun topluluklar','bilinçaltın, ruhsal dünyan, geri çekilişlerin ve arınma alanın'],
+    asc:'Yükselen (ASC)',ascText:'Yükselenin, dünyaya açılan kapın ve insanların seninle ilk karşılaştığında gördüğü yüzdür. Doğduğun anda ufukta bu burç yükseliyordu; bu yüzden dış duruşun, ilk izlenimin ve hayata giriş tarzın onun rengini taşır.',
+    intro:'Aşağıda, doğduğun anın gökyüzünden çıkarılan gerçek haritan var. Her gezegen, bir burçta ve bir evde duruyor — bu ikisinin birleşimi, hayatının o alanındaki hikâyeni anlatır.',
+    inHouse:'evde',inSign:'burcunda',read:'Yorumu Okumak İçin Tıklayın',cont:'Devam Et',edit:'Düzenle',
+    confirm:'Kişisel bilgileriniz doğru mu? Doğru değilse Düzenle butonuna basarak revize edin; doğruysa Devam Et ile ilerleyin.',
+    title:'Natal Haritam',page:'Sayfa',of:'/',listen:'🔊 Sesli Dinle',stop:'⏹ Sustur',
+    loading:'Doğduğun anın gökyüzü hesaplanıyor…',noNet:'Haritadaki evleri hesaplamak için doğum şehrini bulmam gerekti ama internete ulaşamadım. Gezegen burçların yine de gerçek; evler için tekrar dene.',
+    tpl:function(sym,pn,sign,house,core,flavor,harea,deg){return sym+' '+pn+', '+sign+' '+this.inSign+' ve '+house+'. '+this.inHouse+'. Bu, senin '+core+' demek. '+sign+' burcunda bu enerji '+flavor+'. '+house+'. ev hayatının '+harea+' alanını temsil eder — yani bu güç tam da orada kendini gösteriyor. Doğduğun anın gökyüzü onu '+deg+'° '+sign+' noktasına yerleştirmiş; bu yerleşim '+pn+' niteliklerini ömür boyu bu temayla birbirine bağlıyor.';}
+   },
+   en:{
+    pname:{sun:'Sun',moon:'Moon',mercury:'Mercury',venus:'Venus',mars:'Mars',jupiter:'Jupiter',saturn:'Saturn',uranus:'Uranus',neptune:'Neptune',pluto:'Pluto'},
+    core:{sun:'your essence, identity and life force — how you shine and what makes you you',moon:'your emotions, inner world and the way you feel safe',mercury:'your mind, how you speak, learn and make decisions',venus:'love, beauty and value — how you bond',mars:'your desire, anger and drive to act',jupiter:'your luck, growth and faith',saturn:'your responsibilities, limits and lessons of maturity',uranus:'your freedom, sudden change and what makes you unique',neptune:'your dreams, intuition and spiritual–artistic side',pluto:'your deep transformation, power and rebirth'},
+    flavor:['a bold, pioneering and direct manner; you act without waiting','a patient, steady and tangible way; you build what lasts','a curious, versatile and communicative colour; you move fast between ideas','an emotional, protective and intuitive depth; you move with your heart','a proud, generous and centre-stage light; you want to be seen','a precise, analytical and service-minded order; you value refinement','a harmonious, fair and relationship-centred grace; you seek balance','an intense, passionate and transformative power; you never settle for the surface','a free, optimistic and seeking expanse; you widen your horizon','a disciplined, ambitious and strategic seriousness; you aim for the summit','an original, innovative and community-minded view; you question the mould','a compassionate, dreamy and boundless sensitivity; you trust your intuition'],
+    house:['your identity, appearance and first step into the world','your money, possessions and sense of self-worth','your communication, siblings, close circle and learning style','your home, family, roots and inner security','your creativity, love, children and self-expression','your work, daily routines, health and service','your partnerships, marriage and one-to-one relationships','your transformation, shared resources, intimacy and deep bonds','your beliefs, long journeys, higher learning and philosophy','your career, public standing and mark on the world','your friendships, hopes and the communities you belong to','your subconscious, spiritual world, retreats and release'],
+    asc:'Ascendant (ASC)',ascText:'Your Ascendant is your doorway to the world and the face people meet first. This sign was rising on the horizon at your birth, so your outward manner and first impression carry its colour.',
+    intro:'Below is your real chart, drawn from the sky at the moment you were born. Each planet sits in a sign and a house — together they tell the story of that area of your life.',
+    inHouse:'house',inSign:'in',read:'Tap to Read the Interpretation',cont:'Continue',edit:'Edit',
+    confirm:'Is your personal information correct? If not, tap Edit to revise it; if it is, tap Continue.',
+    title:'My Natal Chart',page:'Page',of:'/',listen:'🔊 Listen',stop:'⏹ Stop',
+    loading:'Calculating the sky of your birth…',noNet:'I needed to find your birth city to compute the houses but could not reach the internet. Your planet signs are still real; try again for the houses.',
+    tpl:function(sym,pn,sign,house,core,flavor,harea,deg){return sym+' '+pn+' is in '+sign+', in the '+house+ordinal(house)+' '+this.inHouse+'. This is '+core+'. In '+sign+', this energy shows '+flavor+'. The '+house+ordinal(house)+' house rules '+harea+' — so this force appears exactly there. The sky placed it at '+deg+'° '+sign+', binding '+pn+'’s qualities to this theme for life.';}
+   }
+  };
+  function ordinal(n){var s=['th','st','nd','rd'],v=n%100;return (s[(v-20)%10]||s[v]||s[0]);}
+  function L(){return C[window.__lang]?window.__lang:'en';}
+  function SIGNS(){return L()==='tr'?SIGNS_TR:SIGNS_EN;}
+
+  /* ---------- styles ---------- */
+  var css=document.createElement('style');
+  css.textContent=
+  '#natalScr{position:fixed;inset:0;z-index:140;display:none;background:#07040d;overflow:hidden}'+
+  '#natalScr.on{display:block}'+
+  '#natalScr .nt-bg{position:absolute;inset:0;background:url("natal_splash.jpg") center/cover no-repeat;opacity:.14;filter:saturate(1.05)}'+
+  '#natalScr .nt-veil{position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0,rgba(60,30,6,.35),rgba(7,4,13,.86) 70%)}'+
+  '.nt-wrap{position:relative;z-index:2;height:100%;display:flex;flex-direction:column}'+
+  '.nt-head{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 12px) 16px 8px}'+
+  '.nt-head .nt-t{flex:1;font-family:\'Cinzel\',serif;color:#e6c46a;font-size:17px;letter-spacing:.12em;text-align:center}'+
+  '.nt-x{width:38px;height:38px;border-radius:50%;border:1px solid rgba(232,190,96,.5);background:rgba(0,0,0,.3);color:#e8be60;font-size:16px;cursor:pointer;flex:0 0 auto}'+
+  '.nt-body{flex:1;overflow-y:auto;padding:6px 18px 20px}'+
+  '.nt-card{background:linear-gradient(180deg,rgba(40,24,8,.5),rgba(20,10,4,.42));border:1px solid rgba(214,168,92,.35);border-radius:16px;padding:16px 16px;margin:12px auto;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,.4)}'+
+  '.nt-info-row{display:flex;justify-content:space-between;gap:12px;padding:9px 2px;border-bottom:1px solid rgba(214,168,92,.16);font-family:\'Spectral\',serif}'+
+  '.nt-info-row:last-child{border-bottom:none}.nt-info-row .k{color:#c9a87a;font-size:13px}.nt-info-row .v{color:#f4e6c4;font-size:14px;text-align:right}'+
+  '.nt-note{color:#d9c6a0;font-size:13px;line-height:1.55;font-family:\'Spectral\',serif;text-align:center;margin:14px auto 6px;max-width:400px}'+
+  '.nt-btn{display:block;width:100%;max-width:420px;margin:12px auto 0;padding:15px;border-radius:14px;border:1px solid rgba(232,190,96,.85);background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;font-family:\'Cinzel\',serif;font-size:14px;letter-spacing:.08em;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.4)}'+
+  '.nt-btn.ghost{background:transparent;color:#e8be60;box-shadow:none}'+
+  '.nt-lead{color:#e9d9b3;font-family:\'Spectral\',serif;font-size:14px;line-height:1.6;text-align:center;margin:8px auto 4px;max-width:420px}'+
+  '.nt-pline{display:flex;align-items:center;gap:10px;padding:11px 6px;border-bottom:1px solid rgba(214,168,92,.14);max-width:420px;margin:0 auto}'+
+  '.nt-pline .sym{font-size:19px;color:#f4d488;width:24px;text-align:center}'+
+  '.nt-pline .pn{flex:1;color:#f4e6c4;font-family:\'Cinzel\',serif;font-size:13.5px}'+
+  '.nt-pline .sg{color:#e0c48a;font-size:13px;font-family:\'Spectral\',serif}'+
+  '.nt-pline .hs{color:#c99a54;font-size:12px;font-family:\'Cinzel\',serif;margin-left:8px;white-space:nowrap}'+
+  '.nt-read-p{color:#efe2c2;font-family:\'Spectral\',serif;font-size:15.5px;line-height:1.72;margin:0 0 16px}'+
+  '.nt-read-h{color:#e6c46a;font-family:\'Cinzel\',serif;font-size:15px;letter-spacing:.06em;margin:2px 0 8px;display:flex;align-items:center;gap:9px}'+
+  '.nt-read-h .rs{font-size:20px}'+
+  '.nt-reader{position:relative;z-index:2;height:100%;display:flex;flex-direction:column}'+
+  '.nt-page{flex:1;overflow-y:auto;padding:8px 20px 8px}'+
+  '.nt-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid rgba(232,190,96,.55);background:rgba(10,6,2,.55);color:#f4d488;font-size:20px;cursor:pointer;z-index:6;display:flex;align-items:center;justify-content:center}'+
+  '.nt-arrow.l{left:6px}.nt-arrow.r{right:6px}.nt-arrow[disabled]{opacity:.25;pointer-events:none}'+
+  '.nt-pageno{position:absolute;right:14px;bottom:calc(env(safe-area-inset-bottom) + 58px);z-index:6;color:#e0c48a;font-family:\'Cinzel\',serif;font-size:12px;background:rgba(10,6,2,.5);border:1px solid rgba(214,168,92,.3);border-radius:12px;padding:4px 10px}'+
+  '.nt-bar{position:relative;z-index:6;display:flex;gap:8px;justify-content:center;padding:8px 14px calc(env(safe-area-inset-bottom) + 12px)}'+
+  '.nt-bar button{flex:0 0 auto;padding:10px 14px;border-radius:20px;border:1px solid rgba(232,190,96,.5);background:rgba(10,6,2,.5);color:#e8be60;font-family:\'Cinzel\',serif;font-size:12px;cursor:pointer}';
+  document.head.appendChild(css);
+
+  /* ---------- DOM ---------- */
+  var scr=document.createElement('div');scr.id='natalScr';
+  scr.innerHTML='<div class="nt-bg"></div><div class="nt-veil"></div>'+
+    '<div class="nt-wrap" id="ntWrap"></div>';
+  document.body.appendChild(scr);
+  function $n(id){return document.getElementById(id);}
+  function closeNatal(){try{window.speechSynthesis.cancel();}catch(e){}scr.classList.remove('on');}
+
+  var CHART=null;
+
+  function headHTML(t){return '<div class="nt-head"><div style="width:38px"></div><div class="nt-t">'+t+'</div><button class="nt-x" id="ntClose">✕</button></div>';}
+
+  /* ---- view 1: confirm ---- */
+  function viewConfirm(){
+    var t=C[L()],p=window.__profile||{};
+    var wrap=$n('ntWrap');
+    wrap.innerHTML=headHTML(t.title)+
+      '<div class="nt-body">'+
+        '<div class="nt-card">'+
+          row('Ad', p.name||'—')+
+          row(L()==='tr'?'Doğum Tarihi':'Birth Date', p.date||'—')+
+          row(L()==='tr'?'Doğum Saati':'Birth Time', p.time||'—')+
+          row(L()==='tr'?'Doğum Yeri':'Birth Place', p.place||'—')+
+        '</div>'+
+        '<div class="nt-note">'+t.confirm+'</div>'+
+        '<button class="nt-btn ghost" id="ntEdit">✎ '+t.edit+'</button>'+
+        '<button class="nt-btn" id="ntCont">'+t.cont+' ›</button>'+
+      '</div>';
+    $n('ntClose').onclick=closeNatal;
+    $n('ntEdit').onclick=function(){ if(window.__openEditProfile)window.__openEditProfile(function(){viewConfirm();}); };
+    $n('ntCont').onclick=startCompute;
+  }
+  function row(k,v){return '<div class="nt-info-row"><span class="k">'+k+'</span><span class="v">'+(v||'—')+'</span></div>';}
+
+  /* ---- compute ---- */
+  function startCompute(){
+    var t=C[L()],p=window.__profile||{};
+    var wrap=$n('ntWrap');
+    wrap.innerHTML=headHTML(t.title)+'<div class="nt-body"><div class="nt-note" style="margin-top:60px">'+t.loading+'</div></div>';
+    $n('ntClose').onclick=closeNatal;
+    var dp=(p.date||'').split('-'),tp=(p.time||'12:00').split(':');
+    var y=+dp[0],mo=+dp[1],D=+dp[2],h=+tp[0]||12,mi=+tp[1]||0;
+    geocode(p.place||'',function(g){
+      var lat,lon,y2=y,mo2=mo,D2=D,UT;
+      if(g){lat=g.lat;lon=g.lon;
+        var off=tzOffsetMin(g.tz,y,mo,D,h,mi);
+        var utcMs=Date.UTC(y,mo-1,D,h,mi)-off*60000;var dd=new Date(utcMs);
+        y2=dd.getUTCFullYear();mo2=dd.getUTCMonth()+1;D2=dd.getUTCDate();UT=dd.getUTCHours()+dd.getUTCMinutes()/60;
+      } else { lat=null;lon=0; var loff=-new Date(Date.UTC(y,mo-1,D,h,mi)).getTimezoneOffset(); UT=h+mi/60; }
+      var chart=computeChart(y2,mo2,D2,UT, (lat==null?0:lat), lon);
+      CHART={chart:chart,ascSign:Math.floor(rev(chart.asc)/30),hasHouses:(lat!=null),g:g};
+      viewChart();
+    });
+  }
+
+  /* ---- view 2: chart summary ---- */
+  function viewChart(){
+    var t=C[L()],sg=SIGNS(),pos=CHART.chart.pos,ascSign=CHART.ascSign;
+    var lines='';
+    lines+='<div class="nt-pline"><span class="sym">⬆</span><span class="pn">'+t.asc+'</span><span class="sg">'+sg[ascSign]+'</span></div>';
+    PORDER.forEach(function(p){var lon=pos[p],s=Math.floor(rev(lon)/30),deg=(rev(lon)%30).toFixed(0);
+      var hs=CHART.hasHouses?(' <span class="hs">'+(((s-ascSign+12)%12)+1)+'. '+t.inHouse+'</span>'):'';
+      lines+='<div class="nt-pline"><span class="sym">'+PSYM[p]+'</span><span class="pn">'+t.pname[p]+'</span><span class="sg">'+sg[s]+' '+deg+'°</span>'+hs+'</div>';
+    });
+    var wrap=$n('ntWrap');
+    wrap.innerHTML=headHTML(t.title)+
+      '<div class="nt-body">'+
+        '<div class="nt-lead">'+t.intro+'</div>'+
+        (CHART.hasHouses?'':'<div class="nt-note">'+t.noNet+'</div>')+
+        '<div style="margin:10px 0 4px">'+lines+'</div>'+
+        '<button class="nt-btn" id="ntRead">'+t.read+' ›</button>'+
+        '<button class="nt-btn ghost" id="ntBack2">‹ '+t.cont.replace(/.*/,(L()==='tr'?'Geri':'Back'))+'</button>'+
+      '</div>';
+    $n('ntClose').onclick=closeNatal;
+    $n('ntRead').onclick=openReader;
+    $n('ntBack2').onclick=viewConfirm;
+  }
+
+  /* ---- view 3: paginated reader ---- */
+  var PAGES=[],curPage=0,voiceText=[];
+  function buildPages(){
+    var t=C[L()],sg=SIGNS(),pos=CHART.chart.pos,ascSign=CHART.ascSign;
+    var items=[];
+    // ascendant first
+    items.push({sym:'⬆',h:t.asc+' — '+sg[ascSign],p:t.ascText+' '+sg[ascSign]+' yükselen '+(L()==='tr'?'sana ':'gives you ')+(L()==='tr'?t.flavor[ascSign]+'.':t.flavor[ascSign]+'.')});
+    PORDER.forEach(function(pl){var lon=pos[pl],s=Math.floor(rev(lon)/30),deg=(rev(lon)%30).toFixed(0);
+      var house=CHART.hasHouses?(((s-ascSign+12)%12)+1):null;
+      var hlabel=house?(house+'. '+(L()==='tr'?'Ev':'House')):(L()==='tr'?'':'');
+      var para=house?t.tpl(PSYM[pl],t.pname[pl],sg[s],house,t.core[pl],t.flavor[s],t.house[house-1],deg)
+        :(PSYM[pl]+' '+t.pname[pl]+', '+sg[s]+' '+t.inSign+' ('+deg+'°). '+ (L()==='tr'?'Bu, senin ':'This is ')+t.core[pl]+'. '+sg[s]+(L()==='tr'?' burcunda bu enerji ':' shows ')+t.flavor[s]+'.');
+      items.push({sym:PSYM[pl],h:t.pname[pl]+' — '+sg[s]+(house?(' · '+hlabel):''),p:para});
+    });
+    PAGES=[];voiceText=[];
+    for(var i=0;i<items.length;i+=2){PAGES.push(items.slice(i,i+2));}
+    PAGES.forEach(function(pg){voiceText.push(pg.map(function(it){return it.h+'. '+it.p;}).join(' '));});
+  }
+  function openReader(){buildPages();curPage=0;renderPage();}
+  function renderPage(){
+    var t=C[L()];
+    var body=PAGES[curPage].map(function(it){return '<div class="nt-read-h"><span class="rs">'+it.sym+'</span>'+it.h+'</div><p class="nt-read-p">'+it.p+'</p>';}).join('');
+    var wrap=$n('ntWrap');
+    wrap.innerHTML=headHTML(t.title)+
+      '<div class="nt-reader">'+
+        '<button class="nt-arrow l" id="ntPrev">‹</button>'+
+        '<button class="nt-arrow r" id="ntNext">›</button>'+
+        '<div class="nt-page" id="ntPage">'+body+'</div>'+
+        '<div class="nt-pageno">'+t.page+' '+(curPage+1)+' '+t.of+' '+PAGES.length+'</div>'+
+        '<div class="nt-bar"><button id="ntListen">'+t.listen+'</button><button id="ntStop">'+t.stop+'</button><button id="ntExit">✕</button></div>'+
+      '</div>';
+    var pv=$n('ntPrev'),nx=$n('ntNext');
+    if(curPage===0)pv.setAttribute('disabled','');if(curPage===PAGES.length-1)nx.setAttribute('disabled','');
+    pv.onclick=function(){if(curPage>0){curPage--;stopVoice();renderPage();}};
+    nx.onclick=function(){if(curPage<PAGES.length-1){curPage++;stopVoice();renderPage();}};
+    $n('ntClose').onclick=closeNatal;$n('ntExit').onclick=closeNatal;
+    $n('ntListen').onclick=speakPage;$n('ntStop').onclick=stopVoice;
+    $n('ntPage').scrollTop=0;
+  }
+  function stopVoice(){try{window.speechSynthesis.cancel();}catch(e){}}
+  function speakPage(){if(!window.speechSynthesis)return;stopVoice();
+    var u=new SpeechSynthesisUtterance((voiceText[curPage]||'').replace(/<[^>]+>/g,''));
+    u.lang=(window.__lang==='tr')?'tr-TR':(window.__lang||'en')+'-'+((window.__lang||'en').toUpperCase());
+    if(window.__lang==='en')u.lang='en-US';u.rate=.97;window.speechSynthesis.speak(u);}
+
+  /* ---------- entry ---------- */
+  window.__openNatal=function(){scr.classList.add('on');viewConfirm();};
+ }catch(e){ if(window.console)console.log('natal init error',e); }
+})();
+
 </script>
 </body>
 </html>
