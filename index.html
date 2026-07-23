@@ -310,6 +310,9 @@ img{display:block}
 .esave:active{transform:scale(.98)}
 .logout{width:100%;max-width:400px;margin-top:22px;background:transparent;border:1px solid rgba(230,120,110,.5);
   color:#f0b3a8;font-family:'Cinzel',serif;letter-spacing:.1em;border-radius:14px;padding:16px;cursor:pointer;font-size:15px}
+.install-btn{width:100%;max-width:400px;margin-top:22px;background:linear-gradient(180deg,rgba(214,168,92,.22),rgba(214,168,92,.08));
+  border:1px solid rgba(214,168,92,.6);color:#e9c67a;font-family:'Cinzel',serif;letter-spacing:.1em;border-radius:14px;padding:16px;cursor:pointer;font-size:15px}
+.install-hint{width:100%;max-width:400px;margin-top:12px;color:#cbb58a;font-family:'Spectral',serif;font-size:13px;line-height:1.5;text-align:center;opacity:.85}
 /* settings bottom sheet */
 .sheet{position:fixed;inset:0;z-index:130;display:none;align-items:flex-end;justify-content:center}
 .sheet.on{display:flex}
@@ -599,6 +602,8 @@ img{display:block}
         <div class="prow taprow" id="setLang"><span>Language</span><span class="v" id="vLang">English ›</span></div>
         <div class="prow taprow" id="setNotif"><span>Notifications</span><span class="v" id="vNotif">On ›</span></div>
       </div>
+      <button class="install-btn" id="installBtn" style="display:none">⬇  UYGULAMAYI YÜKLE</button>
+      <div class="install-hint" id="installHint" style="display:none"></div>
       <button class="logout" id="logoutBtn">↩  LOG OUT</button>
     </div>
   </section>
@@ -1779,14 +1784,38 @@ try{
     e+=rev?'Reversed, you live this energy inwardly or feel it blocked; untangle that first.':'Upright, the energy flows freely here.';
     return e;
   }
+  var FOCUS={
+    cups:{tr:'kalbinin ve ilişkilerinin',en:'your heart and relationships'},
+    pentacles:{tr:'işinin, paranın ve bedeninin',en:'your work, money and body'},
+    swords:{tr:'zihninin ve vereceğin kararların',en:'your mind and decisions'},
+    wands:{tr:'tutkunun ve girişimlerinin',en:'your passion and ventures'},
+    major:{tr:'kaderinin büyük çarklarının',en:'the great wheels of your fate'}
+  };
   function synth(picks){
-    var rc=0,cnt={}; for(var i=0;i<picks.length;i++){if(picks[i].rev)rc++;var s=T[picks[i].idx].s;cnt[s]=(cnt[s]||0)+1;}
+    var L=tr(), n=picks.length, rc=0, cnt={}, cards=[];
+    for(var i=0;i<n;i++){var p=picks[i],c=T[p.idx]; if(p.rev)rc++; cnt[c.s]=(cnt[c.s]||0)+1; cards.push({c:c,rev:p.rev});}
     var dom=null,dv=0; for(var k in cnt){if(cnt[k]>dv){dv=cnt[k];dom=k;}}
-    var frac=rc/picks.length, L=tr();
-    var o=L?'Genel tablo: ':'Overall: ';
-    if(dv>=Math.ceil(picks.length/2)&&dom)o+=(L?(SUITNAME[dom].tr+' bu açılıma damga vuruyor; şu dönem hayatının merkezinde bu alan var. '):(SUITNAME[dom].en+' mark this spread. '));
-    o+=frac>=0.5?(L?'Kartların çoğu ters — önce içindeki bir direnci ya da korkuyu çözmen gerekiyor; asıl dönüşüm oradan gelecek.':'Most cards are reversed — clear an inner block first.'):(frac===0?(L?'Kartların hepsi düz; enerji açık ve akışta, cesaretle adım atmak için elverişli bir dönem.':'All upright; a good time to act.'):(L?'Kartlar dengeli bir hikâye anlatıyor; sabırla ve niyetle atacağın adım seni ileri taşıyacak.':'A balanced story; a patient step carries you onward.'));
-    return o;
+    var majc=cnt['major']||0, frac=rc/n;
+    var sig=null; for(var j=0;j<cards.length;j++){if(cards[j].c.s==='major'){sig=cards[j];break;}} if(!sig)sig=cards[0];
+    var parts=[];
+    /* 1. baskin seri temasi */
+    if(dom && dv>=2 && dv/n>=0.4){
+      parts.push(L?(SUITNAME[dom].tr+' bu açılıma damga vuruyor; şu dönemde '+FOCUS[dom].tr+' ön planda olduğunu söylüyor.'):(SUITNAME[dom].en+' dominate this spread; '+FOCUS[dom].en+' take center stage right now.'));
+    }
+    /* 2. Buyuk Arkana yogunlugu */
+    if(majc>=3){parts.push(L?'Masaya bu kadar çok Büyük Arkana gelmesi ender bir durum — yaşadığın şey gündelik bir dalgalanma değil, hayatının seyrini değiştirecek bir eşik.':'So many Major Arcana at once is rare — this is a threshold that reshapes your path, not a passing ripple.');}
+    else if(majc===2){parts.push(L?'İki Büyük Arkana kartı, olup bitenin bir kısmının senin kontrolünün ötesinde, kadersel bir yanı olduğunu hatırlatıyor.':'Two Major Arcana remind you that part of this lies beyond your control, in the hands of fate.');}
+    /* 3. imza kart (gercek bir kart adiyla) */
+    parts.push(L?(sig.c.t+(sig.rev?' (ters)':'')+' kartı bu açılımın kalbinde duruyor; '+(sig.rev?sig.c.rt:sig.c.kt)+' temaları önümüzdeki günlerin anahtarı.'):(sig.c.e+(sig.rev?' (reversed)':'')+' sits at the heart of this reading; '+(sig.rev?sig.c.re:sig.c.ke)+' are the key to the days ahead.'));
+    /* 4. duz/ters dengesi (kademeli) */
+    var rev;
+    if(frac===0)rev=L?'Kartların hepsi düz gelmiş; enerji açık ve akışta, niyetini eyleme dökmek için elverişli bir dönemdesin.':'Every card is upright; the energy is open and flowing, a fine time to act on your intention.';
+    else if(frac===1)rev=L?'Kartların tamamı ters — güçlü bir iç direnç var; önce kendi içindeki düğümü çözmelisin, gerçek dönüşüm oradan başlayacak.':'Every card is reversed — a strong inner resistance; untangle your own knot first, real change begins there.';
+    else if(frac>=0.6)rev=L?'Kartların çoğu ters; enerji şu an dışarı değil içeri akıyor, acele etmeden önce içindeki tereddüdü dinlemen gerekiyor.':'Most cards are reversed; the energy turns inward, listen to your hesitation before you rush.';
+    else if(frac<=0.34)rev=L?'Kartların çoğu düz; yolun büyük ölçüde açık, yalnızca birkaç noktada sabır göstermen yeterli.':'Most cards are upright; your path is largely clear, only a few points ask for patience.';
+    else rev=L?'Düz ve ters kartlar dengede; hikâyen iki ucu da barındırıyor, sabırla ve niyetle atacağın adım seni ileri taşıyacak.':'Upright and reversed sit in balance; your story holds both ends, a patient and intentional step carries you onward.';
+    parts.push(rev);
+    return (L?'Genel tablo: ':'Overall: ')+parts.join(' ');
   }
 
   /* gallery */
@@ -1918,6 +1947,29 @@ try{
 /* service worker */
 /* service worker */
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
+
+/* PWA install */
+(function(){
+  var deferred=null;
+  function T(){try{return (localStorage.getItem('oph_lang')||'tr')==='tr';}catch(_){return true;}}
+  function standalone(){return window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;}
+  function iOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;}
+  function byId(x){return document.getElementById(x);}
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault(); deferred=e;
+    var b=byId('installBtn'); if(b){b.textContent=T()?'⬇  UYGULAMAYI YÜKLE':'⬇  INSTALL APP'; b.style.display='';}
+  });
+  window.addEventListener('appinstalled',function(){deferred=null; var b=byId('installBtn'); if(b)b.style.display='none'; var h=byId('installHint'); if(h)h.style.display='none';});
+  document.addEventListener('DOMContentLoaded',function(){
+    var b=byId('installBtn'); if(b){b.addEventListener('click',function(){
+      if(deferred){deferred.prompt(); deferred.userChoice.then(function(){deferred=null; b.style.display='none';});}
+    });}
+    if(iOS() && !standalone()){
+      var h=byId('installHint');
+      if(h){h.textContent=T()?'iPhone/iPad: Alttaki Paylaş düğmesine (⬆) dokunun, ardından “Ana Ekrana Ekle”yi seçin.':'iPhone/iPad: tap the Share button (⬆) below, then choose “Add to Home Screen”.'; h.style.display='';}
+    }
+  });
+})();
 </script>
 </body>
 </html>
