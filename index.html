@@ -202,9 +202,9 @@ img{display:block}
   border:1px solid var(--line);border-radius:10px;padding:7px 12px;background:rgba(58,26,8,.4)}
 .obub .osky:active{opacity:.6}
 .otyping{align-self:flex-start;color:var(--gold);font-size:22px;letter-spacing:3px;padding:2px 14px;opacity:.8}
-.oph-chips{display:flex;gap:8px;overflow-x:auto;padding:6px 14px 8px;-webkit-overflow-scrolling:touch}
-.ochip{flex:0 0 auto;white-space:nowrap;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.04em;
-  color:var(--gold2);border:1px solid var(--line);border-radius:14px;padding:8px 13px;
+.oph-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:6px 12px 8px}
+.ochip{flex:0 0 auto;white-space:nowrap;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.01em;
+  color:var(--gold2);border:1px solid var(--line);border-radius:13px;padding:6px 10px;
   background:rgba(40,10,15,.5);cursor:pointer}
 .ochip:active{opacity:.6}
 .oph-bar{display:flex;align-items:center;gap:10px;padding:8px 14px calc(env(safe-area-inset-bottom) + 84px)}
@@ -430,11 +430,11 @@ img{display:block}
 .tr-scard:active{transform:scale(1.25);z-index:99}
 .tr-shufbtn{display:block;margin:12px auto 4px;width:auto;padding:13px 26px}
 /* pick grid 6x13 */
-.tr-deckgrid{max-width:342px;margin:10px auto 4px;animation:trReveal .5s ease both}
-.tr-half{display:grid;grid-template-columns:repeat(13,1fr);gap:4px}
-.tr-half.bottom{margin-top:34px}
-.tr-deckfoot{color:#f0dcb4;text-align:center;font-family:'Spectral',serif;font-size:12.5px;font-style:italic;margin:18px 8px 6px;opacity:.92}
-.tr-gcard{aspect-ratio:.563;border-radius:3px;overflow:hidden;border:1px solid rgba(232,190,96,.4);box-shadow:0 2px 5px rgba(0,0,0,.5);cursor:pointer;transition:transform .18s,box-shadow .18s}
+.tr-deckgrid{max-width:346px;margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100dvh - 250px);animation:trReveal .5s ease both}
+.tr-drow{display:flex;gap:5px;position:relative}
+.tr-drow + .tr-drow{margin-top:-46px}
+.tr-deckfoot{color:#f0dcb4;text-align:center;font-family:'Spectral',serif;font-size:12.5px;font-style:italic;margin:20px 8px 4px;opacity:.92}
+.tr-gcard{width:44px;aspect-ratio:.563;border-radius:4px;overflow:hidden;border:1px solid rgba(232,190,96,.45);box-shadow:0 3px 8px rgba(0,0,0,.6);cursor:pointer;transition:transform .18s,box-shadow .18s;flex:0 0 auto}
 .tr-gcard img{width:100%;height:100%;object-fit:cover;pointer-events:none}
 .tr-gcard.sel{transform:translateY(-8px) scale(1.06);box-shadow:0 10px 18px rgba(0,0,0,.6),0 0 12px rgba(230,182,74,.8);border-color:var(--gold2)}
 .tr-pickinfo{color:#f0dcb4;text-align:center;font-family:'Spectral',serif;font-size:13.5px;margin:4px 6px 2px}
@@ -1844,11 +1844,15 @@ try{
   function showPickGrid(){el('trPick').style.display=''; el('trPickedMini').innerHTML=''; updateCount();
     el('trPickInfo').textContent=tr()?('Desteden '+need+' kart seç.'):('Pick '+need+' cards.');
     var g=el('trDeckGrid'); g.innerHTML='';
-    var top=document.createElement('div'); top.className='tr-half';
-    var bot=document.createElement('div'); bot.className='tr-half bottom';
-    deckAll.forEach(function(card,i){var d=document.createElement('div'); d.className='tr-gcard'; d.innerHTML='<img src="cards/back.jpg" alt="">';
-      attachLift(d,i); (i<39?top:bot).appendChild(d);});
-    g.appendChild(top); g.appendChild(bot);
+    var pattern=[7,6,7,6,7,6,7,6,7,6,7,6], idx=0;
+    for(var r=0;r<pattern.length;r++){
+      var row=document.createElement('div'); row.className='tr-drow'; row.style.zIndex=(r+1);
+      for(var k=0;k<pattern[r]&&idx<deckAll.length;k++){
+        var i=idx++; var d=document.createElement('div'); d.className='tr-gcard'; d.innerHTML='<img src="cards/back.jpg" alt="">';
+        attachLift(d,i); row.appendChild(d);
+      }
+      g.appendChild(row);
+    }
     var f=document.createElement('div'); f.className='tr-deckfoot'; f.textContent=tr()?'Seçmek istediğiniz kartı yukarı doğru kaydırınız.':'Slide the card you want upward to select it.'; g.appendChild(f);
     el('trBody').scrollTop=0;}
   function updateCount(){el('trPickCount').textContent=tr()?('Kalan seçim: '+(need-picks.length)+' / '+need):('Cards to pick: '+(need-picks.length)+' / '+need);}
