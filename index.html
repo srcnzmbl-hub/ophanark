@@ -406,7 +406,7 @@ img{display:block}
 .tr-splash.img{background:#0a0304;background-image:url('cards/splash.jpg');background-size:cover;background-position:center}
 .tr-splash::after{content:'';position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 45%,rgba(255,120,90,.28),transparent 70%);mix-blend-mode:screen}
 .tr-splash.dim{opacity:.32;transition:opacity .6s}
-.tr-head{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:14px 16px 6px;flex:0 0 auto}
+.tr-head{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:26px 16px 6px;flex:0 0 auto}
 .tr-head .tr-back{width:34px;height:34px;border-radius:50%;border:1px solid rgba(232,190,96,.6);color:var(--gold2);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;background:rgba(20,7,4,.5)}
 .tr-ttl{color:var(--gold2);font-size:20px;letter-spacing:.22em;font-family:'Cinzel',serif}
 .tr-mute{width:34px;height:34px;border-radius:50%;border:1px solid rgba(232,190,96,.5);background:rgba(20,7,4,.5);color:var(--gold2);display:flex;align-items:center;justify-content:center;cursor:pointer}
@@ -414,7 +414,9 @@ img{display:block}
 .tr-body{position:relative;z-index:2;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 16px 46px}
 .tr-lead{color:#f0dcb4;text-align:center;font-family:'Spectral',Georgia,serif;font-size:15px;line-height:1.6;margin:12px 6px 20px;text-shadow:0 1px 8px rgba(0,0,0,.6)}
 /* spread buttons */
-.tr-btns{display:flex;flex-direction:column;gap:12px;max-width:340px;margin:0 auto}
+#trSelect{min-height:calc(100dvh - 160px);display:flex;flex-direction:column;justify-content:center}
+.tr-btns{display:flex;flex-direction:column;gap:12px;max-width:340px;margin:0 auto;width:100%}
+.tr-selnote{color:#e0cb9f;text-align:center;font-size:12px;font-family:'Spectral',serif;font-style:italic;margin:20px 8px 0;opacity:.9}
 .tr-btn{opacity:0;transform:translateY(14px);animation:trBtnIn .5s ease forwards;padding:15px 16px;border-radius:14px;border:1px solid rgba(232,190,96,.55);background:linear-gradient(180deg,rgba(58,26,10,.72),rgba(22,7,5,.82));color:var(--gold2);font-family:'Cinzel',serif;font-size:14.5px;letter-spacing:.02em;text-align:center;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.45),inset 0 0 16px rgba(230,182,74,.08)}
 .tr-btn:active{transform:scale(.98)}
 .tr-btn small{display:block;font-family:'Spectral',serif;font-size:11px;color:#cbb488;letter-spacing:0;margin-top:3px}
@@ -428,7 +430,10 @@ img{display:block}
 .tr-scard:active{transform:scale(1.25);z-index:99}
 .tr-shufbtn{display:block;margin:12px auto 4px;width:auto;padding:13px 26px}
 /* pick grid 6x13 */
-.tr-deckgrid{display:grid;grid-template-columns:repeat(13,1fr);gap:3px;margin:6px 0 8px;animation:trReveal .5s ease both}
+.tr-deckgrid{max-width:342px;margin:10px auto 4px;animation:trReveal .5s ease both}
+.tr-half{display:grid;grid-template-columns:repeat(13,1fr);gap:4px}
+.tr-half.bottom{margin-top:34px}
+.tr-deckfoot{color:#f0dcb4;text-align:center;font-family:'Spectral',serif;font-size:12.5px;font-style:italic;margin:18px 8px 6px;opacity:.92}
 .tr-gcard{aspect-ratio:.563;border-radius:3px;overflow:hidden;border:1px solid rgba(232,190,96,.4);box-shadow:0 2px 5px rgba(0,0,0,.5);cursor:pointer;transition:transform .18s,box-shadow .18s}
 .tr-gcard img{width:100%;height:100%;object-fit:cover;pointer-events:none}
 .tr-gcard.sel{transform:translateY(-8px) scale(1.06);box-shadow:0 10px 18px rgba(0,0,0,.6),0 0 12px rgba(230,182,74,.8);border-color:var(--gold2)}
@@ -1811,7 +1816,8 @@ try{
       b.addEventListener('click',function(){chooseSpread(key);}); box.appendChild(b);});
     var dv=document.createElement('div'); dv.className='tr-btn deck'; dv.style.animationDelay=(d+=0.08)+'s';
     dv.innerHTML=(tr()?'DESTEYİ GÖR':'SEE THE DECK')+'<small>'+(tr()?'78 kartın tamamı':'all 78 cards')+'</small>';
-    dv.addEventListener('click',showDeckView); box.appendChild(dv);}
+    dv.addEventListener('click',showDeckView); box.appendChild(dv);
+    var note=document.createElement('div'); note.className='tr-selnote'; note.textContent=tr()?'İpucu: Kart seçerken, seçmek istediğiniz kartı yukarı doğru kaydırınız.':'Tip: to pick a card, slide it upward.'; box.appendChild(note);}
 
   function showDeckView(){hideAllStages(); buildGallery(); el('trDeckView').style.display=''; el('trBody').scrollTop=0;}
 
@@ -1836,16 +1842,26 @@ try{
     setTimeout(function(){ el('trScatterWrap').style.display='none'; makeDeck(); showPickGrid(); },1150);}
 
   function showPickGrid(){el('trPick').style.display=''; el('trPickedMini').innerHTML=''; updateCount();
-    el('trPickInfo').textContent=tr()?'Desteden '+need+' kart seç — istediğine dokun.':'Pick '+need+' cards — tap any you feel.';
+    el('trPickInfo').textContent=tr()?('Desteden '+need+' kart seç.'):('Pick '+need+' cards.');
     var g=el('trDeckGrid'); g.innerHTML='';
+    var top=document.createElement('div'); top.className='tr-half';
+    var bot=document.createElement('div'); bot.className='tr-half bottom';
     deckAll.forEach(function(card,i){var d=document.createElement('div'); d.className='tr-gcard'; d.innerHTML='<img src="cards/back.jpg" alt="">';
-      d.addEventListener('click',function(){togglePick(d,i);}); g.appendChild(d);});
+      attachLift(d,i); (i<39?top:bot).appendChild(d);});
+    g.appendChild(top); g.appendChild(bot);
+    var f=document.createElement('div'); f.className='tr-deckfoot'; f.textContent=tr()?'Seçmek istediğiniz kartı yukarı doğru kaydırınız.':'Slide the card you want upward to select it.'; g.appendChild(f);
     el('trBody').scrollTop=0;}
   function updateCount(){el('trPickCount').textContent=tr()?('Kalan seçim: '+(need-picks.length)+' / '+need):('Cards to pick: '+(need-picks.length)+' / '+need);}
-  function togglePick(d,i){
-    if(d.__sel){return;}
-    if(picks.length>=need)return;
-    d.__sel=1; d.classList.add('sel'); picks.push(deckAll[i]);
+  function attachLift(d,i){
+    var sy=0,dy=0,drag=false,moved=false;
+    function dn(e){ if(d.__sel||picks.length>=need)return; drag=true;moved=false; sy=(e.touches?e.touches[0].clientY:e.clientY); dy=0; if(d.setPointerCapture&&e.pointerId!=null){try{d.setPointerCapture(e.pointerId);}catch(_){}}}
+    function mv(e){ if(!drag)return; var y=(e.touches?e.touches[0].clientY:e.clientY); dy=sy-y; if(dy<0)dy=0; if(dy>5)moved=true; d.style.transform='translateY(-'+dy+'px) scale(1.14)'; d.style.zIndex=50; if(e.cancelable)e.preventDefault(); }
+    function up(){ if(!drag)return; drag=false; if(dy>24 || !moved){ pickCard(d,i); } else { d.style.transform=''; d.style.zIndex=''; } dy=0; }
+    if(window.PointerEvent){d.addEventListener('pointerdown',dn);d.addEventListener('pointermove',mv);d.addEventListener('pointerup',up);d.addEventListener('pointercancel',up);}
+    else {d.addEventListener('touchstart',dn,{passive:true});d.addEventListener('touchmove',mv,{passive:false});d.addEventListener('touchend',up);d.addEventListener('mousedown',dn);window.addEventListener('mousemove',mv);window.addEventListener('mouseup',up);}
+  }
+  function pickCard(d,i){ if(d.__sel||picks.length>=need)return; d.__sel=1; d.classList.add('sel'); d.style.transform=''; d.style.zIndex='';
+    picks.push(deckAll[i]);
     var m=document.createElement('div'); m.className='m'; m.innerHTML='<img src="cards/back.jpg" alt="">'; el('trPickedMini').appendChild(m);
     updateCount();
     if(picks.length>=need){ setTimeout(showReading,480); }
