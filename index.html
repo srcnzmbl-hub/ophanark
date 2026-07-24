@@ -139,6 +139,35 @@ img{display:block}
 #register .pp-in{width:100%;background:rgba(40,12,16,.5);border:1px solid var(--line);border-radius:14px;color:#eadfc6;font-size:15px;padding:13px 15px;font-family:inherit}
 #register .login-field{color-scheme:dark}
 .reg-place{width:100%;margin:2px 0 4px}
+/* ===== Rüya kartı (Ophan AI dinleme) ===== */
+#dreamCard{position:fixed;inset:0;z-index:120;display:none;flex-direction:column;overflow:hidden}
+#dreamCard.on{display:flex}
+#dreamCard .dc-bg{position:absolute;inset:0;background:url('card_reading.jpg') center center/cover no-repeat;z-index:0}
+#dreamCard .dc-veil{position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 22%,rgba(20,4,8,.08),rgba(8,3,6,.66));z-index:1}
+.dc-inner{position:relative;z-index:2;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;padding:calc(env(safe-area-inset-top,0px) + 58px) 16px 6px}
+.dc-chat{overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:10px;padding-bottom:8px}
+.dc-msg{max-width:86%;padding:11px 14px;border-radius:15px;font-size:14.5px;line-height:1.45;font-family:'Spectral',Georgia,serif}
+.dc-msg.op{align-self:flex-start;background:rgba(28,10,14,.74);border:1px solid rgba(230,182,74,.35);color:#f0e2c6}
+.dc-msg.me{align-self:flex-end;background:rgba(64,28,12,.62);border:1px solid rgba(230,182,74,.25);color:#f6ecd6}
+.dc-listen{position:absolute;inset:0;z-index:3;display:none;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.dc-listen.on{display:flex}
+.dc-logo{width:min(52vw,220px);height:auto;opacity:0;transition:opacity 1.05s ease,transform 1.05s ease;transform:scale(.85);filter:drop-shadow(0 0 34px rgba(240,180,70,.42))}
+.dc-listen.show .dc-logo{opacity:.92;transform:scale(1)}
+.dc-listen.dim .dc-logo{opacity:.3}
+.dc-listen-txt{margin-top:18px;color:#f4dca0;font-family:'Cinzel',serif;letter-spacing:.16em;font-size:15px;opacity:0;transition:opacity .6s ease;text-shadow:0 0 16px rgba(240,180,70,.5)}
+.dc-listen.dim .dc-listen-txt{opacity:1}
+.dc-listen-txt .dot{animation:dcdot 1.4s infinite}
+@keyframes dcdot{0%,100%{opacity:.25}50%{opacity:1}}
+.dc-barwrap{position:relative;z-index:4;flex:0 0 auto;padding:10px 14px calc(env(safe-area-inset-bottom,0px) + 10px);background:linear-gradient(0deg,rgba(8,3,6,.85),rgba(8,3,6,0))}
+.dc-inputrow{display:flex;align-items:center;gap:8px;margin-bottom:11px}
+.dc-input{flex:1;background:rgba(30,10,14,.7);border:1px solid rgba(230,182,74,.5);border-radius:22px;color:#f3e7d6;font-size:15px;padding:12px 16px;font-family:inherit}
+.dc-input::placeholder{color:rgba(214,186,128,.7)}
+.dc-send{flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:1px solid rgba(230,196,120,.9);background:radial-gradient(circle at 50% 36%,rgba(46,24,10,.94),rgba(14,7,4,.96));color:#e9c86e;font-size:17px;cursor:pointer}
+.dc-btns{display:flex;align-items:center;justify-content:center;gap:16px}
+.dc-b{width:46px;height:46px;border-radius:50%;cursor:pointer;background:radial-gradient(circle at 50% 36%,rgba(46,24,10,.9),rgba(14,7,4,.95));border:1.5px solid rgba(230,196,120,.85);color:#e9c86e;font-size:18px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+.dc-b:active{transform:scale(.93)}
+.dc-b.off{opacity:.42}
+.dc-b svg{width:20px;height:20px;fill:#e9c86e}
 /* ===== top bar ===== */
 .top{position:absolute;top:0;left:0;right:0;z-index:6;padding:calc(env(safe-area-inset-top) + 14px) 20px 10px;
   display:flex;align-items:center;justify-content:space-between}
@@ -602,6 +631,29 @@ img{display:block}
     </div>
   </div>
 
+  <div id="dreamCard">
+    <div class="dc-bg"></div><div class="dc-veil"></div>
+    <div class="dc-inner">
+      <div class="dc-chat" id="dcChat"></div>
+    </div>
+    <div class="dc-listen" id="dcListen">
+      <img class="dc-logo" id="dcLogo" src="ophan_logo.png" alt="Ophan AI">
+      <div class="dc-listen-txt" id="dcListenTxt">Sizi dinliyorum<span class="dot">…</span></div>
+    </div>
+    <div class="dc-barwrap">
+      <div class="dc-inputrow">
+        <input id="dcInput" class="dc-input" placeholder="Rüyanı yaz…" autocomplete="off">
+        <button id="dcSend" class="dc-send" aria-label="Gönder"><svg viewBox="0 0 24 24" fill="#e9c86e"><path d="M4 12l16-8-6 8 6 8z"/></svg></button>
+      </div>
+      <div class="dc-btns">
+        <button id="dcSpeak" class="dc-b" aria-label="Sesli oku"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9H4zm11.5 3a4 4 0 0 0-2.25-3.6v7.2A4 4 0 0 0 15.5 12z"/></svg></button>
+        <button id="dcClose" class="dc-b" aria-label="Kapat">✕</button>
+        <button id="dcMute" class="dc-b" aria-label="Sesi kapat"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M15 9l6 6M21 9l-6 6" stroke="#e9c86e" stroke-width="2.1" fill="none" stroke-linecap="round"/></svg></button>
+        <button id="dcBack" class="dc-b" aria-label="Geri">‹</button>
+      </div>
+    </div>
+  </div>
+
   <!-- TOP BAR -->
   <div class="top" id="topbar">
     <div class="ttl"><div class="kick">OPHANARK</div><div class="h" id="topH">Choose Your Fate</div></div>
@@ -996,6 +1048,7 @@ function makeWheel(el,cards,opts){
 function openDetail(c){
   if(c.id==='sky'){ if(window.openSky)window.openSky(); return; }
   if(c.id==='tarot'){ if(window.openTarot)window.openTarot(); return; }
+  if(c.id==='ruyat'){ if(window.openDream)window.openDream(); return; }
   var det=$('detail');
   $('dbg').style.backgroundImage="url('"+c.img+".jpg')";
   $('dttl').textContent=c.title;
@@ -1019,6 +1072,44 @@ function openDetail(c){
 }
 function closeDetail(){$('detail').classList.remove('on');}
 $('detailBack').addEventListener('click',closeDetail);
+
+/* ---------- Rüya kartı (Ophan AI dinleme) ---------- */
+(function(){
+  var dc=$('dreamCard'); if(!dc)return;
+  var chat=$('dcChat'), listen=$('dcListen'), listenTxt=$('dcListenTxt'), input=$('dcInput');
+  var dcMuted=false, lastResp='';
+  function TT(tr,en){try{return (window.tr&&window.tr())?tr:en;}catch(e){return en;}}
+  function msg(who,html){var d=document.createElement('div');d.className='dc-msg '+who;d.innerHTML=html;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d;}
+  function stopTTS(){try{if(window.speechSynthesis)window.speechSynthesis.cancel();}catch(e){}}
+  function say(text){ lastResp=text; if(dcMuted)return; if(window.__ophanSpeak){try{window.__ophanSpeak(text);}catch(e){}} }
+  function showListen(){ listen.classList.add('on'); requestAnimationFrame(function(){ listen.classList.add('show'); setTimeout(function(){ if(listen.classList.contains('on'))listen.classList.add('dim'); },1050); }); }
+  function hideListen(){ listen.className='dc-listen'; }
+  window.openDream=function(){
+    dc.classList.add('on'); chat.innerHTML=''; hideListen();
+    listenTxt.innerHTML=TT('Sizi dinliyorum','I\'m listening')+'<span class="dot">…</span>';
+    if(input){input.value='';input.placeholder=TT('Rüyanı yaz…','Type your dream…');}
+    msg('op',TT('Rüyanı anlat, dinliyorum. Ne gördün?','Tell me your dream — I am listening. What did you see?'));
+  };
+  function send(){
+    if(!input)return; var v=(input.value||'').trim(); if(!v)return;
+    msg('me',v.replace(/</g,'&lt;')); input.value=''; hideListen();
+    var reply=(window.__dreamReply?window.__dreamReply(v):TT('Rüyanı dinledim, üzerine düşüneceğim.','I heard your dream and will reflect on it.'));
+    setTimeout(function(){ msg('op',reply); say(String(reply).replace(/<[^>]+>/g,' ')); },340);
+  }
+  if(input){
+    input.addEventListener('focus',showListen);
+    input.addEventListener('blur',function(){ setTimeout(function(){ if(document.activeElement!==input && (!input.value||!input.value.trim())) hideListen(); },160); });
+    input.addEventListener('keydown',function(e){ if(e.key==='Enter'){e.preventDefault();send();} });
+  }
+  if($('dcSend'))$('dcSend').addEventListener('click',send);
+  if($('dcClose'))$('dcClose').addEventListener('click',function(){ dc.classList.remove('on'); stopTTS(); });
+  if($('dcBack'))$('dcBack').addEventListener('click',function(){
+    if(listen.classList.contains('on')){ hideListen(); if(input)input.blur(); }
+    else { dc.classList.remove('on'); stopTTS(); }
+  });
+  if($('dcSpeak'))$('dcSpeak').addEventListener('click',function(){ if(!lastResp)return; dcMuted=false; var mb=$('dcMute'); if(mb)mb.classList.remove('off'); if(window.__ophanSpeak){try{window.__ophanSpeak(lastResp);}catch(e){}} });
+  if($('dcMute'))$('dcMute').addEventListener('click',function(){ dcMuted=!dcMuted; this.classList.toggle('off',dcMuted); if(dcMuted)stopTTS(); });
+})();
 
 function zodiacHTML(){
   var cards='';
@@ -1710,6 +1801,7 @@ try{
     {k:['kaybol','lost','yol','road','path'],tr:'Yol ve kaybolmak hayatındaki bir seçimle ilgilidir; yönünü yeniden bulma zamanı.',en:'Roads and being lost relate to a choice in your life; it is time to find your direction again.'},
     {k:['ateş','yangın','fire','flame'],tr:'Ateş tutku, öfke ya da arınmadır; içindeki güçlü bir enerji dönüşmek istiyor.',en:'Fire is passion, anger or purification; a powerful energy within you wants to transform.'}
   ];
+  function pk(a){return a[(Math.random()*a.length)|0];}
   function dreamReply(text){
     var lang=lang0(), t=' '+text.toLowerCase()+' ', found=[];
     DREAM.forEach(function(sy){for(var i=0;i<sy.k.length;i++){if(t.indexOf(sy.k[i])>=0){found.push(lang==='tr'?sy.tr:sy.en);break;}}});
@@ -1753,6 +1845,7 @@ try{
       speak(txt);
     });
   }
+  try{window.__dreamReply=dreamReply;window.__ophanSpeak=speak;}catch(e){}
   /* ---- intent routing ---- */
   function has(t,arr){for(var i=0;i<arr.length;i++){if(t.indexOf(arr[i])>=0)return true;}return false;}
   var pendingDream=false;
