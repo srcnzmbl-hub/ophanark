@@ -440,14 +440,17 @@ img{display:block}
 /* ===== zodiac reading (period pick + flip) ===== */
 #reading{position:fixed;inset:0;z-index:60;display:none;background:radial-gradient(120% 90% at 50% 18%,#1a0608,#0a0304)}
 #reading.on{display:block}
-.rd-card{position:absolute;inset:1.5cm;perspective:1900px}
-.rd-flip{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateY(0deg);
-  transition:transform .85s cubic-bezier(.45,.05,.2,1)}
-.rd-flip.flipped{transform:rotateY(180deg)}
-.rd-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;
+.rd-card{position:absolute;top:calc(env(safe-area-inset-top,0px) + 44px);bottom:calc(env(safe-area-inset-bottom,0px) + 52px);left:12px;right:12px}
+.rd-flip{position:absolute;inset:0}
+.rd-face{position:absolute;inset:0;overflow:hidden;
   border-radius:22px;background:#0c0304;display:flex;flex-direction:column}
-.rd-back{transform:rotateY(180deg)}
+.rd-back{display:none}
+#reading.reading .rd-front{display:none}
+#reading.reading .rd-back{display:flex}
+.rd-topback{position:absolute;top:12px;left:12px;z-index:7;width:40px;height:40px;border-radius:50%;border:1px solid rgba(232,190,96,.75);background:linear-gradient(180deg,rgba(58,26,8,.72),rgba(20,7,4,.9));color:var(--gold2);font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.rd-topback:active{transform:scale(.93)}
 .rd-bg2{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.34;filter:saturate(.85) brightness(.72)}
+#reading .rd-back .rd-bg2{opacity:.5;filter:saturate(1.05) brightness(.82)}
 .rd-veil2{position:absolute;inset:0;background:
   radial-gradient(120% 75% at 50% 28%,rgba(12,3,4,.42),rgba(12,3,4,.66) 84%),
   linear-gradient(180deg,rgba(12,3,4,.55),rgba(12,3,4,.42) 26%,rgba(12,3,4,.85))}
@@ -468,7 +471,7 @@ img{display:block}
 .rd-title{font-family:'Cinzel',serif;color:var(--gold2);font-size:19px;letter-spacing:.05em;text-align:center;margin-bottom:6px}
 .rd-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 8px 16px;
   display:flex;flex-direction:column;justify-content:safe center;text-align:center}
-.rd-body{color:#f6e9c8;font-size:18px;line-height:1.78;font-family:'Spectral',Georgia,serif;
+.rd-body{color:#f2d489;font-size:18px;line-height:1.78;font-family:'Spectral',Georgia,serif;
   text-align:left;text-shadow:0 1px 3px rgba(0,0,0,.5);white-space:pre-line;font-style:normal;font-weight:400;
   letter-spacing:.005em}
 .rd-body b,.rd-body strong{color:var(--gold2);font-weight:500}
@@ -754,6 +757,7 @@ img{display:block}
   <!-- ZODIAC READING (period pick + flip) -->
   <div id="reading">
     <div class="rd-card">
+      <div class="rd-topback" id="rdTopBack" aria-label="Geri">‹</div>
       <div class="rd-flip" id="rdFlip">
         <div class="rd-face rd-front">
           <div class="rd-bg2" id="rdBgF"></div><div class="rd-veil2"></div>
@@ -781,7 +785,6 @@ img{display:block}
       <div class="rd-ctrls">
         <button class="rd-cbtn rd-mute" id="rdMute" title="Stop"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5"/></svg></button>
         <button class="rd-cbtn rd-voice" id="rdVoice" title="Read aloud"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a9 9 0 0 1 0 12"/></svg></button>
-        <button class="rd-cbtn rd-backc" id="rdBack2" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
       </div>
     </div>
   </div>
@@ -1482,7 +1485,7 @@ try{
     curSign=i;
     var slug=ZOD[i][0], name=ZOD[i][1];
     $('rdBgF').style.backgroundImage="url('z_"+slug+".jpg')";
-    $('rdBgB').style.backgroundImage="url('z_"+slug+".jpg')";
+    $('rdBgB').style.backgroundImage="url('natal_splash.jpg')";
     $('rdSign').textContent=name;
     stopVoice();
     flip.classList.remove('flipped');
@@ -1519,6 +1522,7 @@ try{
   function rdBack(){ if(rd.classList.contains('reading')){ toPeriods(); } else { closeReading(); } }
   window.__rdBack=rdBack;
   if($('rdBack2'))$('rdBack2').addEventListener('click',rdBack);
+  if($('rdTopBack'))$('rdTopBack').addEventListener('click',rdBack);
   if($('rdVoice'))$('rdVoice').addEventListener('click',function(){
     if(!TTS)return;
     var txt=$('rdBody').textContent||''; if(!txt||txt==='…')return;
