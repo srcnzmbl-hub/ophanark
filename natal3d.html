@@ -706,50 +706,58 @@ controls.enabled=true;controls.enableRotate=true;controls.enableZoom=true;contro
 controls.minDistance=5;controls.maxDistance=32;
 controls.target.copy(TGT_D);camera.position.copy(CAM_D);camera.fov=FOV_D;camera.updateProjectionMatrix();controls.update();
 startReveal();} // gezegenler çembere girdi -> ortada karadelik belirip 3D logo doğsun
-// ---- KARADELİK REVEAL: gezegenler saat yönü çemberine girince ortada birden karadelik belirir, 3D OPHANARK logosu ondan doğar ----
+// ---- REVEAL: gezegenler çembere girince MERKEZDE yüzlerce melek tüyü toplanır -> yavaşça yanıp söner (sarı->beyaz) -> SON yanışta sönmez, beyazda patlayıp TOZ olur aşağı düşer -> OPHENİM belirir (KARA DELİK yok, loş ışık yok) ----
 let reveal={on:false,t0:0,done:false};
-const REVEAL_BH=1.35, REVEAL_HOLD=0.3, REVEAL_EMERGE=1.7; // karadelik ~1.35s belirir, kısa bekler, logo ~1.7s doğar
+const R_GATHER=1.5, R_PULSE=2.6, R_DUST=2.0, R_PULSES=3; // toplanma / yanıp sönme / toz süreleri
+const rfeatherG=new THREE.Group(); rfeatherG.visible=false; scene.add(rfeatherG); const rfeathers=[];
+for(let i=0;i<220;i++){ const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:featherTexture,transparent:true,depthWrite:false,blending:THREE.NormalBlending,opacity:0}));
+  const b=0.14+Math.random()*0.16; sp.userData={b:b}; sp.scale.set(b*0.5,b,1); rfeatherG.add(sp); rfeathers.push(sp); }
+const REV_GOLD=new THREE.Color(0xffcf5a), REV_WHITE=new THREE.Color(0xffffff), _rcol=new THREE.Color();
 function startReveal(){
  if(reveal.on)return; reveal.on=true; reveal.t0=t; reveal.done=false;
- bh.position.copy(SCATTER_C); bh.visible=true; bhCore.visible=true; bhCore.scale.setScalar(0.02);
- for(const p of diskP)p.material.opacity=0;
- for(const p of vortex){p.userData.rad=3+Math.random()*5; p.material.opacity=0;}
- flash.position.copy(SCATTER_C); flash.material.opacity=0; flash.scale.setScalar(1);
- logoGroup.position.copy(SCATTER_C); logoGroup.visible=false;
- if(logoModel)logoModel.scale.setScalar(0.0001);
- logoGlow.material.opacity=0; logoLight.intensity=0;
+ bh.visible=false; flash.visible=false; flash.material.opacity=0; // KARA DELİK sahneden çıkarıldı
+ rfeatherG.visible=true; rfeatherG.position.copy(SCATTER_C);
+ for(const sp of rfeathers){ const u=sp.userData;
+  const a=Math.random()*6.2832, el=(Math.random()*2-1), sq=Math.sqrt(1-el*el), rad=3.4+Math.random()*2.8;
+  u.start=new THREE.Vector3(Math.cos(a)*sq*rad, Math.sin(a)*sq*rad*0.85, el*rad*0.5);
+  const jr=0.55+Math.random()*0.5, ja=Math.random()*6.2832, je=(Math.random()*2-1), js=Math.sqrt(1-je*je);
+  u.target=new THREE.Vector3(Math.cos(ja)*js*jr, Math.sin(ja)*js*jr, je*jr*0.5);
+  u.rot0=Math.random()*6.2832; u.rspd=(Math.random()*2-1)*0.6; u.phase=Math.random()*6.2832;
+  u.dust=false; u.p=new THREE.Vector3(); u.dv=new THREE.Vector3();
+  sp.position.copy(u.start); sp.scale.set(u.b*0.5,u.b,1); sp.material.rotation=u.rot0; sp.material.opacity=0; sp.material.color.copy(REV_GOLD); }
+ logoGroup.position.copy(SCATTER_C); logoGroup.visible=false; if(logoModel)logoModel.scale.setScalar(0.0001);
 }
 function updateReveal(re){
- // disk + girdap sürekli döner
- disk.rotation.z+=0.02;
- for(const p of diskP){p.userData.ang+=0.01*p.userData.sp;const r=p.userData.rad;p.position.set(Math.cos(p.userData.ang)*r,Math.sin(p.userData.ang)*r,0);}
- for(const p of vortex){p.userData.ang+=0.03*p.userData.sp;p.userData.rad-=0.03*p.userData.in;if(p.userData.rad<0.5){p.userData.rad=4+Math.random()*4;p.userData.z=(Math.random()-.5)*4;}
-  const r=p.userData.rad;p.position.set(Math.cos(p.userData.ang)*r,Math.sin(p.userData.ang)*r,p.userData.z*(r/8));}
- // FAZ A: karadelik ortada birden belirir
- const bhF=ez(clamp01(re/REVEAL_BH));
- bhCore.scale.setScalar(Math.max(0.02,0.05+bhF*1.05));
- const appear=clamp01(re/(REVEAL_BH*0.8));
- for(const p of diskP)p.material.opacity=0.78*appear;
- for(const p of vortex)p.material.opacity=clamp01(p.userData.rad/6)*0.6*appear;
- // karadelik tam oluşunca ışık patlaması
- if(re>REVEAL_BH-0.35 && re<REVEAL_BH+0.9){flash.material.opacity=Math.sin(clamp01((re-(REVEAL_BH-0.35))/0.9)*Math.PI)*0.95; flash.scale.setScalar(1+(re-(REVEAL_BH-0.35))*9);}
- else flash.material.opacity=Math.max(0,flash.material.opacity-0.06);
- // FAZ B: 3D logo karadelikten doğar; karadelik kapanır
- const eStart=REVEAL_BH+REVEAL_HOLD;
- if(re>=eStart){
-  const k=ez(clamp01((re-eStart)/REVEAL_EMERGE));
-  logoGroup.visible=true;
-  if(logoModel)logoModel.scale.setScalar(Math.max(0.0001,logoFinalScale*k));
-  const col=clamp01(1-(re-eStart)/(REVEAL_EMERGE*0.7));
-  bhCore.scale.setScalar(Math.max(0.001,1.1*col));
-  for(const p of diskP)p.material.opacity*=col;
-  for(const p of vortex)p.material.opacity*=col;
- }
- if(re>eStart+REVEAL_EMERGE+0.3){
-  reveal.done=true; bh.visible=false; bhCore.visible=false; flash.material.opacity=0;
-  for(const p of diskP)p.material.opacity=0; for(const p of vortex)p.material.opacity=0;
-  if(logoModel)logoModel.scale.setScalar(logoFinalScale); logoGroup.visible=true;
- }
+ const gEnd=R_GATHER, pEnd=R_GATHER+R_PULSE, dEnd=pEnd+R_DUST;
+ // 1) TOPLANMA: yüzlerce tüy merkeze akar
+ if(re<gEnd){ const a=ez(clamp01(re/R_GATHER));
+  for(const sp of rfeathers){ const u=sp.userData;
+   sp.position.lerpVectors(u.start,u.target,a);
+   sp.position.x+=Math.sin(t*1.3+u.phase)*0.06*(1-a); sp.position.y+=Math.cos(t*1.1+u.phase)*0.06*(1-a);
+   sp.material.rotation=u.rot0+u.rspd*re; sp.material.opacity=a*0.88; sp.material.color.copy(REV_GOLD); }
+  return; }
+ // 2) YANIP SÖNME: sarıdan beyaza, her yanışta daha güçlü; SON yanışta sönmez (beyazda kalır)
+ if(re<pEnd){ const pt=(re-gEnd)/R_PULSE; const phN=pt*R_PULSES; const idx=Math.min(R_PULSES-1,Math.floor(phN)); const frac=phN-Math.floor(phN);
+  const last=idx>=R_PULSES-1; const b= last? ez(clamp01(frac/0.7)) : Math.sin(clamp01(frac)*Math.PI);
+  const grow=idx/(R_PULSES-1);
+  const bright=clamp01(b*(0.55+0.45*grow)+0.12*grow);
+  const whiteMix=clamp01(grow*0.6 + b*grow*0.4);
+  _rcol.copy(REV_GOLD).lerp(REV_WHITE,whiteMix); const sc=1+0.16*bright;
+  for(const sp of rfeathers){ const u=sp.userData;
+   sp.position.set(u.target.x*(1+0.05*Math.sin(t*2+u.phase)), u.target.y*(1+0.05*Math.cos(t*2+u.phase)), u.target.z);
+   sp.material.rotation=u.rot0+u.rspd*re*0.4; sp.scale.set(u.b*0.5*sc,u.b*sc,1);
+   sp.material.opacity=0.3+0.65*bright; sp.material.color.copy(_rcol); }
+  return; }
+ // 3) TOZ: beyaz tepede tüyler dökülüp TOZ olur, aşağı düşer; OPHENİM belirir
+ const dt=re-pEnd, dp=clamp01(dt/R_DUST);
+ if(!rfeathers[0].userData.dust){ for(const sp of rfeathers){ const u=sp.userData; u.dust=true; u.p.copy(u.target);
+   u.dv.set((Math.random()*2-1)*0.5, -(0.35+Math.random()*0.75), (Math.random()*2-1)*0.5); sp.material.color.copy(REV_WHITE); } }
+ for(const sp of rfeathers){ const u=sp.userData; u.dv.y-=0.0016; u.p.addScaledVector(u.dv,0.06);
+  sp.position.copy(u.p); const shrink=Math.max(0.15,1-dp); sp.scale.set(u.b*0.42*shrink,u.b*0.42*shrink,1);
+  sp.material.color.copy(REV_WHITE).lerp(REV_GOLD,dp*0.6); sp.material.opacity=Math.max(0,(1-dp)*0.9); sp.material.rotation+=0.035; }
+ const k=ez(clamp01((dt-0.15)/1.5)); logoGroup.visible=true; if(logoModel)logoModel.scale.setScalar(Math.max(0.0001,logoFinalScale*k));
+ if(re>dEnd){ reveal.done=true; rfeatherG.visible=false; for(const sp of rfeathers)sp.material.opacity=0;
+  if(logoModel)logoModel.scale.setScalar(logoFinalScale); logoGroup.visible=true; }
 }
 // ---- FINAL: tum gezegenler okununca parca parca natal semaya toplanir, usturlap cemberleri sirayla belirir, gunes gri gelip parlar ----
 function startFinale(){if(finale)return; finale=true; finaleStart=t; finaleDone=false;
