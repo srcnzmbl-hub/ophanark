@@ -1164,13 +1164,15 @@ $('topbar').style.display='none';   /* açılışta ana ekran: üst bar gizli */
 window.OphNav=(function(){
   function el(id){return document.getElementById(id);}
   function isOn(id){var e=el(id);return !!(e&&e.classList.contains('on'));}
-  var OVER=['dreamCard','reading','tarot','detail','sky','sheet'];
+  var OVER=['posterView','natalScr','dreamCard','reading','tarot','detail','sky','sheet'];
   function overlayOpen(){for(var i=0;i<OVER.length;i++){if(isOn(OVER[i]))return true;}return false;}
   function curScreen(){var b=document.querySelector('.nb.on');return b?b.getAttribute('data-s'):'home';}
   function bar(show){var n=document.querySelector('.nav');if(n)n.style.display=show?'':'none';}
   function sync(){var s=curScreen();bar(!overlayOpen() && s!=='natal3d');}
   function goBack(){
     /* açık katmanı adım adım kapat (en üstteki önce) */
+    if(isOn('posterView')){if(window.__posterClose)window.__posterClose();sync();return true;}
+    if(isOn('natalScr')){if(window.__natalBack)window.__natalBack();sync();return true;}
     if(isOn('sheet')){el('sheet').classList.remove('on');sync();return true;}
     if(isOn('trModal')){if(window.__trHideCard)window.__trHideCard();else el('trModal').classList.remove('on');sync();return true;}
     if(isOn('dreamCard')){if(window.__dcBack)window.__dcBack();else el('dreamCard').classList.remove('on');sync();return true;}
@@ -2508,7 +2510,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   var CHART=null, chartPage=0, PAGES=[], curPage=0, voiceText=[];
   function el(id){return document.getElementById(id);}
   function stopVoice(){try{window.speechSynthesis.cancel();}catch(e){}}
-  function closeNatal(){stopVoice();scr.classList.remove('on');}
+  function closeNatal(){stopVoice();scr.classList.remove('on');if(window.OphNav)window.OphNav.sync();}
   function houseOf(sIdx,ascSign){return ((sIdx-ascSign+12)%12)+1;}
   function signOfHouse(N,ascSign){return (ascSign+N-1)%12;}
   function ordTR(n){return n+'.';}
@@ -2586,15 +2588,68 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   '.nt-arrow.l{left:4px}.nt-arrow.r{right:4px}.nt-arrow[disabled]{opacity:.22;pointer-events:none}'+
   '.nt-pageno{position:absolute;right:12px;bottom:calc(env(safe-area-inset-bottom) + 56px);z-index:6;color:#e0c48a;font-family:\'Cinzel\',serif;font-size:11.5px;background:rgba(10,6,2,.5);border:1px solid rgba(214,168,92,.3);border-radius:12px;padding:4px 10px}'+
   '.nt-bar{position:relative;z-index:6;display:flex;gap:8px;justify-content:center;padding:8px 14px calc(env(safe-area-inset-bottom) + 12px);flex:0 0 auto}'+
-  '.nt-bar button{padding:10px 14px;border-radius:20px;border:1px solid rgba(232,190,96,.5);background:rgba(10,6,2,.5);color:#e8be60;font-family:\'Cinzel\',serif;font-size:12px;cursor:pointer}';
+  '.nt-bar button{padding:10px 14px;border-radius:20px;border:1px solid rgba(232,190,96,.5);background:rgba(10,6,2,.5);color:#e8be60;font-family:\'Cinzel\',serif;font-size:12px;cursor:pointer}'+
+  '.nt-back{font-size:26px;line-height:1}'+
+  '.nt-mapshrink{transform:scale(.9);transform-origin:top center;margin:-2px 0 -20px}'+
+  '.nt-legendsmall{transform:scale(.9);transform-origin:top center}'+
+  '.nt-posterCTA{max-width:420px;margin:18px auto 10px;text-align:center;color:#e9d9b3;font-family:\'Spectral\',serif;font-size:13.5px;line-height:1.6}'+
+  '.nt-posterlink{background:none;border:0;color:#f4d488;font-family:\'Cinzel\',serif;font-weight:600;font-size:13.5px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:0 2px}'+
+  '#posterView{position:fixed;inset:0;z-index:200;display:none;background:#08040c;flex-direction:column}'+
+  '#posterView.on{display:flex}'+
+  '#posterView .pv-scroll{position:relative;flex:1;overflow:hidden;display:flex;align-items:center;justify-content:center}'+
+  '#posterView .pv-img{width:min(92vw,520px);height:min(138vw,780px);background:url("poster_preview.jpg") center/contain no-repeat;transition:transform .25s;transform-origin:center;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}'+
+  '#posterView .pv-img.z{transform:scale(1.9)}'+
+  '#posterView .pv-wm{position:absolute;inset:0;pointer-events:none;overflow:hidden;transform:rotate(-28deg) scale(1.7);opacity:.16;display:flex;flex-direction:column;justify-content:center;gap:24px}'+
+  '#posterView .pv-wmline{white-space:nowrap;color:#fff;font-family:\'Cinzel\',serif;font-size:13px;letter-spacing:.1em}'+
+  '#posterView .pv-back{position:absolute;top:calc(env(safe-area-inset-top) + 12px);left:14px;z-index:5;width:38px;height:38px;border-radius:50%;border:1px solid rgba(232,190,96,.55);background:rgba(10,6,2,.5);color:#e8be60;font-size:24px;cursor:pointer}'+
+  '#posterView .pv-note{position:relative;z-index:5;text-align:center;color:#d9c6a0;font-family:\'Spectral\',serif;font-size:12.5px;padding:8px 20px;line-height:1.5}'+
+  '#posterView .pv-buy{position:relative;z-index:5;padding:6px 16px calc(env(safe-area-inset-bottom) + 14px);display:flex;justify-content:center}'+
+  '#posterView .pv-buybtn{width:100%;max-width:440px;padding:14px;border-radius:24px;border:0;background:linear-gradient(180deg,#e6b64a,#c8912f);color:#2a1406;font-family:\'Cinzel\',serif;font-weight:600;font-size:14px;letter-spacing:.04em;cursor:pointer;box-shadow:0 5px 16px rgba(0,0,0,.45)}';
   document.head.appendChild(css);
 
   var scr=document.createElement('div');scr.id='natalScr';
   scr.innerHTML='<div class="nt-bg"></div><div class="nt-veil"></div><div class="feathers" id="ntFeathers" style="z-index:1"></div><div class="nt-wrap" id="ntWrap"></div>';
   document.body.appendChild(scr);
   function ntFeathers(){var e=el('ntFeathers');if(!e||e.__f)return;e.__f=1;for(var i=0;i<16;i++){var f=document.createElement('div');f.className='ftr';f.style.left=(Math.random()*98)+'%';var s=0.6+Math.random()*0.9;f.style.width=(9*s).toFixed(1)+'px';f.style.height=(20*s).toFixed(1)+'px';var dur=10+Math.random()*9;f.style.animationDuration=dur.toFixed(1)+'s';f.style.animationDelay=(-Math.random()*dur).toFixed(1)+'s';e.appendChild(f);}}
-  function head(t){return '<div class="nt-head"><div style="width:38px"></div><div class="nt-t">'+t+'</div><button class="nt-x" id="ntClose">✕</button></div>';}
+  function head(t){return '<div class="nt-head"><button class="nt-x nt-back" id="ntClose" aria-label="Geri">‹</button><div class="nt-t">'+t+'</div><div style="width:38px"></div></div>';}
   function bindClose(){var c=el('ntClose');if(c)c.onclick=closeNatal;}
+  /* ---- Etsy kader haritası poster önizlemesi ---- */
+  var ETSY_SHOP='https://www.etsy.com/shop/OzarkCollectiveCo';
+  function posterCTA(){
+    return '<div class="nt-posterCTA">'+
+      (tr()?'Sizin için ürettiğimiz kader haritası tasarımını görmek için ':'To see the destiny chart design we created for you ')+
+      '<button class="nt-posterlink" id="ntPosterBtn">'+(tr()?'tıklayınız':'tap here')+'</button>'+
+    '</div>';
+  }
+  function wirePoster(){var b=el('ntPosterBtn');if(b)b.onclick=openPoster;}
+  function openPoster(){
+    var pv=el('posterView');
+    if(!pv){
+      pv=document.createElement('div');pv.id='posterView';
+      pv.innerHTML='<div class="pv-scroll" id="pvScroll"><div class="pv-img" id="pvImg" draggable="false"></div><div class="pv-wm" id="pvWm"></div></div>'+
+        '<button class="pv-back" id="pvBack" aria-label="Geri">‹</button>'+
+        '<div class="pv-note" id="pvNote"></div>'+
+        '<div class="pv-buy"><button class="pv-buybtn" id="pvBuy"></button></div>';
+      document.body.appendChild(pv);
+      var wm=el('pvWm'),row='OPHANARK · ozarkcollective.co · ÖNİZLEME &nbsp;&nbsp; ',line='';
+      for(var i=0;i<6;i++)line+=row; var whtml='';for(var j=0;j<26;j++)whtml+='<div class="pv-wmline">'+line+'</div>'; wm.innerHTML=whtml;
+      pv.addEventListener('contextmenu',function(e){e.preventDefault();});
+      var img=el('pvImg'),zoomed=false;
+      img.addEventListener('click',function(){zoomed=!zoomed;img.classList.toggle('z',zoomed);});
+      el('pvBack').onclick=closePoster;
+      el('pvBuy').onclick=function(){ try{window.open(ETSY_SHOP,'_blank','noopener');}catch(e){location.href=ETSY_SHOP;} };
+    }
+    el('pvNote').textContent=tr()?'Bu bir önizlemedir — baskı kalitesindeki filigransız tasarım Etsy mağazamızda.':'This is a preview — the clean, print-quality design is in our Etsy shop.';
+    el('pvBuy').textContent=tr()?'Dijital tasarımı satın almak için tıklayınız':'Tap to buy the digital design';
+    pv.classList.add('on');
+    if(window.OphNav)window.OphNav.sync();
+  }
+  function closePoster(){var pv=el('posterView');if(pv)pv.classList.remove('on');if(window.OphNav)window.OphNav.sync();}
+  window.__posterOpen=function(){var pv=el('posterView');return !!(pv&&pv.classList.contains('on'));};
+  window.__openPoster=openPoster;
+  window.__posterClose=closePoster;
+  window.__natalOpen=function(){return scr.classList.contains('on');};
+  window.__natalBack=function(){var c=el('ntClose');if(c)c.onclick?c.onclick():closeNatal();};
   function attachSwipe(elm,cb){ if(!elm)return; var x0=null,y0=null;
     function st(e){var t=e.touches?e.touches[0]:e;x0=t.clientX;y0=t.clientY;}
     function en(e){ if(x0==null)return; var t=e.changedTouches?e.changedTouches[0]:e; var dx=t.clientX-x0,dy=t.clientY-y0; x0=null; if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.25){cb(dx<0?'left':'right');} }
@@ -2782,10 +2837,11 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
       '<div class="cp-score">'+(tr()?'Kader Uyumu':'Destiny Harmony')+': '+r.pct+'%  ·  '+(tr()?'akıcı':'flowing')+' '+r.harm+'  ·  '+(tr()?'gerilimli':'tense')+' '+r.tense+'</div>'+
       '<div class="cp-rtitle">'+(tr()?'Ortak Kaderiniz':'Your Shared Destiny')+'</div>'+
       r.ps.map(function(x){return '<p class="cp-rp">'+x+'</p>';}).join('')+
+      posterCTA()+
       '<button class="nt-btn ghost" id="cpAgain">‹ '+(tr()?'Yeni Çift':'New Couple')+'</button>'+
       '<button class="nt-btn" id="cpDone">'+(tr()?'Bitir':'Done')+'</button>'+
      '</div></div>';
-    bindClose();
+    bindClose(); wirePoster();
     el('cpAgain').onclick=viewCoupleEntry;
     el('cpDone').onclick=viewConfirm;
     var sc=el('cpRS');if(sc)sc.scrollTop=0;}
@@ -2852,14 +2908,15 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
       head(tr()?'Natal Haritam':'My Natal Chart')+
       '<div class="nt-scroll" id="ntWS" style="justify-content:flex-start;padding-top:6px"><div class="nt-center nt-wheelwrap">'+
         '<div class="nt-cap">'+(tr()?'Yükselen':'Asc')+' '+sg[asc]+' · '+(tr()?'Güneş':'Sun')+' '+sg[Math.floor(rev(CHART.chart.pos.sun)/30)]+' · '+(tr()?'Ay':'Moon')+' '+sg[Math.floor(rev(CHART.chart.pos.moon)/30)]+'</div>'+
-        buildWheel()+
+        '<div class="nt-mapshrink">'+buildWheel()+'</div>'+
         '<div class="nt-lead">'+(tr()?'Doğduğun anın gökyüzü haritası.':'Your birth sky chart.')+'</div>'+
-        legendHTML()+
+        posterCTA()+
+        '<div class="nt-legendsmall">'+legendHTML()+'</div>'+
       '</div></div>'+
       '<div class="nt-pageno">'+(tr()?'Sayfa':'Page')+' 1 / 2</div>'+
-      '<div class="nt-bar" style="flex-direction:column;gap:6px"><div class="nt-swipehint">‹ '+(tr()?'Sayfa 2 için kaydırınız':'Swipe left for page 2')+'</div><button id="ntExitW">✕ '+(tr()?'Kapat':'Close')+'</button></div>'+
+      '<div class="nt-bar" style="flex-direction:column;gap:6px"><div class="nt-swipehint">‹ '+(tr()?'Sayfa 2 için kaydırınız':'Swipe left for page 2')+'</div></div>'+
      '</div>';
-    bindClose();el('ntExitW').onclick=closeNatal;
+    bindClose(); wirePoster();
     attachSwipe(el('ntWS'),function(d){if(d==='left'){chartPage=1;viewChartPage();}});scrollHints(el('ntWS'));}
   function renderTablePage(){var sg=SIGN(),asc=CHART.ascSign,C=CHART.chart;
     var rows='';
@@ -2875,9 +2932,9 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
         '<button class="nt-btn" id="ntRead">'+(tr()?'Detaylı Yorum İçin Tıklayın':'Read the Full Interpretation')+' ›</button>'+
       '</div></div>'+
       '<div class="nt-pageno">'+(tr()?'Sayfa':'Page')+' 2 / 2</div>'+
-      '<div class="nt-bar" style="flex-direction:column;gap:6px"><div class="nt-swipehint">'+(tr()?'Geri dönmek için sağa kaydırınız ›':'Swipe right to go back ›')+'</div><button id="ntExitT">✕ '+(tr()?'Kapat':'Close')+'</button></div>'+
+      '<div class="nt-bar" style="flex-direction:column;gap:6px"><div class="nt-swipehint">'+(tr()?'Geri dönmek için sağa kaydırınız ›':'Swipe right to go back ›')+'</div></div>'+
      '</div>';
-    bindClose();el('ntExitT').onclick=closeNatal;el('ntRead').onclick=openReader;
+    bindClose();el('ntRead').onclick=openReader;
     attachSwipe(el('ntTS'),function(d){if(d==='right'){chartPage=0;viewChartPage();}});scrollHints(el('ntTS'));}
   function trow(sym,name,sign,deg,house,theme){var si=SIGN().indexOf(sign);var gl=si>=0?'<span class="zsym" style="font-size:15px;color:#f4d488">'+ZCH[si]+'</span> ':'';
     return '<tr><td class="c-n"><b>'+sym+'</b> '+name+'</td><td class="c-s">'+gl+sign+'</td><td class="c-d">'+deg.toFixed(2)+'°</td><td class="c-h">'+house+'</td><td class="c-t">'+theme+'</td></tr>';}
@@ -2928,7 +2985,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   function speakPage(){if(!window.speechSynthesis)return;stopVoice();var u=new SpeechSynthesisUtterance((voiceText[curPage]||'').replace(/<[^>]+>/g,''));u.lang=tr()?'tr-TR':'en-US';u.rate=.97;window.speechSynthesis.speak(u);}
 
   /* ---------- entry ---------- */
-  window.__openNatal=function(){scr.classList.add('on');ntFeathers();chartPage=0;viewConfirm();};
+  window.__openNatal=function(){scr.classList.add('on');ntFeathers();chartPage=0;viewConfirm();if(window.OphNav)window.OphNav.sync();};
 
   /* ---- data for 3D viewer (natal3d.html reads localStorage 'oph_natal3d') ---- */
   function t3d(k,si,hh,L){return PN_TR[k]+', '+SIGN_TR[si]+' burcunda ve '+hh+'. evde ('+(rev(L)%30).toFixed(0)+'°). '+PLANET_LONG[k]+' '+SIGN_TR[si]+' burcunda bu enerji '+SADJ[si]+' bir renk alır; '+hh+'. evde durması bunu '+HOUSE_LIFE[hh-1]+' alanına taşır ve karakterinde belirleyici bir çizgi olur.';}
