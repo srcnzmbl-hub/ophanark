@@ -334,19 +334,41 @@ const sunRing=new THREE.Mesh(new THREE.TorusGeometry(0.92,0.012,12,90),new THREE
 const logoGroup=new THREE.Group(); logoGroup.position.set(0,0.6,0); logoGroup.visible=false; scene.add(logoGroup);
 let logoReady=false, logoModel=null, logoFinalScale=1;
 const logoGlow=new THREE.Sprite(new THREE.SpriteMaterial({map:radialTex('rgba(255,216,132,0.95)','rgba(255,150,45,0)'),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0}));
-logoGlow.scale.set(4,4,1); logoGlow.position.y=0; logoGroup.add(logoGlow);
-const logoLight=new THREE.PointLight(0xffe6b0,0,44,1.5); logoGroup.add(logoLight);
+logoGlow.scale.set(4,4,1); logoGlow.position.y=0; logoGlow.visible=false; logoGroup.add(logoGlow); // loş arka ışık KALDIRILDI
+const logoLight=new THREE.PointLight(0xffe6b0,0,44,1.5); logoGroup.add(logoLight); // ışık kapalı (model kendi kendine parlar)
 new GLTFLoader().load('ophanim.glb',(gl)=>{ const m=gl.scene;
-  // Işığa bağımlı olmadan kendi dokusuyla PARLASIN (altın net görünsün)
+  // Işığa bağımlı olmadan kendi dokusuyla PARLASIN + yanıp sönme için taban renk saklanır
   m.traverse(o=>{ if(o.isMesh){ const mp=(o.material&&o.material.map)||null;
     o.material=new THREE.MeshBasicMaterial({map:mp,color:mp?0xffffff:0xdca548,side:THREE.DoubleSide,transparent:!!(o.material&&o.material.transparent),alphaTest:0.02});
-    o.frustumCulled=false; } });
+    o.userData.__bc=o.material.color.clone(); o.frustumCulled=false; } });
   let box=new THREE.Box3().setFromObject(m); const sz=new THREE.Vector3(); box.getSize(sz);
   const targetD=2.7, mx=Math.max(sz.x,sz.y,sz.z)||1; logoFinalScale=targetD/mx; m.scale.setScalar(logoFinalScale);
   box=new THREE.Box3().setFromObject(m); const ctr=new THREE.Vector3(); box.getCenter(ctr); m.position.sub(ctr);
   logoGroup.add(m); logoModel=m; logoReady=true;
   // başlangıç kürede GÜNEŞ kalır; logo yalnızca karadelik reveal'inde görünür
 },undefined,(e)=>{console.log('ophanim.glb yüklenemedi',e);});
+// ===== MELEK TÜYLERİ: logodan HER YÖNE (yukarı/aşağı/sağ/sol) süzülen minik parlak sarı tüyler =====
+function featherTex(){ const s=128,cv=document.createElement('canvas');cv.width=cv.height=s;const x=cv.getContext('2d'); x.clearRect(0,0,s,s);
+  const cx=s/2, top=20, bot=110;
+  const grd=x.createLinearGradient(0,top,0,bot); grd.addColorStop(0,'rgba(255,236,150,0.98)'); grd.addColorStop(0.5,'rgba(255,206,74,0.96)'); grd.addColorStop(1,'rgba(245,180,50,0.0)');
+  x.fillStyle=grd; x.beginPath(); x.moveTo(cx,top); x.bezierCurveTo(cx+24,top+30, cx+20,bot-22, cx,bot); x.bezierCurveTo(cx-20,bot-22, cx-24,top+30, cx,top); x.closePath(); x.fill();
+  x.strokeStyle='rgba(255,224,130,0.85)'; x.lineWidth=2; x.beginPath(); x.moveTo(cx,top+5); x.lineTo(cx,bot-6); x.stroke();
+  const g2=x.createRadialGradient(cx,top+7,0,cx,top+7,15); g2.addColorStop(0,'rgba(255,240,170,0.95)'); g2.addColorStop(1,'rgba(255,240,170,0)'); x.fillStyle=g2; x.beginPath(); x.arc(cx,top+7,15,0,6.28); x.fill();
+  return new THREE.CanvasTexture(cv); }
+const featherTexture=featherTex();
+const featherG=new THREE.Group(); featherG.visible=false; scene.add(featherG); const feathers=[];
+for(let i=0;i<24;i++){ const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:featherTexture,transparent:true,depthWrite:false,blending:THREE.NormalBlending,opacity:0}));
+  const b=0.12+Math.random()*0.12; sp.scale.set(b*0.5,b,1); sp.userData={init:false}; featherG.add(sp); feathers.push(sp); }
+function resetFeather(sp){ const u=sp.userData;
+  u.start=new THREE.Vector3((Math.random()*2-1)*1.15,(Math.random()*2-1)*1.0,(Math.random()*2-1)*0.35);
+  const ang=Math.random()*6.2832, spd=0.12+Math.random()*0.20; // her yöne, nazikçe
+  u.vps=new THREE.Vector3(Math.cos(ang)*spd, Math.sin(ang)*spd, (Math.random()*2-1)*0.05);
+  u.t0=t; u.dur=2.4+Math.random()*2.6; u.rot0=Math.random()*6.2832; u.rspd=(Math.random()*2-1)*0.5; u.sway=Math.random()*6.2832; u.init=true; sp.material.rotation=u.rot0; }
+function updateFeathers(){ if(!logoGroup.visible){ if(featherG.visible)featherG.visible=false; return; }
+  featherG.visible=true; featherG.position.copy(logoGroup.position);
+  for(const sp of feathers){ const u=sp.userData; if(!u.init){resetFeather(sp);} const el=t-u.t0; const life=el/u.dur; if(life>=1){resetFeather(sp); continue;}
+    sp.position.set(u.start.x+u.vps.x*el+Math.sin(t*1.1+u.sway)*0.05, u.start.y+u.vps.y*el+Math.cos(t*0.9+u.sway)*0.05, u.start.z+u.vps.z*el);
+    sp.material.rotation=u.rot0+u.rspd*el; sp.material.opacity=Math.sin(Math.PI*clamp01(life))*0.92; } }
 function numSprite(txt){const s=128,cv=document.createElement('canvas');cv.width=cv.height=s;const x=cv.getContext('2d');x.font='bold 54px Georgia';x.textAlign='center';x.textBaseline='middle';x.lineWidth=7;x.strokeStyle='rgba(18,6,8,0.92)';x.strokeText(txt,s/2,s/2);x.fillStyle='rgba(246,222,150,0.98)';x.fillText(txt,s/2,s/2);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthWrite:false,depthTest:false}));sp.scale.set(0.86,0.86,1);sp.renderOrder=2;return sp;}
 for(let d=0;d<360;d+=30){const a=THREE.MathUtils.degToRad(d);const sp=numSprite(String(d)+'°');sp.position.set(Math.cos(a)*R*1.09,Math.sin(a)*R*1.09,0);wheel.add(sp);}
 
@@ -718,7 +740,6 @@ function updateReveal(re){
   const k=ez(clamp01((re-eStart)/REVEAL_EMERGE));
   logoGroup.visible=true;
   if(logoModel)logoModel.scale.setScalar(Math.max(0.0001,logoFinalScale*k));
-  logoGlow.material.opacity=0.5*k; logoLight.intensity=2.2*k;
   const col=clamp01(1-(re-eStart)/(REVEAL_EMERGE*0.7));
   bhCore.scale.setScalar(Math.max(0.001,1.1*col));
   for(const p of diskP)p.material.opacity*=col;
@@ -727,7 +748,7 @@ function updateReveal(re){
  if(re>eStart+REVEAL_EMERGE+0.3){
   reveal.done=true; bh.visible=false; bhCore.visible=false; flash.material.opacity=0;
   for(const p of diskP)p.material.opacity=0; for(const p of vortex)p.material.opacity=0;
-  if(logoModel)logoModel.scale.setScalar(logoFinalScale); logoGroup.visible=true; logoGlow.material.opacity=0.5; logoLight.intensity=2.2;
+  if(logoModel)logoModel.scale.setScalar(logoFinalScale); logoGroup.visible=true;
  }
 }
 // ---- FINAL: tum gezegenler okununca parca parca natal semaya toplanir, usturlap cemberleri sirayla belirir, gunes gri gelip parlar ----
@@ -965,8 +986,10 @@ nodes.forEach(n=>{if(!n.isSun)n.planet.rotation.y+=0.0018;if(n.isHot&&n.halo){n.
 for(const sg of suns)updateSun(sg);
 if(story.on)updateStory(t-story.t0);
 if(reveal.on && !reveal.done) updateReveal(t-reveal.t0);
-if(logoReady && logoGroup.visible){ if(logoModel)logoModel.rotation.y+=0.005;
-  if(reveal.done){ logoGlow.material.opacity=0.5+0.16*Math.sin(t*1.5); logoLight.intensity=2.1+0.6*Math.sin(t*1.5); } }
+if(logoReady && logoGroup.visible){ if(logoModel){ logoModel.rotation.y+=0.005;
+    const pf=reveal.done?(0.66+0.5*(0.5+0.5*Math.sin(t*2.3))):1; // kanatlar+gövde OLDUĞU YERDE yanıp söner
+    logoModel.traverse(o=>{ if(o.isMesh&&o.userData.__bc)o.material.color.copy(o.userData.__bc).multiplyScalar(pf); }); }
+  updateFeathers(); }
 composer.render();}
 loop();
 </script>
