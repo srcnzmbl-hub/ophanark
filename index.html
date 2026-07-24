@@ -1166,10 +1166,20 @@ window.__load3D=function(){
   var msg=document.getElementById('n3dMsg'),fr=document.getElementById('n3dFrame');
   if(!msg||!fr)return;
   /* 3D ekranında aşağı düşen tüyler KAPALI — tüyler yalnızca emblemden (iframe içinde) her yöne saçılır */
-  msg.style.display='';fr.style.display='none';msg.textContent='3D natal hazırlanıyor…';
+  msg.style.display='flex';msg.style.flexDirection='';fr.style.display='none';msg.textContent='3D natal hazırlanıyor…';
   if(!window.__natal3dData){msg.textContent='3D natal yakında.';return;}
   window.__natal3dData(function(d){
-    if(!d){msg.innerHTML='3D natal haritası için önce doğum bilgilerini tamamla:<br>tarih, saat ve yer.';return;}
+    if(!d){
+      var _tr=(window.__lang!=='en');
+      msg.style.display='flex';msg.style.flexDirection='column';
+      msg.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;max-width:300px">'
+        +'<div style="line-height:1.55">'+(_tr?'3D natal haritası için önce doğum bilgilerini tamamla:<br>tarih, saat ve yer.':'To view your 3D natal chart, first complete your birth details:<br>date, time and place.')+'</div>'
+        +'<button id="n3dEditBtn" style="font-family:\'Cinzel\',serif;letter-spacing:.08em;background:linear-gradient(180deg,#e6b64a,#c8912f);color:#2a1406;border:0;border-radius:22px;padding:11px 32px;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.45);cursor:pointer">'+(_tr?'Düzenle':'Edit')+'</button>'
+        +'</div>';
+      var _eb=document.getElementById('n3dEditBtn');
+      if(_eb)_eb.onclick=function(){ if(window.__openEditProfile)window.__openEditProfile(function(){ if(window.__load3D)window.__load3D(); }); };
+      return;
+    }
     try{localStorage.setItem('oph_natal3d',JSON.stringify(d));}catch(e){}
     fr.onload=function(){msg.style.display='none';fr.style.display='';};
     fr.src='natal3d.html?t='+Date.now();
