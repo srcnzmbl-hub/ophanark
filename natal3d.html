@@ -44,18 +44,19 @@ font-size:13.5px;letter-spacing:1px;z-index:9;pointer-events:none}
 #cardBody p{margin:0 0 0.7em}
 #cardBody .cw{opacity:0;transition:opacity .3s ease}
 #cardBody .cw.on{opacity:1}
-#cardSpeak,#cardClose,#cardStop{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:2;transform:translateX(-50%);
+#cardSpeak,#cardClose,#cardStop,#cardReplay{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:2;transform:translateX(-50%);
   pointer-events:auto;width:54px;height:54px;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;
   background:radial-gradient(circle at 50% 36%,rgba(46,24,10,0.94),rgba(14,7,4,0.96));border:1.5px solid rgba(230,196,120,0.9);color:#e9c86e;font-size:22px;font-family:Georgia;
   display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(210,160,70,.32),inset 0 1px 2px rgba(255,225,150,.22)}
-#cardSpeak::before,#cardClose::before,#cardStop::before{content:'';position:absolute;inset:4px;border-radius:50%;border:1px solid rgba(230,196,120,0.42);pointer-events:none}
-#cardSpeak{left:calc(50% - 74px)}
-#cardClose{left:50%}
-#cardStop{left:calc(50% + 74px)}
-#cardSpeak svg,#cardStop svg{width:23px;height:23px;fill:#e9c86e}
+#cardSpeak::before,#cardClose::before,#cardStop::before,#cardReplay::before{content:'';position:absolute;inset:4px;border-radius:50%;border:1px solid rgba(230,196,120,0.42);pointer-events:none}
+#cardSpeak{left:calc(50% - 111px)}
+#cardClose{left:calc(50% - 37px);font-size:32px;line-height:1}
+#cardStop{left:calc(50% + 37px)}
+#cardReplay{left:calc(50% + 111px)}
+#cardSpeak svg,#cardStop svg,#cardReplay svg{width:23px;height:23px;fill:#e9c86e}
 #cardSpeak.on{border-color:#ffe08a;box-shadow:0 0 22px rgba(233,200,110,.75),inset 0 1px 2px rgba(255,225,150,.3)}
 #cardStop.off{opacity:.45}
-#cardSpeak:active,#cardClose:active,#cardStop:active{transform:translateX(-50%) scale(.93)}
+#cardSpeak:active,#cardClose:active,#cardStop:active,#cardReplay:active{transform:translateX(-50%) scale(.93)}
 #cardGlow{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .7s ease;
   background:radial-gradient(circle at 50% 46%, var(--acc,#6a5acd) 0%, transparent 58%);}
 #cardOverlay.open #cardGlow{opacity:.20}
@@ -80,8 +81,9 @@ font-size:13.5px;letter-spacing:1px;z-index:9;pointer-events:none}
     <div id="cardBody"></div>
   </div>
   <button id="cardSpeak" aria-label="sesli oku"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4zm11.5 3a4 4 0 0 0-2.25-3.6v7.2A4 4 0 0 0 15.5 12zM13.25 3.2v2.06A6.99 6.99 0 0 1 18 12a6.99 6.99 0 0 1-4.75 6.74v2.06A9 9 0 0 0 20 12a9 9 0 0 0-6.75-8.8z"/></svg></button>
-  <button id="cardClose" aria-label="kapat">✕</button>
-  <button id="cardStop" aria-label="okumayi durdur"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg></button>
+  <button id="cardClose" aria-label="geri">‹</button>
+  <button id="cardStop" aria-label="duraklat"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg></button>
+  <button id="cardReplay" aria-label="baştan oku"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7.5 6.5 12 11V7.5a4.5 4.5 0 1 1-4.5 4.5H5.5A6.5 6.5 0 1 0 12 5z"/></svg></button>
 </div>
 
 <script type="importmap">
@@ -635,16 +637,29 @@ const v=pickTrVoice(); if(v)u.voice=v;
 u.onend=()=>{ if(!speaking)return; _ci++; speakNext(); };
 u.onerror=()=>{ if(!speaking)return; _ci++; speakNext(); };
 window.speechSynthesis.speak(u);}
-function stopSpeak(){if(!SPEECH_OK)return; speaking=false; try{window.speechSynthesis.cancel();}catch(e){} if(cardSpeak)cardSpeak.classList.remove('on'); applyTheme();}
+// TAM DURDUR + konumu sıfırla (kart kapanınca / sayfadan çıkınca)
+function stopSpeak(){if(!SPEECH_OK)return; speaking=false; try{window.speechSynthesis.cancel();}catch(e){} _chunks=[]; _ci=0; if(cardSpeak)cardSpeak.classList.remove('on'); applyTheme();}
+// DURAKLAT: sesi kes ama konumu (cümleyi) koru — Play'e basınca kaldığı yerden devam
+function pauseSpeak(){if(!SPEECH_OK)return; speaking=false; try{window.speechSynthesis.cancel();}catch(e){} if(cardSpeak)cardSpeak.classList.remove('on'); applyTheme();}
 function speakCard(){if(!SPEECH_OK||!cardKey)return;
 try{window.speechSynthesis.cancel();}catch(e){}
 const full=(NAMES[cardKey]||cardKey)+'. '+((INTERP[cardKey]||'').replace(/\s+/g,' ').trim());
 _chunks=chunkText(full); _ci=0; speaking=true; if(cardSpeak)cardSpeak.classList.add('on'); applyTheme();
 speakNext();}
-// 3'lü buton: [Sesli oku] [Kapat] [Sesli okumayı durdur]
-if(cardSpeak)cardSpeak.addEventListener('click',()=>{ if(!speaking)speakCard(); });
+// PLAY/DEVAM: duraklatılmışsa kaldığı cümleden devam, hiç başlamadıysa baştan
+function playSpeak(){if(!SPEECH_OK||!cardKey||speaking)return;
+if(_chunks.length && _ci<_chunks.length){ speaking=true; if(cardSpeak)cardSpeak.classList.add('on'); applyTheme(); speakNext(); }
+else { speakCard(); }}
+// [Sesli oku/Devam] [Geri] [Duraklat] [Baştan]
+if(cardSpeak)cardSpeak.addEventListener('click',playSpeak);
 const cardStop=document.getElementById('cardStop');
-if(cardStop)cardStop.addEventListener('click',(e)=>{ e.stopPropagation(); stopSpeak(); });
+if(cardStop)cardStop.addEventListener('click',(e)=>{ e.stopPropagation(); pauseSpeak(); });
+const cardReplay=document.getElementById('cardReplay');
+if(cardReplay)cardReplay.addEventListener('click',(e)=>{ e.stopPropagation(); speakCard(); });
+// sayfadan çıkınca / arka plana geçince ses otomatik kapansın
+document.addEventListener('visibilitychange',function(){ if(document.hidden)stopSpeak(); });
+window.addEventListener('pagehide',stopSpeak);
+window.addEventListener('blur',function(){ if(document.hidden)stopSpeak(); });
 if(SPEECH_OK)window.speechSynthesis.onvoiceschanged=()=>{};
 function closeCard(){cardOverlay.classList.remove('open');try{parent.postMessage({oph:'cardClose'},'*');}catch(e){}if(revealTimer){clearInterval(revealTimer);revealTimer=null;}stopSpeak();stopCardPad();sfxWhoosh(true);
 if(transitioning){const n=transitioning;
