@@ -556,7 +556,10 @@ img{display:block}
   </section>
 
   <section class="screen" id="s_natal3d">
-    <div class="simple"><div class="em">🪐</div><h2>3D Natal Chart</h2><p>Explore the sky of the moment you were born as a rotating 3D celestial sphere — planets, houses and aspects come alive.<br><br>(Coming soon)</p></div>
+    <div id="n3dHost" style="position:absolute;inset:0;background:#07040d;overflow:hidden">
+      <div id="n3dMsg" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:26px;color:#d9c6a0;font-family:'Spectral',serif;font-size:14px;z-index:2">3D natal hazırlanıyor…</div>
+      <iframe id="n3dFrame" title="3D Natal" style="width:100%;height:100%;border:0;display:none" allow="accelerometer;gyroscope;xr-spatial-tracking"></iframe>
+    </div>
   </section>
 
   <section class="screen" id="s_play">
@@ -973,9 +976,24 @@ document.querySelectorAll('.nb').forEach(function(b){
     $('topH').textContent=TITLES[s];
     $('topbar').style.display = (s==='home'||s==='profil')?'none':'flex';
     if(s==='home'&&window.__homeWheel){requestAnimationFrame(function(){window.__homeWheel.layout();window.__homeWheel.render();});}
+    if(s==='natal3d'&&window.__load3D)window.__load3D();
   });
 });
 $('topbar').style.display='none';   /* açılışta ana ekran: üst bar gizli */
+/* ---- 3D natal tab loader ---- */
+window.__load3D=function(){
+  var msg=document.getElementById('n3dMsg'),fr=document.getElementById('n3dFrame');
+  if(!msg||!fr)return;
+  msg.style.display='';fr.style.display='none';msg.textContent='3D natal hazırlanıyor…';
+  if(!window.__natal3dData){msg.textContent='3D natal yakında.';return;}
+  window.__natal3dData(function(d){
+    if(!d){msg.innerHTML='3D natal haritası için önce doğum bilgilerini tamamla:<br>tarih, saat ve yer.';return;}
+    try{localStorage.setItem('oph_natal3d',JSON.stringify(d));}catch(e){}
+    fr.onload=function(){msg.style.display='none';fr.style.display='';};
+    fr.src='natal3d.html?t='+Date.now();
+    setTimeout(function(){if(fr.style.display==='none'){fr.style.display='';msg.style.display='none';}},6000);
+  });
+};
 
 /* ---------- settings (theme / language / notifications) ---------- */
 (function(){
@@ -2338,6 +2356,24 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
 
   /* ---------- entry ---------- */
   window.__openNatal=function(){scr.classList.add('on');ntFeathers();chartPage=0;viewConfirm();};
+
+  /* ---- data for 3D viewer (natal3d.html reads localStorage 'oph_natal3d') ---- */
+  function t3d(k,si,hh,L){return PN_TR[k]+', '+SIGN_TR[si]+' burcunda ve '+hh+'. evde ('+(rev(L)%30).toFixed(0)+'°). '+PLANET_LONG[k]+' '+SIGN_TR[si]+' burcunda bu enerji '+SADJ[si]+' bir renk alır; '+hh+'. evde durması bunu '+HOUSE_LIFE[hh-1]+' alanına taşır ve karakterinde belirleyici bir çizgi olur.';}
+  window.__natal3dData=function(cb){
+    if(window.profileComplete && !window.profileComplete()){cb(null);return;}
+    var p=window.__profile||{},dp=(p.date||'').split('-'),tp=(p.time||'12:00').split(':');
+    var y=+dp[0],mo=+dp[1],D=+dp[2],h=+tp[0]||12,mi=+tp[1]||0;
+    geocode(p.place||'',function(g){var lat,lon,y2=y,mo2=mo,D2=D,UT;
+      if(g){lat=g.lat;lon=g.lon;var off=tzOffsetMin(g.tz,y,mo,D,h,mi);var dd=new Date(Date.UTC(y,mo-1,D,h,mi)-off*60000);y2=dd.getUTCFullYear();mo2=dd.getUTCMonth()+1;D2=dd.getUTCDate();UT=dd.getUTCHours()+dd.getUTCMinutes()/60;}
+      else{lat=null;lon=0;UT=h+mi/60;}
+      var chart=computeChart(y2,mo2,D2,UT,(lat==null?0:lat),lon),ascSign=Math.floor(rev(chart.asc)/30);
+      var CAP={sun:'Sun',moon:'Moon',mercury:'Mercury',venus:'Venus',mars:'Mars',jupiter:'Jupiter',saturn:'Saturn',uranus:'Uranus',neptune:'Neptune',pluto:'Pluto'};
+      var P={},INTERP={};
+      PORDER.forEach(function(k){var L=chart.pos[k],si=Math.floor(rev(L)/30),hh=((si-ascSign+12)%12)+1;P[CAP[k]]={lon:rev(L),sign:SIGN_TR[si]};INTERP[CAP[k]]=t3d(k,si,hh,L);});
+      var HOUSES=[];for(var i=0;i<12;i++)HOUSES.push(((ascSign+i)*30)%360);
+      try{cb({P:P,HOUSES:HOUSES,INTERP:INTERP,asc:rev(chart.asc),ascSign:ascSign,name:(p.name||'')});}catch(e){cb(null);}
+    });
+  };
  }catch(e){ if(window.console)console.log('natal init error',e); }
 })();
 
