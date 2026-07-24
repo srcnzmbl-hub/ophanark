@@ -324,6 +324,8 @@ img{display:block}
 #n3dbar .n3dr b{font-family:'Cinzel',serif;color:#e6c46a;font-size:12px;letter-spacing:.12em;font-weight:400}
 #n3dbar .n3dsep{color:#8a6a3a;font-size:12px}
 #n3dbar .n3dbrand{color:#caa658}
+#n3dExit{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 12px);z-index:6;width:44px;height:44px;border-radius:50%;border:1px solid rgba(232,190,96,.55);background:rgba(10,6,2,.6);color:#e8be60;font-size:19px;line-height:1;cursor:pointer;display:none;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);box-shadow:0 4px 14px rgba(0,0,0,.5)}
+#n3dExit:active{transform:translateX(-50%) scale(.93)}
 .sheet.on{display:flex}
 .sheet .veil{position:absolute;inset:0;background:rgba(6,2,3,.62);backdrop-filter:blur(2px)}
 .sheet .panel{position:relative;width:min(100%,520px);max-height:72%;overflow-y:auto;
@@ -573,6 +575,7 @@ img{display:block}
         <img class="n3demb" src="emblem.png" alt="">
         <div class="n3dr"><b>3D NATAL CHART</b><span class="n3dsep">—</span><b class="n3dbrand">OPHANARK</b></div>
       </div>
+      <button id="n3dExit" aria-label="Kapat">✕</button>
     </div>
   </section>
 
@@ -991,11 +994,19 @@ document.querySelectorAll('.nb').forEach(function(b){
     $('topbar').style.display = (s==='home'||s==='profil'||s==='natal3d')?'none':'flex';
     var navEl=document.querySelector('.nav'); if(navEl)navEl.style.display=(s==='natal3d')?'none':'';
     var bar3=document.getElementById('n3dbar'); if(bar3)bar3.style.display=(s==='natal3d')?'flex':'none';
+    var x3=document.getElementById('n3dExit'); if(x3)x3.style.display=(s==='natal3d')?'block':'none';
     if(s==='home'&&window.__homeWheel){requestAnimationFrame(function(){window.__homeWheel.layout();window.__homeWheel.render();});}
     if(s==='natal3d'&&window.__load3D)window.__load3D();
   });
 });
-(function(){var bk=document.getElementById('n3dBack');if(bk)bk.addEventListener('click',function(){var h=document.querySelector('.nb[data-s="home"]');if(h)h.click();});})();
+/* 3D geri (‹): bir önceki 3D harita görünümüne dön (animasyonu sıfırla, iframe'i yeniden yükle) */
+(function(){var bk=document.getElementById('n3dBack');if(bk)bk.addEventListener('click',function(){
+  var fr=document.getElementById('n3dFrame');
+  if(fr && fr.src && fr.style.display!=='none'){ if(window.__load3D)window.__load3D(); }
+  else { var h=document.querySelector('.nb[data-s="home"]'); if(h)h.click(); }
+});})();
+/* 3D en alt X: home ekranına dön */
+(function(){var xb=document.getElementById('n3dExit');if(xb)xb.addEventListener('click',function(){var h=document.querySelector('.nb[data-s="home"]');if(h)h.click();});})();
 $('topbar').style.display='none';   /* açılışta ana ekran: üst bar gizli */
 /* ---- 3D natal tab loader ---- */
 window.__load3D=function(){

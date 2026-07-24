@@ -32,7 +32,7 @@ font-size:13.5px;letter-spacing:1px;z-index:9;pointer-events:none}
 #cardOverlay.open{opacity:1;pointer-events:auto}
 #cardInner{position:relative;aspect-ratio:1024/1800;width:auto;height:min(calc(94vw / 0.5689),100%);
   background:url('natal_splash.jpg') center center / 100% 100% no-repeat;
-  display:flex;flex-direction:column;box-sizing:border-box;padding:8.5% 11% 7%;
+  display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;padding:8.5% 11% 7%;
   transform:scale(.82);opacity:0;transition:transform .6s cubic-bezier(.2,.8,.2,1),opacity .5s ease}
 #cardOverlay.open #cardInner{transform:scale(1);opacity:1}
 #cardHead{flex:0 0 auto;text-align:center;margin-top:0}
@@ -40,7 +40,7 @@ font-size:13.5px;letter-spacing:1px;z-index:9;pointer-events:none}
 #cardName{font-size:min(5.8vw,30px);color:#f5ecd6;margin-top:1px;letter-spacing:1px}
 #cardMeta{font-size:min(3vw,16px);color:#cdb26e;letter-spacing:2px;margin-top:4px}
 #cardDiv{width:40%;height:1px;background:rgba(214,186,128,0.5);margin:7px auto 2px}
-#cardBody{flex:1 1 auto;min-height:0;overflow:hidden;color:#e9c86e;font-style:italic;font-family:'Georgia',serif;line-height:1.3;text-align:justify;padding:2% 0 1.5%}
+#cardBody{flex:0 1 auto;min-height:0;max-height:78%;overflow:hidden;color:#e9c86e;font-style:italic;font-family:'Georgia',serif;line-height:1.3;text-align:center;padding:2% 0 1.5%}
 #cardBody p{margin:0 0 0.7em}
 #cardBody .cw{opacity:0;transition:opacity .3s ease}
 #cardBody .cw.on{opacity:1}
