@@ -314,7 +314,7 @@ img{display:block}
   border:1px solid rgba(214,168,92,.6);color:#e9c67a;font-family:'Cinzel',serif;letter-spacing:.1em;border-radius:14px;padding:16px;cursor:pointer;font-size:15px}
 .install-hint{width:100%;max-width:400px;margin-top:12px;color:#cbb58a;font-family:'Spectral',serif;font-size:13px;line-height:1.5;text-align:center;opacity:.85}
 /* settings bottom sheet */
-.sheet{position:fixed;inset:0;z-index:130;display:none;align-items:flex-end;justify-content:center}
+.sheet{position:fixed;inset:0;z-index:210;display:none;align-items:flex-end;justify-content:center}
 .sheet.on{display:flex}
 .sheet .veil{position:absolute;inset:0;background:rgba(6,2,3,.62);backdrop-filter:blur(2px)}
 .sheet .panel{position:relative;width:min(100%,520px);max-height:72%;overflow-y:auto;
@@ -521,7 +521,7 @@ img{display:block}
   <div id="login">
     <div class="login-bgart"></div><div class="login-veil"></div>
     <div class="login-inner">
-      <img class="login-logo" src="app-icon-192.png" alt="">
+      <img class="login-logo" src="emblem.png" alt="">
       <h1 class="login-title cin">OPHANARK</h1>
       <p class="login-sub cin">Sign in to continue</p>
       <input id="loginEmail" class="login-field" type="email" inputmode="email" autocomplete="email" placeholder="Email">
@@ -540,13 +540,13 @@ img{display:block}
   <!-- TOP BAR -->
   <div class="top" id="topbar">
     <div class="ttl"><div class="kick">OPHANARK</div><div class="h" id="topH">Choose Your Fate</div></div>
-    <img class="emb" src="app-icon-192.png" alt="">
+    <img class="emb" src="emblem.png" alt="">
   </div>
 
   <!-- SCREENS -->
   <section class="screen on" id="s_home">
     <div class="home-head">
-      <img class="hh-logo" src="app-icon-192.png" alt="">
+      <img class="hh-logo" src="emblem.png" alt="">
       <div class="hh-title cin">OPHANARK</div>
       <div class="hh-sub">DIVINE GALGALIM</div>
     </div>
@@ -586,7 +586,7 @@ img{display:block}
   <section class="screen" id="s_profil">
     <div class="prof-wrap">
       <div class="prof-top">
-        <img class="prof-emb" src="app-icon-192.png" alt="">
+        <img class="prof-emb" src="emblem.png" alt="">
       </div>
       <div class="pcard">
         <div class="pcard-h pcard-hrow"><span>PERSONAL INFO</span><button class="pedit" id="editInfo">✎ Edit</button></div>
@@ -1976,7 +1976,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
 })();
 </script>
 <script>
-/* ============================ OPHANARK — NATAL HARITA ============================ */
+/* ============================ OPHANARK — NATAL HARITA (v2) ============================ */
 (function(){
  try{
   var D2R=Math.PI/180,R2D=180/Math.PI;
@@ -2007,7 +2007,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
     var E=M+e*R2D*sind(M)*(1+e*cosd(M));for(var k=0;k<6;k++){E=E-(E-e*R2D*sind(E)-M)/(1-e*cosd(E));}
     var xv=a*(cosd(E)-e),yv=a*Math.sqrt(1-e*e)*sind(E);var v=atan2d(yv,xv),r=Math.sqrt(xv*xv+yv*yv);
     var xh=r*(cosd(N)*cosd(v+w)-sind(N)*sind(v+w)*cosd(i));var yh=r*(sind(N)*cosd(v+w)+cosd(N)*sind(v+w)*cosd(i));
-    var lon=atan2d(yh,xh);var Ls=sun.L,Lm=rev(N+w+M),Ms=sun.M,Mm=M,Dp=rev(Lm-Ls),F=rev(Lm-N);
+    var lon=atan2d(yh,xh);var Ls=sun.L,Lm=rev(N+w+M),Ms=sun.M,Mm=M,Dp=rev(Lm-Ls);
     var dl=-1.274*sind(Mm-2*Dp)+0.658*sind(2*Dp)-0.186*sind(Ms)-0.059*sind(2*Mm-2*Dp)-0.057*sind(Mm-2*Dp+Ms)+0.053*sind(Mm+2*Dp)+0.046*sind(2*Dp-Ms)+0.041*sind(Mm-Ms)-0.035*sind(Dp)-0.031*sind(Mm+Ms);
     return {lon:rev(lon+dl)};}
   function geoLon(ph,sun){var xs=sun.r*cosd(sun.lon),ys=sun.r*sind(sun.lon);return rev(atan2d(ph.yh+ys,ph.xh+xs));}
@@ -2021,224 +2021,290 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
     return {pos:pos,asc:asc,mc:mc};}
   window.__natalCompute=computeChart;
 
-  /* ---------- geocode + timezone ---------- */
-  function tzOffsetMin(tz,y,mo,D,h,mi){
-    try{var guess=Date.UTC(y,mo-1,D,h,mi);
-      var dtf=new Intl.DateTimeFormat('en-US',{timeZone:tz,hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
-      var ps={};dtf.formatToParts(new Date(guess)).forEach(function(p){ps[p.type]=p.value;});
-      var asUTC=Date.UTC(+ps.year,+ps.month-1,+ps.day,+(ps.hour==='24'?0:ps.hour),+ps.minute,+ps.second);
-      return (asUTC-guess)/60000;
-    }catch(e){return 0;}
-  }
-  function geocode(place,cb){
-    var key='oph_geo_'+place.toLowerCase().replace(/\s+/g,'_');
+  /* ---------- geocode + tz ---------- */
+  function tzOffsetMin(tz,y,mo,D,h,mi){try{var guess=Date.UTC(y,mo-1,D,h,mi);
+    var dtf=new Intl.DateTimeFormat('en-US',{timeZone:tz,hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    var ps={};dtf.formatToParts(new Date(guess)).forEach(function(p){ps[p.type]=p.value;});
+    var asUTC=Date.UTC(+ps.year,+ps.month-1,+ps.day,+(ps.hour==='24'?0:ps.hour),+ps.minute,+ps.second);
+    return (asUTC-guess)/60000;}catch(e){return 0;}}
+  function geocode(place,cb){var key='oph_geo_'+place.toLowerCase().replace(/\s+/g,'_');
     try{var c=localStorage.getItem(key);if(c){cb(JSON.parse(c));return;}}catch(e){}
     var url='https://geocoding-api.open-meteo.com/v1/search?count=1&language='+(window.__lang||'en')+'&name='+encodeURIComponent(place.split(',')[0].trim());
     fetch(url).then(function(r){return r.json();}).then(function(j){
-      if(j&&j.results&&j.results.length){var g={lat:j.results[0].latitude,lon:j.results[0].longitude,tz:j.results[0].timezone,name:j.results[0].name};
-        try{localStorage.setItem(key,JSON.stringify(g));}catch(e){}cb(g);}
-      else cb(null);
-    }).catch(function(){cb(null);});
-  }
+      if(j&&j.results&&j.results.length){var g={lat:j.results[0].latitude,lon:j.results[0].longitude,tz:j.results[0].timezone};
+        try{localStorage.setItem(key,JSON.stringify(g));}catch(e){}cb(g);} else cb(null);
+    }).catch(function(){cb(null);});}
 
-  /* ---------- content ---------- */
-  var SIGNS_TR=['Koç','Boğa','İkizler','Yengeç','Aslan','Başak','Terazi','Akrep','Yay','Oğlak','Kova','Balık'];
-  var SIGNS_EN=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  /* ---------- glyphs & names ---------- */
+  var SGL=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+  var SIGN_TR=['Koç','Boğa','İkizler','Yengeç','Aslan','Başak','Terazi','Akrep','Yay','Oğlak','Kova','Balık'];
+  var SIGN_EN=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
   var PSYM={sun:'☉',moon:'☾',mercury:'☿',venus:'♀',mars:'♂',jupiter:'♃',saturn:'♄',uranus:'♅',neptune:'♆',pluto:'♇'};
   var PORDER=['sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto'];
-  var C={
-   tr:{
-    pname:{sun:'Güneş',moon:'Ay',mercury:'Merkür',venus:'Venüs',mars:'Mars',jupiter:'Jüpiter',saturn:'Satürn',uranus:'Uranüs',neptune:'Neptün',pluto:'Plüton'},
-    core:{sun:'özün, kimliğin ve hayat gücün; nasıl parladığın ve neyle var olduğun',moon:'duyguların, iç dünyan ve güvende hissetme biçimin',mercury:'zihnin, konuşma–öğrenme tarzın ve kararlarını kurma şeklin',venus:'sevgi, güzellik ve değer anlayışın; nasıl bağ kurduğun',mars:'arzun, öfken ve harekete geçme gücün',jupiter:'şansın, büyüme–genişleme alanın ve inancın',saturn:'sorumlulukların, sınırların ve olgunlaşma dersin',uranus:'özgürlüğün, ani değişimlerin ve seni sıra dışı kılan yanın',neptune:'hayallerin, sezgin ve ruhsal–sanatsal yönün',pluto:'derin dönüşümün, gücün ve yeniden doğuşun'},
-    flavor:['cesur, öncü ve doğrudan bir tavırla ifade buluyor; beklemeden harekete geçiyorsun','sabırlı, istikrarlı ve somut bir biçimde çalışıyor; kalıcı olanı inşa ediyorsun','meraklı, çok yönlü ve iletişimci bir renk alıyor; fikirler arasında hızla dolaşıyorsun','duygusal, koruyucu ve sezgisel bir derinlik kazanıyor; kalbinle hareket ediyorsun','gururlu, cömert ve sahne alan bir ışıkla parlıyor; fark edilmek istiyorsun','titiz, analitik ve hizmet odaklı bir düzenle işliyor; inceliği önemsiyorsun','uyumlu, adil ve ilişki merkezli bir zarafetle akıyor; dengeyi arıyorsun','yoğun, tutkulu ve dönüştürücü bir güçle derinleşiyor; yüzeyle yetinmiyorsun','özgür, iyimser ve arayışçı bir genişlikle uzanıyor; ufkunu büyütüyorsun','disiplinli, hırslı ve stratejik bir ciddiyetle ilerliyor; zirveyi hedefliyorsun','özgün, yenilikçi ve topluluk bilinçli bir bakışla ayrışıyor; kalıpları sorguluyorsun','şefkatli, hayalperest ve sınırsız bir duyarlılıkla eriyor; sezgine güveniyorsun'],
-    house:['kimliğin, dış görünüşün ve dünyaya ilk adımını atma biçimin','paran, sahip oldukların ve kendi değerini hissetme biçimin','iletişimin, kardeşlerin, yakın çevren ve öğrenme tarzın','evin, ailen, köklerin ve içsel güvenlik duygun','yaratıcılığın, aşkın, çocukların ve kendini ifade etme neşen','işin, günlük rutinlerin, sağlığın ve hizmet alanın','ortaklıkların, evliliğin ve birebir ilişkilerin','dönüşümün, ortak kaynakların, mahremiyetin ve derin bağların','inançların, uzun yolculukların, yüksek öğrenimin ve hayat felsefen','kariyerin, toplumsal statün ve dünyada bıraktığın iz','arkadaşlıkların, hayallerin ve ait olduğun topluluklar','bilinçaltın, ruhsal dünyan, geri çekilişlerin ve arınma alanın'],
-    asc:'Yükselen (ASC)',ascText:'Yükselenin, dünyaya açılan kapın ve insanların seninle ilk karşılaştığında gördüğü yüzdür. Doğduğun anda ufukta bu burç yükseliyordu; bu yüzden dış duruşun, ilk izlenimin ve hayata giriş tarzın onun rengini taşır.',
-    intro:'Aşağıda, doğduğun anın gökyüzünden çıkarılan gerçek haritan var. Her gezegen, bir burçta ve bir evde duruyor — bu ikisinin birleşimi, hayatının o alanındaki hikâyeni anlatır.',
-    inHouse:'evde',inSign:'burcunda',read:'Yorumu Okumak İçin Tıklayın',cont:'Devam Et',edit:'Düzenle',
-    confirm:'Kişisel bilgileriniz doğru mu? Doğru değilse Düzenle butonuna basarak revize edin; doğruysa Devam Et ile ilerleyin.',
-    title:'Natal Haritam',page:'Sayfa',of:'/',listen:'🔊 Sesli Dinle',stop:'⏹ Sustur',
-    loading:'Doğduğun anın gökyüzü hesaplanıyor…',noNet:'Haritadaki evleri hesaplamak için doğum şehrini bulmam gerekti ama internete ulaşamadım. Gezegen burçların yine de gerçek; evler için tekrar dene.',
-    tpl:function(sym,pn,sign,house,core,flavor,harea,deg){return sym+' '+pn+', '+sign+' '+this.inSign+' ve '+house+'. '+this.inHouse+'. Bu, senin '+core+' demek. '+sign+' burcunda bu enerji '+flavor+'. '+house+'. ev hayatının '+harea+' alanını temsil eder — yani bu güç tam da orada kendini gösteriyor. Doğduğun anın gökyüzü onu '+deg+'° '+sign+' noktasına yerleştirmiş; bu yerleşim '+pn+' niteliklerini ömür boyu bu temayla birbirine bağlıyor.';}
-   },
-   en:{
-    pname:{sun:'Sun',moon:'Moon',mercury:'Mercury',venus:'Venus',mars:'Mars',jupiter:'Jupiter',saturn:'Saturn',uranus:'Uranus',neptune:'Neptune',pluto:'Pluto'},
-    core:{sun:'your essence, identity and life force — how you shine and what makes you you',moon:'your emotions, inner world and the way you feel safe',mercury:'your mind, how you speak, learn and make decisions',venus:'love, beauty and value — how you bond',mars:'your desire, anger and drive to act',jupiter:'your luck, growth and faith',saturn:'your responsibilities, limits and lessons of maturity',uranus:'your freedom, sudden change and what makes you unique',neptune:'your dreams, intuition and spiritual–artistic side',pluto:'your deep transformation, power and rebirth'},
-    flavor:['a bold, pioneering and direct manner; you act without waiting','a patient, steady and tangible way; you build what lasts','a curious, versatile and communicative colour; you move fast between ideas','an emotional, protective and intuitive depth; you move with your heart','a proud, generous and centre-stage light; you want to be seen','a precise, analytical and service-minded order; you value refinement','a harmonious, fair and relationship-centred grace; you seek balance','an intense, passionate and transformative power; you never settle for the surface','a free, optimistic and seeking expanse; you widen your horizon','a disciplined, ambitious and strategic seriousness; you aim for the summit','an original, innovative and community-minded view; you question the mould','a compassionate, dreamy and boundless sensitivity; you trust your intuition'],
-    house:['your identity, appearance and first step into the world','your money, possessions and sense of self-worth','your communication, siblings, close circle and learning style','your home, family, roots and inner security','your creativity, love, children and self-expression','your work, daily routines, health and service','your partnerships, marriage and one-to-one relationships','your transformation, shared resources, intimacy and deep bonds','your beliefs, long journeys, higher learning and philosophy','your career, public standing and mark on the world','your friendships, hopes and the communities you belong to','your subconscious, spiritual world, retreats and release'],
-    asc:'Ascendant (ASC)',ascText:'Your Ascendant is your doorway to the world and the face people meet first. This sign was rising on the horizon at your birth, so your outward manner and first impression carry its colour.',
-    intro:'Below is your real chart, drawn from the sky at the moment you were born. Each planet sits in a sign and a house — together they tell the story of that area of your life.',
-    inHouse:'house',inSign:'in',read:'Tap to Read the Interpretation',cont:'Continue',edit:'Edit',
-    confirm:'Is your personal information correct? If not, tap Edit to revise it; if it is, tap Continue.',
-    title:'My Natal Chart',page:'Page',of:'/',listen:'🔊 Listen',stop:'⏹ Stop',
-    loading:'Calculating the sky of your birth…',noNet:'I needed to find your birth city to compute the houses but could not reach the internet. Your planet signs are still real; try again for the houses.',
-    tpl:function(sym,pn,sign,house,core,flavor,harea,deg){return sym+' '+pn+' is in '+sign+', in the '+house+ordinal(house)+' '+this.inHouse+'. This is '+core+'. In '+sign+', this energy shows '+flavor+'. The '+house+ordinal(house)+' house rules '+harea+' — so this force appears exactly there. The sky placed it at '+deg+'° '+sign+', binding '+pn+'’s qualities to this theme for life.';}
-   }
+  function tr(){return (window.__lang==='tr');}
+  function SIGN(){return tr()?SIGN_TR:SIGN_EN;}
+  var PN_TR={sun:'Güneş',moon:'Ay',mercury:'Merkür',venus:'Venüs',mars:'Mars',jupiter:'Jüpiter',saturn:'Satürn',uranus:'Uranüs',neptune:'Neptün',pluto:'Plüton'};
+  var PN_EN={sun:'Sun',moon:'Moon',mercury:'Mercury',venus:'Venus',mars:'Mars',jupiter:'Jupiter',saturn:'Saturn',uranus:'Uranus',neptune:'Neptune',pluto:'Pluto'};
+  function PN(k){return tr()?PN_TR[k]:PN_EN[k];}
+
+  /* ---------- short themes (table) ---------- */
+  var SUBJ={sun:'Ruh yolun',moon:'Duygusal doyumun',mercury:'Zihnin ve iletişimin',venus:'Sevme ve değer verme biçimin',mars:'İtki ve mücadele gücün',jupiter:'Büyümen ve şansın',saturn:'Olgunlaşman ve sorumluluğun',uranus:'Özgürleşme ihtiyacın',neptune:'Hayal gücün ve sezgin',pluto:'Dönüşümün ve iç gücün'};
+  var PRED=['cesaret, öncülük ve doğrudan eylemden geçer','istikrar, güven ve somut değer üretmekten geçer','merak, iletişim ve fikir alışverişinden geçer','duygusal bağ, koruma ve aidiyetten geçer','kendini ifade etmek, yaratmak ve fark edilmekten geçer','hizmet etmek, düzen kurmak ve mükemmellik aramaktan geçer','denge, uyum ve ilişkiler kurmaktan geçer','derinlik, tutku ve köklü dönüşümden geçer','özgürlük, anlam arayışı ve geniş ufuklardan geçer','disiplin, hedef ve kalıcı başarı inşa etmekten geçer','özgünlük, topluluk ve geleceği kurmaktan geçer','şefkat, hayal ve ruhsal bütünleşmeden geçer'];
+  var SADJ=['atılgan, enerjik ve cesur','sakin, güven veren ve sağlam','meraklı, konuşkan ve canlı','sıcak, duyarlı ve koruyucu','göz alıcı, sıcak ve kendinden emin','zarif, ölçülü ve özenli','incelikli, dengeli ve dostça','yoğun, çekici ve gizemli','içten, neşeli ve özgür','ciddi, saygın ve kararlı','sıra dışı, bağımsız ve özgün','yumuşak, hayalperest ve sezgisel'];
+  var MCPHRASE=['öncülük ve cesur girişimler','istikrar ve değer üreten işler','iletişim, yazı ve fikir işleri','bakım, aile ve güven veren roller','sahne, liderlik ve yaratıcı görünürlük','uzmanlık, hizmet ve titiz işler','ilişkiler, estetik ve arabuluculuk','derin araştırma, dönüşüm ve güç işleri','öğretmek, yaymak ve ufuk açan işler','otorite, yönetim ve kalıcı başarı','yenilik, teknoloji ve toplumsal fayda','sanat, şifa ve ilham veren işler'];
+  function themeFor(k,s){return SUBJ[k]+' '+PRED[s]+'.';}
+  function ascTheme(s){return SADJ[s]+' bir ilk izlenim bırakırsın.';}
+  function mcTheme(s){return MCPHRASE[s]+' senin kariyer çağrındır.';}
+
+  /* ---------- long content (reader) ---------- */
+  var HOUSE_LONG=[
+   'Birinci ev senin kapın: bedenin, dış görünüşün, mizacın ve hayata attığın ilk adım. İnsanların seni daha tanımadan hissettiği enerji, kendini nasıl taşıdığın ve dünyaya "ben buyum" deyişin burada şekillenir. Bu ev güçlüyse varlığın bir odaya girdiğinde sessizce hissedilir.',
+   'İkinci ev sahip olduklarının ve kendine biçtiğin değerin evidir. Paran, kazanma biçimin, güvenlik ihtiyacın ve "ben neye layığım" sorusunun cevabı buradadır. Maddi dünyayla kurduğun ilişki kadar öz saygının temeli de bu alanda atılır.',
+   'Üçüncü ev zihnin, dilin ve yakın çevrenin evidir: kardeşler, komşular, kısa yolculuklar, öğrenme ve konuşma tarzın. Düşüncelerini nasıl kelimelere döktüğün, merakının nereye aktığı ve günlük iletişimin bu alanda renklenir.',
+   'Dördüncü ev köklerin, evin ve ailenin evidir — haritanın en özel, en içsel köşesi. Nereden geldiğin, seni büyüten atmosfer, güvende hissettiğin yer ve ruhunun sığınağı burada yaşar. Dışarıda ne olursa olsun döndüğün iç zemindir.',
+   'Beşinci ev yaratıcılığın, aşkın, oyunun ve kendini ifade etme neşenin evidir. Kalpten gelen her şey — flört, sanat, çocuklar, risk alma cesareti ve "ben yarattım" gururu — bu alanda parlar. Burası ruhunun çocuk kalan, ışıldayan yanıdır.',
+   'Altıncı ev günlük hayatın, emeğin, sağlığın ve hizmetin evidir. İşini nasıl yaptığın, bedenine nasıl baktığın, rutinlerin ve başkalarına faydan burada biçimlenir. Küçük görünen günlük seçimlerinin zamanla seni inşa ettiği yer burasıdır.',
+   'Yedinci ev birebir ilişkilerin, ortaklıkların ve evliliğin evidir — karşındaki "sen". Kiminle yan yana durduğun, nasıl bağ kurduğun, çatışmayı nasıl yönettiğin ve başkasında hangi eksik parçanı aradığın burada görünür. Aynada karşına çıkanların evidir.',
+   'Sekizinci ev dönüşümün, mahremiyetin, ortak kaynakların ve derin bağların evidir. Krizler, kayıplar, yeniden doğuşlar, cinsellik, miras ve paylaşılan güç burada yaşar. Seni kökten değiştiren, yüzeyin altındaki güçlü sulardır.',
+   'Dokuzuncu ev anlam arayışının evidir: inançların, felsefen, uzak yolculukların, yüksek öğrenimin ve büyük resmi görme arzun. Hayatı neye göre yorumladığın ve "neden yaşıyorum" sorusu bu alanda cevap bulur.',
+   'Onuncu ev kariyerin, toplumsal rolün ve dünyada bıraktığın izin evidir — haritanın en tepesi, herkesin gördüğü nokta. Nasıl anılmak istediğin, otoriteyle ilişkin ve hayattaki hedefin buradan yükselir. "Ne olarak hatırlanacaksın" sorusunun evidir.',
+   'On birinci ev arkadaşlıkların, toplulukların ve geleceğe dair hayallerinin evidir. Ait olduğun gruplar, ortak ideallerin, seni ileri taşıyan çevreler ve uzun vadeli umutların burada yaşar. "Biz" duygusunun ve yarına dair vizyonun evidir.',
+   'On ikinci ev bilinçaltının, ruhsal dünyanın ve geri çekilişlerin evidir — haritanın en gizli, en derin köşesi. Rüyalar, sezgiler, gizli korkular, arınma ve görünmeyene açılan kapı burada durur. Kendinle baş başa kaldığında karşılaştığın iç âlemdir.'
+  ];
+  var HOUSE_LIFE=['kimliğin ve öz-ifaden','değerin ve güvenliğin','öğrenmen ve iletişimin','ailen ve iç huzurun','yaratıcılığın ve aşkın','emeğin ve sağlığın','ilişkilerin ve ortaklıkların','dönüşümün ve derin bağların','inançların ve arayışın','kariyerin ve toplumsal izin','dostlukların ve hayallerin','ruhsal dünyan ve arınman'];
+  var SIGN_LONG=[
+   'Koç ateşin ilk kıvılcımıdır: cesur, doğrudan ve durmak bilmez. Bir şey istediğinde beklemez, önce atılır sonra düşünür; başlangıçlar onun doğasında vardır.',
+   'Boğa toprağın sabrıdır: sakin, kararlı ve hazza düşkün. Acele etmez, kök salar, güzel ve kalıcı olanı yavaş yavaş inşa eder.',
+   'İkizler havanın merakıdır: hızlı, çok yönlü ve konuşkan. Zihni sürekli hareket halinde, bir fikirden diğerine atlar, hayatı bir sohbet gibi yaşar.',
+   'Yengeç suyun şefkatidir: duygusal, koruyucu ve sezgisel. Kalbiyle hisseder, sevdiklerini kanatlarının altına alır, geçmişi ve aidiyeti derinden taşır.',
+   'Aslan ateşin gururudur: cömert, sıcak ve sahne alan. Sevgiyle beslenir, yaratmayı ve fark edilmeyi sever; içinde sönmeyen bir ışık taşır.',
+   'Başak toprağın zekâsıdır: titiz, analitik ve hizmetkâr. Detayları görür, iyileştirmek ister, sevgisini işe yarar olmakla gösterir.',
+   'Terazi havanın zarafetidir: uyumlu, adil ve ilişki odaklı. Dengeyi arar, güzelliğe değer verir, kararlarını karşısındakini de düşünerek verir.',
+   'Akrep suyun yoğunluğudur: tutkulu, derin ve dönüştürücü. Yüzeyle yetinmez, gerçeğin dibine iner, ölüp yeniden doğmaktan korkmaz.',
+   'Yay ateşin arayışıdır: özgür, iyimser ve felsefi. Ufkun ötesini merak eder, anlam peşinde koşar, hayatı büyük bir macera olarak görür.',
+   'Oğlak toprağın iradesidir: disiplinli, hırslı ve sabırlı. Zirveyi hedefler, zorluğa dayanır, zamanla kalıcı olanı inşa eder.',
+   'Kova havanın özgünlüğüdür: bağımsız, yenilikçi ve topluluk bilinçli. Kalıpları sorgular, geleceği düşünür, kendi yolunu çekinmeden yürür.',
+   'Balık suyun sonsuzluğudur: şefkatli, hayalperest ve sınırsız. Sezgisiyle görür, sınırların eridiği yerde yaşar, acıyı da güzelliği de derinden hisseder.'
+  ];
+  var PLANET_LONG={
+   sun:'Güneş senin özün, iradenin merkezi ve hayat gücündür. Nerede parladığını, neyle canlandığını ve "ben" derken neyi kastettiğini gösterir.',
+   moon:'Ay iç dünyan, duygusal ihtiyaçların ve güvende hissetme biçimindir. Seni ne yatıştırır, neye içgüdüsel tepki verirsin — kaynağı Ay\'dır.',
+   mercury:'Merkür zihnin, öğrenme ve iletişim tarzındır. Nasıl düşündüğün, konuştuğun, bağ kurduğun ve kararları nasıl ördüğün onunla anlatılır.',
+   venus:'Venüs sevme, çekme ve değer verme biçimindir. Neyi güzel bulduğun, nasıl bağlandığın ve hayattan hangi hazları istediğin Venüs\'le renklenir.',
+   mars:'Mars arzun, öfken ve harekete geçme gücündür. Ne için savaştığın, nasıl istediğin ve engelle karşılaşınca ne yaptığın Mars\'ta gizlidir.',
+   jupiter:'Jüpiter büyüme, şans ve genişleme prensibidir. Hayatın sana nerede cömert davrandığını, neye inandığını ve nasıl büyüdüğünü gösterir.',
+   saturn:'Satürn sorumluluk, sınır ve olgunlaşma dersidir. En çok nerede zorlandığını ama sabırla en kalıcı ustalığı da orada kazandığını anlatır.',
+   uranus:'Uranüs özgürlük, ani değişim ve seni sıra dışı kılan kıvılcımdır. Kalıpları nerede kırdığını ve hangi alanda "farklı" olduğunu gösterir.',
+   neptune:'Neptün hayal, sezgi ve ruhsal çözülüştür. Nerede sınırların eridiğini ve hangi alanda hem en yaratıcı hem en kırılgan olduğunu anlatır.',
+   pluto:'Plüton güç, kriz ve köklü dönüşümdür. Hayatının hangi alanında ölüp yeniden doğduğunu ve en derin gücünü nereden çektiğini gösterir.'
   };
-  function ordinal(n){var s=['th','st','nd','rd'],v=n%100;return (s[(v-20)%10]||s[v]||s[0]);}
-  function L(){return C[window.__lang]?window.__lang:'en';}
-  function SIGNS(){return L()==='tr'?SIGNS_TR:SIGNS_EN;}
+
+  /* ---------- state ---------- */
+  var CHART=null, chartPage=0, PAGES=[], curPage=0, voiceText=[];
+  function el(id){return document.getElementById(id);}
+  function stopVoice(){try{window.speechSynthesis.cancel();}catch(e){}}
+  function closeNatal(){stopVoice();scr.classList.remove('on');}
+  function houseOf(sIdx,ascSign){return ((sIdx-ascSign+12)%12)+1;}
+  function signOfHouse(N,ascSign){return (ascSign+N-1)%12;}
+  function ordTR(n){return n+'.';}
 
   /* ---------- styles ---------- */
   var css=document.createElement('style');
   css.textContent=
   '#natalScr{position:fixed;inset:0;z-index:140;display:none;background:#07040d;overflow:hidden}'+
   '#natalScr.on{display:block}'+
-  '#natalScr .nt-bg{position:absolute;inset:0;background:url("natal_splash.jpg") center/cover no-repeat;opacity:.14;filter:saturate(1.05)}'+
-  '#natalScr .nt-veil{position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0,rgba(60,30,6,.35),rgba(7,4,13,.86) 70%)}'+
+  '#natalScr .nt-bg{position:absolute;inset:0;background:url("natal_splash.jpg") center/cover no-repeat;opacity:.12;filter:saturate(1.05)}'+
+  '#natalScr .nt-veil{position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0,rgba(60,30,6,.32),rgba(7,4,13,.9) 72%)}'+
   '.nt-wrap{position:relative;z-index:2;height:100%;display:flex;flex-direction:column}'+
-  '.nt-head{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 12px) 16px 8px}'+
-  '.nt-head .nt-t{flex:1;font-family:\'Cinzel\',serif;color:#e6c46a;font-size:17px;letter-spacing:.12em;text-align:center}'+
+  '.nt-head{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 12px) 16px 6px;flex:0 0 auto}'+
+  '.nt-head .nt-t{flex:1;font-family:\'Cinzel\',serif;color:#e6c46a;font-size:16px;letter-spacing:.12em;text-align:center}'+
   '.nt-x{width:38px;height:38px;border-radius:50%;border:1px solid rgba(232,190,96,.5);background:rgba(0,0,0,.3);color:#e8be60;font-size:16px;cursor:pointer;flex:0 0 auto}'+
-  '.nt-body{flex:1;overflow-y:auto;padding:6px 18px 20px}'+
-  '.nt-card{background:linear-gradient(180deg,rgba(40,24,8,.5),rgba(20,10,4,.42));border:1px solid rgba(214,168,92,.35);border-radius:16px;padding:16px 16px;margin:12px auto;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,.4)}'+
-  '.nt-info-row{display:flex;justify-content:space-between;gap:12px;padding:9px 2px;border-bottom:1px solid rgba(214,168,92,.16);font-family:\'Spectral\',serif}'+
-  '.nt-info-row:last-child{border-bottom:none}.nt-info-row .k{color:#c9a87a;font-size:13px}.nt-info-row .v{color:#f4e6c4;font-size:14px;text-align:right}'+
-  '.nt-note{color:#d9c6a0;font-size:13px;line-height:1.55;font-family:\'Spectral\',serif;text-align:center;margin:14px auto 6px;max-width:400px}'+
-  '.nt-btn{display:block;width:100%;max-width:420px;margin:12px auto 0;padding:15px;border-radius:14px;border:1px solid rgba(232,190,96,.85);background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;font-family:\'Cinzel\',serif;font-size:14px;letter-spacing:.08em;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.4)}'+
-  '.nt-btn.ghost{background:transparent;color:#e8be60;box-shadow:none}'+
-  '.nt-lead{color:#e9d9b3;font-family:\'Spectral\',serif;font-size:14px;line-height:1.6;text-align:center;margin:8px auto 4px;max-width:420px}'+
-  '.nt-pline{display:flex;align-items:center;gap:10px;padding:11px 6px;border-bottom:1px solid rgba(214,168,92,.14);max-width:420px;margin:0 auto}'+
-  '.nt-pline .sym{font-size:19px;color:#f4d488;width:24px;text-align:center}'+
-  '.nt-pline .pn{flex:1;color:#f4e6c4;font-family:\'Cinzel\',serif;font-size:13.5px}'+
-  '.nt-pline .sg{color:#e0c48a;font-size:13px;font-family:\'Spectral\',serif}'+
-  '.nt-pline .hs{color:#c99a54;font-size:12px;font-family:\'Cinzel\',serif;margin-left:8px;white-space:nowrap}'+
-  '.nt-read-p{color:#efe2c2;font-family:\'Spectral\',serif;font-size:15.5px;line-height:1.72;margin:0 0 16px}'+
-  '.nt-read-h{color:#e6c46a;font-family:\'Cinzel\',serif;font-size:15px;letter-spacing:.06em;margin:2px 0 8px;display:flex;align-items:center;gap:9px}'+
-  '.nt-read-h .rs{font-size:20px}'+
-  '.nt-reader{position:relative;z-index:2;height:100%;display:flex;flex-direction:column}'+
-  '.nt-page{flex:1;overflow-y:auto;padding:8px 20px 8px}'+
-  '.nt-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid rgba(232,190,96,.55);background:rgba(10,6,2,.55);color:#f4d488;font-size:20px;cursor:pointer;z-index:6;display:flex;align-items:center;justify-content:center}'+
-  '.nt-arrow.l{left:6px}.nt-arrow.r{right:6px}.nt-arrow[disabled]{opacity:.25;pointer-events:none}'+
-  '.nt-pageno{position:absolute;right:14px;bottom:calc(env(safe-area-inset-bottom) + 58px);z-index:6;color:#e0c48a;font-family:\'Cinzel\',serif;font-size:12px;background:rgba(10,6,2,.5);border:1px solid rgba(214,168,92,.3);border-radius:12px;padding:4px 10px}'+
-  '.nt-bar{position:relative;z-index:6;display:flex;gap:8px;justify-content:center;padding:8px 14px calc(env(safe-area-inset-bottom) + 12px)}'+
-  '.nt-bar button{flex:0 0 auto;padding:10px 14px;border-radius:20px;border:1px solid rgba(232,190,96,.5);background:rgba(10,6,2,.5);color:#e8be60;font-family:\'Cinzel\',serif;font-size:12px;cursor:pointer}';
+  '.nt-scroll{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding:4px 16px 8px}'+   /* dikey+yatay ortalama */
+  '.nt-center{margin:auto;width:100%;max-width:430px}'+
+  '.nt-card{background:linear-gradient(180deg,rgba(40,24,8,.5),rgba(20,10,4,.42));border:1px solid rgba(214,168,92,.35);border-radius:16px;padding:16px;margin:10px auto;box-shadow:0 8px 24px rgba(0,0,0,.4)}'+
+  '.nt-irow{display:flex;justify-content:space-between;gap:12px;padding:9px 2px;border-bottom:1px solid rgba(214,168,92,.16);font-family:\'Spectral\',serif}'+
+  '.nt-irow:last-child{border-bottom:none}.nt-irow .k{color:#c9a87a;font-size:13px}.nt-irow .v{color:#f4e6c4;font-size:14px;text-align:right}'+
+  '.nt-note{color:#d9c6a0;font-size:13px;line-height:1.55;font-family:\'Spectral\',serif;text-align:center;margin:14px auto 6px}'+
+  '.nt-btn{display:block;width:100%;max-width:430px;margin:12px auto 0;padding:15px;border-radius:14px;border:1px solid rgba(232,190,96,.85);background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;font-family:\'Cinzel\',serif;font-size:14px;letter-spacing:.06em;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.4)}'+
+  '.nt-btn.ghost{background:transparent;color:#e8be60;box-shadow:none;border-color:rgba(232,190,96,.5)}'+
+  '.nt-lead{color:#e9d9b3;font-family:\'Spectral\',serif;font-size:14px;line-height:1.6;text-align:center;margin:6px auto 8px}'+
+  /* wheel */
+  '.nt-wheelwrap{text-align:center}'+
+  '.nt-wheel{width:min(88vw,360px);height:auto;display:block;margin:6px auto}'+
+  '.nt-cap{color:#e6c46a;font-family:\'Cinzel\',serif;font-size:13px;letter-spacing:.1em;text-align:center;margin:2px 0 6px}'+
+  /* table */
+  '.nt-tbl{width:100%;border-collapse:collapse;font-family:\'Spectral\',serif}'+
+  '.nt-tbl th{color:#c99a54;font-family:\'Cinzel\',serif;font-size:10.5px;letter-spacing:.08em;text-align:left;padding:6px 6px;border-bottom:1px solid rgba(214,168,92,.4)}'+
+  '.nt-tbl td{padding:8px 6px;border-bottom:1px solid rgba(214,168,92,.14);vertical-align:top}'+
+  '.nt-tbl .c-n{color:#f4e6c4;font-size:12.5px;white-space:nowrap}.nt-tbl .c-n b{color:#f4d488;font-weight:400}'+
+  '.nt-tbl .c-s{color:#e0c48a;font-size:12.5px;white-space:nowrap}.nt-tbl .c-d{color:#cbb58a;font-size:12px;white-space:nowrap}'+
+  '.nt-tbl .c-h{color:#c99a54;font-size:12px;white-space:nowrap}.nt-tbl .c-t{color:#cdbb95;font-size:11.5px;line-height:1.4}'+
+  /* reader */
+  '.nt-rtitle{color:#e6c46a;font-family:\'Cinzel\',serif;font-size:16px;letter-spacing:.05em;text-align:center;margin:2px 0 12px}'+
+  '.nt-rp{color:#efe2c2;font-family:\'Spectral\',serif;font-size:15.5px;line-height:1.75;margin:0 0 14px;text-align:left}'+
+  '.nt-arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:1px solid rgba(232,190,96,.55);background:rgba(10,6,2,.55);color:#f4d488;font-size:20px;cursor:pointer;z-index:6;display:flex;align-items:center;justify-content:center}'+
+  '.nt-arrow.l{left:4px}.nt-arrow.r{right:4px}.nt-arrow[disabled]{opacity:.22;pointer-events:none}'+
+  '.nt-pageno{position:absolute;right:12px;bottom:calc(env(safe-area-inset-bottom) + 56px);z-index:6;color:#e0c48a;font-family:\'Cinzel\',serif;font-size:11.5px;background:rgba(10,6,2,.5);border:1px solid rgba(214,168,92,.3);border-radius:12px;padding:4px 10px}'+
+  '.nt-bar{position:relative;z-index:6;display:flex;gap:8px;justify-content:center;padding:8px 14px calc(env(safe-area-inset-bottom) + 12px);flex:0 0 auto}'+
+  '.nt-bar button{padding:10px 14px;border-radius:20px;border:1px solid rgba(232,190,96,.5);background:rgba(10,6,2,.5);color:#e8be60;font-family:\'Cinzel\',serif;font-size:12px;cursor:pointer}';
   document.head.appendChild(css);
 
-  /* ---------- DOM ---------- */
   var scr=document.createElement('div');scr.id='natalScr';
-  scr.innerHTML='<div class="nt-bg"></div><div class="nt-veil"></div>'+
-    '<div class="nt-wrap" id="ntWrap"></div>';
+  scr.innerHTML='<div class="nt-bg"></div><div class="nt-veil"></div><div class="nt-wrap" id="ntWrap"></div>';
   document.body.appendChild(scr);
-  function $n(id){return document.getElementById(id);}
-  function closeNatal(){try{window.speechSynthesis.cancel();}catch(e){}scr.classList.remove('on');}
+  function head(t){return '<div class="nt-head"><div style="width:38px"></div><div class="nt-t">'+t+'</div><button class="nt-x" id="ntClose">✕</button></div>';}
+  function bindClose(){var c=el('ntClose');if(c)c.onclick=closeNatal;}
 
-  var CHART=null;
+  /* ---------- view: confirm ---------- */
+  function viewConfirm(){var p=window.__profile||{};
+    el('ntWrap').innerHTML=head(tr()?'Natal Haritam':'My Natal Chart')+
+     '<div class="nt-scroll"><div class="nt-center">'+
+      '<div class="nt-card">'+irow('Ad',p.name)+irow(tr()?'Doğum Tarihi':'Birth Date',p.date)+irow(tr()?'Doğum Saati':'Birth Time',p.time)+irow(tr()?'Doğum Yeri':'Birth Place',p.place)+'</div>'+
+      '<div class="nt-note">'+(tr()?'Kişisel bilgilerin doğru mu? Doğru değilse Düzenle\'ye bas; doğruysa Devam Et.':'Is your info correct? Tap Edit to fix, or Continue.')+'</div>'+
+      '<button class="nt-btn ghost" id="ntEdit">✎ '+(tr()?'Düzenle':'Edit')+'</button>'+
+      '<button class="nt-btn" id="ntCont">'+(tr()?'Devam Et':'Continue')+' ›</button>'+
+     '</div></div>';
+    bindClose();
+    el('ntEdit').onclick=function(){ if(window.__openEditProfile)window.__openEditProfile(function(){viewConfirm();}); };
+    el('ntCont').onclick=startCompute;}
+  function irow(k,v){return '<div class="nt-irow"><span class="k">'+k+'</span><span class="v">'+(v||'—')+'</span></div>';}
 
-  function headHTML(t){return '<div class="nt-head"><div style="width:38px"></div><div class="nt-t">'+t+'</div><button class="nt-x" id="ntClose">✕</button></div>';}
-
-  /* ---- view 1: confirm ---- */
-  function viewConfirm(){
-    var t=C[L()],p=window.__profile||{};
-    var wrap=$n('ntWrap');
-    wrap.innerHTML=headHTML(t.title)+
-      '<div class="nt-body">'+
-        '<div class="nt-card">'+
-          row('Ad', p.name||'—')+
-          row(L()==='tr'?'Doğum Tarihi':'Birth Date', p.date||'—')+
-          row(L()==='tr'?'Doğum Saati':'Birth Time', p.time||'—')+
-          row(L()==='tr'?'Doğum Yeri':'Birth Place', p.place||'—')+
-        '</div>'+
-        '<div class="nt-note">'+t.confirm+'</div>'+
-        '<button class="nt-btn ghost" id="ntEdit">✎ '+t.edit+'</button>'+
-        '<button class="nt-btn" id="ntCont">'+t.cont+' ›</button>'+
-      '</div>';
-    $n('ntClose').onclick=closeNatal;
-    $n('ntEdit').onclick=function(){ if(window.__openEditProfile)window.__openEditProfile(function(){viewConfirm();}); };
-    $n('ntCont').onclick=startCompute;
-  }
-  function row(k,v){return '<div class="nt-info-row"><span class="k">'+k+'</span><span class="v">'+(v||'—')+'</span></div>';}
-
-  /* ---- compute ---- */
-  function startCompute(){
-    var t=C[L()],p=window.__profile||{};
-    var wrap=$n('ntWrap');
-    wrap.innerHTML=headHTML(t.title)+'<div class="nt-body"><div class="nt-note" style="margin-top:60px">'+t.loading+'</div></div>';
-    $n('ntClose').onclick=closeNatal;
+  /* ---------- compute ---------- */
+  function startCompute(){var p=window.__profile||{};
+    el('ntWrap').innerHTML=head(tr()?'Natal Haritam':'My Natal Chart')+'<div class="nt-scroll"><div class="nt-center"><div class="nt-note" style="margin-top:40px">'+(tr()?'Doğduğun anın gökyüzü hesaplanıyor…':'Calculating your birth sky…')+'</div></div></div>';
+    bindClose();
     var dp=(p.date||'').split('-'),tp=(p.time||'12:00').split(':');
     var y=+dp[0],mo=+dp[1],D=+dp[2],h=+tp[0]||12,mi=+tp[1]||0;
-    geocode(p.place||'',function(g){
-      var lat,lon,y2=y,mo2=mo,D2=D,UT;
-      if(g){lat=g.lat;lon=g.lon;
-        var off=tzOffsetMin(g.tz,y,mo,D,h,mi);
-        var utcMs=Date.UTC(y,mo-1,D,h,mi)-off*60000;var dd=new Date(utcMs);
+    geocode(p.place||'',function(g){var lat,lon,y2=y,mo2=mo,D2=D,UT;
+      if(g){lat=g.lat;lon=g.lon;var off=tzOffsetMin(g.tz,y,mo,D,h,mi);
+        var dd=new Date(Date.UTC(y,mo-1,D,h,mi)-off*60000);
         y2=dd.getUTCFullYear();mo2=dd.getUTCMonth()+1;D2=dd.getUTCDate();UT=dd.getUTCHours()+dd.getUTCMinutes()/60;
-      } else { lat=null;lon=0; var loff=-new Date(Date.UTC(y,mo-1,D,h,mi)).getTimezoneOffset(); UT=h+mi/60; }
-      var chart=computeChart(y2,mo2,D2,UT, (lat==null?0:lat), lon);
-      CHART={chart:chart,ascSign:Math.floor(rev(chart.asc)/30),hasHouses:(lat!=null),g:g};
-      viewChart();
-    });
-  }
+      } else {lat=null;lon=0;UT=h+mi/60;}
+      var chart=computeChart(y2,mo2,D2,UT,(lat==null?0:lat),lon);
+      CHART={chart:chart,ascSign:Math.floor(rev(chart.asc)/30),hasHouses:(lat!=null)};
+      chartPage=0;viewChartPage();
+    });}
 
-  /* ---- view 2: chart summary ---- */
-  function viewChart(){
-    var t=C[L()],sg=SIGNS(),pos=CHART.chart.pos,ascSign=CHART.ascSign;
-    var lines='';
-    lines+='<div class="nt-pline"><span class="sym">⬆</span><span class="pn">'+t.asc+'</span><span class="sg">'+sg[ascSign]+'</span></div>';
-    PORDER.forEach(function(p){var lon=pos[p],s=Math.floor(rev(lon)/30),deg=(rev(lon)%30).toFixed(0);
-      var hs=CHART.hasHouses?(' <span class="hs">'+(((s-ascSign+12)%12)+1)+'. '+t.inHouse+'</span>'):'';
-      lines+='<div class="nt-pline"><span class="sym">'+PSYM[p]+'</span><span class="pn">'+t.pname[p]+'</span><span class="sg">'+sg[s]+' '+deg+'°</span>'+hs+'</div>';
-    });
-    var wrap=$n('ntWrap');
-    wrap.innerHTML=headHTML(t.title)+
-      '<div class="nt-body">'+
-        '<div class="nt-lead">'+t.intro+'</div>'+
-        (CHART.hasHouses?'':'<div class="nt-note">'+t.noNet+'</div>')+
-        '<div style="margin:10px 0 4px">'+lines+'</div>'+
-        '<button class="nt-btn" id="ntRead">'+t.read+' ›</button>'+
-        '<button class="nt-btn ghost" id="ntBack2">‹ '+t.cont.replace(/.*/,(L()==='tr'?'Geri':'Back'))+'</button>'+
-      '</div>';
-    $n('ntClose').onclick=closeNatal;
-    $n('ntRead').onclick=openReader;
-    $n('ntBack2').onclick=viewConfirm;
-  }
+  /* ---------- wheel svg ---------- */
+  function buildWheel(){var C=CHART.chart,asc=C.asc,cx=180,cy=180;
+    function P(a,R){return [cx-R*cosd(a),cy+R*sind(a)];}
+    var s='<svg class="nt-wheel" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">';
+    s+='<defs><radialGradient id="ntg" cx="50%" cy="45%" r="60%"><stop offset="0%" stop-color="#1c1206"/><stop offset="100%" stop-color="#0a0710"/></radialGradient></defs>';
+    s+='<circle cx="180" cy="180" r="176" fill="url(#ntg)"/>';
+    [176,150,128,92].forEach(function(R){s+='<circle cx="180" cy="180" r="'+R+'" fill="none" stroke="#caa04a" stroke-opacity="'+(R===176?0.9:0.4)+'" stroke-width="'+(R===176?1.4:1)+'"/>';});
+    // sign sectors + house numbers
+    for(var i=0;i<12;i++){var a0=rev(i*30-asc);var p1=P(a0,150),p2=P(a0,176);
+      s+='<line x1="'+p1[0].toFixed(1)+'" y1="'+p1[1].toFixed(1)+'" x2="'+p2[0].toFixed(1)+'" y2="'+p2[1].toFixed(1)+'" stroke="#caa04a" stroke-opacity="0.5" stroke-width="0.8"/>';
+      var am=rev(i*30+15-asc),g=P(am,163);
+      s+='<text x="'+g[0].toFixed(1)+'" y="'+(g[1]+4).toFixed(1)+'" fill="#f4d488" font-size="14" text-anchor="middle">'+SGL[i]+'</text>';
+      // house divider (whole sign = sign boundary) and number
+      var hp1=P(a0,128),hp2=P(a0,150);
+      s+='<line x1="'+hp1[0].toFixed(1)+'" y1="'+hp1[1].toFixed(1)+'" x2="'+hp2[0].toFixed(1)+'" y2="'+hp2[1].toFixed(1)+'" stroke="#caa04a" stroke-opacity="0.35" stroke-width="0.7"/>';
+      var hn=houseOf(i,CHART.ascSign),hg=P(am,138);
+      s+='<text x="'+hg[0].toFixed(1)+'" y="'+(hg[1]+3.5).toFixed(1)+'" fill="#c99a54" font-size="9" text-anchor="middle">'+hn+'</text>';
+    }
+    // axes AC-DC / MC-IC
+    function axis(a,lab,col){var q1=P(a,92),q2=P(a,176);s+='<line x1="'+q1[0].toFixed(1)+'" y1="'+q1[1].toFixed(1)+'" x2="'+q2[0].toFixed(1)+'" y2="'+q2[1].toFixed(1)+'" stroke="'+col+'" stroke-width="1.1" stroke-opacity="0.85"/>';var l=P(a,184);s+='<text x="'+l[0].toFixed(1)+'" y="'+(l[1]+3).toFixed(1)+'" fill="'+col+'" font-size="9" text-anchor="middle" font-family="Cinzel,serif">'+lab+'</text>';}
+    axis(0,'AC','#e7b96a');axis(180,'DC','#b98b46');
+    var amc=rev(C.mc-asc);axis(amc,'MC','#e7b96a');axis(rev(amc+180),'IC','#b98b46');
+    // aspects
+    var pl=PORDER.map(function(k){return {k:k,a:rev(C.pos[k]-asc),lon:C.pos[k]};});
+    function asp(d){d=Math.abs(d);d=Math.min(d,360-d);var t=[[0,6,'#8a6f3a'],[60,4,'#5bbf9f'],[90,6,'#c0563e'],[120,6,'#5bbf9f'],[180,6,'#c0563e']];for(var i=0;i<t.length;i++){if(Math.abs(d-t[i][0])<=t[i][1])return t[i][2];}return null;}
+    for(var i=0;i<pl.length;i++)for(var j=i+1;j<pl.length;j++){var col=asp(pl[i].lon-pl[j].lon);if(!col)continue;var a1=P(pl[i].a,90),a2=P(pl[j].a,90);s+='<line x1="'+a1[0].toFixed(1)+'" y1="'+a1[1].toFixed(1)+'" x2="'+a2[0].toFixed(1)+'" y2="'+a2[1].toFixed(1)+'" stroke="'+col+'" stroke-width="0.8" stroke-opacity="0.65"/>';}
+    // planets (radial stagger for close ones)
+    var sorted=pl.slice().sort(function(x,y){return x.a-y.a;});var lastA=-99,tier=0;
+    var placed={};
+    sorted.forEach(function(pp){if(Math.abs(pp.a-lastA)<9){tier=(tier+1)%2;}else{tier=0;}lastA=pp.a;placed[pp.k]=112-tier*16;});
+    pl.forEach(function(pp){var R=placed[pp.k];var g=P(pp.a,R);var tk1=P(pp.a,150),tk2=P(pp.a,145);
+      s+='<line x1="'+tk1[0].toFixed(1)+'" y1="'+tk1[1].toFixed(1)+'" x2="'+tk2[0].toFixed(1)+'" y2="'+tk2[1].toFixed(1)+'" stroke="#f4d488" stroke-width="1"/>';
+      s+='<text x="'+g[0].toFixed(1)+'" y="'+(g[1]+5).toFixed(1)+'" fill="#ffe6a0" font-size="14" text-anchor="middle">'+PSYM[pp.k]+'</text>';});
+    s+='</svg>';return s;}
 
-  /* ---- view 3: paginated reader ---- */
-  var PAGES=[],curPage=0,voiceText=[];
-  function buildPages(){
-    var t=C[L()],sg=SIGNS(),pos=CHART.chart.pos,ascSign=CHART.ascSign;
-    var items=[];
-    // ascendant first
-    items.push({sym:'⬆',h:t.asc+' — '+sg[ascSign],p:t.ascText+' '+sg[ascSign]+' yükselen '+(L()==='tr'?'sana ':'gives you ')+(L()==='tr'?t.flavor[ascSign]+'.':t.flavor[ascSign]+'.')});
-    PORDER.forEach(function(pl){var lon=pos[pl],s=Math.floor(rev(lon)/30),deg=(rev(lon)%30).toFixed(0);
-      var house=CHART.hasHouses?(((s-ascSign+12)%12)+1):null;
-      var hlabel=house?(house+'. '+(L()==='tr'?'Ev':'House')):(L()==='tr'?'':'');
-      var para=house?t.tpl(PSYM[pl],t.pname[pl],sg[s],house,t.core[pl],t.flavor[s],t.house[house-1],deg)
-        :(PSYM[pl]+' '+t.pname[pl]+', '+sg[s]+' '+t.inSign+' ('+deg+'°). '+ (L()==='tr'?'Bu, senin ':'This is ')+t.core[pl]+'. '+sg[s]+(L()==='tr'?' burcunda bu enerji ':' shows ')+t.flavor[s]+'.');
-      items.push({sym:PSYM[pl],h:t.pname[pl]+' — '+sg[s]+(house?(' · '+hlabel):''),p:para});
-    });
-    PAGES=[];voiceText=[];
-    for(var i=0;i<items.length;i+=2){PAGES.push(items.slice(i,i+2));}
-    PAGES.forEach(function(pg){voiceText.push(pg.map(function(it){return it.h+'. '+it.p;}).join(' '));});
+  /* ---------- view: chart pages (0=wheel, 1=table) ---------- */
+  function viewChartPage(){
+    if(chartPage===0)renderWheelPage();else renderTablePage();}
+  function renderWheelPage(){var sg=SIGN(),asc=CHART.ascSign;
+    el('ntWrap').innerHTML=
+     '<div class="nt-wrap-inner" style="position:relative;display:flex;flex-direction:column;height:100%">'+
+      head(tr()?'Natal Haritam':'My Natal Chart')+
+      '<button class="nt-arrow r" id="ntNextC">›</button>'+
+      '<div class="nt-scroll"><div class="nt-center nt-wheelwrap">'+
+        '<div class="nt-cap">'+(tr()?'Yükselen':'Ascendant')+' '+sg[asc]+' · '+(tr()?'Güneş':'Sun')+' '+sg[Math.floor(rev(CHART.chart.pos.sun)/30)]+' · '+(tr()?'Ay':'Moon')+' '+sg[Math.floor(rev(CHART.chart.pos.moon)/30)]+'</div>'+
+        buildWheel()+
+        '<div class="nt-lead">'+(tr()?'Doğduğun anın gerçek gökyüzü. Sağdaki oka basarak gezegen tablosuna geç.':'Your real birth sky. Tap the arrow for the planet table.')+'</div>'+
+      '</div></div>'+
+      '<div class="nt-pageno">'+(tr()?'Sayfa':'Page')+' 1 / 2</div>'+
+      '<div class="nt-bar"><button id="ntExitW">✕ '+(tr()?'Kapat':'Close')+'</button></div>'+
+     '</div>';
+    bindClose();el('ntExitW').onclick=closeNatal;el('ntNextC').onclick=function(){chartPage=1;viewChartPage();};}
+  function renderTablePage(){var sg=SIGN(),asc=CHART.ascSign,C=CHART.chart;
+    var rows='';
+    rows+=trow('⬆',tr()?'AC Yükselen':'AC Asc',sg[asc],rev(C.asc)%30,'—',ascTheme(asc));
+    PORDER.forEach(function(k){var lon=C.pos[k],s=Math.floor(rev(lon)/30);var h=CHART.hasHouses?houseOf(s,asc)+'. '+(tr()?'Ev':'H'):'—';
+      rows+=trow(PSYM[k],PN(k),sg[s],rev(lon)%30,h,themeFor(k,s));});
+    var mcs=Math.floor(rev(C.mc)/30);rows+=trow('MC',tr()?'MC Tepe':'MC',sg[mcs],rev(C.mc)%30,'—',mcTheme(mcs));
+    el('ntWrap').innerHTML=
+     '<div class="nt-wrap-inner" style="position:relative;display:flex;flex-direction:column;height:100%">'+
+      head(tr()?'Natal Haritam':'My Natal Chart')+
+      '<button class="nt-arrow l" id="ntPrevC">‹</button>'+
+      '<div class="nt-scroll"><div class="nt-center">'+
+        '<table class="nt-tbl"><thead><tr><th>'+(tr()?'NOKTA':'POINT')+'</th><th>'+(tr()?'BURÇ':'SIGN')+'</th><th>'+(tr()?'DERECE':'DEG')+'</th><th>'+(tr()?'EV':'H')+'</th><th>'+(tr()?'TEMA':'THEME')+'</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+        '<button class="nt-btn" id="ntRead">'+(tr()?'Detaylı Yorum İçin Tıklayın':'Read the Full Interpretation')+' ›</button>'+
+      '</div></div>'+
+      '<div class="nt-pageno">'+(tr()?'Sayfa':'Page')+' 2 / 2</div>'+
+      '<div class="nt-bar"><button id="ntExitT">✕ '+(tr()?'Kapat':'Close')+'</button></div>'+
+     '</div>';
+    bindClose();el('ntExitT').onclick=closeNatal;el('ntPrevC').onclick=function(){chartPage=0;viewChartPage();};el('ntRead').onclick=openReader;}
+  function trow(sym,name,sign,deg,house,theme){var si=SIGN().indexOf(sign);var gl=si>=0?SGL[si]+' ':'';
+    return '<tr><td class="c-n"><b>'+sym+'</b> '+name+'</td><td class="c-s">'+gl+sign+'</td><td class="c-d">'+deg.toFixed(2)+'°</td><td class="c-h">'+house+'</td><td class="c-t">'+theme+'</td></tr>';}
+
+  /* ---------- reader (long, page per house) ---------- */
+  function buildPages(){var asc=CHART.ascSign,C=CHART.chart;PAGES=[];voiceText=[];
+    // intro
+    var sunS=Math.floor(rev(C.pos.sun)/30),moonS=Math.floor(rev(C.pos.moon)/30);
+    var intro=[
+      'Bu harita, doğduğun anın gökyüzünün bir fotoğrafıdır — ve o an bir daha asla tekrarlanmadı. Her gezegenin durduğu burç ve ev, karakterinin bir katmanını, hayatının bir odasını anlatır.',
+      'Özün '+SIGN_TR[sunS]+' Güneşi ile parlıyor: '+SIGN_LONG[sunS]+' Duygusal dünyanı ise '+SIGN_TR[moonS]+' Ayı besliyor: '+SIGN_LONG[moonS],
+      'Dünyaya '+SIGN_TR[asc]+' yükseleniyle açılıyorsun; insanların ilk gördüğü yüz budur. Şimdi on iki evi tek tek gezerek bu haritanın seni nasıl şekillendirdiğine bakalım — sağdaki okla ilerle.'
+    ];
+    PAGES.push({title:tr()?'Haritanın Özü':'Chart Essence',ps:intro});
+    for(var N=1;N<=12;N++){
+      var sign=signOfHouse(N,asc);var ps=[];
+      ps.push(HOUSE_LONG[N-1]);
+      ps.push('Bu alanı '+SIGN_TR[sign]+' burcu yönetiyor. '+SIGN_LONG[sign]+' Bu yüzden hayatının bu köşesine '+SADJ[sign]+' bir tavırla yaklaşırsın.');
+      var here=PORDER.filter(function(k){return houseOf(Math.floor(rev(C.pos[k])/30),asc)===N;});
+      if(here.length){here.forEach(function(k){var s=Math.floor(rev(C.pos[k])/30);
+        ps.push('Bu evde '+PSYM[k]+' '+PN_TR[k]+' bulunuyor ('+SIGN_TR[s]+' '+(rev(C.pos[k])%30).toFixed(0)+'°). '+PLANET_LONG[k]+' Tam da '+ordTR(N)+' evde durması, bu gücü doğrudan '+HOUSE_LIFE[N-1]+' alanına bağlar; bu yerleşim, söz konusu temayı senin için ömür boyu canlı ve belirleyici kılar.');});
+        ps.push('Kısacası '+ordTR(N)+' ev, '+here.map(function(k){return PN_TR[k];}).join(' ve ')+' enerjisiyle yüklü — hayatının en çok yaşandığı, en çok ders verdiği alanlardan biri burasıdır.');
+      } else {
+        ps.push('Bu evde herhangi bir gezegen yok. Bu bir eksiklik değil: alan daha sessiz, daha içsel işler ve tamamen '+SIGN_TR[sign]+' burcunun rehberliğinde akar. Buradaki dersler gürültüsüz gelir, ama '+SIGN_TR[sign]+' burcunun doğasıyla derinden şekillenir; zaman zaman hayatın seni bu kapıdan içeri, sessizce çağırır.');
+      }
+      PAGES.push({title:N+'. Ev · '+SIGN_TR[sign],ps:ps});
+    }
+    PAGES.forEach(function(pg){voiceText.push(pg.title+'. '+pg.ps.join(' '));});
   }
   function openReader(){buildPages();curPage=0;renderPage();}
-  function renderPage(){
-    var t=C[L()];
-    var body=PAGES[curPage].map(function(it){return '<div class="nt-read-h"><span class="rs">'+it.sym+'</span>'+it.h+'</div><p class="nt-read-p">'+it.p+'</p>';}).join('');
-    var wrap=$n('ntWrap');
-    wrap.innerHTML=headHTML(t.title)+
-      '<div class="nt-reader">'+
-        '<button class="nt-arrow l" id="ntPrev">‹</button>'+
-        '<button class="nt-arrow r" id="ntNext">›</button>'+
-        '<div class="nt-page" id="ntPage">'+body+'</div>'+
-        '<div class="nt-pageno">'+t.page+' '+(curPage+1)+' '+t.of+' '+PAGES.length+'</div>'+
-        '<div class="nt-bar"><button id="ntListen">'+t.listen+'</button><button id="ntStop">'+t.stop+'</button><button id="ntExit">✕</button></div>'+
-      '</div>';
-    var pv=$n('ntPrev'),nx=$n('ntNext');
+  function renderPage(){var pg=PAGES[curPage];
+    var body='<div class="nt-rtitle">'+pg.title+'</div>'+pg.ps.map(function(x){return '<p class="nt-rp">'+x+'</p>';}).join('');
+    el('ntWrap').innerHTML=
+     '<div class="nt-wrap-inner" style="position:relative;display:flex;flex-direction:column;height:100%">'+
+      head(tr()?'Natal Yorumu':'Natal Reading')+
+      '<button class="nt-arrow l" id="ntPrev">‹</button><button class="nt-arrow r" id="ntNext">›</button>'+
+      '<div class="nt-scroll"><div class="nt-center">'+body+'</div></div>'+
+      '<div class="nt-pageno">'+(tr()?'Sayfa':'Page')+' '+(curPage+1)+' / '+PAGES.length+'</div>'+
+      '<div class="nt-bar"><button id="ntListen">'+(tr()?'🔊 Sesli Dinle':'🔊 Listen')+'</button><button id="ntStop">'+(tr()?'⏹ Sustur':'⏹ Stop')+'</button><button id="ntExit">✕</button></div>'+
+     '</div>';
+    bindClose();
+    var pv=el('ntPrev'),nx=el('ntNext');
     if(curPage===0)pv.setAttribute('disabled','');if(curPage===PAGES.length-1)nx.setAttribute('disabled','');
     pv.onclick=function(){if(curPage>0){curPage--;stopVoice();renderPage();}};
     nx.onclick=function(){if(curPage<PAGES.length-1){curPage++;stopVoice();renderPage();}};
-    $n('ntClose').onclick=closeNatal;$n('ntExit').onclick=closeNatal;
-    $n('ntListen').onclick=speakPage;$n('ntStop').onclick=stopVoice;
-    $n('ntPage').scrollTop=0;
-  }
-  function stopVoice(){try{window.speechSynthesis.cancel();}catch(e){}}
-  function speakPage(){if(!window.speechSynthesis)return;stopVoice();
-    var u=new SpeechSynthesisUtterance((voiceText[curPage]||'').replace(/<[^>]+>/g,''));
-    u.lang=(window.__lang==='tr')?'tr-TR':(window.__lang||'en')+'-'+((window.__lang||'en').toUpperCase());
-    if(window.__lang==='en')u.lang='en-US';u.rate=.97;window.speechSynthesis.speak(u);}
+    el('ntExit').onclick=closeNatal;el('ntListen').onclick=speakPage;el('ntStop').onclick=stopVoice;
+    var sc=el('ntWrap').querySelector('.nt-scroll');if(sc)sc.scrollTop=0;}
+  function speakPage(){if(!window.speechSynthesis)return;stopVoice();var u=new SpeechSynthesisUtterance((voiceText[curPage]||'').replace(/<[^>]+>/g,''));u.lang=tr()?'tr-TR':'en-US';u.rate=.97;window.speechSynthesis.speak(u);}
 
   /* ---------- entry ---------- */
-  window.__openNatal=function(){scr.classList.add('on');viewConfirm();};
+  window.__openNatal=function(){scr.classList.add('on');chartPage=0;viewConfirm();};
  }catch(e){ if(window.console)console.log('natal init error',e); }
 })();
 

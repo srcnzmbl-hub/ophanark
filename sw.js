@@ -1,7 +1,7 @@
 /* Ophanark PWA service worker */
-var CACHE = 'ophanark-v25';
+var CACHE = 'ophanark-v26';
 var CORE = [
-  './','./index.html','./manifest.webmanifest','./opening.jpg',
+  './','./index.html','./manifest.webmanifest','./opening.jpg','./emblem.png',
   './app-icon-192.png','./app-icon-512.png','./app-apple-touch.png'
 ];
 
