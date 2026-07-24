@@ -577,7 +577,7 @@ goldBall.position.copy(bh.position); goldBall.scale.set(1,1,1); scene.add(goldBa
 
 // ================= ETAP 2: SAHNE 9-10-11 =================
 // SAHNE 10-11: gezegenler DAGINIK (cember gibi ama ic ice gecmeden) durur; serbest 3B yorunge + zoom
-const SCATTER_C=new THREE.Vector3(0,0.6,0), SCATTER_R=2.9, PATH_SCALE=1.05; // saat yonu 12 gezegen cemberi (biraz daraltildi)
+const SCATTER_C=new THREE.Vector3(0,0.6,0), SCATTER_R=2.5, PATH_SCALE=1.05; // saat yonu 12 gezegen cemberi (merkeze yaklastirildi)
 const CAM_D=new THREE.Vector3(0,1.3,16.5), TGT_D=new THREE.Vector3(0,0.6,0), FOV_D=54; // etkilesim kadraji
 // yildiz tozu (sahne9: cember/dereceler/gunes dusup toza donusur)
 const starDust=new THREE.Group(); scene.add(starDust); const sdust=[];
@@ -669,7 +669,12 @@ const GRAYC=new THREE.Color(0x8f9299);
 function reparentPlanets(){if(reparented)return;reparented=true;
 const N=nodes.length;
 const R=SCATTER_R*1.18;
-for(let i=0;i<N;i++){const n=nodes[i];scene.attach(n.pg);n.p0=n.pg.position.clone();n.s0=n.pg.scale.x;n.read=false;
+for(let i=0;i<N;i++){const n=nodes[i];scene.attach(n.pg);n.p0=n.pg.position.clone();n.s0=n.pg.scale.x;n.read=false;}
+// boyuta göre sırala, sonra BİR KÜÇÜK BİR BÜYÜK olacak şekilde çembere eşit dağıt (küçükler/büyükler kümelenmesin)
+const bySize=[...nodes].sort((a,b)=>a.sz-b.sz);
+const ordered=[]; let lo=0, hi=N-1, tog=true;
+while(lo<=hi){ if(tog)ordered.push(bySize[lo++]); else ordered.push(bySize[hi--]); tog=!tog; }
+for(let i=0;i<N;i++){const n=ordered[i];
 const ang=Math.PI/2 - (i/N)*Math.PI*2; /* saat yonu, tepeden basla */
 n.cscatter=new THREE.Vector3(SCATTER_C.x+Math.cos(ang)*R, SCATTER_C.y+Math.sin(ang)*R, SCATTER_C.z);}
 }
