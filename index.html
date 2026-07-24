@@ -1975,6 +1975,20 @@ try{
   var rec=null, wakeRec=null, wakeOn=false, listening=false;
   function setSub(txt){var s=document.getElementById('ophSub');if(s)s.textContent=txt;}
   function micBtn(){return document.getElementById('ophMic');}
+  var _actx=null;
+  function beep(kind){
+    try{
+      _actx=_actx||new (window.AudioContext||window.webkitAudioContext)();
+      if(_actx.state==='suspended')_actx.resume();
+      var o=_actx.createOscillator(), g=_actx.createGain();
+      o.connect(g); g.connect(_actx.destination); o.type='sine';
+      var t=_actx.currentTime;
+      if(kind==='start'){ o.frequency.setValueAtTime(620,t); o.frequency.exponentialRampToValueAtTime(970,t+0.12); }
+      else { o.frequency.setValueAtTime(900,t); o.frequency.exponentialRampToValueAtTime(500,t+0.14); }
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.17,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+0.2);
+      o.start(t); o.stop(t+0.22);
+    }catch(e){}
+  }
   function startListen(){
     if(!SR){var lang=lang0();var m=(lang==='tr')?'Bu tarayıcı sesle konuşmayı desteklemiyor; yazarak sorabilirsin.':'This browser does not support voice input; you can type instead.';bubble('op',m);return;}
     if(listening)return; listening=true;
@@ -1984,7 +1998,8 @@ try{
     var b=micBtn(); if(b)b.classList.add('listening');
     var inp=document.getElementById('ophIn');
     var base=(inp&&inp.value)?inp.value.trim():'';
-    setSub(TR?'Dinliyorum…':'Listening…');
+    var hadErr=false;
+    rec.onstart=function(){ hadErr=false; beep('start'); setSub(TR?'🎙 Dinliyorum…':'🎙 Listening…'); };
     rec.onresult=function(e){
       var out='';
       for(var i=0;i<e.results.length;i++){ out+=e.results[i][0].transcript; }
@@ -1992,7 +2007,7 @@ try{
       if(inp){ inp.value=(base?base+' ':'')+out; }
     };
     rec.onerror=function(ev){
-      var er=ev&&ev.error;
+      var er=ev&&ev.error; hadErr=true;
       var m = (er==='not-allowed'||er==='service-not-allowed') ? (TR?'Mikrofon izni kapalı. Cihaz ayarlarından bu uygulamaya mikrofon iznini aç.':'Microphone permission is off. Allow mic access for this app in settings.')
         : er==='no-speech' ? (TR?'Ses algılanamadı, tekrar dene.':'No speech detected, try again.')
         : er==='network' ? (TR?'Ses tanıma için internet gerekli.':'Voice recognition needs internet.')
@@ -2000,7 +2015,11 @@ try{
         : '';
       if(m)setSub(m);
     };
-    rec.onend=function(){listening=false;var bb=micBtn();if(bb)bb.classList.remove('listening');};
+    rec.onend=function(){
+      listening=false; var bb=micBtn(); if(bb)bb.classList.remove('listening');
+      if(!hadErr){ beep('end'); setSub(TR?'✓ Kayıt bitti — doğruysa gönder\'e bas':'✓ Recorded — tap send if correct'); }
+      setTimeout(function(){ if(!listening)setSub(subDefault()); },2400);
+    };
     try{rec.start();}catch(e){listening=false;var bb=micBtn();if(bb)bb.classList.remove('listening');setSub(subDefault());}
   }
   function subDefault(){return (lang0()==='tr')?'"Hey Ophan" de ya da aşağıya yaz':'Say "Hey Ophan" or ask below';}
