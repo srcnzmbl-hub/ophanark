@@ -330,22 +330,22 @@ d.flareT-=0.016;if(d.flareT<=0){const dir=randUnit();const fl=new THREE.Sprite(n
 for(let i=d.flares.length-1;i>=0;i--){const f=d.flares[i];f.life+=0.03;const r=d.radius*(1.0+f.life*2.2);f.fl.position.set(f.dir.x*r,f.dir.y*r,f.dir.z*r);const b=d.radius*(1.2+f.life*2.6);f.fl.scale.set(b,b,1);f.fl.material.opacity=Math.max(0,0.9*(1-f.life));if(f.life>=1){g.remove(f.fl);d.flares.splice(i,1);}}}
 const centerSun=makeSun(0.5,50);wheel.add(centerSun); // ilk gorunumde merkezde durur; sinematikte gizlenir (frontSun kullanilir)
 const sunRing=new THREE.Mesh(new THREE.TorusGeometry(0.92,0.012,12,90),new THREE.MeshBasicMaterial({color:0xe8b45c,transparent:true,opacity:.5}));wheel.add(sunRing);
-// ======= MERKEZ: 3D OPHANARK LOGOSU (güneş yerine, ışık saçar) =======
-const logoGroup=new THREE.Group(); logoGroup.position.set(0,0,0); scene.add(logoGroup);
-let logoReady=false, logoModel=null;
-const logoGlow=new THREE.Sprite(new THREE.SpriteMaterial({map:radialTex('rgba(255,216,132,0.95)','rgba(255,150,45,0)'),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0.7}));
-logoGlow.scale.set(4,4,1); logoGlow.position.y=-0.4; logoGroup.add(logoGlow);
-const logoLight=new THREE.PointLight(0xffe6b0,2.4,44,1.5); logoGroup.add(logoLight);
+// ======= MERKEZ 3D OPHANARK LOGOSU — başlangıçta GİZLİ; sadece "yorumla" akışında gezegenler çembere girince KARADELİKTEN doğar =======
+const logoGroup=new THREE.Group(); logoGroup.position.set(0,0.6,0); logoGroup.visible=false; scene.add(logoGroup);
+let logoReady=false, logoModel=null, logoFinalScale=1;
+const logoGlow=new THREE.Sprite(new THREE.SpriteMaterial({map:radialTex('rgba(255,216,132,0.95)','rgba(255,150,45,0)'),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0}));
+logoGlow.scale.set(4,4,1); logoGlow.position.y=0; logoGroup.add(logoGlow);
+const logoLight=new THREE.PointLight(0xffe6b0,0,44,1.5); logoGroup.add(logoLight);
 new GLTFLoader().load('ophanim.glb',(gl)=>{ const m=gl.scene;
   // Işığa bağımlı olmadan kendi dokusuyla PARLASIN (altın net görünsün)
   m.traverse(o=>{ if(o.isMesh){ const mp=(o.material&&o.material.map)||null;
     o.material=new THREE.MeshBasicMaterial({map:mp,color:mp?0xffffff:0xdca548,side:THREE.DoubleSide,transparent:!!(o.material&&o.material.transparent),alphaTest:0.02});
     o.frustumCulled=false; } });
   let box=new THREE.Box3().setFromObject(m); const sz=new THREE.Vector3(); box.getSize(sz);
-  const targetD=3.0, mx=Math.max(sz.x,sz.y,sz.z)||1; m.scale.setScalar(targetD/mx);
-  box=new THREE.Box3().setFromObject(m); const ctr=new THREE.Vector3(); box.getCenter(ctr); m.position.sub(ctr); m.position.y-=0.55;
+  const targetD=2.7, mx=Math.max(sz.x,sz.y,sz.z)||1; logoFinalScale=targetD/mx; m.scale.setScalar(logoFinalScale);
+  box=new THREE.Box3().setFromObject(m); const ctr=new THREE.Vector3(); box.getCenter(ctr); m.position.sub(ctr);
   logoGroup.add(m); logoModel=m; logoReady=true;
-  centerSun.visible=false; sunRing.visible=false; // güneşi kaldır, yerini logo alır
+  // başlangıç kürede GÜNEŞ kalır; logo yalnızca karadelik reveal'inde görünür
 },undefined,(e)=>{console.log('ophanim.glb yüklenemedi',e);});
 function numSprite(txt){const s=128,cv=document.createElement('canvas');cv.width=cv.height=s;const x=cv.getContext('2d');x.font='bold 54px Georgia';x.textAlign='center';x.textBaseline='middle';x.lineWidth=7;x.strokeStyle='rgba(18,6,8,0.92)';x.strokeText(txt,s/2,s/2);x.fillStyle='rgba(246,222,150,0.98)';x.fillText(txt,s/2,s/2);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthWrite:false,depthTest:false}));sp.scale.set(0.86,0.86,1);sp.renderOrder=2;return sp;}
 for(let d=0;d<360;d+=30){const a=THREE.MathUtils.degToRad(d);const sp=numSprite(String(d)+'°');sp.position.set(Math.cos(a)*R*1.09,Math.sin(a)*R*1.09,0);wheel.add(sp);}
@@ -682,7 +682,54 @@ dustGroup.visible=false; goldStars.visible=false; // sarı toz/yildizlar gizlens
 frontSunG.visible=false; centerSun.visible=false; wheel.visible=false; // sinematik gunes/cember kalintilarini gizle
 controls.enabled=true;controls.enableRotate=true;controls.enableZoom=true;controls.enablePan=false;controls.autoRotate=true;controls.autoRotateSpeed=0.08;
 controls.minDistance=5;controls.maxDistance=32;
-controls.target.copy(TGT_D);camera.position.copy(CAM_D);camera.fov=FOV_D;camera.updateProjectionMatrix();controls.update();}
+controls.target.copy(TGT_D);camera.position.copy(CAM_D);camera.fov=FOV_D;camera.updateProjectionMatrix();controls.update();
+startReveal();} // gezegenler çembere girdi -> ortada karadelik belirip 3D logo doğsun
+// ---- KARADELİK REVEAL: gezegenler saat yönü çemberine girince ortada birden karadelik belirir, 3D OPHANARK logosu ondan doğar ----
+let reveal={on:false,t0:0,done:false};
+const REVEAL_BH=1.35, REVEAL_HOLD=0.3, REVEAL_EMERGE=1.7; // karadelik ~1.35s belirir, kısa bekler, logo ~1.7s doğar
+function startReveal(){
+ if(reveal.on)return; reveal.on=true; reveal.t0=t; reveal.done=false;
+ bh.position.copy(SCATTER_C); bh.visible=true; bhCore.visible=true; bhCore.scale.setScalar(0.02);
+ for(const p of diskP)p.material.opacity=0;
+ for(const p of vortex){p.userData.rad=3+Math.random()*5; p.material.opacity=0;}
+ flash.position.copy(SCATTER_C); flash.material.opacity=0; flash.scale.setScalar(1);
+ logoGroup.position.copy(SCATTER_C); logoGroup.visible=false;
+ if(logoModel)logoModel.scale.setScalar(0.0001);
+ logoGlow.material.opacity=0; logoLight.intensity=0;
+}
+function updateReveal(re){
+ // disk + girdap sürekli döner
+ disk.rotation.z+=0.02;
+ for(const p of diskP){p.userData.ang+=0.01*p.userData.sp;const r=p.userData.rad;p.position.set(Math.cos(p.userData.ang)*r,Math.sin(p.userData.ang)*r,0);}
+ for(const p of vortex){p.userData.ang+=0.03*p.userData.sp;p.userData.rad-=0.03*p.userData.in;if(p.userData.rad<0.5){p.userData.rad=4+Math.random()*4;p.userData.z=(Math.random()-.5)*4;}
+  const r=p.userData.rad;p.position.set(Math.cos(p.userData.ang)*r,Math.sin(p.userData.ang)*r,p.userData.z*(r/8));}
+ // FAZ A: karadelik ortada birden belirir
+ const bhF=ez(clamp01(re/REVEAL_BH));
+ bhCore.scale.setScalar(Math.max(0.02,0.05+bhF*1.05));
+ const appear=clamp01(re/(REVEAL_BH*0.8));
+ for(const p of diskP)p.material.opacity=0.78*appear;
+ for(const p of vortex)p.material.opacity=clamp01(p.userData.rad/6)*0.6*appear;
+ // karadelik tam oluşunca ışık patlaması
+ if(re>REVEAL_BH-0.35 && re<REVEAL_BH+0.9){flash.material.opacity=Math.sin(clamp01((re-(REVEAL_BH-0.35))/0.9)*Math.PI)*0.95; flash.scale.setScalar(1+(re-(REVEAL_BH-0.35))*9);}
+ else flash.material.opacity=Math.max(0,flash.material.opacity-0.06);
+ // FAZ B: 3D logo karadelikten doğar; karadelik kapanır
+ const eStart=REVEAL_BH+REVEAL_HOLD;
+ if(re>=eStart){
+  const k=ez(clamp01((re-eStart)/REVEAL_EMERGE));
+  logoGroup.visible=true;
+  if(logoModel)logoModel.scale.setScalar(Math.max(0.0001,logoFinalScale*k));
+  logoGlow.material.opacity=0.5*k; logoLight.intensity=2.2*k;
+  const col=clamp01(1-(re-eStart)/(REVEAL_EMERGE*0.7));
+  bhCore.scale.setScalar(Math.max(0.001,1.1*col));
+  for(const p of diskP)p.material.opacity*=col;
+  for(const p of vortex)p.material.opacity*=col;
+ }
+ if(re>eStart+REVEAL_EMERGE+0.3){
+  reveal.done=true; bh.visible=false; bhCore.visible=false; flash.material.opacity=0;
+  for(const p of diskP)p.material.opacity=0; for(const p of vortex)p.material.opacity=0;
+  if(logoModel)logoModel.scale.setScalar(logoFinalScale); logoGroup.visible=true; logoGlow.material.opacity=0.5; logoLight.intensity=2.2;
+ }
+}
 // ---- FINAL: tum gezegenler okununca parca parca natal semaya toplanir, usturlap cemberleri sirayla belirir, gunes gri gelip parlar ----
 function startFinale(){if(finale)return; finale=true; finaleStart=t; finaleDone=false;
 controls.enabled=false; controls.autoRotate=false;
@@ -917,12 +964,9 @@ const pulse=(Math.sin(t*2.4)+1)/2;
 nodes.forEach(n=>{if(!n.isSun)n.planet.rotation.y+=0.0018;if(n.isHot&&n.halo){n.halo.material.opacity=.24+pulse*.35;}});
 for(const sg of suns)updateSun(sg);
 if(story.on)updateStory(t-story.t0);
-if(logoReady){ const inC=(story.phase==='interactive'||story.phase==='arrange');
-  logoGroup.position.x += ((inC?SCATTER_C.x:0)-logoGroup.position.x)*0.07;
-  logoGroup.position.y += ((inC?SCATTER_C.y:0)-logoGroup.position.y)*0.07;
-  logoGroup.position.z += ((inC?SCATTER_C.z:0)-logoGroup.position.z)*0.07;
-  if(logoModel)logoModel.rotation.y+=0.005;
-  logoGlow.material.opacity=0.55+0.16*Math.sin(t*1.5); logoLight.intensity=2.1+0.6*Math.sin(t*1.5); }
+if(reveal.on && !reveal.done) updateReveal(t-reveal.t0);
+if(logoReady && logoGroup.visible){ if(logoModel)logoModel.rotation.y+=0.005;
+  if(reveal.done){ logoGlow.material.opacity=0.5+0.16*Math.sin(t*1.5); logoLight.intensity=2.1+0.6*Math.sin(t*1.5); } }
 composer.render();}
 loop();
 </script>
