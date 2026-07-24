@@ -450,7 +450,11 @@ img{display:block}
 .rd-topback{position:absolute;top:12px;left:12px;z-index:7;width:40px;height:40px;border-radius:50%;border:1px solid rgba(232,190,96,.75);background:linear-gradient(180deg,rgba(58,26,8,.72),rgba(20,7,4,.9));color:var(--gold2);font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 4px 14px rgba(0,0,0,.5)}
 .rd-topback:active{transform:scale(.93)}
 .rd-bg2{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.34;filter:saturate(.85) brightness(.72)}
-#reading .rd-back .rd-bg2{opacity:.5;filter:saturate(1.05) brightness(.82)}
+#reading .rd-back .rd-bg2{opacity:1;filter:none}
+#reading .rd-back .rd-veil2{background:linear-gradient(180deg,rgba(15,3,5,.18),rgba(15,3,5,.08) 30%,rgba(15,3,5,.42))}
+.rd-signname{font-family:'Cinzel',serif;color:#f2d489;font-size:22px;letter-spacing:.06em;text-align:center;margin-top:2px;text-shadow:0 2px 10px rgba(0,0,0,.65)}
+.rd-signglyph{font-family:'ophzod',serif;color:#f2d489;font-size:40px;line-height:1;text-align:center;margin-top:7px;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+#reading .rd-back .rd-scroll{margin-top:2cm}
 .rd-veil2{position:absolute;inset:0;background:
   radial-gradient(120% 75% at 50% 28%,rgba(12,3,4,.42),rgba(12,3,4,.66) 84%),
   linear-gradient(180deg,rgba(12,3,4,.55),rgba(12,3,4,.42) 26%,rgba(12,3,4,.85))}
@@ -776,7 +780,8 @@ img{display:block}
           <div class="rd-bg2" id="rdBgB"></div><div class="rd-veil2"></div>
           <div class="feathers" id="rdFeathers"></div>
           <div class="rd-inner">
-            <div class="rd-title" id="rdTitle">Aries · Daily</div>
+            <div class="rd-signname" id="rdTitle">Aries</div>
+            <div class="rd-signglyph" id="rdGlyph">v</div>
             <div class="rd-scroll"><div class="rd-body" id="rdBody">…</div><div class="rd-natal" id="rdNatal"></div></div>
           </div>
         </div>
@@ -1485,8 +1490,11 @@ try{
     curSign=i;
     var slug=ZOD[i][0], name=ZOD[i][1];
     $('rdBgF').style.backgroundImage="url('z_"+slug+".jpg')";
-    $('rdBgB').style.backgroundImage="url('natal_splash.jpg')";
+    $('rdBgB').style.backgroundImage="url('card_reading.jpg')";
     $('rdSign').textContent=name;
+    var ZCH_R=['v','d','p','t','n','b','l','f','h','r','x','j'];
+    if($('rdTitle'))$('rdTitle').textContent=name;
+    if($('rdGlyph'))$('rdGlyph').textContent=ZCH_R[i]||'';
     stopVoice();
     flip.classList.remove('flipped');
     rd.classList.remove('reading');
@@ -1497,7 +1505,7 @@ try{
   function openPeriod(period){
     stopVoice();
     var name=ZOD[curSign][1];
-    $('rdTitle').textContent=name+' · '+(PLABEL[period]||'');
+    $('rdTitle').textContent=name;
     var body=$('rdBody'); body.textContent='…';
     var sc=rd.querySelector('.rd-scroll'); if(sc)sc.scrollTop=0;
     flip.classList.add('flipped');
