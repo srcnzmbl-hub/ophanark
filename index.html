@@ -1979,13 +1979,29 @@ try{
     if(!SR){var lang=lang0();var m=(lang==='tr')?'Bu tarayıcı sesle konuşmayı desteklemiyor; yazarak sorabilirsin.':'This browser does not support voice input; you can type instead.';bubble('op',m);return;}
     if(listening)return; listening=true;
     try{rec=new SR();}catch(e){listening=false;return;}
-    rec.lang=(LANGV[lang0()]||'en-US'); rec.interimResults=false; rec.maxAlternatives=1;
+    var TR=(lang0()==='tr');
+    rec.lang=(LANGV[lang0()]||'en-US'); rec.interimResults=true; rec.maxAlternatives=1; rec.continuous=false;
     var b=micBtn(); if(b)b.classList.add('listening');
-    setSub((lang0()==='tr')?'Dinliyorum…':'Listening…');
-    rec.onresult=function(e){var txt=e.results[0][0].transcript;send(txt);};
-    rec.onerror=function(){};
-    rec.onend=function(){listening=false;var bb=micBtn();if(bb)bb.classList.remove('listening');setSub(subDefault());};
-    try{rec.start();}catch(e){listening=false;}
+    var inp=document.getElementById('ophIn');
+    var base=(inp&&inp.value)?inp.value.trim():'';
+    setSub(TR?'Dinliyorum…':'Listening…');
+    rec.onresult=function(e){
+      var out='';
+      for(var i=0;i<e.results.length;i++){ out+=e.results[i][0].transcript; }
+      out=out.replace(/\s+/g,' ').trim();
+      if(inp){ inp.value=(base?base+' ':'')+out; }
+    };
+    rec.onerror=function(ev){
+      var er=ev&&ev.error;
+      var m = (er==='not-allowed'||er==='service-not-allowed') ? (TR?'Mikrofon izni kapalı. Cihaz ayarlarından bu uygulamaya mikrofon iznini aç.':'Microphone permission is off. Allow mic access for this app in settings.')
+        : er==='no-speech' ? (TR?'Ses algılanamadı, tekrar dene.':'No speech detected, try again.')
+        : er==='network' ? (TR?'Ses tanıma için internet gerekli.':'Voice recognition needs internet.')
+        : er==='audio-capture' ? (TR?'Mikrofon bulunamadı.':'No microphone found.')
+        : '';
+      if(m)setSub(m);
+    };
+    rec.onend=function(){listening=false;var bb=micBtn();if(bb)bb.classList.remove('listening');};
+    try{rec.start();}catch(e){listening=false;var bb=micBtn();if(bb)bb.classList.remove('listening');setSub(subDefault());}
   }
   function subDefault(){return (lang0()==='tr')?'"Hey Ophan" de ya da aşağıya yaz':'Say "Hey Ophan" or ask below';}
   function startWake(){
