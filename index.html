@@ -454,7 +454,7 @@ img{display:block}
 #reading .rd-back .rd-veil2{background:linear-gradient(180deg,rgba(15,3,5,.18),rgba(15,3,5,.08) 30%,rgba(15,3,5,.42))}
 .rd-signname{font-family:'Cinzel',serif;color:#f2d489;font-size:22px;letter-spacing:.06em;text-align:center;margin-top:2px;text-shadow:0 2px 10px rgba(0,0,0,.65)}
 .rd-signglyph{font-family:'ophzod',serif;color:#f2d489;font-size:40px;line-height:1;text-align:center;margin-top:7px;text-shadow:0 2px 12px rgba(0,0,0,.6)}
-#reading .rd-back .rd-scroll{margin-top:2cm}
+#reading .rd-back .rd-scroll{margin-top:1.3cm}
 .rd-veil2{position:absolute;inset:0;background:
   radial-gradient(120% 75% at 50% 28%,rgba(12,3,4,.42),rgba(12,3,4,.66) 84%),
   linear-gradient(180deg,rgba(12,3,4,.55),rgba(12,3,4,.42) 26%,rgba(12,3,4,.85))}
@@ -1127,8 +1127,7 @@ function zodiacHTML(){
   ZOD.forEach(function(z){cards+='<div class="zcard" data-z="'+z[0]+'"><img loading="lazy" src="z_'+z[0]+'.jpg" alt="'+z[1]+'"></div>';});
   return '<p class="lead">Guidance of the stars — choose your sign.</p>'+
     '<div class="zwrap"><div class="zcar" id="zcar">'+cards+'</div>'+
-    '<div class="cap" id="zcap" style="margin-top:10px">Aries</div></div>'+
-    '<button class="gold-btn" onclick="closeDetail()">Back</button>';
+    '<div class="cap" id="zcap" style="margin-top:10px">Aries</div></div>';
 }
 function wireZodiac(){
   var zc=$('zcar'); if(!zc)return;
