@@ -2690,7 +2690,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
       el('pvBuy').onclick=function(){ try{window.open(ETSY_SHOP,'_blank','noopener');}catch(e){location.href=ETSY_SHOP;} };
       el('pvImg').addEventListener('click',function(){this.classList.toggle('z');});
     }
-    try{el('pvImg').innerHTML=posterContent();}catch(e){el('pvImg').innerHTML='';}
+    el('pvImg').innerHTML='';   /* poster tek parça, düz görsel (poster_preview.jpg) — öğeler görsele gömülü, bozulmaz */
     el('pvImg').classList.remove('z');
     el('pvNote').textContent=tr()?'Bu bir önizlemedir — baskı kalitesindeki filigransız tasarım Etsy mağazamızda.':'This is a preview — the clean, print-quality design is in our Etsy shop.';
     el('pvBuy').textContent=tr()?'Dijital tasarımı satın almak için tıklayınız':'Tap to buy the digital design';
