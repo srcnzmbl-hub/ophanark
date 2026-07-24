@@ -1,7 +1,7 @@
 /* Ophanark PWA service worker */
-var CACHE = 'ophanark-v48';
+var CACHE = 'ophanark-v49';
 var CORE = [
-  './','./index.html','./manifest.webmanifest','./opening.jpg','./emblem.png','./natal_splash.jpg','./zodiac.ttf',
+  './','./index.html','./manifest.webmanifest','./opening.jpg','./emblem.png','./natal_splash.jpg','./natal_bg.jpg','./zodiac.ttf',
   './app-icon-192.png','./app-icon-512.png','./app-apple-touch.png'
 ];
 
@@ -27,6 +27,16 @@ self.addEventListener('fetch', function(e){
   if(req.mode === 'navigate'){
     e.respondWith(
       fetch(req).catch(function(){ return caches.match('./index.html'); })
+    );
+    return;
+  }
+  // HTML dosyaları (index + natal3d): network-first — güncellemeler çevrimiçiyken ANINDA görünür, çevrimdışında cache'e düşer
+  if(url.origin === self.location.origin && /\.html$/.test(url.pathname)){
+    e.respondWith(
+      fetch(req).then(function(res){
+        if(res && res.status === 200){ var copy = res.clone(); caches.open(CACHE).then(function(c){ c.put(req, copy); }); }
+        return res;
+      }).catch(function(){ return caches.match(req); })
     );
     return;
   }

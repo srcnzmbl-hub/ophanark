@@ -1052,7 +1052,7 @@ $('topbar').style.display='none';   /* açılışta ana ekran: üst bar gizli */
 window.__load3D=function(){
   var msg=document.getElementById('n3dMsg'),fr=document.getElementById('n3dFrame');
   if(!msg||!fr)return;
-  (function(){var e=document.getElementById('n3dFeathers');if(e&&!e.__f){e.__f=1;for(var i=0;i<16;i++){var f=document.createElement('div');f.className='ftr';f.style.left=(Math.random()*98)+'%';var sc=0.6+Math.random()*0.9;f.style.width=(9*sc).toFixed(1)+'px';f.style.height=(20*sc).toFixed(1)+'px';var du=10+Math.random()*9;f.style.animationDuration=du.toFixed(1)+'s';f.style.animationDelay=(-Math.random()*du).toFixed(1)+'s';e.appendChild(f);}}})();
+  /* 3D ekranında aşağı düşen tüyler KAPALI — tüyler yalnızca emblemden (iframe içinde) her yöne saçılır */
   msg.style.display='';fr.style.display='none';msg.textContent='3D natal hazırlanıyor…';
   if(!window.__natal3dData){msg.textContent='3D natal yakında.';return;}
   window.__natal3dData(function(d){

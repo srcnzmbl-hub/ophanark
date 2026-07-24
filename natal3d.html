@@ -6,13 +6,13 @@
 <title>Ozark Collective · 3B Natal Harita (Açılış)</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;background:#07040d url('natal_splash.jpg') center/cover no-repeat;font-family:'Georgia',serif;color:#eadfc6}
+html,body{width:100%;height:100%;overflow:hidden;background:#07040d url('natal_bg.jpg') center/cover no-repeat;font-family:'Georgia',serif;color:#eadfc6}
 #c{display:block;width:100%;height:100%;touch-action:none}
 .ui{position:fixed;left:0;right:0;pointer-events:none;z-index:5}
 #top{top:20px;text-align:center}
 #top .name{font-size:26px;letter-spacing:7px;color:#e7d4a0;text-shadow:0 0 16px rgba(180,140,255,.45)}
 #top .sub{font-size:11.5px;letter-spacing:4px;color:#8a80b8;margin-top:5px}
-#btnWrap{bottom:46px;text-align:center}
+#btnWrap{bottom:calc(env(safe-area-inset-bottom,0px) + 96px);text-align:center}
 #yorumla{pointer-events:auto;cursor:pointer;display:inline-block;font-family:'Georgia',serif;font-size:16px;letter-spacing:3px;
 color:#2a1c05;padding:15px 40px;border-radius:40px;border:1px solid #f4d98a;
 background:linear-gradient(180deg,#f6e2a6,#d9b25f 55%,#b98e3e);
@@ -175,7 +175,7 @@ const canvas=document.getElementById('c');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setClearColor(0x000000,0);
 renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight);
 renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=0.78;
-const scene=new THREE.Scene(); scene.background=new THREE.TextureLoader().load('natal_splash.jpg'); scene.backgroundIntensity=0.12; scene.fog=new THREE.FogExp2(0x120309,0.011);
+const scene=new THREE.Scene(); scene.background=new THREE.TextureLoader().load('natal_bg.jpg'); scene.backgroundIntensity=0.12; scene.fog=new THREE.FogExp2(0x120309,0.011);
 scene.add(new THREE.AmbientLight(0x9aa8d0,0.6)); const sunLight=new THREE.PointLight(0xfff0d0,2,0,0); scene.add(sunLight); const dl=new THREE.DirectionalLight(0xd0d6ff,0.55); dl.position.set(2,3,4); scene.add(dl);
 const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,400); camera.position.set(0,3.2,18.5);
 const controls=new OrbitControls(camera,canvas);
@@ -570,7 +570,7 @@ goldBall.position.copy(bh.position); goldBall.scale.set(1,1,1); scene.add(goldBa
 
 // ================= ETAP 2: SAHNE 9-10-11 =================
 // SAHNE 10-11: gezegenler DAGINIK (cember gibi ama ic ice gecmeden) durur; serbest 3B yorunge + zoom
-const SCATTER_C=new THREE.Vector3(0,0.6,0), SCATTER_R=3.25, PATH_SCALE=1.05; // saat yonu 12 gezegen cemberi (ekran ortasi)
+const SCATTER_C=new THREE.Vector3(0,0.6,0), SCATTER_R=2.9, PATH_SCALE=1.05; // saat yonu 12 gezegen cemberi (biraz daraltildi)
 const CAM_D=new THREE.Vector3(0,1.3,16.5), TGT_D=new THREE.Vector3(0,0.6,0), FOV_D=54; // etkilesim kadraji
 // yildiz tozu (sahne9: cember/dereceler/gunes dusup toza donusur)
 const starDust=new THREE.Group(); scene.add(starDust); const sdust=[];
