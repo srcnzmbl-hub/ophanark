@@ -290,15 +290,7 @@ img{display:block}
   background:rgba(58,26,8,.6);color:var(--gold2);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .oph-send svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .oph-back{position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;z-index:6;width:38px;height:38px;border-radius:50%;border:1px solid rgba(232,190,96,.6);background:rgba(20,7,4,.5);color:var(--gold2);font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer}
-#s_ophan.kbd .oph-head,#s_ophan.kbd .oph-wake,#s_ophan.kbd .oph-chips{display:none}
-.oph-wake{display:flex;align-items:center;justify-content:center;gap:8px;padding:0 14px 6px;
-  color:var(--gold);font-size:11px;font-family:'Cinzel',serif;letter-spacing:.05em}
-.wake-tog{position:relative;width:38px;height:20px;border-radius:12px;background:rgba(20,7,9,.8);
-  border:1px solid var(--line);cursor:pointer;transition:background .2s}
-.wake-tog::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
-  background:var(--gold);transition:left .2s}
-.wake-tog.on{background:rgba(120,80,20,.6)}
-.wake-tog.on::after{left:20px;background:var(--gold2)}
+#s_ophan.kbd .oph-head,#s_ophan.kbd .oph-chips{display:none}
 /* ===== Sky (real telescope map) screen ===== */
 #sky{position:fixed;inset:0;z-index:70;display:none;background:#04060e}
 #sky.on{display:block}
@@ -709,11 +701,7 @@ img{display:block}
       <button class="oph-back" id="ophBack" aria-label="Geri">‹</button>
       <div class="oph-head">
         <div class="oh-t cin">OPHAN AI</div>
-        <div class="oh-s" id="ophSub">Say "Hey Ophan" or ask below</div>
-      </div>
-      <div class="oph-wake">
-        <span id="wakeLbl">Hey Ophan wake word</span>
-        <div class="wake-tog" id="wakeTog" role="switch" aria-checked="false" tabindex="0"></div>
+        <div class="oh-s" id="ophSub">Type below or tap the mic</div>
       </div>
       <div class="oph-chat" id="ophChat" aria-live="polite"></div>
       <div class="oph-chips" id="ophChips"></div>
@@ -1947,8 +1935,8 @@ try{
   function greetText(){
     var lang=lang0(), nm=(window.__profile&&window.__profile.name)?(' '+window.__profile.name.split(' ')[0]):'';
     return (lang==='tr')
-      ? ('Merhaba'+nm+', ben Ophan. Yıldızların dilini senin için okurum. Günlük burcunu, gökyüzündeki hareketleri sorabilir, tarot falı baktırabilir ya da rüyanı yorumlatabilirsin. "Hey Ophan" diyerek sesle de konuşabilirsin.')
-      : ('Hello'+nm+', I am Ophan. I read the language of the stars for you. Ask for your daily horoscope, the movements in the sky, a tarot reading, or tell me a dream. You can also just say "Hey Ophan" to speak with me.');
+      ? ('Merhaba'+nm+', ben Ophan. Yıldızların dilini senin için okurum. Günlük burcunu, gökyüzündeki hareketleri sorabilir, tarot falı baktırabilir ya da rüyanı yorumlatabilirsin. Mikrofona basıp sesle de konuşabilirsin.')
+      : ('Hello'+nm+', I am Ophan. I read the language of the stars for you. Ask for your daily horoscope, the movements in the sky, a tarot reading, or tell me a dream. You can also tap the mic to speak with me.');
   }
   window.__ophRoute=route;
 
@@ -1970,9 +1958,9 @@ try{
   }
   function sendFromInput(){var inp=document.getElementById('ophIn');if(!inp)return;var v=inp.value;inp.value='';if(v.trim())send(v);}
 
-  /* ---- speech recognition (STT) + wake word ---- */
+  /* ---- speech recognition (STT) ---- */
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  var rec=null, wakeRec=null, wakeOn=false, listening=false;
+  var rec=null, listening=false;
   function setSub(txt){var s=document.getElementById('ophSub');if(s)s.textContent=txt;}
   function micBtn(){return document.getElementById('ophMic');}
   var _actx=null;
@@ -2022,36 +2010,12 @@ try{
     };
     try{rec.start();}catch(e){listening=false;var bb=micBtn();if(bb)bb.classList.remove('listening');setSub(subDefault());}
   }
-  function subDefault(){return (lang0()==='tr')?'"Hey Ophan" de ya da aşağıya yaz':'Say "Hey Ophan" or ask below';}
-  function startWake(){
-    if(!SR){wakeToggleUI(false);var lang=lang0();bubble('op',(lang==='tr')?'Bu tarayıcı "Hey Ophan" için ses tanımayı desteklemiyor.':'This browser does not support the "Hey Ophan" wake word.');return;}
-    wakeOn=true; wakeToggleUI(true);
-    try{wakeRec=new SR();}catch(e){wakeOn=false;wakeToggleUI(false);return;}
-    wakeRec.lang=(LANGV[lang0()]||'en-US'); wakeRec.continuous=true; wakeRec.interimResults=true;
-    wakeRec.onresult=function(e){
-      var txt=''; for(var i=e.resultIndex;i<e.results.length;i++){txt+=e.results[i][0].transcript;}
-      txt=txt.toLowerCase();
-      if(/hey op?han|hey ofan|hey o?fan|ey ophan|hey opan/.test(txt)){
-        try{wakeRec.stop();}catch(_){}
-        var after=txt.replace(/.*?(hey )?(op?han|ofan|opan)/,'').trim();
-        var ping=(lang0()==='tr')?'Efendim, dinliyorum.':'Yes, I am listening.';
-        setSub(ping); speak(ping);
-        if(after.length>4){setTimeout(function(){send(after);},400);}
-        else{setTimeout(startListen,700);}
-      }
-    };
-    wakeRec.onend=function(){ if(wakeOn){try{wakeRec.start();}catch(e){}} };
-    wakeRec.onerror=function(){};
-    try{wakeRec.start();}catch(e){}
-  }
-  function stopWake(){wakeOn=false;wakeToggleUI(false);try{wakeRec&&wakeRec.stop();}catch(e){}}
-  function wakeToggleUI(on){var t=document.getElementById('wakeTog');if(t){t.classList.toggle('on',on);t.setAttribute('aria-checked',on?'true':'false');}}
+  function subDefault(){return (lang0()==='tr')?'Aşağıya yaz ya da mikrofona bas':'Type below or tap the mic';}
 
   /* ---- init on first open of Ophan screen ---- */
   var inited=false;
   function initOphan(){
     setSub(subDefault());
-    if(document.getElementById('wakeLbl'))document.getElementById('wakeLbl').textContent=(lang0()==='tr')?'"Hey Ophan" sesli uyandırma':'"Hey Ophan" wake word';
     var inp=document.getElementById('ophIn'); if(inp)inp.placeholder=(lang0()==='tr')?'Ophan\'a sor…':'Ask Ophan…';
     renderChips();
     if(!inited){ inited=true; bubble('op',greetText()); }
@@ -2080,8 +2044,7 @@ try{
       (chat||scr).addEventListener('touchmove',function(e){ if(y0==null)return; var y=e.touches[0].clientY; if(y-y0>44){ closeKbd(); y0=null; } },{passive:true});
       (chat||scr).addEventListener('touchend',function(){ y0=null; });
     }})();
-  document.getElementById('wakeTog').addEventListener('click',function(){wakeOn?stopWake():startWake();});
-  document.getElementById('wakeTog').addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){wakeOn?stopWake():startWake();}});
+  /* "Hey Ophan" sesli uyandırma tamamen kaldırıldı (donanım yok) */
 
   /* nav'a Ophan'a geçişte başlat + diğer ekrana geçince dinlemeyi durdur */
   document.querySelectorAll('.nb').forEach(function(b){
