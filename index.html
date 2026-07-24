@@ -16,7 +16,8 @@
   --ink:#f3e7d6; --dim:#c9a98f; --line:rgba(230,182,74,.28);
   --app-bg:radial-gradient(120% 80% at 50% 0%,#3a0e16 0%,#220810 45%,#140406 100%);
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{width:0!important;height:0!important;display:none!important;background:transparent}
 html,body{height:100%}
 body{background:#000;color:var(--ink);font-family:'EB Garamond',Georgia,serif;overflow:hidden;
   -webkit-font-smoothing:antialiased}
@@ -2122,7 +2123,11 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   '.nt-head{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 12px) 16px 6px;flex:0 0 auto}'+
   '.nt-head .nt-t{flex:1;font-family:\'Cinzel\',serif;color:#e6c46a;font-size:16px;letter-spacing:.12em;text-align:center}'+
   '.nt-x{width:38px;height:38px;border-radius:50%;border:1px solid rgba(232,190,96,.5);background:rgba(0,0,0,.3);color:#e8be60;font-size:16px;cursor:pointer;flex:0 0 auto}'+
-  '.nt-scroll{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding:4px 16px 8px}'+   /* dikey+yatay ortalama */
+  '.nt-scroll{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding:4px 16px 8px;scrollbar-width:none;-ms-overflow-style:none}'+
+  '.nt-scroll::-webkit-scrollbar,.nt-page::-webkit-scrollbar{width:0;height:0;display:none}'+
+  '.nt-page{scrollbar-width:none;-ms-overflow-style:none}'+
+  '.nt-schev{position:absolute;left:0;right:0;display:flex;justify-content:center;pointer-events:none;z-index:6;opacity:0;transition:opacity .25s;filter:drop-shadow(0 0 3px rgba(0,0,0,.55))}'+
+  '.nt-schev.up{top:50px}.nt-schev.dn{bottom:72px}'+
   '.nt-center{margin:auto;width:100%;max-width:430px}'+
   '.nt-card{background:linear-gradient(180deg,rgba(40,24,8,.5),rgba(20,10,4,.42));border:1px solid rgba(214,168,92,.35);border-radius:16px;padding:16px;margin:10px auto;box-shadow:0 8px 24px rgba(0,0,0,.4)}'+
   '.nt-irow{display:flex;justify-content:space-between;gap:12px;padding:9px 2px;border-bottom:1px solid rgba(214,168,92,.16);font-family:\'Spectral\',serif}'+
@@ -2133,7 +2138,13 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   '.nt-lead{color:#e9d9b3;font-family:\'Spectral\',serif;font-size:14px;line-height:1.6;text-align:center;margin:6px auto 8px}'+
   /* wheel */
   '.nt-wheelwrap{text-align:center}'+
-  '.nt-wheel{width:min(97vw,440px);height:auto;display:block;margin:2px auto}'+
+  '.nt-wheel{width:min(calc(100vw - 40px),476px);height:auto;display:block;margin:2px auto}'+
+  '.leg-title{color:#c99a54;font-family:\'Cinzel\',serif;font-size:11px;letter-spacing:.14em;text-align:center;margin:16px 0 9px}'+
+  '.leg-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 16px;max-width:440px;margin:0 auto 8px}'+
+  '.leg-i{display:flex;align-items:baseline;gap:7px;font-family:\'Spectral\',serif}'+
+  '.leg-s{color:#f4d488;font-size:15px;min-width:20px;text-align:center;flex:0 0 auto}'+
+  '.leg-n{color:#f0e0bd;font-size:12.5px;flex:0 0 auto}.leg-d{color:#b49a72;font-size:11px}'+
+  '.nt-swipehint{color:#d9c6a0;font-family:\'Spectral\',serif;font-size:12.5px;font-style:italic;text-align:center;width:100%}'+
   '.nt-cap{color:#e6c46a;font-family:\'Cinzel\',serif;font-size:13px;letter-spacing:.1em;text-align:center;margin:2px 0 6px}'+
   /* table */
   '.nt-tbl{width:100%;border-collapse:collapse;font-family:\'Spectral\',serif}'+
@@ -2144,7 +2155,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   '.nt-tbl .c-h{color:#c99a54;font-size:12px;white-space:nowrap}.nt-tbl .c-t{color:#cdbb95;font-size:11.5px;line-height:1.4}'+
   /* reader */
   '.nt-rtitle{color:#e6c46a;font-family:\'Cinzel\',serif;font-size:16px;letter-spacing:.05em;text-align:center;margin:2px 0 12px}'+
-  '.nt-rp{color:#efe2c2;font-family:\'Spectral\',serif;font-size:15.5px;line-height:1.75;margin:0 0 14px;text-align:left}'+
+  '.nt-rp{color:#f0d190;font-family:\'Spectral\',serif;font-size:16.8px;line-height:1.8;margin:0 0 15px;text-align:left}'+
   '.nt-arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:1px solid rgba(232,190,96,.55);background:rgba(10,6,2,.55);color:#f4d488;font-size:20px;cursor:pointer;z-index:6;display:flex;align-items:center;justify-content:center}'+
   '.nt-arrow.l{left:4px}.nt-arrow.r{right:4px}.nt-arrow[disabled]{opacity:.22;pointer-events:none}'+
   '.nt-pageno{position:absolute;right:12px;bottom:calc(env(safe-area-inset-bottom) + 56px);z-index:6;color:#e0c48a;font-family:\'Cinzel\',serif;font-size:11.5px;background:rgba(10,6,2,.5);border:1px solid rgba(214,168,92,.3);border-radius:12px;padding:4px 10px}'+
@@ -2153,10 +2164,26 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   document.head.appendChild(css);
 
   var scr=document.createElement('div');scr.id='natalScr';
-  scr.innerHTML='<div class="nt-bg"></div><div class="nt-veil"></div><div class="nt-wrap" id="ntWrap"></div>';
+  scr.innerHTML='<div class="nt-bg"></div><div class="nt-veil"></div><div class="feathers" id="ntFeathers" style="z-index:1"></div><div class="nt-wrap" id="ntWrap"></div>';
   document.body.appendChild(scr);
+  function ntFeathers(){var e=el('ntFeathers');if(!e||e.__f)return;e.__f=1;for(var i=0;i<16;i++){var f=document.createElement('div');f.className='ftr';f.style.left=(Math.random()*98)+'%';var s=0.6+Math.random()*0.9;f.style.width=(9*s).toFixed(1)+'px';f.style.height=(20*s).toFixed(1)+'px';var dur=10+Math.random()*9;f.style.animationDuration=dur.toFixed(1)+'s';f.style.animationDelay=(-Math.random()*dur).toFixed(1)+'s';e.appendChild(f);}}
   function head(t){return '<div class="nt-head"><div style="width:38px"></div><div class="nt-t">'+t+'</div><button class="nt-x" id="ntClose">✕</button></div>';}
   function bindClose(){var c=el('ntClose');if(c)c.onclick=closeNatal;}
+  function attachSwipe(elm,cb){ if(!elm)return; var x0=null,y0=null;
+    function st(e){var t=e.touches?e.touches[0]:e;x0=t.clientX;y0=t.clientY;}
+    function en(e){ if(x0==null)return; var t=e.changedTouches?e.changedTouches[0]:e; var dx=t.clientX-x0,dy=t.clientY-y0; x0=null; if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.25){cb(dx<0?'left':'right');} }
+    elm.addEventListener('touchstart',st,{passive:true}); elm.addEventListener('touchend',en);
+    elm.addEventListener('pointerdown',st); elm.addEventListener('pointerup',en); }
+  var PLEG=[['☉','Güneş','özün, kimliğin'],['☾','Ay','duyguların'],['☿','Merkür','zihin, iletişim'],['♀','Venüs','sevgi, değer'],['♂','Mars','arzu, enerji'],['♃','Jüpiter','şans, büyüme'],['♄','Satürn','sorumluluk, sınır'],['♅','Uranüs','özgürlük, değişim'],['♆','Neptün','hayal, sezgi'],['♇','Plüton','dönüşüm, güç'],['⬆','Yükselen','dış görünüşün'],['MC','Tepe (MC)','kariyer, hedef']];
+  function legendHTML(){var items=PLEG.map(function(p){return '<div class="leg-i"><span class="leg-s">'+p[0]+'</span><span class="leg-n">'+p[1]+'</span> <span class="leg-d">'+(tr()?'— '+p[2]:'')+'</span></div>';}).join('');
+    return '<div class="leg-title">'+(tr()?'HARİTADAKİ SEMBOLLER':'SYMBOLS')+'</div><div class="leg-grid">'+items+'</div>';}
+  function chevSVG(dir){var d=dir==='up'?'M2 8.5 L11 3 L20 8.5':'M2 3 L11 8.5 L20 3';return '<svg width="26" height="11" viewBox="0 0 22 11"><path d="'+d+'" fill="none" stroke="#e7bf6e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';}
+  function scrollHints(sc){ if(!sc||!sc.parentNode)return; var wrap=sc.parentNode;
+    var up=document.createElement('div');up.className='nt-schev up';up.innerHTML=chevSVG('up');
+    var dn=document.createElement('div');dn.className='nt-schev dn';dn.innerHTML=chevSVG('down');
+    wrap.appendChild(up);wrap.appendChild(dn);
+    function upd(){var t=sc.scrollTop;up.style.opacity=(t>8)?'0.9':'0';dn.style.opacity=(t+sc.clientHeight<sc.scrollHeight-8)?'0.9':'0';}
+    sc.addEventListener('scroll',upd);setTimeout(upd,60);upd(); }
 
   /* ---------- view: confirm ---------- */
   function viewConfirm(){var p=window.__profile||{};
@@ -2214,7 +2241,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
     // aspects
     var pl=PORDER.map(function(k){return {k:k,a:rev(C.pos[k]-asc),lon:C.pos[k]};});
     function asp(d){d=Math.abs(d);d=Math.min(d,360-d);var t=[[0,6,'#8a6f3a'],[60,4,'#5bbf9f'],[90,6,'#c0563e'],[120,6,'#5bbf9f'],[180,6,'#c0563e']];for(var i=0;i<t.length;i++){if(Math.abs(d-t[i][0])<=t[i][1])return t[i][2];}return null;}
-    for(var i=0;i<pl.length;i++)for(var j=i+1;j<pl.length;j++){var col=asp(pl[i].lon-pl[j].lon);if(!col)continue;var a1=P(pl[i].a,90),a2=P(pl[j].a,90);s+='<line x1="'+a1[0].toFixed(1)+'" y1="'+a1[1].toFixed(1)+'" x2="'+a2[0].toFixed(1)+'" y2="'+a2[1].toFixed(1)+'" stroke="'+col+'" stroke-width="0.8" stroke-opacity="0.65"/>';}
+    for(var i=0;i<pl.length;i++)for(var j=i+1;j<pl.length;j++){var col=asp(pl[i].lon-pl[j].lon);if(!col)continue;var a1=P(pl[i].a,90),a2=P(pl[j].a,90);s+='<line x1="'+a1[0].toFixed(1)+'" y1="'+a1[1].toFixed(1)+'" x2="'+a2[0].toFixed(1)+'" y2="'+a2[1].toFixed(1)+'" stroke="'+col+'" stroke-width="1.8" stroke-opacity="0.92"/>';}
     // planets (radial stagger for close ones)
     var sorted=pl.slice().sort(function(x,y){return x.a-y.a;});var lastA=-99,tier=0;
     var placed={};
@@ -2231,16 +2258,17 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
     el('ntWrap').innerHTML=
      '<div class="nt-wrap-inner" style="position:relative;display:flex;flex-direction:column;height:100%">'+
       head(tr()?'Natal Haritam':'My Natal Chart')+
-      '<button class="nt-arrow r" id="ntNextC">›</button>'+
-      '<div class="nt-scroll"><div class="nt-center nt-wheelwrap">'+
-        '<div class="nt-cap">'+(tr()?'Yükselen':'Ascendant')+' '+sg[asc]+' · '+(tr()?'Güneş':'Sun')+' '+sg[Math.floor(rev(CHART.chart.pos.sun)/30)]+' · '+(tr()?'Ay':'Moon')+' '+sg[Math.floor(rev(CHART.chart.pos.moon)/30)]+'</div>'+
+      '<div class="nt-scroll" id="ntWS" style="justify-content:flex-start;padding-top:6px"><div class="nt-center nt-wheelwrap">'+
+        '<div class="nt-cap">'+(tr()?'Yükselen':'Asc')+' '+sg[asc]+' · '+(tr()?'Güneş':'Sun')+' '+sg[Math.floor(rev(CHART.chart.pos.sun)/30)]+' · '+(tr()?'Ay':'Moon')+' '+sg[Math.floor(rev(CHART.chart.pos.moon)/30)]+'</div>'+
         buildWheel()+
-        '<div class="nt-lead">'+(tr()?'Doğduğun anın gerçek gökyüzü. Sağdaki oka basarak gezegen tablosuna geç.':'Your real birth sky. Tap the arrow for the planet table.')+'</div>'+
+        '<div class="nt-lead">'+(tr()?'Doğduğun anın gökyüzü haritası.':'Your birth sky chart.')+'</div>'+
+        legendHTML()+
       '</div></div>'+
       '<div class="nt-pageno">'+(tr()?'Sayfa':'Page')+' 1 / 2</div>'+
-      '<div class="nt-bar"><button id="ntExitW">✕ '+(tr()?'Kapat':'Close')+'</button></div>'+
+      '<div class="nt-bar" style="flex-direction:column;gap:6px"><div class="nt-swipehint">‹ '+(tr()?'Sayfa 2 için kaydırınız':'Swipe left for page 2')+'</div><button id="ntExitW">✕ '+(tr()?'Kapat':'Close')+'</button></div>'+
      '</div>';
-    bindClose();el('ntExitW').onclick=closeNatal;el('ntNextC').onclick=function(){chartPage=1;viewChartPage();};}
+    bindClose();el('ntExitW').onclick=closeNatal;
+    attachSwipe(el('ntWS'),function(d){if(d==='left'){chartPage=1;viewChartPage();}});scrollHints(el('ntWS'));}
   function renderTablePage(){var sg=SIGN(),asc=CHART.ascSign,C=CHART.chart;
     var rows='';
     rows+=trow('⬆',tr()?'AC Yükselen':'AC Asc',sg[asc],rev(C.asc)%30,'—',ascTheme(asc));
@@ -2251,14 +2279,15 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
      '<div class="nt-wrap-inner" style="position:relative;display:flex;flex-direction:column;height:100%">'+
       head(tr()?'Natal Haritam':'My Natal Chart')+
       '<button class="nt-arrow l" id="ntPrevC">‹</button>'+
-      '<div class="nt-scroll"><div class="nt-center">'+
+      '<div class="nt-scroll" id="ntTS"><div class="nt-center">'+
         '<table class="nt-tbl"><thead><tr><th>'+(tr()?'NOKTA':'POINT')+'</th><th>'+(tr()?'BURÇ':'SIGN')+'</th><th>'+(tr()?'DERECE':'DEG')+'</th><th>'+(tr()?'EV':'H')+'</th><th>'+(tr()?'TEMA':'THEME')+'</th></tr></thead><tbody>'+rows+'</tbody></table>'+
         '<button class="nt-btn" id="ntRead">'+(tr()?'Detaylı Yorum İçin Tıklayın':'Read the Full Interpretation')+' ›</button>'+
       '</div></div>'+
       '<div class="nt-pageno">'+(tr()?'Sayfa':'Page')+' 2 / 2</div>'+
       '<div class="nt-bar"><button id="ntExitT">✕ '+(tr()?'Kapat':'Close')+'</button></div>'+
      '</div>';
-    bindClose();el('ntExitT').onclick=closeNatal;el('ntPrevC').onclick=function(){chartPage=0;viewChartPage();};el('ntRead').onclick=openReader;}
+    bindClose();el('ntExitT').onclick=closeNatal;el('ntPrevC').onclick=function(){chartPage=0;viewChartPage();};el('ntRead').onclick=openReader;
+    attachSwipe(el('ntTS'),function(d){if(d==='right'){chartPage=0;viewChartPage();}});scrollHints(el('ntTS'));}
   function trow(sym,name,sign,deg,house,theme){var si=SIGN().indexOf(sign);var gl=si>=0?'<span class="zsym" style="font-size:15px;color:#f4d488">'+ZCH[si]+'</span> ':'';
     return '<tr><td class="c-n"><b>'+sym+'</b> '+name+'</td><td class="c-s">'+gl+sign+'</td><td class="c-d">'+deg.toFixed(2)+'°</td><td class="c-h">'+house+'</td><td class="c-t">'+theme+'</td></tr>';}
 
@@ -2290,25 +2319,25 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   function openReader(){buildPages();curPage=0;renderPage();}
   function renderPage(){var pg=PAGES[curPage];
     var body='<div class="nt-rtitle">'+pg.title+'</div>'+pg.ps.map(function(x){return '<p class="nt-rp">'+x+'</p>';}).join('');
+    var last=(curPage===PAGES.length-1);
     el('ntWrap').innerHTML=
      '<div class="nt-wrap-inner" style="position:relative;display:flex;flex-direction:column;height:100%">'+
       head(tr()?'Natal Yorumu':'Natal Reading')+
-      '<button class="nt-arrow l" id="ntPrev">‹</button><button class="nt-arrow r" id="ntNext">›</button>'+
-      '<div class="nt-scroll"><div class="nt-center">'+body+'</div></div>'+
+      '<div class="nt-scroll" id="ntRS"><div class="nt-center">'+body+'</div></div>'+
       '<div class="nt-pageno">'+(tr()?'Sayfa':'Page')+' '+(curPage+1)+' / '+PAGES.length+'</div>'+
-      '<div class="nt-bar"><button id="ntListen">'+(tr()?'🔊 Sesli Dinle':'🔊 Listen')+'</button><button id="ntStop">'+(tr()?'⏹ Sustur':'⏹ Stop')+'</button><button id="ntExit">✕</button></div>'+
+      '<div class="nt-bar" style="flex-direction:column;gap:7px">'+
+        '<div class="nt-swipehint">'+(last?(tr()?'Geri kaydırarak önceki sayfaya dönebilirsin':'Swipe right to go back'):(tr()?'‹ Sonraki sayfa için kaydırınız':'‹ Swipe for next page'))+'</div>'+
+        '<div style="display:flex;gap:8px;justify-content:center"><button id="ntListen">'+(tr()?'🔊 Sesli Dinle':'🔊 Listen')+'</button><button id="ntStop">'+(tr()?'⏹ Sustur':'⏹ Stop')+'</button></div>'+
+      '</div>'+
      '</div>';
-    bindClose();
-    var pv=el('ntPrev'),nx=el('ntNext');
-    if(curPage===0)pv.setAttribute('disabled','');if(curPage===PAGES.length-1)nx.setAttribute('disabled','');
-    pv.onclick=function(){if(curPage>0){curPage--;stopVoice();renderPage();}};
-    nx.onclick=function(){if(curPage<PAGES.length-1){curPage++;stopVoice();renderPage();}};
-    el('ntExit').onclick=closeNatal;el('ntListen').onclick=speakPage;el('ntStop').onclick=stopVoice;
-    var sc=el('ntWrap').querySelector('.nt-scroll');if(sc)sc.scrollTop=0;}
+    var c=el('ntClose');if(c)c.onclick=function(){stopVoice();chartPage=0;viewChartPage();};
+    el('ntListen').onclick=speakPage;el('ntStop').onclick=stopVoice;
+    attachSwipe(el('ntRS'),function(d){ if(d==='left'&&curPage<PAGES.length-1){curPage++;stopVoice();renderPage();} else if(d==='right'&&curPage>0){curPage--;stopVoice();renderPage();} });
+    var sc=el('ntRS');if(sc)sc.scrollTop=0;scrollHints(sc);}
   function speakPage(){if(!window.speechSynthesis)return;stopVoice();var u=new SpeechSynthesisUtterance((voiceText[curPage]||'').replace(/<[^>]+>/g,''));u.lang=tr()?'tr-TR':'en-US';u.rate=.97;window.speechSynthesis.speak(u);}
 
   /* ---------- entry ---------- */
-  window.__openNatal=function(){scr.classList.add('on');chartPage=0;viewConfirm();};
+  window.__openNatal=function(){scr.classList.add('on');ntFeathers();chartPage=0;viewConfirm();};
  }catch(e){ if(window.console)console.log('natal init error',e); }
 })();
 
