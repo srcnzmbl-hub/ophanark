@@ -362,13 +362,15 @@ function featherTex(){ const s=128,cv=document.createElement('canvas');cv.width=
   return new THREE.CanvasTexture(cv); }
 const featherTexture=featherTex();
 const featherG=new THREE.Group(); featherG.visible=false; scene.add(featherG); const feathers=[];
-for(let i=0;i<24;i++){ const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:featherTexture,transparent:true,depthWrite:false,blending:THREE.NormalBlending,opacity:0}));
-  const b=0.12+Math.random()*0.12; sp.scale.set(b*0.5,b,1); sp.userData={init:false}; featherG.add(sp); feathers.push(sp); }
+for(let i=0;i<40;i++){ const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:featherTexture,transparent:true,depthWrite:false,blending:THREE.NormalBlending,opacity:0}));
+  const b=0.15+Math.random()*0.14; sp.scale.set(b*0.5,b,1); sp.userData={init:false}; featherG.add(sp); feathers.push(sp); }
 function resetFeather(sp){ const u=sp.userData;
-  u.start=new THREE.Vector3((Math.random()*2-1)*1.15,(Math.random()*2-1)*1.0,(Math.random()*2-1)*0.35);
-  const ang=Math.random()*6.2832, spd=0.12+Math.random()*0.20; // her yöne, nazikçe
-  u.vps=new THREE.Vector3(Math.cos(ang)*spd, Math.sin(ang)*spd, (Math.random()*2-1)*0.05);
-  u.t0=t; u.dur=2.4+Math.random()*2.6; u.rot0=Math.random()*6.2832; u.rspd=(Math.random()*2-1)*0.5; u.sway=Math.random()*6.2832; u.init=true; sp.material.rotation=u.rot0; }
+  // emblemin ETRAFINDAN çık (üst+alt+yanlar hepsi) — tek noktadan değil
+  const ang=Math.random()*6.2832, r=0.95+Math.random()*0.45;
+  u.start=new THREE.Vector3(Math.cos(ang)*r, Math.sin(ang)*r*0.95, (Math.random()*2-1)*0.3);
+  const spd=0.10+Math.random()*0.16; // dışarı doğru saçıl
+  u.vps=new THREE.Vector3(Math.cos(ang)*spd, Math.sin(ang)*spd, (Math.random()*2-1)*0.04);
+  u.t0=t; u.dur=2.4+Math.random()*2.4; u.rot0=Math.random()*6.2832; u.rspd=(Math.random()*2-1)*0.5; u.sway=Math.random()*6.2832; u.init=true; sp.material.rotation=u.rot0; }
 function updateFeathers(){ if(!logoGroup.visible){ if(featherG.visible)featherG.visible=false; return; }
   featherG.visible=true; featherG.position.copy(logoGroup.position);
   for(const sp of feathers){ const u=sp.userData; if(!u.init){resetFeather(sp);} const el=t-u.t0; const life=el/u.dur; if(life>=1){resetFeather(sp); continue;}
@@ -711,55 +713,18 @@ controls.enabled=true;controls.enableRotate=true;controls.enableZoom=true;contro
 controls.minDistance=5;controls.maxDistance=32;
 controls.target.copy(TGT_D);camera.position.copy(CAM_D);camera.fov=FOV_D;camera.updateProjectionMatrix();controls.update();
 startReveal();} // gezegenler çembere girdi -> ortada karadelik belirip 3D logo doğsun
-// ---- REVEAL: ortada BİNLERCE nokta OLDUĞU YERDE belirir -> bir kez yanar -> ikinci kez 2.5sn'de en alt sarı tondan en üst beyaz tona çıkar -> hepsi aşağı dökülür -> noktalar birleşerek 3D ophenim'i ortada OLUŞTURUR (kara delik yok, loş ışık yok) ----
-let reveal={on:false,t0:0,done:false,fall:false};
-const R_APPEAR=0.8, R_BLINK1=0.7, R_RAMP=2.5, R_FALL=0.7, R_FORM=1.9; // belir / 1.yanış / 2.yanış(2.5sn beyaz) / dökül / birleşip model
-const REV_GOLD_LO=new THREE.Color(0x6e4a12), REV_GOLD=new THREE.Color(0xffcf5a), REV_WHITE=new THREE.Color(0xffffff), _rcol=new THREE.Color();
-const RN=2500;
-const rgeo=new THREE.BufferGeometry(); const rpos=new Float32Array(RN*3); rgeo.setAttribute('position',new THREE.BufferAttribute(rpos,3));
-const rmat=new THREE.PointsMaterial({size:0.16,map:featherTexture,transparent:true,depthWrite:false,blending:THREE.NormalBlending,opacity:0,color:0xffcf5a,sizeAttenuation:true});
-const rpoints=new THREE.Points(rgeo,rmat); rpoints.frustumCulled=false; rpoints.visible=false; scene.add(rpoints);
-const rHome=[], rHome0=[], rFall=[], rPhase=new Float32Array(RN);
-for(let i=0;i<RN;i++){ const a=Math.random()*6.2832, el=(Math.random()*2-1), sq=Math.sqrt(1-el*el), rad=Math.pow(Math.random(),0.5)*1.2;
-  const h=new THREE.Vector3(Math.cos(a)*sq*rad, Math.sin(a)*sq*rad, el*rad*0.45); rHome0.push(h.clone()); rHome.push(h); rFall.push(new THREE.Vector3()); rPhase[i]=Math.random()*6.2832; }
+// ---- REVEAL: gezegenler çembere girince OPHENİM ortada SADECE belirir (efekt/animasyon yok); etrafından tüyler saçılır ----
+let reveal={on:false,t0:0,done:false};
 function setLogoOpacity(v){ if(!logoModel)return; logoModel.traverse(o=>{ if(o.isMesh&&o.material)o.material.opacity=v; }); }
 function startReveal(){
- if(reveal.on)return; reveal.on=true; reveal.t0=t; reveal.done=false; reveal.fall=false;
- bh.visible=false; flash.visible=false; flash.material.opacity=0; // KARA DELİK yok
- rpoints.visible=true; rpoints.position.copy(SCATTER_C); rmat.opacity=0; rmat.color.copy(REV_GOLD_LO); rmat.size=0.16;
- for(let i=0;i<RN;i++){ rHome[i].copy(rHome0[i]); const h=rHome[i]; rpos[i*3]=h.x; rpos[i*3+1]=h.y; rpos[i*3+2]=h.z; } rgeo.attributes.position.needsUpdate=true;
- logoGroup.position.copy(SCATTER_C); logoGroup.visible=false;
+ if(reveal.on)return; reveal.on=true; reveal.t0=t; reveal.done=false;
+ bh.visible=false; flash.visible=false; flash.material.opacity=0; // kara delik / efekt yok
+ logoGroup.position.copy(SCATTER_C); logoGroup.visible=true;
  if(logoModel){ logoModel.rotation.set(0,0,0); logoModel.scale.setScalar(logoFinalScale); setLogoOpacity(0); }
 }
-function updateReveal(re){
- const mApp=R_APPEAR, mB1=mApp+R_BLINK1, mRamp=mB1+R_RAMP, mFall=mRamp+R_FALL, mForm=mFall+R_FORM;
- // 1) BELİRME: binlerce nokta OLDUĞU YERDE yavaşça belirir (yandan gelmez)
- if(re<mApp){ const a=ez(clamp01(re/R_APPEAR));
-  for(let i=0;i<RN;i++){ const h=rHome[i]; rpos[i*3]=h.x+Math.sin(t*1.4+rPhase[i])*0.02; rpos[i*3+1]=h.y+Math.cos(t*1.2+rPhase[i])*0.02; rpos[i*3+2]=h.z; }
-  rgeo.attributes.position.needsUpdate=true; rmat.opacity=a*0.95; _rcol.copy(REV_GOLD_LO).lerp(REV_GOLD,a*0.35); rmat.color.copy(_rcol); rmat.size=0.16; return; }
- // 2) BİRİNCİ YANIŞ: kısa bir kez yanıp söner (sarı)
- if(re<mB1){ const f=(re-mApp)/R_BLINK1, b=Math.sin(clamp01(f)*Math.PI);
-  for(let i=0;i<RN;i++){ const h=rHome[i]; rpos[i*3]=h.x+Math.sin(t*1.6+rPhase[i])*0.03; rpos[i*3+1]=h.y+Math.cos(t*1.4+rPhase[i])*0.03; rpos[i*3+2]=h.z; }
-  rgeo.attributes.position.needsUpdate=true; rmat.opacity=0.45+0.5*b; _rcol.copy(REV_GOLD_LO).lerp(REV_GOLD,0.4+0.6*b); rmat.color.copy(_rcol); rmat.size=0.16+0.05*b; return; }
- // 3) İKİNCİ YANIŞ: 2.5 sn'de en alt sarı tondan en üst beyaz tona çıkar (sönmez)
- if(re<mRamp){ const f=ez(clamp01((re-mB1)/R_RAMP));
-  for(let i=0;i<RN;i++){ const h=rHome[i], br=1+0.06*f; rpos[i*3]=h.x*br+Math.sin(t*2+rPhase[i])*0.02; rpos[i*3+1]=h.y*br+Math.cos(t*2+rPhase[i])*0.02; rpos[i*3+2]=h.z*br; }
-  rgeo.attributes.position.needsUpdate=true;
-  _rcol.copy(REV_GOLD_LO).lerp(REV_GOLD,clamp01(f/0.45)).lerp(REV_WHITE,clamp01((f-0.45)/0.55));
-  rmat.color.copy(_rcol); rmat.opacity=0.5+0.5*f; rmat.size=0.16+0.10*f; return; }
- // 4) DÖKÜLME sonra 5) BİRLEŞME: noktalar aşağı dökülür, ardından model yüzey noktalarına akıp 3D görseli OLUŞTURUR
- if(!reveal.fall){ reveal.fall=true; for(let i=0;i<RN;i++)rFall[i].set((Math.random()*2-1)*0.5,-(0.5+Math.random()*0.9),(Math.random()*2-1)*0.5); rmat.color.copy(REV_WHITE); }
- if(re<mFall){ const fd=(re-mRamp)/R_FALL;
-  for(let i=0;i<RN;i++){ rFall[i].y-=0.0016; const h=rHome[i]; h.addScaledVector(rFall[i],0.06); rpos[i*3]=h.x; rpos[i*3+1]=h.y; rpos[i*3+2]=h.z; }
-  rgeo.attributes.position.needsUpdate=true; rmat.opacity=0.9; rmat.size=Math.max(0.06,0.24-fd*0.10); return; }
- const useModel=logoSamplePts.length>0, ff=ez(clamp01((re-mFall)/R_FORM));
- for(let i=0;i<RN;i++){ const h=rHome[i];
-  if(useModel){ const tp=logoSamplePts[i%logoSamplePts.length]; h.x+=((tp.x-SCATTER_C.x)-h.x)*0.10; h.y+=((tp.y-SCATTER_C.y)-h.y)*0.10; h.z+=((tp.z-SCATTER_C.z)-h.z)*0.10; }
-  else { h.x+=(-h.x)*0.06; h.y+=(-h.y)*0.06; h.z+=(-h.z)*0.06; }
-  rpos[i*3]=h.x; rpos[i*3+1]=h.y; rpos[i*3+2]=h.z; }
- rgeo.attributes.position.needsUpdate=true; rmat.opacity=Math.max(0,0.9*(1-ff)); rmat.size=Math.max(0.03,0.14*(1-ff*0.6));
- logoGroup.visible=true; if(logoModel)setLogoOpacity(ez(clamp01((ff-0.12)/0.7)));
- if(re>mForm){ reveal.done=true; rpoints.visible=false; rmat.opacity=0; logoGroup.visible=true; if(logoModel)setLogoOpacity(1); }
+function updateReveal(re){ // kısa, sade bir belirme — animasyon/efekt yok
+ const k=ez(clamp01(re/0.4)); if(logoModel)setLogoOpacity(k);
+ if(re>=0.4){ reveal.done=true; if(logoModel)setLogoOpacity(1); }
 }
 // ---- FINAL: tum gezegenler okununca parca parca natal semaya toplanir, usturlap cemberleri sirayla belirir, gunes gri gelip parlar ----
 function startFinale(){if(finale)return; finale=true; finaleStart=t; finaleDone=false;
