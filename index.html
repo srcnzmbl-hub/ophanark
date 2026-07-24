@@ -316,12 +316,14 @@ img{display:block}
 .install-hint{width:100%;max-width:400px;margin-top:12px;color:#cbb58a;font-family:'Spectral',serif;font-size:13px;line-height:1.5;text-align:center;opacity:.85}
 /* settings bottom sheet */
 .sheet{position:fixed;inset:0;z-index:210;display:none;align-items:flex-end;justify-content:center}
-#n3dbar{position:absolute;top:0;left:0;right:0;z-index:6;display:none;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 8px) 12px 6px;pointer-events:none}
+#n3dbar{position:absolute;top:0;left:0;right:0;z-index:6;display:none;align-items:center;justify-content:flex-start;gap:9px;padding:calc(env(safe-area-inset-top) + 44px) 14px 6px;pointer-events:none}
 #n3dbar>*{pointer-events:auto}
-#n3dBack{width:38px;height:38px;border-radius:50%;border:1px solid rgba(232,190,96,.5);background:rgba(10,6,2,.45);color:#e8be60;font-size:22px;line-height:1;cursor:pointer}
-#n3dbar .n3dr{display:flex;align-items:center;gap:8px}
-#n3dbar .n3dr b{font-family:'Cinzel',serif;color:#e6c46a;font-size:13px;letter-spacing:.14em;font-weight:400}
-#n3dbar .n3demb{width:34px;height:34px;object-fit:contain}
+#n3dBack{flex:0 0 auto;width:38px;height:38px;border-radius:50%;border:1px solid rgba(232,190,96,.5);background:rgba(10,6,2,.45);color:#e8be60;font-size:22px;line-height:1;cursor:pointer}
+#n3dbar .n3demb{flex:0 0 auto;width:34px;height:34px;object-fit:contain}
+#n3dbar .n3dr{display:flex;align-items:center;gap:6px;pointer-events:none}
+#n3dbar .n3dr b{font-family:'Cinzel',serif;color:#e6c46a;font-size:12px;letter-spacing:.12em;font-weight:400}
+#n3dbar .n3dsep{color:#8a6a3a;font-size:12px}
+#n3dbar .n3dbrand{color:#caa658}
 .sheet.on{display:flex}
 .sheet .veil{position:absolute;inset:0;background:rgba(6,2,3,.62);backdrop-filter:blur(2px)}
 .sheet .panel{position:relative;width:min(100%,520px);max-height:72%;overflow-y:auto;
@@ -568,7 +570,8 @@ img{display:block}
       <div class="feathers" id="n3dFeathers" style="z-index:4;pointer-events:none"></div>
       <div id="n3dbar">
         <button id="n3dBack" aria-label="Geri">‹</button>
-        <div class="n3dr"><b>OPHANARK</b><img class="n3demb" src="emblem.png" alt=""></div>
+        <img class="n3demb" src="emblem.png" alt="">
+        <div class="n3dr"><b>3D NATAL CHART</b><span class="n3dsep">—</span><b class="n3dbrand">OPHANARK</b></div>
       </div>
     </div>
   </section>
@@ -2179,6 +2182,27 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   '.nt-note{color:#d9c6a0;font-size:13px;line-height:1.55;font-family:\'Spectral\',serif;text-align:center;margin:14px auto 6px}'+
   '.nt-btn{display:block;width:100%;max-width:430px;margin:12px auto 0;padding:15px;border-radius:14px;border:1px solid rgba(232,190,96,.85);background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;font-family:\'Cinzel\',serif;font-size:14px;letter-spacing:.06em;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.4)}'+
   '.nt-btn.ghost{background:transparent;color:#e8be60;box-shadow:none;border-color:rgba(232,190,96,.5)}'+
+  /* couple / bireysel */
+  '.nt-seclabel{color:#c99a54;font-family:\'Cinzel\',serif;font-size:11.5px;letter-spacing:.18em;text-align:center;margin:6px auto 2px;text-transform:uppercase}'+
+  '.nt-couplebox{position:relative;margin:26px auto 6px;max-width:430px;padding:20px 16px 22px;border-radius:18px;border:1px solid rgba(232,150,170,.4);background:linear-gradient(180deg,rgba(60,20,34,.42),rgba(24,8,14,.5));box-shadow:0 8px 24px rgba(0,0,0,.4)}'+
+  '.nt-couplehead{color:#f0c3d0;font-family:\'Cinzel\',serif;font-size:15px;letter-spacing:.08em;text-align:center}'+
+  '.nt-couplesub{color:#d9b8c2;font-family:\'Spectral\',serif;font-size:12.5px;line-height:1.5;text-align:center;margin:8px auto 16px;max-width:340px}'+
+  '.nt-plus{display:block;width:56px;height:56px;margin:0 auto;border-radius:50%;border:1px solid rgba(240,160,185,.7);background:radial-gradient(circle at 50% 40%,rgba(120,40,64,.55),rgba(40,12,20,.7));color:#f6d0dc;font-size:34px;line-height:52px;font-weight:700;cursor:pointer;box-shadow:0 0 20px rgba(210,90,130,.35),inset 0 1px 2px rgba(255,255,255,.25)}'+
+  '.nt-plus:active{transform:scale(.94)}'+
+  '.cp-two{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin:6px auto 4px}'+
+  '.cp-col{background:linear-gradient(180deg,rgba(40,24,8,.5),rgba(20,10,4,.42));border:1px solid rgba(214,168,92,.35);border-radius:16px;padding:12px}'+
+  '.cp-col.b{border-color:rgba(232,150,170,.4);background:linear-gradient(180deg,rgba(60,20,34,.4),rgba(24,8,14,.46))}'+
+  '.cp-h{font-family:\'Cinzel\',serif;font-size:12px;letter-spacing:.08em;text-align:center;margin-bottom:8px}'+
+  '.cp-col.a .cp-h{color:#f4d488}.cp-col.b .cp-h{color:#f0c3d0}'+
+  '.cp-f{margin-bottom:8px}.cp-f label{display:block;color:#b49a72;font-size:10.5px;letter-spacing:.05em;margin:0 2px 3px}'+
+  '.cp-f input{width:100%;box-sizing:border-box;background:rgba(40,12,16,.5);border:1px solid rgba(214,168,92,.3);border-radius:10px;padding:9px 10px;color:#f0e6d2;font-family:\'EB Garamond\',Georgia,serif;font-size:13px;outline:none}'+
+  '.cp-f input:focus{border-color:rgba(232,190,96,.7)}'+
+  '.cp-legwrap{display:flex;justify-content:center;gap:22px;margin:4px 0 2px}'+
+  '.cp-leg{display:flex;align-items:center;gap:7px;font-family:\'Cinzel\',serif;font-size:11.5px;letter-spacing:.06em}'+
+  '.cp-dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto}'+
+  '.cp-rtitle{color:#f0c3d0;font-family:\'Cinzel\',serif;font-size:15px;letter-spacing:.06em;text-align:center;margin:16px auto 4px}'+
+  '.cp-rp{color:#e9d3bb;font-family:\'Spectral\',serif;font-size:14px;line-height:1.62;text-align:justify;margin:0 auto .7em;max-width:520px}'+
+  '.cp-score{color:#f4d488;font-family:\'Cinzel\',serif;font-size:13px;letter-spacing:.08em;text-align:center;margin:10px auto}'+
   '.nt-lead{color:#e9d9b3;font-family:\'Spectral\',serif;font-size:14px;line-height:1.6;text-align:center;margin:6px auto 8px}'+
   /* wheel */
   '.nt-wheelwrap{text-align:center}'+
@@ -2233,14 +2257,146 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   function viewConfirm(){var p=window.__profile||{};
     el('ntWrap').innerHTML=head(tr()?'Natal Haritam':'My Natal Chart')+
      '<div class="nt-scroll"><div class="nt-center">'+
+      '<div class="nt-seclabel">'+(tr()?'Bireysel':'Individual')+'</div>'+
       '<div class="nt-card">'+irow('Ad',p.name)+irow(tr()?'Doğum Tarihi':'Birth Date',p.date)+irow(tr()?'Doğum Saati':'Birth Time',p.time)+irow(tr()?'Doğum Yeri':'Birth Place',p.place)+'</div>'+
       '<div class="nt-note">'+(tr()?'Kişisel bilgilerin doğru mu? Doğru değilse Düzenle\'ye bas; doğruysa Devam Et.':'Is your info correct? Tap Edit to fix, or Continue.')+'</div>'+
       '<button class="nt-btn ghost" id="ntEdit">✎ '+(tr()?'Düzenle':'Edit')+'</button>'+
       '<button class="nt-btn" id="ntCont">'+(tr()?'Devam Et':'Continue')+' ›</button>'+
+      '<div class="nt-couplebox">'+
+        '<div class="nt-couplehead">'+(tr()?'Çiftler İçin Kader Haritası':'Destiny Chart for Couples')+'</div>'+
+        '<div class="nt-couplesub">'+(tr()?'İki kişinin natal haritasını üst üste getirip ortak kaderinizi yorumlayalım.':'Overlay two natal charts and read your shared destiny.')+'</div>'+
+        '<button class="nt-plus" id="ntCoupleAdd" aria-label="'+(tr()?'Çift ekle':'Add couple')+'">+</button>'+
+      '</div>'+
      '</div></div>';
     bindClose();
     el('ntEdit').onclick=function(){ if(window.__openEditProfile)window.__openEditProfile(function(){viewConfirm();}); };
-    el('ntCont').onclick=startCompute;}
+    el('ntCont').onclick=startCompute;
+    el('ntCoupleAdd').onclick=viewCoupleEntry;}
+
+  /* ================= ÇİFT (KADER HARİTASI) ================= */
+  var COUPLE=null;
+  function computeFor(p,cb){
+    var dp=(p.date||'').split('-'),tp=(p.time||'12:00').split(':');
+    var y=+dp[0],mo=+dp[1],D=+dp[2],h=+tp[0]||12,mi=+tp[1]||0;
+    geocode(p.place||'',function(g){var lat,lon,y2=y,mo2=mo,D2=D,UT;
+      if(g){lat=g.lat;lon=g.lon;var off=tzOffsetMin(g.tz,y,mo,D,h,mi);
+        var dd=new Date(Date.UTC(y,mo-1,D,h,mi)-off*60000);
+        y2=dd.getUTCFullYear();mo2=dd.getUTCMonth()+1;D2=dd.getUTCDate();UT=dd.getUTCHours()+dd.getUTCMinutes()/60;
+      } else {lat=null;lon=0;UT=h+mi/60;}
+      var chart=computeChart(y2,mo2,D2,UT,(lat==null?0:lat),lon);
+      cb({chart:chart,ascSign:Math.floor(rev(chart.asc)/30),hasHouses:(lat!=null)});
+    });
+  }
+  function viewCoupleEntry(){var p=window.__profile||{};
+    el('ntWrap').innerHTML=head(tr()?'Kader Haritası':'Destiny Chart')+
+     '<div class="nt-scroll"><div class="nt-center">'+
+      '<div class="nt-note" style="margin-top:2px">'+(tr()?'İki kişinin doğum bilgilerini girin. İki harita ayrı ayrı hesaplanıp üst üste getirilecek.':'Enter both birth details. Two charts are computed and overlaid.')+'</div>'+
+      '<div class="cp-two">'+
+        '<div class="cp-col a"><div class="cp-h">'+(tr()?'1. Kişi':'Person 1')+'</div>'+
+          cpf('a','Name',(tr()?'Ad':'Name'),p.name||'')+cpf('a','Place',(tr()?'Doğum Yeri':'Place'),p.place||'','text')+cpf('a','Date',(tr()?'Tarih':'Date'),p.date||'','date')+cpf('a','Time',(tr()?'Saat':'Time'),p.time||'','time')+'</div>'+
+        '<div class="cp-col b"><div class="cp-h">'+(tr()?'2. Kişi':'Person 2')+'</div>'+
+          cpf('b','Name',(tr()?'Ad':'Name'),'')+cpf('b','Place',(tr()?'Doğum Yeri':'Place'),'','text')+cpf('b','Date',(tr()?'Tarih':'Date'),'','date')+cpf('b','Time',(tr()?'Saat':'Time'),'','time')+'</div>'+
+      '</div>'+
+      '<button class="nt-btn ghost" id="cpBack">‹ '+(tr()?'Geri':'Back')+'</button>'+
+      '<button class="nt-btn" id="cpGo">'+(tr()?'Kader Haritasını Oluştur':'Build Destiny Chart')+' ›</button>'+
+     '</div></div>';
+    bindClose();
+    el('cpBack').onclick=viewConfirm;
+    el('cpGo').onclick=function(){
+      var A={name:(el('cpaName').value||'').trim(),place:(el('cpaPlace').value||'').trim(),date:(el('cpaDate').value||'').trim(),time:(el('cpaTime').value||'').trim()};
+      var B={name:(el('cpbName').value||'').trim(),place:(el('cpbPlace').value||'').trim(),date:(el('cpbDate').value||'').trim(),time:(el('cpbTime').value||'').trim()};
+      if(!A.date||!B.date){alert(tr()?'Lütfen her iki kişinin doğum tarihini girin.':'Please enter both birth dates.');return;}
+      el('ntWrap').innerHTML=head(tr()?'Kader Haritası':'Destiny Chart')+'<div class="nt-scroll"><div class="nt-center"><div class="nt-note" style="margin-top:40px">'+(tr()?'İki gökyüzü üst üste getiriliyor…':'Overlaying two skies…')+'</div></div></div>';bindClose();
+      computeFor(A,function(ca){computeFor(B,function(cb){
+        COUPLE={A:ca,B:cb,aName:A.name||(tr()?'1. Kişi':'Person 1'),bName:B.name||(tr()?'2. Kişi':'Person 2')};
+        viewCoupleChart();
+      });});
+    };}
+  function cpf(who,id,label,val,type){return '<div class="cp-f"><label>'+label+'</label><input id="cp'+who+id+'" type="'+(type||'text')+'" value="'+esc2(val)+'" placeholder="'+label+'"></div>';}
+  function esc2(s){return (s||'').replace(/"/g,'&quot;');}
+
+  // iki haritanin üst üste bindirildiği bi-wheel (iç: 1.kişi altın, dış: 2.kişi pembe)
+  function buildCoupleWheel(A,B){var C=A.chart,asc=C.asc,cx=180,cy=180;
+    function P(a,R){return [cx-R*cosd(a),cy+R*sind(a)];}
+    var s='<svg class="nt-wheel" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">';
+    s+='<circle cx="180" cy="180" r="127" fill="#0a0710" fill-opacity="0.4"/>';
+    [176,150,127,150].forEach(function(R){s+='<circle cx="180" cy="180" r="'+R+'" fill="none" stroke="#e7bf6e" stroke-opacity="'+(R===176?0.9:0.45)+'" stroke-width="'+(R===176?1.5:0.9)+'"/>';});
+    for(var i=0;i<12;i++){var a0=rev(i*30-asc);var p1=P(a0,150),p2=P(a0,176);
+      s+='<line x1="'+p1[0].toFixed(1)+'" y1="'+p1[1].toFixed(1)+'" x2="'+p2[0].toFixed(1)+'" y2="'+p2[1].toFixed(1)+'" stroke="#e7bf6e" stroke-opacity="0.55" stroke-width="0.9"/>';
+      var am=rev(i*30+15-asc),g=P(am,163);
+      s+='<text x="'+g[0].toFixed(1)+'" y="'+(g[1]+6).toFixed(1)+'" fill="#ffe6a0" font-size="18" text-anchor="middle" font-family="ophzod,serif">'+ZCH[i]+'</text>';}
+    // AC ekseni referans (1.kişi)
+    var q1=P(0,92),q2=P(0,176);s+='<line x1="'+q1[0].toFixed(1)+'" y1="'+q1[1].toFixed(1)+'" x2="'+q2[0].toFixed(1)+'" y2="'+q2[1].toFixed(1)+'" stroke="#e7b96a" stroke-width="1" stroke-opacity="0.7"/>';
+    // çapraz açı çizgileri (1.kişi <-> 2.kişi)
+    function xasp(d){d=Math.abs(d);d=Math.min(d,360-d);var t=[[0,7,'#d8b24a'],[60,4,'#5bbf9f'],[90,6,'#c0563e'],[120,6,'#5bbf9f'],[180,7,'#c0563e']];for(var i=0;i<t.length;i++){if(Math.abs(d-t[i][0])<=t[i][1])return t[i][2];}return null;}
+    PORDER.forEach(function(ka){PORDER.forEach(function(kb){var col=xasp(A.chart.pos[ka]-B.chart.pos[kb]);if(!col)return;
+      var pa=P(rev(A.chart.pos[ka]-asc),108),pb=P(rev(B.chart.pos[kb]-asc),136);
+      s+='<line x1="'+pa[0].toFixed(1)+'" y1="'+pa[1].toFixed(1)+'" x2="'+pb[0].toFixed(1)+'" y2="'+pb[1].toFixed(1)+'" stroke="'+col+'" stroke-width="0.9" stroke-opacity="0.5"/>';});});
+    // gezegenler: 1.kişi iç (altın), 2.kişi dış (pembe)
+    function plot(chart,R,tick,col){var pl=PORDER.map(function(k){return {k:k,a:rev(chart.pos[k]-asc)};});
+      var sorted=pl.slice().sort(function(x,y){return x.a-y.a;});var lastA=-99,tier=0,pr={};
+      sorted.forEach(function(pp){if(Math.abs(pp.a-lastA)<9){tier=(tier+1)%2;}else{tier=0;}lastA=pp.a;pr[pp.k]=R-tier*13;});
+      pl.forEach(function(pp){var rr=pr[pp.k];var gp=P(pp.a,rr);var t1=P(pp.a,tick),t2=P(pp.a,tick-5);
+        s+='<line x1="'+t1[0].toFixed(1)+'" y1="'+t1[1].toFixed(1)+'" x2="'+t2[0].toFixed(1)+'" y2="'+t2[1].toFixed(1)+'" stroke="'+col+'" stroke-width="1"/>';
+        s+='<text x="'+gp[0].toFixed(1)+'" y="'+(gp[1]+5).toFixed(1)+'" fill="'+col+'" font-size="13.5" text-anchor="middle">'+PSYM[pp.k]+'</text>';});}
+    plot(B.chart,138,148,'#f3b7c8'); // dış: 2.kişi
+    plot(A.chart,110,124,'#ffe6a0'); // iç: 1.kişi
+    s+='</svg>';return s;}
+
+  var ELEM=[0,1,2,3,0,1,2,3,0,1,2,3]; // 0 ates,1 toprak,2 hava,3 su (burc sirasi)
+  var ELEM_TR=['Ateş','Toprak','Hava','Su'];
+  function elemPair(e1,e2){
+    if(e1===e2)return {tone:'uyumlu',txt:'aynı elemente ait olmanız, birbirinizi kelimelere gerek kalmadan anlamanızı sağlar; ritminiz doğal olarak örtüşür.'};
+    var s=e1+e2;
+    if((e1===0&&e2===2)||(e1===2&&e2===0))return {tone:'uyumlu',txt:'ateş ve hava birbirini besler; biriniz ilham verirken diğeriniz o ateşe nefes olur, ilişkiniz canlı ve hareketlidir.'};
+    if((e1===1&&e2===3)||(e1===3&&e2===1))return {tone:'uyumlu',txt:'toprak ve su birbirini büyütür; biriniz güven ve zemin verirken diğeriniz duygu ve derinlik katar, birlikte kök salarsınız.'};
+    if((e1===0&&e2===3)||(e1===3&&e2===0))return {tone:'zorlayıcı',txt:'ateş ve su farklı dillerden konuşur; biriniz hızlı ve dolaysızken diğeriniz derin ve hisseder — anlamak için sabır, ama öğrenince tamamlayıcı bir denge.'};
+    if((e1===1&&e2===2)||(e1===2&&e2===1))return {tone:'zorlayıcı',txt:'toprak ve hava farklı önceliklere sahiptir; biriniz somut ve istikrarlıyken diğeriniz fikirlerde ve özgürlükte yaşar — köprü kurmak çaba ister ama zenginleştirir.'};
+    if((e1===0&&e2===1)||(e1===1&&e2===0))return {tone:'dengeleyici',txt:'ateş ve toprak: biriniz kıvılcım, diğeriniz onu kalıcı kılan zemin. Sabırla birbirinizi frenler ve ateşlersiniz.'};
+    return {tone:'dengeleyici',txt:'hava ve su: biriniz zihinle, diğeriniz kalple yaklaşır; farkı köprüye çevirdiğinizde derin bir anlayış doğar.'};
+  }
+  function crossAspects(A,B){var out=[],harm=0,tense=0;
+    var defs=[[0,7,'kavuşum'],[60,4,'altmışlık'],[90,6,'kare'],[120,6,'üçgen'],[180,7,'karşıt']];
+    PORDER.forEach(function(ka){PORDER.forEach(function(kb){var d=Math.abs(A.chart.pos[ka]-B.chart.pos[kb]);d=Math.min(d%360,360-(d%360));
+      for(var i=0;i<defs.length;i++){if(Math.abs(d-defs[i][0])<=defs[i][1]){out.push({a:ka,b:kb,ang:defs[i][0],name:defs[i][2]});
+        if(defs[i][0]===60||defs[i][0]===120)harm++;else if(defs[i][0]===90||defs[i][0]===180)tense++;break;}}});});
+    return {list:out,harm:harm,tense:tense};}
+  function coupleReading(){var A=COUPLE.A,B=COUPLE.B,an=COUPLE.aName,bn=COUPLE.bName;
+    var aSun=Math.floor(rev(A.chart.pos.sun)/30),bSun=Math.floor(rev(B.chart.pos.sun)/30);
+    var aMoon=Math.floor(rev(A.chart.pos.moon)/30),bMoon=Math.floor(rev(B.chart.pos.moon)/30);
+    var aVen=Math.floor(rev(A.chart.pos.venus)/30),bMar=Math.floor(rev(B.chart.pos.mars)/30);
+    var bVen=Math.floor(rev(B.chart.pos.venus)/30),aMar=Math.floor(rev(A.chart.pos.mars)/30);
+    var ca=crossAspects(A,B);
+    var ps=[];
+    ps.push('Bu harita, '+an+' ve '+bn+' isimli iki insanın doğduğu anların gökyüzünü aynı çember üzerinde birleştiriyor. İçteki altın gezegenler '+an+'’a, dıştaki pembe gezegenler '+bn+'’a ait. Aralarındaki çizgiler ise iki ruhun birbirine değdiği noktaları — kaderinizin kesiştiği yerleri gösteriyor.');
+    var se=elemPair(ELEM[aSun],ELEM[bSun]);
+    ps.push('Özde, '+an+' bir '+SIGN_TR[aSun]+' ('+ELEM_TR[ELEM[aSun]]+'), '+bn+' ise bir '+SIGN_TR[bSun]+' ('+ELEM_TR[ELEM[bSun]]+') Güneşi taşıyor. '+(se.txt.charAt(0).toUpperCase()+se.txt.slice(1)));
+    var me=elemPair(ELEM[aMoon],ELEM[bMoon]);
+    ps.push('Duygusal dünyalarınız Ay burçlarınızda saklı: '+an+'’ın Ay’ı '+SIGN_TR[aMoon]+', '+bn+'’ın Ay’ı '+SIGN_TR[bMoon]+'. '+(ELEM[aMoon]===ELEM[bMoon]?'Aynı duygusal dili konuşuyorsunuz; birinizin sustuğu yerde diğeriniz ne hissettiğini bilir.':'Duyguyu farklı yaşıyorsunuz: '+me.txt+' Bu fark, birbirinizi tanımak için en değerli öğretmeniniz olabilir.'));
+    ps.push('Çekim ve tutku ekseninde '+an+'’ın Venüs’ü '+SIGN_TR[aVen]+', '+bn+'’ın Mars’ı '+SIGN_TR[bMar]+'; buna karşılık '+bn+'’ın Venüs’ü '+SIGN_TR[bVen]+', '+an+'’ın Mars’ı '+SIGN_TR[aMar]+'. Sevme biçiminizle arzulama biçiminiz bu dört nokta arasında dans eder — birbirinizin istediğini verebildiğiniz ölçüde ilişkiniz hem tutkulu hem huzurlu olur.');
+    var tot=ca.harm+ca.tense, pct=tot?Math.round(ca.harm/tot*100):50;
+    var closing;
+    if(ca.harm>ca.tense) closing='Haritalarınız arasında akıcı bağlar (üçgen ve altmışlık açılar) gerilimli olanlardan fazla — birlikteliğiniz doğal bir kolaylık, bir "eve gelmiş" hissi taşıyor. Yine de her ilişkinin büyümesi için biraz sürtünme gerekir; sizi asıl olgunlaştıracak olan, o birkaç zorlu açıyı sabırla kucaklamanız olacak.';
+    else if(ca.tense>ca.harm) closing='Haritalarınızda gerilimli açılar (kare ve karşıt) akıcı olanlardan fazla — bu, aranızda güçlü, manyetik ama zaman zaman zorlayıcı bir çekim demek. Bu tür bağlar en çok dönüştüren bağlardır: birbirinizi büyütür, sınırlarınızı genişletir. Kaderiniz kolay değil ama derin.';
+    else closing='Akıcı ve gerilimli açılarınız neredeyse dengede — bu, hem huzurun hem de büyümeyi tetikleyen kıvılcımın bir arada olduğu, olgun ve canlı bir bağa işaret eder.';
+    ps.push(closing);
+    return {ps:ps,harm:ca.harm,tense:ca.tense,pct:pct,aSun:aSun,bSun:bSun};}
+  function viewCoupleChart(){var r=coupleReading();var A=COUPLE.A,B=COUPLE.B;
+    el('ntWrap').innerHTML=head(tr()?'Kader Haritası':'Destiny Chart')+
+     '<div class="nt-scroll" id="cpRS"><div class="nt-center">'+
+      '<div class="nt-cap">'+esc2(COUPLE.aName)+'  ✦  '+esc2(COUPLE.bName)+'</div>'+
+      buildCoupleWheel(A,B)+
+      '<div class="cp-legwrap"><div class="cp-leg" style="color:#ffe6a0"><span class="cp-dot" style="background:#ffe6a0"></span>'+esc2(COUPLE.aName)+'</div><div class="cp-leg" style="color:#f3b7c8"><span class="cp-dot" style="background:#f3b7c8"></span>'+esc2(COUPLE.bName)+'</div></div>'+
+      '<div class="cp-score">'+(tr()?'Kader Uyumu':'Destiny Harmony')+': '+r.pct+'%  ·  '+(tr()?'akıcı':'flowing')+' '+r.harm+'  ·  '+(tr()?'gerilimli':'tense')+' '+r.tense+'</div>'+
+      '<div class="cp-rtitle">'+(tr()?'Ortak Kaderiniz':'Your Shared Destiny')+'</div>'+
+      r.ps.map(function(x){return '<p class="cp-rp">'+x+'</p>';}).join('')+
+      '<button class="nt-btn ghost" id="cpAgain">‹ '+(tr()?'Yeni Çift':'New Couple')+'</button>'+
+      '<button class="nt-btn" id="cpDone">'+(tr()?'Bitir':'Done')+'</button>'+
+     '</div></div>';
+    bindClose();
+    el('cpAgain').onclick=viewCoupleEntry;
+    el('cpDone').onclick=viewConfirm;
+    var sc=el('cpRS');if(sc)sc.scrollTop=0;}
   function irow(k,v){return '<div class="nt-irow"><span class="k">'+k+'</span><span class="v">'+(v||'—')+'</span></div>';}
 
   /* ---------- compute ---------- */
@@ -2322,15 +2478,14 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
     el('ntWrap').innerHTML=
      '<div class="nt-wrap-inner" style="position:relative;display:flex;flex-direction:column;height:100%">'+
       head(tr()?'Natal Haritam':'My Natal Chart')+
-      '<button class="nt-arrow l" id="ntPrevC">‹</button>'+
       '<div class="nt-scroll" id="ntTS"><div class="nt-center">'+
         '<table class="nt-tbl"><thead><tr><th>'+(tr()?'NOKTA':'POINT')+'</th><th>'+(tr()?'BURÇ':'SIGN')+'</th><th>'+(tr()?'DERECE':'DEG')+'</th><th>'+(tr()?'EV':'H')+'</th><th>'+(tr()?'TEMA':'THEME')+'</th></tr></thead><tbody>'+rows+'</tbody></table>'+
         '<button class="nt-btn" id="ntRead">'+(tr()?'Detaylı Yorum İçin Tıklayın':'Read the Full Interpretation')+' ›</button>'+
       '</div></div>'+
       '<div class="nt-pageno">'+(tr()?'Sayfa':'Page')+' 2 / 2</div>'+
-      '<div class="nt-bar"><button id="ntExitT">✕ '+(tr()?'Kapat':'Close')+'</button></div>'+
+      '<div class="nt-bar" style="flex-direction:column;gap:6px"><div class="nt-swipehint">'+(tr()?'Geri dönmek için sağa kaydırınız ›':'Swipe right to go back ›')+'</div><button id="ntExitT">✕ '+(tr()?'Kapat':'Close')+'</button></div>'+
      '</div>';
-    bindClose();el('ntExitT').onclick=closeNatal;el('ntPrevC').onclick=function(){chartPage=0;viewChartPage();};el('ntRead').onclick=openReader;
+    bindClose();el('ntExitT').onclick=closeNatal;el('ntRead').onclick=openReader;
     attachSwipe(el('ntTS'),function(d){if(d==='right'){chartPage=0;viewChartPage();}});scrollHints(el('ntTS'));}
   function trow(sym,name,sign,deg,house,theme){var si=SIGN().indexOf(sign);var gl=si>=0?'<span class="zsym" style="font-size:15px;color:#f4d488">'+ZCH[si]+'</span> ':'';
     return '<tr><td class="c-n"><b>'+sym+'</b> '+name+'</td><td class="c-s">'+gl+sign+'</td><td class="c-d">'+deg.toFixed(2)+'°</td><td class="c-h">'+house+'</td><td class="c-t">'+theme+'</td></tr>';}
