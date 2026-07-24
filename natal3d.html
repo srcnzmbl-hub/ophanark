@@ -44,7 +44,7 @@ font-size:13.5px;letter-spacing:1px;z-index:9;pointer-events:none}
 #cardBody p{margin:0 0 0.7em}
 #cardBody .cw{opacity:0;transition:opacity .3s ease}
 #cardBody .cw.on{opacity:1}
-#cardClose{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);left:50%;transform:translateX(-50%);z-index:2;
+#cardClose{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);left:calc(50% + 46px);transform:translateX(-50%);z-index:2;
   pointer-events:auto;width:52px;height:52px;border-radius:50%;cursor:pointer;
   background:radial-gradient(circle at 50% 40%,#1b1738,#0b091b);border:1.5px solid rgba(214,186,128,0.75);color:#e9c86e;font-size:22px;font-family:Georgia;
   display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(120,90,200,.35)}
@@ -63,8 +63,7 @@ font-size:13.5px;letter-spacing:1px;z-index:9;pointer-events:none}
   pointer-events:auto;width:52px;height:52px;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;
   background:radial-gradient(circle at 50% 40%,#1b1738,#0b091b);border:1.5px solid rgba(214,186,128,0.75);color:#e9c86e;font-size:20px;
   display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(120,90,200,.35)}
-#cardSpeak{left:calc(50% - 76px)}
-#cardMute{left:calc(50% + 76px)}
+#cardSpeak{left:calc(50% - 46px)}
 #cardMute.off{opacity:.5;color:#8a86a0;border-color:rgba(214,186,128,0.4)}
 #cardSpeak.on{border-color:#ffe08a;box-shadow:0 0 22px rgba(233,200,110,.7);animation:spk 1s ease-in-out infinite}
 #cardSpeak:active,#cardMute:active{transform:translateX(-50%) scale(.94)}
@@ -75,7 +74,6 @@ font-size:13.5px;letter-spacing:1px;z-index:9;pointer-events:none}
 <canvas id="c"></canvas>
 <div class="ui" id="btnWrap"><span id="yorumla">✦ HARİTAYI YORUMLA ✦</span></div>
 <div id="loading">KOZMİK ALAN HAZIRLANIYOR…</div>
-<button id="muteBtn" aria-label="ses ac/kapat">🔊</button>
 <div id="cardOverlay">
   <div id="cardGlow"></div>
   <div id="cardInner">
@@ -84,7 +82,6 @@ font-size:13.5px;letter-spacing:1px;z-index:9;pointer-events:none}
   </div>
   <button id="cardSpeak" aria-label="sesli oku">🔊</button>
   <button id="cardClose">✕</button>
-  <button id="cardMute" aria-label="tema muzigi">🎵</button>
 </div>
 
 <script type="importmap">
@@ -194,7 +191,7 @@ const softTex=radialTex('rgba(255,255,255,1)','rgba(255,255,255,0)');
 let AC=null, masterGain=null, themeGain=null, audioOn=true, ambientOn=false, themeMuted=false, _nbuf=null, fired={};
 let conv=null, themeConv=null; // kozmik reverb (sfx + tema ayri ki sesli-okuma kisilinca tema kuyrugu da kisilir)
 function makeIR(dur,decay){ const L=Math.floor(AC.sampleRate*dur); const b=AC.createBuffer(2,L,AC.sampleRate); for(let c=0;c<2;c++){const d=b.getChannelData(c); for(let i=0;i<L;i++){const x=i/L; d[i]=(Math.random()*2-1)*Math.pow(1-x,decay);}} return b; }
-function initAudio(){ if(AC)return true; try{const C=window.AudioContext||window.webkitAudioContext; if(!C)return false; AC=new C(); masterGain=AC.createGain(); masterGain.gain.value=audioOn?1:0; masterGain.connect(AC.destination); themeGain=AC.createGain(); themeGain.gain.value=1; themeGain.connect(masterGain);
+function initAudio(){ return false; /* 3D harita: tüm efekt/ambient sesleri kapalı */ if(AC)return true; try{const C=window.AudioContext||window.webkitAudioContext; if(!C)return false; AC=new C(); masterGain=AC.createGain(); masterGain.gain.value=audioOn?1:0; masterGain.connect(AC.destination); themeGain=AC.createGain(); themeGain.gain.value=1; themeGain.connect(masterGain);
  // --- derin/kozmik reverb yolu ---
  const IR=makeIR(4.2,2.4);
  conv=AC.createConvolver(); conv.buffer=IR; const rg=AC.createGain(); rg.gain.value=0.95; conv.connect(rg); rg.connect(masterGain);

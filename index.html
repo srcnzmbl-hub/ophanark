@@ -1142,14 +1142,17 @@ window.__load3D=function(){
   function esc(s){return (s||'').replace(/"/g,'&quot;');}
   function openEdit(onSave){
     var p=window.__profile;
+    var placeBlock=(window.__placeHTML?window.__placeHTML('e'):'<div class="efield"><label>Birth Place</label><input id="ePlace" value="'+esc(p.place)+'" placeholder="City, Country"></div>');
     var h='<div class="efield"><label>Full Name</label><input id="eName" value="'+esc(p.name)+'" placeholder="Name Surname"></div>'+
-      '<div class="efield"><label>Birth Place</label><input id="ePlace" value="'+esc(p.place)+'" placeholder="City, Country"></div>'+
+      placeBlock+
       '<div class="efield"><label>Birth Date</label><input id="eDate" type="date" value="'+esc(p.date)+'"></div>'+
       '<div class="efield"><label>Birth Time</label><input id="eTime" type="time" value="'+esc(p.time)+'"></div>'+
       '<button class="esave" id="eSave">Save</button>';
     openSheet('Edit Personal Info',h);
+    if(window.__placeWire)window.__placeWire('e',p.place);
     $('eSave').addEventListener('click',function(){
-      var name=($('eName').value||'').trim(),place=($('ePlace').value||'').trim(),date=($('eDate').value||'').trim(),time=($('eTime').value||'').trim();
+      var name=($('eName').value||'').trim(),date=($('eDate').value||'').trim(),time=($('eTime').value||'').trim();
+      var place=(window.__placeRead?window.__placeRead('e'):($('ePlace')?($('ePlace').value||'').trim():''));
       window.__profile={name:name,place:place,date:date,time:time};
       ls('oph_name',name);ls('oph_place',place);ls('oph_date',date);ls('oph_time',time);
       fillDisplay();closeSheet();
@@ -2201,13 +2204,15 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   '.nt-plus{display:block;width:56px;height:56px;margin:0 auto;border-radius:50%;border:1px solid rgba(150,190,240,.7);background:radial-gradient(circle at 50% 40%,rgba(38,68,118,.6),rgba(12,22,42,.72));color:#cfe0f8;font-size:34px;line-height:52px;font-weight:700;cursor:pointer;box-shadow:0 0 20px rgba(90,140,220,.4),inset 0 1px 2px rgba(255,255,255,.25)}'+
   '.nt-plus:active{transform:scale(.94)}'+
   '.cp-two{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin:6px auto 4px}'+
-  '.cp-col{background:linear-gradient(180deg,rgba(40,24,8,.5),rgba(20,10,4,.42));border:1px solid rgba(214,168,92,.35);border-radius:16px;padding:12px}'+
+  '.cp-col{min-width:0;background:linear-gradient(180deg,rgba(40,24,8,.5),rgba(20,10,4,.42));border:1px solid rgba(214,168,92,.35);border-radius:16px;padding:12px}'+
   '.cp-col.b{border-color:rgba(120,170,235,.42);background:linear-gradient(180deg,rgba(22,38,64,.4),rgba(8,16,32,.46))}'+
   '.cp-h{font-family:\'Cinzel\',serif;font-size:12px;letter-spacing:.08em;text-align:center;margin-bottom:8px}'+
   '.cp-col.a .cp-h{color:#f4d488}.cp-col.b .cp-h{color:#bcd6f5}'+
-  '.cp-f{margin-bottom:8px}.cp-f label{display:block;color:#b49a72;font-size:10.5px;letter-spacing:.05em;margin:0 2px 3px}'+
-  '.cp-f input{width:100%;box-sizing:border-box;background:rgba(40,12,16,.5);border:1px solid rgba(214,168,92,.3);border-radius:10px;padding:9px 10px;color:#f0e6d2;font-family:\'EB Garamond\',Georgia,serif;font-size:13px;outline:none}'+
-  '.cp-f input:focus{border-color:rgba(232,190,96,.7)}'+
+  '.cp-f{margin-bottom:8px;min-width:0}.cp-f label{display:block;color:#b49a72;font-size:10.5px;letter-spacing:.05em;margin:0 2px 3px}'+
+  '.cp-f input,.cp-f select,.pp-in{width:100%;max-width:100%;min-width:0;box-sizing:border-box;background:rgba(40,12,16,.5);border:1px solid rgba(214,168,92,.3);border-radius:10px;padding:9px 10px;color:#f0e6d2;font-family:\'EB Garamond\',Georgia,serif;font-size:13px;outline:none;-webkit-appearance:none;appearance:none}'+
+  '.cp-f input:focus,.cp-f select:focus,.pp-in:focus{border-color:rgba(232,190,96,.7)}'+
+  'select.pp-in{background-image:url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'7\'><path d=\'M0 0l5 6 5-6z\' fill=\'%23c9a24a\'/></svg>");background-repeat:no-repeat;background-position:right 10px center;padding-right:26px}'+
+  '.pp-in option{background:#1a0a0e;color:#f0e6d2}'+
   '.cp-legwrap{display:flex;justify-content:center;gap:22px;margin:4px 0 2px}'+
   '.cp-leg{display:flex;align-items:center;gap:7px;font-family:\'Cinzel\',serif;font-size:11.5px;letter-spacing:.06em}'+
   '.cp-dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto}'+
@@ -2284,6 +2289,39 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
     el('ntCont').onclick=startCompute;
     el('ntCoupleAdd').onclick=viewCoupleEntry;}
 
+  /* ================= KONUM SEÇİCİ (ülke → il → ilçe) ================= */
+  var COUNTRIES=['Türkiye','KKTC','Almanya','Avusturya','Azerbaycan','ABD','Birleşik Krallık','Fransa','Hollanda','Belçika','İsviçre','İsveç','Norveç','Danimarka','İtalya','İspanya','Portekiz','Yunanistan','Bulgaristan','Romanya','Rusya','Ukrayna','Polonya','Çekya','Macaristan','Suudi Arabistan','Katar','Kuveyt','BAE','İran','Irak','Suriye','Mısır','Fas','Kanada','Avustralya','Japonya','Çin','Hindistan','Brezilya','Diğer'];
+  var IL_TR=['Adana','Adıyaman','Afyonkarahisar','Ağrı','Aksaray','Amasya','Ankara','Antalya','Ardahan','Artvin','Aydın','Balıkesir','Bartın','Batman','Bayburt','Bilecik','Bingöl','Bitlis','Bolu','Burdur','Bursa','Çanakkale','Çankırı','Çorum','Denizli','Diyarbakır','Düzce','Edirne','Elazığ','Erzincan','Erzurum','Eskişehir','Gaziantep','Giresun','Gümüşhane','Hakkâri','Hatay','Iğdır','Isparta','İstanbul','İzmir','Kahramanmaraş','Karabük','Karaman','Kars','Kastamonu','Kayseri','Kilis','Kırıkkale','Kırklareli','Kırşehir','Kocaeli','Konya','Kütahya','Malatya','Manisa','Mardin','Mersin','Muğla','Muş','Nevşehir','Niğde','Ordu','Osmaniye','Rize','Sakarya','Samsun','Şanlıurfa','Siirt','Sinop','Sivas','Şırnak','Tekirdağ','Tokat','Trabzon','Tunceli','Uşak','Van','Yalova','Yozgat','Zonguldak'];
+  function cityFieldHTML(pfx,isTR,sel){
+    if(isTR){var o='<option value="">'+(tr()?'İl seçiniz…':'Select city…')+'</option>'+IL_TR.map(function(c){return '<option'+(c===sel?' selected':'')+'>'+c+'</option>';}).join('');
+      return '<label>'+(tr()?'İl / Şehir':'City')+'</label><select id="'+pfx+'City" class="pp-in">'+o+'</select>';}
+    return '<label>'+(tr()?'Şehir':'City')+'</label><input id="'+pfx+'City" class="pp-in" type="text" placeholder="'+(tr()?'Şehir':'City')+'" value="'+esc2(sel||'')+'">';
+  }
+  function placeHTML(pfx){
+    var opts=COUNTRIES.map(function(c){return '<option'+(c==='Türkiye'?' selected':'')+'>'+c+'</option>';}).join('');
+    return '<div class="cp-f"><label>'+(tr()?'Ülke':'Country')+'</label><select id="'+pfx+'Country" class="pp-in">'+opts+'</select></div>'+
+      '<div class="cp-f" id="'+pfx+'CityWrap"></div>'+
+      '<div class="cp-f"><label>'+(tr()?'İlçe / Köy / Semt':'District / Village')+'</label><input id="'+pfx+'Dist" class="pp-in" type="text" placeholder="'+(tr()?'İlçe, köy, semt (opsiyonel)':'District (optional)')+'"></div>';
+  }
+  function placeWire(pfx,initial){initial=initial||'';
+    var cs=document.getElementById(pfx+'Country'),wrap=document.getElementById(pfx+'CityWrap'),dist=document.getElementById(pfx+'Dist');
+    if(!cs||!wrap)return;
+    var lo=initial.toLocaleLowerCase('tr'),ilMatch='';
+    for(var i=0;i<IL_TR.length;i++){if(lo.indexOf(IL_TR[i].toLocaleLowerCase('tr'))>=0){ilMatch=IL_TR[i];break;}}
+    function render(preset){var isTR=(cs.value==='Türkiye');wrap.innerHTML=cityFieldHTML(pfx,isTR,preset||'');}
+    render(ilMatch);
+    cs.addEventListener('change',function(){render('');});
+    if(!ilMatch&&initial&&dist&&!dist.value){dist.value=initial.replace(/,?\s*(TR|Türkiye|Turkey)\s*$/i,'').trim();}
+  }
+  function placeRead(pfx){
+    var country=((document.getElementById(pfx+'Country')||{}).value||'').trim();
+    var cityEl=document.getElementById(pfx+'City');var city=cityEl?((cityEl.value||'').trim()):'';
+    var dist=((document.getElementById(pfx+'Dist')||{}).value||'').trim();
+    if(country==='Diğer'||country==='Other')country='';
+    return [city,dist,country].filter(Boolean).join(', ');
+  }
+  window.__placeHTML=placeHTML;window.__placeWire=placeWire;window.__placeRead=placeRead;
+
   /* ================= ÇİFT (KADER HARİTASI) ================= */
   var COUPLE=null;
   function computeFor(p,cb){
@@ -2304,18 +2342,19 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
       '<div class="nt-note" style="margin-top:2px">'+(tr()?'İki kişinin doğum bilgilerini girin. İki harita ayrı ayrı hesaplanıp üst üste getirilecek.':'Enter both birth details. Two charts are computed and overlaid.')+'</div>'+
       '<div class="cp-two">'+
         '<div class="cp-col a"><div class="cp-h">'+(tr()?'1. Kişi':'Person 1')+'</div>'+
-          cpf('a','Name',(tr()?'Ad':'Name'),p.name||'')+cpf('a','Place',(tr()?'Doğum Yeri':'Place'),p.place||'','text')+cpf('a','Date',(tr()?'Tarih':'Date'),p.date||'','date')+cpf('a','Time',(tr()?'Saat':'Time'),p.time||'','time')+'</div>'+
+          cpf('a','Name',(tr()?'Ad':'Name'),p.name||'')+placeHTML('cpa')+cpf('a','Date',(tr()?'Tarih':'Date'),p.date||'','date')+cpf('a','Time',(tr()?'Saat':'Time'),p.time||'','time')+'</div>'+
         '<div class="cp-col b"><div class="cp-h">'+(tr()?'2. Kişi':'Person 2')+'</div>'+
-          cpf('b','Name',(tr()?'Ad':'Name'),'')+cpf('b','Place',(tr()?'Doğum Yeri':'Place'),'','text')+cpf('b','Date',(tr()?'Tarih':'Date'),'','date')+cpf('b','Time',(tr()?'Saat':'Time'),'','time')+'</div>'+
+          cpf('b','Name',(tr()?'Ad':'Name'),'')+placeHTML('cpb')+cpf('b','Date',(tr()?'Tarih':'Date'),'','date')+cpf('b','Time',(tr()?'Saat':'Time'),'','time')+'</div>'+
       '</div>'+
       '<button class="nt-btn ghost" id="cpBack">‹ '+(tr()?'Geri':'Back')+'</button>'+
       '<button class="nt-btn" id="cpGo">'+(tr()?'Kader Haritasını Oluştur':'Build Destiny Chart')+' ›</button>'+
      '</div></div>';
     bindClose();
+    placeWire('cpa',p.place||'');placeWire('cpb','');
     el('cpBack').onclick=viewConfirm;
     el('cpGo').onclick=function(){
-      var A={name:(el('cpaName').value||'').trim(),place:(el('cpaPlace').value||'').trim(),date:(el('cpaDate').value||'').trim(),time:(el('cpaTime').value||'').trim()};
-      var B={name:(el('cpbName').value||'').trim(),place:(el('cpbPlace').value||'').trim(),date:(el('cpbDate').value||'').trim(),time:(el('cpbTime').value||'').trim()};
+      var A={name:(el('cpaName').value||'').trim(),place:placeRead('cpa'),date:(el('cpaDate').value||'').trim(),time:(el('cpaTime').value||'').trim()};
+      var B={name:(el('cpbName').value||'').trim(),place:placeRead('cpb'),date:(el('cpbDate').value||'').trim(),time:(el('cpbTime').value||'').trim()};
       if(!A.date||!B.date){alert(tr()?'Lütfen her iki kişinin doğum tarihini girin.':'Please enter both birth dates.');return;}
       el('ntWrap').innerHTML=head(tr()?'Kader Haritası':'Destiny Chart')+'<div class="nt-scroll"><div class="nt-center"><div class="nt-note" style="margin-top:40px">'+(tr()?'İki gökyüzü üst üste getiriliyor…':'Overlaying two skies…')+'</div></div></div>';bindClose();
       computeFor(A,function(ca){computeFor(B,function(cb){
