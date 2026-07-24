@@ -1559,15 +1559,26 @@ try{
     var dom=null,dv=0; for(var kk in cnt){if(cnt[kk]>dv){dv=cnt[kk];dom=kk;}}
     var SUIT={tr:{cups:'Kupalar (duygular)',pentacles:'Tılsımlar (maddi hayat)',swords:'Kılıçlar (zihin)',wands:'Asalar (tutku)',major:'Büyük Arkana (kader)'},
               en:{cups:'Cups (emotions)',pentacles:'Pentacles (material life)',swords:'Swords (mind)',wands:'Wands (passion)',major:'Major Arcana (destiny)'}};
-    var close;
+    var n0=tCardName(draw[0].c,lang),m0=tMean(draw[0].c,draw[0].rev,lang);
+    var n1=tCardName(draw[1].c,lang),m1=tMean(draw[1].c,draw[1].rev,lang);
+    var n2=tCardName(draw[2].c,lang),m2=tMean(draw[2].c,draw[2].rev,lang);
+    var fRev=draw[2].rev, close;
     if(lang==='tr'){
-      close='Geçmişini '+tCardName(draw[0].c,lang)+' ('+tMean(draw[0].c,draw[0].rev,lang)+') şekillendirmiş; şu an '+tCardName(draw[1].c,lang)+' ('+tMean(draw[1].c,draw[1].rev,lang)+') öne çıkıyor ve enerjini buraya vermelisin; gelecek ise '+tCardName(draw[2].c,lang)+' ('+tMean(draw[2].c,draw[2].rev,lang)+') ile açılıyor. ';
-      if(dv>=2)close+=SUIT.tr[dom]+' bu açılımda baskın. ';
-      close+=(rc>=2)?'Kartların çoğu ters — önce içindeki bir direnci çözmen yolu açacak.':(rc===0?'Üç kart da düz; enerji açık, harekete geçmek için iyi bir zaman.':'Sabırla atacağın adım seni ileri taşıyacak.');
+      close='Geçmişini '+n0+' ('+m0+') şekillendirmiş; şu an '+n1+' ('+m1+') öne çıkıyor — enerjini gerçekten buraya vermelisin. Gelecek ise '+n2+' ('+m2+') ile açılıyor. ';
+      if(dv>=2)close+=SUIT.tr[dom]+' bu açılıma damga vuruyor. ';
+      if(fRev&&rc>=2)close+='Açık konuşayım: bu açılım şu an zorlu. Gelecek kartın da ters, yani yol kendiliğinden açılmıyor; '+n2+' ('+m2+') temasındaki düğümü çözmeden ilerlemek seni yorar.';
+      else if(fRev)close+='Dürüst olayım: geleceği temsil eden '+n2+' ters geldi — o alanda bir engel ya da ertelenen bir konu var; zorlamak yerine '+m2+' meselesini içten çözmen gerekiyor.';
+      else if(rc>=2)close+='Şu an biraz sıkışıksın (çok ters kart) ama gelecek kartın düz: içindeki direnci çözdüğün an önün açık.';
+      else if(rc===0)close+='Üç kart da düz — enerji tertemiz akıyor; bu açılım sana açıkça "ilerle" diyor, kaçırma.';
+      else close+='Kartlar dengeli; ne tümüyle kolay ne tümüyle zor. '+n1+' üzerinden atacağın bilinçli adım kefeyi lehine çevirir.';
     } else {
-      close='Your past was shaped by '+tCardName(draw[0].c,lang)+' ('+tMean(draw[0].c,draw[0].rev,lang)+'); now '+tCardName(draw[1].c,lang)+' ('+tMean(draw[1].c,draw[1].rev,lang)+') stands out and deserves your energy; the future opens with '+tCardName(draw[2].c,lang)+' ('+tMean(draw[2].c,draw[2].rev,lang)+'). ';
-      if(dv>=2)close+=SUIT.en[dom]+' dominate this spread. ';
-      close+=(rc>=2)?'Most cards are reversed — clearing an inner resistance first will open the way.':(rc===0?'All upright; the energy is open, a good time to act.':'A patient step forward will carry you onward.');
+      close='Your past was shaped by '+n0+' ('+m0+'); now '+n1+' ('+m1+') stands out and deserves your energy; the future opens with '+n2+' ('+m2+'). ';
+      if(dv>=2)close+=SUIT.en[dom]+' mark this spread. ';
+      if(fRev&&rc>=2)close+='Honestly, this spread is hard right now — the future card is reversed too, so the path won’t open on its own; untangle the '+n2+' ('+m2+') knot first.';
+      else if(fRev)close+='To be honest, your future card '+n2+' came reversed — there is a block or a delay there; instead of forcing it, resolve the '+m2+' issue within.';
+      else if(rc>=2)close+='The present is tight (several reversals) but the future is upright: clear the inner resistance and the way opens.';
+      else if(rc===0)close+='All three upright — the energy flows cleanly; this spread clearly says “go”.';
+      else close+='Balanced cards; neither wholly easy nor hard. A conscious step through '+n1+' tips the scale your way.';
     }
     var voice=draw.map(function(d,i){return pos[i]+': '+tCardName(d.c,lang)+(d.rev?((lang==='tr')?' ters':' reversed'):'');}).join(', ');
     var html='<div class="oph-tarot">'+head+'<div class="oph-tspread">'+rows+'</div><div class="oph-tclose">'+close+'</div></div>';
