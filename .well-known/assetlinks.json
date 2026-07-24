@@ -1,1 +1,1 @@
-[{"relation":["delegate_permission/common.handle_all_urls"],"target":{"namespace":"android_app","package_name":"co.ozarkcollective.ophanark","sha256_cert_fingerprints":["36:78:CF:FC:59:34:CC:68:44:F5:EA:B9:3C:60:23:70:4C:A3:21:49:C2:24:7C:BD:AD:11:D8:97:BB:E4:EE:C4"]}}]
+[{"relation":["delegate_permission/common.handle_all_urls"],"target":{"namespace":"android_app","package_name":"com.ophanark.app","sha256_cert_fingerprints":["6E:C2:3C:BF:C0:48:42:7A:FF:BB:F6:25:26:AF:4B:E3:93:88:CB:D1:58:E9:D3:7D:A4:10:9B:1A:0A:FF:23:17"]}}]
