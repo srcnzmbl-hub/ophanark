@@ -2068,6 +2068,17 @@ try{
     if(inp&&scr){
       inp.addEventListener('focus',function(){scr.classList.add('kbd');});
       inp.addEventListener('blur',function(){setTimeout(function(){scr.classList.remove('kbd');},120);});
+      function closeKbd(){ if(document.activeElement===inp){ inp.blur(); } }
+      /* sohbet alanına / ekrana dokununca klavye kapansın */
+      var chat=document.getElementById('ophChat');
+      if(chat)chat.addEventListener('pointerdown',closeKbd);
+      var wrap=scr.querySelector('.oph-wrap');
+      if(wrap)wrap.addEventListener('pointerdown',function(e){ if(e.target===wrap)closeKbd(); });
+      /* aşağı doğru kaydırınca klavye kapansın */
+      var y0=null;
+      (chat||scr).addEventListener('touchstart',function(e){ y0=(e.touches&&e.touches[0])?e.touches[0].clientY:null; },{passive:true});
+      (chat||scr).addEventListener('touchmove',function(e){ if(y0==null)return; var y=e.touches[0].clientY; if(y-y0>44){ closeKbd(); y0=null; } },{passive:true});
+      (chat||scr).addEventListener('touchend',function(){ y0=null; });
     }})();
   document.getElementById('wakeTog').addEventListener('click',function(){wakeOn?stopWake():startWake();});
   document.getElementById('wakeTog').addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){wakeOn?stopWake():startWake();}});
