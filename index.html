@@ -1628,11 +1628,16 @@ try{
     DREAM.forEach(function(sy){for(var i=0;i<sy.k.length;i++){if(t.indexOf(sy.k[i])>=0){found.push(lang==='tr'?sy.tr:sy.en);break;}}});
     if(!found.length){
       return (lang==='tr')
-        ? 'Rüyanı dinledim. Belirgin bir sembol yakalayamadım ama rüyalar çoğu zaman gündüz taşıdığın duyguların bir yankısıdır. Bana rüyandaki en canlı ayrıntıyı söyle — bir nesne, bir yer ya da bir his — onu senin için yorumlayayım.'
-        : 'I listened to your dream. I could not catch a clear symbol, but dreams are often an echo of feelings you carry by day. Tell me the most vivid detail — an object, a place, or a feeling — and I will interpret it for you.';
+        ? pk(['Rüyanı dinledim. Belirgin bir sembol yakalayamadım ama rüyalar çoğu zaman gündüz taşıdığın duyguların bir yankısıdır. Bana rüyandaki en canlı ayrıntıyı söyle — bir nesne, bir yer ya da bir his — onu senin için yorumlayayım.','Rüyanı bir güzel dinledim ama tek net bir simge çıkmadı. En çok aklında kalan detayı anlat — bir renk, bir yüz, bir yer — oradan devam edelim.','Anlattığında güçlü bir sembol belirmedi; yine de her rüyanın bir tohumu vardır. Rüyandaki en canlı anı tarif et, birlikte açalım.'])
+        : pk(['I listened to your dream. I could not catch a clear symbol, but dreams are often an echo of feelings you carry by day. Tell me the most vivid detail — an object, a place, or a feeling — and I will interpret it for you.','I heard your dream but no single clear sign surfaced. Tell me the detail that stayed with you most and we will open it together.']);
     }
-    var head=(lang==='tr')?'Rüyan şunu fısıldıyor: ':'Your dream whispers this: ';
-    return head+found.join(' ');
+    var head=(lang==='tr')
+      ? pk(['Rüyan şunu fısıldıyor: ','Rüyandaki işaretler şöyle konuşuyor: ','Gördüklerin boş değil; şunu anlatıyor: ','Bilinçaltın bu rüyayla sana diyor ki: ','Rüyanın diline kulak verdim: '])
+      : pk(['Your dream whispers this: ','The signs in your dream speak: ','What you saw is not idle; it says: ']);
+    var tail=(lang==='tr')
+      ? pk(['','',' Rüyalar yargılamaz, yalnızca gösterir; kararı sen verirsin.',' Bunu bir kehanet değil, bir işaret olarak al.'])
+      : pk(['','',' Dreams do not judge, they only reveal; the choice is yours.']);
+    return head+found.join(' ')+tail;
   }
   /* ---- horoscope ---- */
   function askSignReply(){
@@ -1846,18 +1851,69 @@ try{
     celtic:{h:346,c:[{l:118,t:150},{l:118,t:150,r:1},{l:118,t:246},{l:56,t:150},{l:118,t:54},{l:180,t:150},{l:274,t:262},{l:274,t:180},{l:274,t:98},{l:274,t:16}]}
   };
 
+  /* ===== FALCI MOTORU: sabit şablon yok — her okumada parçalar rastgele birleşir ===== */
+  function pk(a){return a[(Math.random()*a.length)|0];}
+  function capTr(s){return s?s.charAt(0).toLocaleUpperCase('tr')+s.slice(1):s;}
+  var UP_TR=[
+    'Düz gelmesi, bu enerjinin önünün açık olduğunu; ona güvenip üstüne gidebileceğini gösteriyor.',
+    'Kart dik duruyor: bu güç şu an akışta, onu cesaretle kullanabilirsin.',
+    'Düz haliyle kapı aralık — bu tema hayatına doğrudan ve net giriyor.',
+    'Dik geldiği için mesaj gizlenmeden, olduğu gibi önüne seriliyor.',
+    'Düz kart, bu alanda rüzgârın arkandan estiğini söylüyor.',
+    'Açık bir düz kart; içinden geleni bastırmana gerek yok, zamanlama senden yana.',
+    'Dik duruşuyla bu enerji dışa dönük çalışıyor, meyvesini görünür kılıyor.',
+    'Düz gelmesi, attığın adımın karşılığını yakında alacağını ima ediyor.'
+  ];
+  var RV_TR=[
+    'Ters gelmesi, bu enerjinin içeride sıkıştığını; önce o düğümü çözmen gerektiğini fısıldıyor.',
+    'Kart ters: güç var ama akmıyor, bir yerde tıkanmış — önce o tıkanıklığa bak.',
+    'Baş aşağı duruşuyla bu tema seni içten içe yokluyor; dışa vurmadan önce içine dönmelisin.',
+    'Ters haliyle mesaj perde arkasında çalışıyor; kendini hemen belli etmiyor.',
+    'Devrik kart bir gecikme ya da direnç gösteriyor; bu başlık sabır istiyor.',
+    'Ters gelmesi, enerjiyi abartılı ya da eksik yaşıyor olabileceğine işaret ediyor; dengeyi ara.',
+    'Baş aşağı geldiği için önce eski bir alışkanlığı ya da korkuyu bırakman gerekebilir.',
+    'Ters kart, cevabın dışarıda değil kendi içinde saklı olduğunu söylüyor.'
+  ];
+  var SUITFLAV_TR={
+    cups:['Kalbini dinle; asıl yön orada.','Duyguların sana yalan söylemiyor.','İlişkilerinde suyun akışına güven.','Şefkat, bu kapıyı açan anahtar.'],
+    pentacles:['Ayaklarını yere bas; somut adım seni taşır.','Sabırla kurulan şey kalıcı olur.','Bedenini ve kaynaklarını gözet.','Küçük ama istikrarlı adım büyük fark yaratır.'],
+    swords:['Zihnini netleştir; karar orada berraklaşır.','Sözünü tartıp söyle.','Gerçeği görmekten korkma.','Bir düşünceyi bırakmak da bir çözümdür.'],
+    wands:['Ateşini doğru yöne çevir.','Cesaret, bu kartın yakıtı.','Harekete geçmek için işaret bekleme.','Tutkunu dağıtma, tek hedefe topla.'],
+    major:['Bu, kaderin daha büyük bir hamlesi.','Kontrolün ötesinde bir akış var; ona güven.','Hayatının dönüm taşlarından biri bu.','Evren burada seninle konuşuyor.']
+  };
+  var UP_EN=['Upright, the energy flows freely — you can trust it and move.','It stands upright: the door is open here.','Dial is clear; act on your intention.','Upright, this theme enters your life directly and plainly.'];
+  var RV_EN=['Reversed, the energy is stuck inside; untangle that knot first.','It falls reversed: the force is there but blocked.','Reversed, the message works behind the curtain; give it patience.','Upside down, look inward — the answer is not outside.'];
   function longRead(c,rev,pos){
     var nm=nameOf(c),mean=meanOf(c,rev),rvw=rev?(tr()?' (ters)':' (reversed)'):'';
-    var suit=SUITSHORT[c.s][tr()?'tr':'en'];
     if(tr()){
-      var s='Bu konum '+pos.dt+'. Burada '+nm+rvw+' beliriyor — anahtar temalar: '+mean+'. ';
-      s+='Kart özünde '+suit+' ile ilgilidir. ';
-      s+=rev?'Ters gelmesi, bu enerjiyi şu an içe dönük ya da engellenmiş yaşadığını gösterir; bu düğümü önce çözersen bu başlık lehine döner.':'Düz gelmesi, enerjinin bu alanda açık aktığını ve bu temaya güvenle yaslanabileceğini gösterir.';
-      return s;
+      var op=pk([
+        nm+rvw+' bu konuma düştü; anlattığı şey: '+pos.dt,
+        'Bu noktada '+nm+rvw+' söz alıyor ve '+pos.dt+' üstüne konuşuyor',
+        pos.dt+' — kartlar burada '+nm+rvw+' gösteriyor',
+        'Burada '+nm+rvw+' beliriyor; bu kart '+pos.dt+' ile ilgili',
+        nm+rvw+', '+pos.dt+' konusunda sana bir kapı aralıyor',
+        'Kartlar '+pos.dt+' tarafına bakıyor ve karşımıza '+nm+rvw+' geliyor'
+      ]);
+      var mn=pk([
+        'taşıdığı temalar: '+mean,
+        'sana '+mean+' üzerinden sesleniyor',
+        'öne çıkan enerjisi: '+mean,
+        'gündeme getirdiği başlıklar: '+mean,
+        'özünde '+mean+' yatıyor'
+      ]);
+      var nu=rev?pk(RV_TR):pk(UP_TR);
+      var flav=(Math.random()<0.5)?(' '+pk(SUITFLAV_TR[c.s])):'';
+      return capTr(op)+'. '+capTr(mn)+'. '+nu+flav;
     }
-    var e='This position reflects '+pos.de+'. Here '+nm+rvw+' appears — key themes: '+mean+'. It concerns '+suit+'. ';
-    e+=rev?'Reversed, you live this energy inwardly or feel it blocked; untangle that first.':'Upright, the energy flows freely here.';
-    return e;
+    var eo=pk([
+      nm+rvw+' lands in this position, speaking of '+pos.de,
+      'Here '+nm+rvw+' appears, concerning '+pos.de,
+      pos.de+' — the cards show '+nm+rvw+' here',
+      nm+rvw+' opens a door about '+pos.de
+    ]);
+    var em=pk(['its themes: '+mean,'it speaks through '+mean,'the energy at play: '+mean,'at its core: '+mean]);
+    var en=rev?pk(RV_EN):pk(UP_EN);
+    return capTr(eo)+'. '+capTr(em)+'. '+en;
   }
   var FOCUS={
     cups:{tr:'kalbinin ve ilişkilerinin',en:'your heart and relationships'},
@@ -1871,26 +1927,72 @@ try{
     for(var i=0;i<n;i++){var p=picks[i],c=T[p.idx]; if(p.rev)rc++; cnt[c.s]=(cnt[c.s]||0)+1; cards.push({c:c,rev:p.rev});}
     var dom=null,dv=0; for(var k in cnt){if(cnt[k]>dv){dv=cnt[k];dom=k;}}
     var majc=cnt['major']||0, frac=rc/n;
-    var sig=null; for(var j=0;j<cards.length;j++){if(cards[j].c.s==='major'){sig=cards[j];break;}} if(!sig)sig=cards[0];
+    var sig=null; for(var j=0;j<cards.length;j++){if(cards[j].c.s==='major'){sig=cards[j];break;}} if(!sig)sig=cards[(Math.random()*cards.length)|0];
     var parts=[];
-    /* 1. baskin seri temasi */
-    if(dom && dv>=2 && dv/n>=0.4){
-      parts.push(L?(SUITNAME[dom].tr+' bu açılıma damga vuruyor; şu dönemde '+FOCUS[dom].tr+' ön planda olduğunu söylüyor.'):(SUITNAME[dom].en+' dominate this spread; '+FOCUS[dom].en+' take center stage right now.'));
+    if(L){
+      var sigrev=sig.rev?' (ters)':'', sigmean=sig.rev?sig.c.rt:sig.c.kt;
+      if(dom && dv>=2 && dv/n>=0.4){parts.push(pk([
+        SUITNAME[dom].tr+' bu açılıma damgasını vuruyor; '+FOCUS[dom].tr+' şu an sahnenin tam ortasında.',
+        'Masaya bu kadar çok '+SUITNAME[dom].tr+' gelmesi boşuna değil — '+FOCUS[dom].tr+' bu dönemin ana ekseni.',
+        'Kartların ağırlığı '+SUITNAME[dom].tr+' tarafında; demek ki '+FOCUS[dom].tr+' seni en çok meşgul eden şey.',
+        SUITNAME[dom].tr+' üst üste geldi; hayatının bu köşesi şu sıralar yüksek sesle konuşuyor — '+FOCUS[dom].tr+'.'
+      ]));}
+      if(majc>=3){parts.push(pk([
+        'Bu kadar çok Büyük Arkana ender görülür — yaşadığın şey gündelik bir dalgalanma değil, kaderinin seyrini değiştiren bir eşik.',
+        'Üç ya da daha fazla Büyük Arkana masada: evren fısıldamıyor, yüksek sesle konuşuyor. Bu bir dönüm dönemi.',
+        'Büyük Arkananın bu yoğunluğu, olayların büyük çarkların elinde döndüğünü söylüyor; küçük kararların ötesinde bir akış var.'
+      ]));}
+      else if(majc===2){parts.push(pk([
+        'İki Büyük Arkana, olup bitenin bir kısmının kontrolünün ötesinde, kadersel bir yanı olduğunu hatırlatıyor.',
+        'Masadaki iki Büyük Arkana, bu meselede görünmeyen bir elin de oyunda olduğunu söylüyor.',
+        'Çift Büyük Arkana; bazı kapıların iradenin dışında açılıp kapandığını gösteriyor.'
+      ]));}
+      else if(majc===1){parts.push(pk([
+        'Tek bir Büyük Arkana, meseleye kadersel bir dokunuş katıyor ama dizginlerin çoğu hâlâ sende.',
+        'Bir Büyük Arkana var: evrenin küçük bir işareti, gerisi senin ellerinde.'
+      ]));}
+      parts.push(pk([
+        sig.c.t+sigrev+' kartı bu açılımın kalbinde duruyor; '+sigmean+' temaları önümüzdeki günlerin anahtarı.',
+        'Tüm hikâyeyi tek bir karta indirsek o '+sig.c.t+sigrev+' olurdu — her şey '+sigmean+' etrafında dönüyor.',
+        'Açılımın nabzı '+sig.c.t+sigrev+' kartında atıyor; '+sigmean+' başlığını sakın es geçme.',
+        'Gözünü '+sig.c.t+sigrev+' kartından ayırma; '+sigmean+' bu dönemin gizli şifresi.'
+      ]));
+      var bal;
+      if(frac===0)bal=pk(['Kartların hepsi düz geldi; enerji açık ve akışta, niyetini eyleme dökmek için elverişli bir dönemdesin.','Tek bir ters kart bile yok — yol büyük ölçüde temiz; tereddüt etmeden ilerleyebilirsin.','Bütün kartlar dik; rüzgâr arkandan esiyor, bu fırsatı kaçırma.']);
+      else if(frac===1)bal=pk(['Kartların tamamı ters — güçlü bir iç direnç var; önce kendi içindeki düğümü çöz, gerçek dönüşüm oradan başlayacak.','Masadaki her kart baş aşağı; tıkanıklık dışarıda değil içeride, önce ona bak.','Hepsi ters geldi; bu, dur ve içine dön çağrısı. Acele her şeyi zorlaştırır.']);
+      else if(frac>=0.6)bal=pk(['Kartların çoğu ters; enerji şu an dışarı değil içeri akıyor, acele etmeden önce içindeki tereddüdü dinle.','Ağırlık ters kartlarda; bu dönem eylemden çok arınma ve bekleme dönemi.','Çoğu kart devrik; bir şeyleri bırakmadan yenisi gelmeyecek gibi.']);
+      else if(frac<=0.34)bal=pk(['Kartların çoğu düz; yolun büyük ölçüde açık, yalnızca birkaç noktada sabır göstermen yeterli.','Ters kartlar azınlıkta; genel gidiş lehine, ufak pürüzleri büyütme.','Ağırlık dik kartlarda; birkaç engel dışında akış senden yana.']);
+      else bal=pk(['Düz ve ters kartlar dengede; hikâyen iki ucu da barındırıyor, sabırla ve niyetle atacağın adım seni ileri taşıyacak.','Kartlar ne tam açık ne tam kapalı; bu, seçimlerinin gerçekten fark yarattığı bir eşik.','Denge hâli: hem fırsat hem sınav bir arada. Hangi tarafı besleyeceğine sen karar vereceksin.']);
+      parts.push(bal);
+      if(window.__transitLine){parts.push(pk(['Gökyüzü de bunu destekliyor: ','Bugünün yıldız hareketleri şunu ekliyor: ','Transitler de aynı yöne işaret ediyor: '])+window.__transitLine);}
+      parts.push(pk([
+        'Kartlar konuştu; son sözü senin niyetin söyleyecek.',
+        'Unutma, hiçbir kart kaderi mühürlemez; yalnızca yolu işaret eder.',
+        'Bu tabloyu bir harita gibi gör — pusula hâlâ senin elinde.',
+        'Falın gösterdiğini olduğu gibi al; kararı kalbine bırak.',
+        'Kartlar olasılığı fısıldar, gerçeği senin adımın yazar.',
+        'Gördüğün her işaret bir davet; hangisine uyacağın sana kalmış.',
+        'Bu kartlar bugünün aynası; yarını senin ellerin şekillendirir.',
+        'Sana düşen, işaret edilen kapıyı açacak cesareti bulmak.',
+        'Yolu gösterdim; yürümek, duraksamak ya da dönmek senin seçimin.'
+      ]));
+      var lead=pk(['Genel tablo: ','Toparlarsak, ','Kartların bütünü şunu anlatıyor: ','Masanın tümüne bakınca: ','Sözün özü: ','Kısacası, ']);
+      return lead+parts.join(' ');
     }
-    /* 2. Buyuk Arkana yogunlugu */
-    if(majc>=3){parts.push(L?'Masaya bu kadar çok Büyük Arkana gelmesi ender bir durum — yaşadığın şey gündelik bir dalgalanma değil, hayatının seyrini değiştirecek bir eşik.':'So many Major Arcana at once is rare — this is a threshold that reshapes your path, not a passing ripple.');}
-    else if(majc===2){parts.push(L?'İki Büyük Arkana kartı, olup bitenin bir kısmının senin kontrolünün ötesinde, kadersel bir yanı olduğunu hatırlatıyor.':'Two Major Arcana remind you that part of this lies beyond your control, in the hands of fate.');}
-    /* 3. imza kart (gercek bir kart adiyla) */
-    parts.push(L?(sig.c.t+(sig.rev?' (ters)':'')+' kartı bu açılımın kalbinde duruyor; '+(sig.rev?sig.c.rt:sig.c.kt)+' temaları önümüzdeki günlerin anahtarı.'):(sig.c.e+(sig.rev?' (reversed)':'')+' sits at the heart of this reading; '+(sig.rev?sig.c.re:sig.c.ke)+' are the key to the days ahead.'));
-    /* 4. duz/ters dengesi (kademeli) */
-    var rev;
-    if(frac===0)rev=L?'Kartların hepsi düz gelmiş; enerji açık ve akışta, niyetini eyleme dökmek için elverişli bir dönemdesin.':'Every card is upright; the energy is open and flowing, a fine time to act on your intention.';
-    else if(frac===1)rev=L?'Kartların tamamı ters — güçlü bir iç direnç var; önce kendi içindeki düğümü çözmelisin, gerçek dönüşüm oradan başlayacak.':'Every card is reversed — a strong inner resistance; untangle your own knot first, real change begins there.';
-    else if(frac>=0.6)rev=L?'Kartların çoğu ters; enerji şu an dışarı değil içeri akıyor, acele etmeden önce içindeki tereddüdü dinlemen gerekiyor.':'Most cards are reversed; the energy turns inward, listen to your hesitation before you rush.';
-    else if(frac<=0.34)rev=L?'Kartların çoğu düz; yolun büyük ölçüde açık, yalnızca birkaç noktada sabır göstermen yeterli.':'Most cards are upright; your path is largely clear, only a few points ask for patience.';
-    else rev=L?'Düz ve ters kartlar dengede; hikâyen iki ucu da barındırıyor, sabırla ve niyetle atacağın adım seni ileri taşıyacak.':'Upright and reversed sit in balance; your story holds both ends, a patient and intentional step carries you onward.';
-    parts.push(rev);
-    return (L?'Genel tablo: ':'Overall: ')+parts.join(' ');
+    /* EN */
+    var esig=sig.c.e+(sig.rev?' (reversed)':''), esm=sig.rev?sig.c.re:sig.c.ke;
+    if(dom&&dv>=2&&dv/n>=0.4)parts.push(pk([SUITNAME[dom].en+' dominate this spread; '+FOCUS[dom].en+' take center stage.','The weight sits with '+SUITNAME[dom].en+' — '+FOCUS[dom].en+' lead this chapter.']));
+    if(majc>=3)parts.push('So many Major Arcana is rare — a threshold that reshapes your path.');
+    else if(majc===2)parts.push('Two Major Arcana: part of this lies beyond your control.');
+    parts.push(pk([esig+' sits at the heart of this reading; '+esm+' are the key to the days ahead.','If the whole story were one card it would be '+esig+' — it all turns on '+esm+'.']));
+    var er;
+    if(frac===0)er='Every card is upright; the energy flows, a fine time to act.';
+    else if(frac===1)er='Every card is reversed — untangle your inner knot first.';
+    else if(frac>=0.6)er='Most cards reversed; the energy turns inward, listen before you rush.';
+    else if(frac<=0.34)er='Most cards upright; your path is largely clear.';
+    else er='Upright and reversed in balance; your intentional step carries you onward.';
+    parts.push(er);
+    return pk(['Overall: ','In short: ','Taken together: '])+parts.join(' ');
   }
 
   /* gallery */
