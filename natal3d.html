@@ -31,7 +31,7 @@ font-size:13.5px;letter-spacing:1px;z-index:9;pointer-events:none}
   background:rgba(3,3,11,0.94);opacity:0;transition:opacity .5s ease;pointer-events:none}
 #cardOverlay.open{opacity:1;pointer-events:auto}
 #cardInner{position:relative;aspect-ratio:1024/1800;width:auto;height:min(calc(94vw / 0.5689),100%);
-  background:url('card_panel.png?v=7') center center / 100% 100% no-repeat;
+  background:url('natal_splash.jpg') center center / 100% 100% no-repeat;
   display:flex;flex-direction:column;box-sizing:border-box;padding:8.5% 11% 7%;
   transform:scale(.82);opacity:0;transition:transform .6s cubic-bezier(.2,.8,.2,1),opacity .5s ease}
 #cardOverlay.open #cardInner{transform:scale(1);opacity:1}
@@ -107,6 +107,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const GLYPH={Koç:'♈',Boğa:'♉',İkizler:'♊',Yengeç:'♋',Aslan:'♌',Başak:'♍',Terazi:'♎',Akrep:'♏',Yay:'♐',Oğlak:'♑',Kova:'♒',Balık:'♓'};
 const __ND=(function(){try{return JSON.parse(localStorage.getItem('oph_natal3d')||'null');}catch(e){return null;}})();
+try{if(__ND&&__ND.name){var _nm=document.querySelector('#top .name'); if(_nm)_nm.textContent=(__ND.name||'').toLocaleUpperCase('tr');}}catch(e){}
 const __Pdemo={ Sun:{lon:1.3487,sign:'Koç'}, Moon:{lon:281.782,sign:'Oğlak'}, Mercury:{lon:19.4538,sign:'Koç'}, Venus:{lon:314.999,sign:'Kova'}, Mars:{lon:13.4786,sign:'Koç'}, Jupiter:{lon:340.9262,sign:'Balık'}, Saturn:{lon:20.5548,sign:'Koç'}, Uranus:{lon:311.4814,sign:'Kova'}, Neptune:{lon:301.6574,sign:'Kova'}, Pluto:{lon:248.0293,sign:'Yay'} };
 const P=(__ND&&__ND.P)||__Pdemo;
 const NAMES={Sun:'Güneş',Moon:'Ay',Mercury:'Merkür',Venus:'Venüs',Mars:'Mars',Jupiter:'Jüpiter',Saturn:'Satürn',Uranus:'Uranüs',Neptune:'Neptün',Pluto:'Plüton'};
@@ -179,11 +180,11 @@ const canvas=document.getElementById('c');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setClearColor(0x000000,0);
 renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight);
 renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.0;
-const scene=new THREE.Scene(); scene.fog=new THREE.FogExp2(0x0a0710,0.010);
+const scene=new THREE.Scene(); scene.background=new THREE.TextureLoader().load('natal_splash.jpg'); scene.fog=new THREE.FogExp2(0x2a0a0e,0.005);
 scene.add(new THREE.AmbientLight(0x9aa8d0,0.6)); const sunLight=new THREE.PointLight(0xfff0d0,2,0,0); scene.add(sunLight); const dl=new THREE.DirectionalLight(0xd0d6ff,0.55); dl.position.set(2,3,4); scene.add(dl);
-const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,400); camera.position.set(0,3.5,15.5);
+const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,400); camera.position.set(0,3.2,18.5);
 const controls=new OrbitControls(camera,canvas);
-controls.enableDamping=true; controls.dampingFactor=.06; controls.autoRotate=true; controls.autoRotateSpeed=.42;
+controls.enableDamping=true; controls.dampingFactor=.06; controls.autoRotate=true; controls.autoRotateSpeed=.10;
 controls.minDistance=7; controls.maxDistance=30; controls.enablePan=false;
 const clock=new THREE.Clock();
 
@@ -260,7 +261,7 @@ const mat=new THREE.PointsMaterial({size,map:softTex,color:col,transparent:true,
 return new THREE.Points(g,mat); }
 scene.add(starfield(3200,30,115,.4,0xffffff,.55));
 scene.add(starfield(1500,26,100,.26,0xdfe6ff,.42));
-const goldStars=starfield(1100,32,115,.42,0xffd489,.42); scene.add(goldStars);
+const goldStars=starfield(1100,32,115,.42,0xffd489,.42); scene.add(goldStars); goldStars.visible=false;
 // ---- yumusak uzay nebulasi (arka plan derinligi) ----
 const nebulaG=new THREE.Group(); scene.add(nebulaG); const nebSprites=[];
 const NEB_COLS=['rgba(120,90,220,',"rgba(70,110,220,",'rgba(210,140,90,','rgba(180,80,160,','rgba(90,150,210,'];
@@ -389,7 +390,7 @@ function ez(x){x=clamp01(x);return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;}
 
 // ---- Kara delik + girdap ----
 const bh=new THREE.Group(); bh.visible=false; bh.position.set(0,0.2,0); scene.add(bh);
-const bhCore=new THREE.Mesh(new THREE.SphereGeometry(1,40,40),new THREE.MeshBasicMaterial({color:0x000000}));bh.add(bhCore);
+const bhCore=new THREE.Mesh(new THREE.SphereGeometry(1,40,40),new THREE.MeshBasicMaterial({color:0x000000}));bh.add(bhCore);bhCore.visible=false;
 const bhRim=new THREE.Mesh(new THREE.SphereGeometry(1.02,40,40),new THREE.MeshBasicMaterial({color:0x1a0f33,transparent:true,opacity:.9,side:THREE.BackSide}));bhCore.add(bhRim);
 const disk=new THREE.Group(); disk.rotation.x=1.28; bh.add(disk);
 const diskP=[];
@@ -617,14 +618,14 @@ let selected=null; let reparented=false; const _fl=new THREE.Vector3();
 let transitioning=null, tStart=0, cardShown=false, iStart=0;
 let finale=false, finaleStart=0, finaleDone=false; let ringChildren=[];
 const jcamPos=new THREE.Vector3(), jcamTgt=new THREE.Vector3();
-const _initCamPos=new THREE.Vector3(0,3.5,15.5), _initCamTgt=new THREE.Vector3(0,0.6,0);
+const _initCamPos=new THREE.Vector3(0,3.2,18.5), _initCamTgt=new THREE.Vector3(0,0.6,0);
 const GRAYC=new THREE.Color(0x8f9299);
 function reparentPlanets(){if(reparented)return;reparented=true;
 const N=nodes.length;
-const R=SCATTER_R, GA=Math.PI*(3-Math.sqrt(5)); // esit dagilim (fibonacci kuresi) — ic ice gecmez
+const R=SCATTER_R*1.18;
 for(let i=0;i<N;i++){const n=nodes[i];scene.attach(n.pg);n.p0=n.pg.position.clone();n.s0=n.pg.scale.x;n.read=false;
-const y=1-(i/(N-1))*2, rad=Math.sqrt(Math.max(0,1-y*y)), th=GA*i;
-n.cscatter=new THREE.Vector3(SCATTER_C.x+Math.cos(th)*rad*R, SCATTER_C.y+y*R, SCATTER_C.z+Math.sin(th)*rad*R);}
+const ang=Math.PI/2 - (i/N)*Math.PI*2; /* saat yonu, tepeden basla */
+n.cscatter=new THREE.Vector3(SCATTER_C.x+Math.cos(ang)*R, SCATTER_C.y+Math.sin(ang)*R, SCATTER_C.z);}
 }
 function startTransition(n){if(transitioning)return; transitioning=n; tStart=t; cardShown=false;}
 function selectPlanet(n){if(n)startTransition(n);}
@@ -662,7 +663,7 @@ function enterInteractive(){story.free=true;transitioning=null;finale=false;fina
 handFX.visible=false; summonG.visible=false; beingAura.material.opacity=0; // cagirma efektlerini kapat
 dustGroup.visible=false; goldStars.visible=false; // sarı toz/yildizlar gizlensin — sadece beyaz yildiz + gezegen
 frontSunG.visible=false; centerSun.visible=false; wheel.visible=false; // sinematik gunes/cember kalintilarini gizle
-controls.enabled=true;controls.enableRotate=true;controls.enableZoom=true;controls.enablePan=false;controls.autoRotate=true;controls.autoRotateSpeed=0.32;
+controls.enabled=true;controls.enableRotate=true;controls.enableZoom=true;controls.enablePan=false;controls.autoRotate=true;controls.autoRotateSpeed=0.08;
 controls.minDistance=5;controls.maxDistance=32;
 controls.target.copy(TGT_D);camera.position.copy(CAM_D);camera.fov=FOV_D;camera.updateProjectionMatrix();controls.update();}
 // ---- FINAL: tum gezegenler okununca parca parca natal semaya toplanir, usturlap cemberleri sirayla belirir, gunes gri gelip parlar ----
@@ -682,7 +683,7 @@ n.pg.position.lerp(n.slotW, 0.05+0.12*p);
 n.pg.scale.setScalar(n.pg.scale.x+(n.s0-n.pg.scale.x)*0.06);
 if(n.signSprite)n.signSprite.material.opacity += ((0.55+0.35*Math.sin(t*4+n.lon))-n.signSprite.material.opacity)*0.05;}
 // 2) usturlap cemberleri SIRAYLA belirir (gezegenler toplandiktan sonra)
-wheel.visible=true; wheel.rotation.y+=0.003;
+wheel.visible=true; wheel.rotation.y+=0.0008;
 for(let i=0;i<ringChildren.length;i++){const o=ringChildren[i]; const rp=clamp01((fe-2.0-i*0.09)/0.7);
 o.material.opacity=o.userData.__o0*ez(rp);}
 // 3) GUNES gri gelir, sonra parlamaya baslar (en son)
@@ -707,7 +708,7 @@ finale=false;finaleDone=false;reparented=false;story.on=false;story.free=false;s
 wheel.visible=true;wheel.position.set(0,0,0);wheel.scale.setScalar(1);wheel.rotation.set(-0.5,0,0);setPlanetsReveal(1);
 being.visible=false;bh.visible=false;frontSunG.visible=false;
 for(const sp of sdust)sp.material.opacity=0; for(const sp of bstars)sp.material.opacity=0;
-dustGroup.visible=true; goldStars.visible=true;
+dustGroup.visible=false; goldStars.visible=false;
 if(fadeOver){fadeOver.style.transition='opacity .6s';fadeOver.style.opacity='0';}
 controls.enabled=true;controls.autoRotate=true;controls.enableRotate=true;controls.enableZoom=true;controls.enablePan=false;controls.minDistance=7;controls.maxDistance=30;
 camera.position.set(0,3.5,15.5);camera.fov=52;camera.updateProjectionMatrix();controls.target.set(0,0,0);controls.update();
@@ -769,7 +770,7 @@ updateHandFX(st);
 
 // ===== SAHNE 3: buyulu sozler =====
 const sp3=clamp01((st-5.6)/2.0);
-spellG.visible = st>5.5 && st<9.6;
+spellG.visible = false;
 if(spellG.visible){
 spellG.rotation.y += 0.006;
 const conv=clamp01((st-7.6)/1.6);

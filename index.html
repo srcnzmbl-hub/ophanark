@@ -316,6 +316,12 @@ img{display:block}
 .install-hint{width:100%;max-width:400px;margin-top:12px;color:#cbb58a;font-family:'Spectral',serif;font-size:13px;line-height:1.5;text-align:center;opacity:.85}
 /* settings bottom sheet */
 .sheet{position:fixed;inset:0;z-index:210;display:none;align-items:flex-end;justify-content:center}
+#n3dbar{position:absolute;top:0;left:0;right:0;z-index:6;display:none;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 8px) 12px 6px;pointer-events:none}
+#n3dbar>*{pointer-events:auto}
+#n3dBack{width:38px;height:38px;border-radius:50%;border:1px solid rgba(232,190,96,.5);background:rgba(10,6,2,.45);color:#e8be60;font-size:22px;line-height:1;cursor:pointer}
+#n3dbar .n3dr{display:flex;align-items:center;gap:8px}
+#n3dbar .n3dr b{font-family:'Cinzel',serif;color:#e6c46a;font-size:13px;letter-spacing:.14em;font-weight:400}
+#n3dbar .n3demb{width:34px;height:34px;object-fit:contain}
 .sheet.on{display:flex}
 .sheet .veil{position:absolute;inset:0;background:rgba(6,2,3,.62);backdrop-filter:blur(2px)}
 .sheet .panel{position:relative;width:min(100%,520px);max-height:72%;overflow-y:auto;
@@ -559,6 +565,11 @@ img{display:block}
     <div id="n3dHost" style="position:absolute;inset:0;background:#07040d;overflow:hidden">
       <div id="n3dMsg" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:26px;color:#d9c6a0;font-family:'Spectral',serif;font-size:14px;z-index:2">3D natal hazırlanıyor…</div>
       <iframe id="n3dFrame" title="3D Natal" style="width:100%;height:100%;border:0;display:none" allow="accelerometer;gyroscope;xr-spatial-tracking"></iframe>
+      <div class="feathers" id="n3dFeathers" style="z-index:4;pointer-events:none"></div>
+      <div id="n3dbar">
+        <button id="n3dBack" aria-label="Geri">‹</button>
+        <div class="n3dr"><b>OPHANARK</b><img class="n3demb" src="emblem.png" alt=""></div>
+      </div>
     </div>
   </section>
 
@@ -974,16 +985,20 @@ document.querySelectorAll('.nb').forEach(function(b){
     document.querySelectorAll('.nb').forEach(function(x){x.classList.toggle('on',x===b);});
     Object.keys(SCREENS).forEach(function(k){$(SCREENS[k]).classList.toggle('on',k===s);});
     $('topH').textContent=TITLES[s];
-    $('topbar').style.display = (s==='home'||s==='profil')?'none':'flex';
+    $('topbar').style.display = (s==='home'||s==='profil'||s==='natal3d')?'none':'flex';
+    var navEl=document.querySelector('.nav'); if(navEl)navEl.style.display=(s==='natal3d')?'none':'';
+    var bar3=document.getElementById('n3dbar'); if(bar3)bar3.style.display=(s==='natal3d')?'flex':'none';
     if(s==='home'&&window.__homeWheel){requestAnimationFrame(function(){window.__homeWheel.layout();window.__homeWheel.render();});}
     if(s==='natal3d'&&window.__load3D)window.__load3D();
   });
 });
+(function(){var bk=document.getElementById('n3dBack');if(bk)bk.addEventListener('click',function(){var h=document.querySelector('.nb[data-s="home"]');if(h)h.click();});})();
 $('topbar').style.display='none';   /* açılışta ana ekran: üst bar gizli */
 /* ---- 3D natal tab loader ---- */
 window.__load3D=function(){
   var msg=document.getElementById('n3dMsg'),fr=document.getElementById('n3dFrame');
   if(!msg||!fr)return;
+  (function(){var e=document.getElementById('n3dFeathers');if(e&&!e.__f){e.__f=1;for(var i=0;i<16;i++){var f=document.createElement('div');f.className='ftr';f.style.left=(Math.random()*98)+'%';var sc=0.6+Math.random()*0.9;f.style.width=(9*sc).toFixed(1)+'px';f.style.height=(20*sc).toFixed(1)+'px';var du=10+Math.random()*9;f.style.animationDuration=du.toFixed(1)+'s';f.style.animationDelay=(-Math.random()*du).toFixed(1)+'s';e.appendChild(f);}}})();
   msg.style.display='';fr.style.display='none';msg.textContent='3D natal hazırlanıyor…';
   if(!window.__natal3dData){msg.textContent='3D natal yakında.';return;}
   window.__natal3dData(function(d){
