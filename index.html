@@ -316,7 +316,7 @@ img{display:block}
 .install-hint{width:100%;max-width:400px;margin-top:12px;color:#cbb58a;font-family:'Spectral',serif;font-size:13px;line-height:1.5;text-align:center;opacity:.85}
 /* settings bottom sheet */
 .sheet{position:fixed;inset:0;z-index:210;display:none;align-items:flex-end;justify-content:center}
-#n3dbar{position:absolute;top:0;left:0;right:0;z-index:6;display:none;align-items:center;justify-content:space-between;gap:9px;padding:calc(env(safe-area-inset-top) + 44px) 14px 6px;pointer-events:none}
+#n3dbar{position:absolute;top:0;left:0;right:0;z-index:6;display:none;align-items:center;justify-content:space-between;gap:9px;padding:calc(env(safe-area-inset-top) + 50px) 38px 6px;pointer-events:none}
 #n3dbar>*{pointer-events:auto}
 #n3dbar .n3dleft{display:flex;align-items:center;gap:10px}
 #n3dBack{flex:0 0 auto;width:38px;height:38px;border-radius:50%;border:1px solid rgba(232,190,96,.5);background:rgba(10,6,2,.45);color:#e8be60;font-size:22px;line-height:1;cursor:pointer}
@@ -1010,6 +1010,12 @@ document.querySelectorAll('.nb').forEach(function(b){
 });})();
 /* 3D en alt X: home ekranına dön */
 (function(){var xb=document.getElementById('n3dExit');if(xb)xb.addEventListener('click',function(){var h=document.querySelector('.nb[data-s="home"]');if(h)h.click();});})();
+/* Kart açılınca iframe'den gelen mesajla arka plandaki üst bar + X gizlenir */
+window.addEventListener('message',function(e){var d=e&&e.data;if(!d||!d.oph)return;
+  var x=document.getElementById('n3dExit'),bar=document.getElementById('n3dbar');
+  if(d.oph==='cardOpen'){if(x)x.style.visibility='hidden';if(bar)bar.style.visibility='hidden';}
+  else if(d.oph==='cardClose'){if(x)x.style.visibility='visible';if(bar)bar.style.visibility='visible';}
+});
 $('topbar').style.display='none';   /* açılışta ana ekran: üst bar gizli */
 /* ---- 3D natal tab loader ---- */
 window.__load3D=function(){
