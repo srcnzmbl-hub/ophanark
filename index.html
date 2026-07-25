@@ -2111,7 +2111,67 @@ try{
     stop:function(){ this.on=false; this.muted=false; this.ci=0; try{window.speechSynthesis.cancel();}catch(e){} trMark(''); },
     toggleMute:function(){ this.muted=!this.muted; if(this.on){ this._n(); } trMark(this.muted?'trMute2':'trSpeak'); return this.muted; } };
   function stopV(){ trTts.stop(); }
-  (function(){ var hs=el('trShare'); if(hs)hs.addEventListener('click',function(){ if(window.OphShare)OphShare.share({title:'Tarot',text:lastVoice||''}); }); })();
+  /* ---- Tarot: birleşik hikaye kartı (kart görseli + yorum, 9:16) ---- */
+  var _tstBusy=false, _storyBg=null;
+  function _clientSumT(t){ var z=String(t).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(); var se=z.match(/[^.!?]+[.!?]+/g)||[z]; var o=''; for(var i=0;i<se.length;i++){ if(o&&(o+se[i]).length>420)break; o+=se[i]; } return (o||z.slice(0,420)).trim(); }
+  function _ozetTarot(text,cb){ var done=false; var to=setTimeout(function(){ if(!done){done=true; cb(_clientSumT(text)); } },9000);
+    fetch(FN_OZET,{method:'POST',headers:{'Content-Type':'application/json','apikey':TAROT_ANON,'Authorization':'Bearer '+TAROT_ANON},body:JSON.stringify({text:String(text).replace(/<[^>]+>/g,' ')})})
+      .then(function(r){return r.json();}).then(function(j){ if(done)return; done=true; clearTimeout(to); cb((j&&j.summary&&j.summary.trim())?j.summary.trim():_clientSumT(text)); })
+      .catch(function(){ if(done)return; done=true; clearTimeout(to); cb(_clientSumT(text)); }); }
+  function _loadImgT(src){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=src; }); }
+  function _rrT(x,rx,ry,rw,rh,r){ x.beginPath(); x.moveTo(rx+r,ry); x.arcTo(rx+rw,ry,rx+rw,ry+rh,r); x.arcTo(rx+rw,ry+rh,rx,ry+rh,r); x.arcTo(rx,ry+rh,rx,ry,r); x.arcTo(rx,ry,rx+rw,ry,r); x.closePath(); }
+  function _wrapT(x,t,mw){ var w=String(t).split(/\s+/),l='',o=[]; for(var i=0;i<w.length;i++){ var tt=l?l+' '+w[i]:w[i]; if(x.measureText(tt).width>mw&&l){o.push(l);l=w[i];}else l=tt; } if(l)o.push(l); return o; }
+  function _fitT(x,t,cx,mw,top,bot){ var sz,lh,ls; for(sz=50;sz>=26;sz-=2){ x.font=sz+"px Georgia,serif"; ls=_wrapT(x,t,mw); lh=Math.round(sz*1.42); if(ls.length*lh<=(bot-top))break; } x.font=sz+"px Georgia,serif"; var th=ls.length*lh, sy=top+Math.max(0,((bot-top)-th)/2)+sz*0.82; for(var k=0;k<ls.length;k++)x.fillText(ls[k],cx,sy+k*lh); }
+  function _drawCardT(x,img,cx,cy,w,h,rev){ x.save(); x.translate(cx,cy); if(rev)x.rotate(Math.PI); x.save(); _rrT(x,-w/2,-h/2,w,h,16); x.clip(); if(img)x.drawImage(img,-w/2,-h/2,w,h); else {x.fillStyle='#2a0f0c';x.fillRect(-w/2,-h/2,w,h);} x.restore(); x.lineWidth=4; x.strokeStyle='rgba(233,200,120,.9)'; _rrT(x,-w/2,-h/2,w,h,16); x.stroke(); x.restore(); }
+  function _canvasBlobT(c,cb){ var done=false; function fin(b){ if(done)return; done=true; cb(b); }
+    function fb(){ try{ var u=c.toDataURL('image/png'); var bs=atob(u.split(',')[1]); var ar=new Uint8Array(bs.length); for(var i=0;i<bs.length;i++)ar[i]=bs.charCodeAt(i); fin(new Blob([ar],{type:'image/png'})); }catch(e2){ fin(null); } }
+    try{ c.toBlob(function(b){ if(b)fin(b); else fb(); },'image/png'); setTimeout(function(){ if(!done)fb(); },4000); }catch(e){ fb(); } }
+  function _toastT(m){ var t=document.getElementById('__ophToast'); if(!t){ t=document.createElement('div'); t.id='__ophToast'; t.style.cssText='position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:rgba(20,7,9,.94);border:1px solid rgba(232,190,96,.4);color:#f2d489;padding:10px 16px;border-radius:12px;font:12px/1.4 Georgia,serif;z-index:99999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:86%;text-align:center'; document.body.appendChild(t); } t.textContent=m; t.style.opacity='1'; clearTimeout(t._t); t._t=setTimeout(function(){ t.style.opacity='0'; },2600); }
+  function shareTarotStory(){
+    if(_tstBusy)return;
+    var text=String(lastVoice||'').replace(/<[^>]+>/g,' ').trim();
+    if(!text){ _toastT('Önce falına bak'); return; }
+    if(!picks.length){ _toastT('Kart bulunamadı'); return; }
+    _tstBusy=true; _toastT('Hikaye kartın hazırlanıyor…');
+    var srcs=picks.map(function(pp){ return {src:location.origin+'/cards/'+T[pp.idx].i+'.jpg', rev:!!pp.rev, img:null}; });
+    var sp=(curKey&&SPREADS[curKey])?SPREADS[curKey]:null;
+    var spName=sp?(tr()?sp.label.tr:sp.label.en):'TAROT';
+    _ozetTarot(text,function(sum){
+      var need=[]; if(!_storyBg)need.push(_loadImgT(location.origin+'/story_bg.jpg').then(function(i){_storyBg=i;}));
+      srcs.forEach(function(o){ need.push(_loadImgT(o.src).then(function(im){o.img=im;})); });
+      Promise.all(need).then(function(){
+        var W=1080,H=1920,c=document.createElement('canvas'); c.width=W;c.height=H; var x=c.getContext('2d');
+        if(_storyBg){ var ir=_storyBg.width/_storyBg.height,dw,dh; if(ir>W/H){dh=H;dw=H*ir;}else{dw=W;dh=W/ir;} x.drawImage(_storyBg,(W-dw)/2,(H-dh)/2,dw,dh); x.fillStyle='rgba(6,2,4,.5)'; x.fillRect(0,0,W,H); }
+        else { var g=x.createLinearGradient(0,0,W,H); g.addColorStop(0,'#5a1712'); g.addColorStop(1,'#160504'); x.fillStyle=g; x.fillRect(0,0,W,H); }
+        x.strokeStyle='rgba(233,200,120,.55)'; x.lineWidth=6; _rrT(x,44,44,W-88,H-88,44); x.stroke();
+        x.textAlign='center';
+        x.fillStyle='#f2d489'; x.font='700 40px Georgia,serif'; x.fillText('O P H A N A R K',W/2,150);
+        x.fillStyle='#e9c877'; x.font='26px Georgia,serif'; x.fillText(String(spName).toUpperCase(),W/2,196);
+        x.fillStyle='#e9c877'; x.font='24px Georgia,serif'; x.fillText('✦   ✦   ✦',W/2,242);
+        var n=srcs.length, zoneTop=290, zoneBot=1075, zoneW=W-180;
+        var ar=0.585; for(var q=0;q<srcs.length;q++){ if(srcs[q].img){ ar=srcs[q].img.naturalWidth/srcs[q].img.naturalHeight; break; } }
+        var perRow = n<=1?1 : (n<=3?n : (n<=6?3 : (n<=8?4:5)));
+        var rows=Math.ceil(n/perRow), gap=22;
+        var cw=(zoneW-(perRow-1)*gap)/perRow, ch=cw/ar;
+        var maxH=zoneBot-zoneTop;
+        if(rows*ch+(rows-1)*gap>maxH){ var scl=maxH/(rows*ch+(rows-1)*gap); ch*=scl; cw*=scl; }
+        if(n===1){ ch=Math.min(maxH*0.98,720); cw=ch*ar; }
+        var totalH=rows*ch+(rows-1)*gap, startY=zoneTop+(maxH-totalH)/2+ch/2;
+        for(var r=0;r<rows;r++){ var inRow=Math.min(perRow,n-r*perRow); var rowW=inRow*cw+(inRow-1)*gap; var sx=W/2-rowW/2+cw/2;
+          for(var k=0;k<inRow;k++){ var o=srcs[r*perRow+k]; _drawCardT(x,o.img,sx+k*(cw+gap),startY+r*(ch+gap),cw,ch,o.rev); } }
+        x.fillStyle='#f4e2a4'; x.shadowColor='rgba(0,0,0,.82)'; x.shadowBlur=10; _fitT(x,sum,W/2,W-230,1130,1770); x.shadowBlur=0;
+        x.fillStyle='rgba(232,214,168,.72)'; x.font='24px Georgia,serif'; x.fillText('www.ophanark.com',W/2,1836);
+        _canvasBlobT(c,function(blob){ _tstBusy=false;
+          if(!blob){ _toastT('Kart oluşturulamadı, tekrar dener misin?'); return; }
+          var file=null; try{ file=new File([blob],'ophanark-tarot-hikaye.png',{type:'image/png'}); }catch(e){}
+          if(file&&navigator.canShare&&navigator.canShare({files:[file]})){ navigator.share({files:[file],title:'OPHANARK Tarot'}).catch(function(){}); return; }
+          try{ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ophanark-tarot-hikaye.png'; a.click(); _toastT('Kart indirildi — Instagram hikayene ekle'); return; }catch(e){}
+          _toastT('Bu cihazda paylaşım desteklenmiyor');
+        });
+      }).catch(function(){ _tstBusy=false; _toastT('Kart oluşturulamadı'); });
+    });
+  }
+  (function(){ var hs=el('trShare'); if(hs)hs.addEventListener('click',shareTarotStory); })();
   var SUITSHORT={cups:{tr:'duygular ve ilişkiler',en:'emotions and relationships'},pentacles:{tr:'maddi hayat, iş ve sağlık',en:'material life, work and health'},swords:{tr:'zihin, kararlar ve iletişim',en:'the mind, decisions and communication'},wands:{tr:'tutku, enerji ve girişim',en:'passion, energy and initiative'},major:{tr:'hayatının büyük bir dönüm noktası',en:'a major turning point in your life'}};
   var SUITNAME={cups:{tr:'Kupalar',en:'Cups'},pentacles:{tr:'Tılsımlar',en:'Pentacles'},swords:{tr:'Kılıçlar',en:'Swords'},wands:{tr:'Asalar',en:'Wands'},major:{tr:'Büyük Arkana',en:'Major Arcana'}};
 
