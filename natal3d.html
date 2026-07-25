@@ -39,6 +39,8 @@ font-size:13.5px;letter-spacing:1px;z-index:9;pointer-events:none}
 #cardGlyph{font-size:min(7vw,38px);line-height:1;color:#f0d9a0}
 #cardName{font-size:min(5.8vw,30px);color:#f5ecd6;margin-top:1px;letter-spacing:1px}
 #cardMeta{font-size:min(3vw,16px);color:#cdb26e;letter-spacing:2px;margin-top:4px}
+@font-face{font-family:'ophzod';src:url("zodiac.ttf") format("truetype");font-display:swap}
+#cardMeta .zsign{font-family:'ophzod',serif;font-size:1.18em;line-height:1;letter-spacing:0;vertical-align:-0.06em;display:inline-block}
 #cardDiv{width:40%;height:1px;background:rgba(214,186,128,0.5);margin:7px auto 2px}
 #cardBody{flex:0 1 auto;min-height:0;max-height:78%;overflow:hidden;color:#e9c86e;font-style:italic;font-family:'Georgia',serif;line-height:1.3;text-align:center;padding:2% 0 1.5%}
 #cardBody p{margin:0 0 0.7em}
@@ -109,6 +111,8 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const GLYPH={Koç:'♈',Boğa:'♉',İkizler:'♊',Yengeç:'♋',Aslan:'♌',Başak:'♍',Terazi:'♎',Akrep:'♏',Yay:'♐',Oğlak:'♑',Kova:'♒',Balık:'♓'};
+/* zodyak fontu (ophzod / zodiac.ttf) sembol harfleri — iOS mor emoji yerine */
+const ZLET={Koç:'v',Boğa:'d',İkizler:'p',Yengeç:'t',Aslan:'n',Başak:'b',Terazi:'l',Akrep:'f',Yay:'h',Oğlak:'r',Kova:'x',Balık:'j'};
 const __ND=(function(){try{return JSON.parse(localStorage.getItem('oph_natal3d')||'null');}catch(e){return null;}})();
 const __Pdemo={ Sun:{lon:1.3487,sign:'Koç'}, Moon:{lon:281.782,sign:'Oğlak'}, Mercury:{lon:19.4538,sign:'Koç'}, Venus:{lon:314.999,sign:'Kova'}, Mars:{lon:13.4786,sign:'Koç'}, Jupiter:{lon:340.9262,sign:'Balık'}, Saturn:{lon:20.5548,sign:'Koç'}, Uranus:{lon:311.4814,sign:'Kova'}, Neptune:{lon:301.6574,sign:'Kova'}, Pluto:{lon:248.0293,sign:'Yay'} };
 const P=(__ND&&__ND.P)||__Pdemo;
@@ -618,7 +622,7 @@ function openCard(k){if(revealTimer)clearInterval(revealTimer); cardKey=k; stopS
 audioResume(); sfxCardOpen(k); startCardPad(k); // gezegen sesi + kendine ozel tema
 const acc=PLANET_COLOR[k]||'#c9b06a'; cardOverlay.style.setProperty('--acc',acc); elGlyph.style.color=acc; elMeta.style.color=acc;
 elGlyph.textContent=PGLYPH[k]||'\u2726';elName.textContent=NAMES[k]||k;
-elMeta.textContent=(P[k].sign||'').toLocaleUpperCase('tr')+'  \u00b7  '+houseOf(P[k].lon)+'. EV  \u00b7  '+(GLYPH[P[k].sign]||'');
+elMeta.innerHTML=(P[k].sign||'').toLocaleUpperCase('tr')+'  \u00b7  '+houseOf(P[k].lon)+'. EV  \u00b7  <span class="zsign">'+(ZLET[P[k].sign]||'')+'</span>';
 elBody.innerHTML='';const spans=[];
 (INTERP[k]||'').split('\n\n').forEach(par=>{const p=document.createElement('p');par.trim().split(' ').forEach(wd=>{const s=document.createElement('span');s.className='cw';s.textContent=wd+' ';p.appendChild(s);spans.push(s);});elBody.appendChild(p);});
 cardOverlay.classList.add('open');
@@ -1016,21 +1020,21 @@ window.OphShare=(function(){
   function build(title,summary){return new Promise(function(resolve){
     var W=1080,H=1920,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
     function draw(){
-      if(_bg){var ir=_bg.width/_bg.height,dw,dh;if(ir>W/H){dh=H;dw=H*ir;}else{dw=W;dh=W/ir;}x.drawImage(_bg,(W-dw)/2,(H-dh)/2,dw,dh);x.fillStyle='rgba(8,3,5,.42)';x.fillRect(0,0,W,H);}
+      if(_bg){var ir=_bg.width/_bg.height,dw,dh;if(ir>W/H){dh=H;dw=H*ir;}else{dw=W;dh=W/ir;}x.drawImage(_bg,(W-dw)/2,(H-dh)/2,dw,dh);x.fillStyle='rgba(6,2,4,.26)';x.fillRect(0,0,W,H);}
       else{var g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#5a1712');g.addColorStop(1,'#180605');x.fillStyle=g;x.fillRect(0,0,W,H);}
-      x.strokeStyle='rgba(233,200,120,.6)';x.lineWidth=6;rr(x,44,44,W-88,H-88,46);x.stroke();
-      x.strokeStyle='rgba(233,200,120,.28)';x.lineWidth=2;rr(x,74,74,W-148,H-148,34);x.stroke();
+      
+      
       x.textAlign='center';
-      if(_logo){var s=250;x.drawImage(_logo,W/2-s/2,190,s,s);}
-      x.fillStyle='#f2d489';x.font='bold 58px Georgia';x.fillText('O P H A N A R K',W/2,548);
-      var sub=(title||'').toString().toUpperCase().split('').join(' ');
-      if(sub){x.fillStyle='#e9c877';x.font='32px Georgia';x.fillText(sub,W/2,606);}
-      x.fillStyle='#e9c877';x.font='34px Georgia';x.fillText('✦   ✦   ✦',W/2,694);
-      x.fillStyle='#f4e2a4';x.shadowColor='rgba(0,0,0,.75)';x.shadowBlur=8;fit(x,summary,W/2,W-230,780,1700);x.shadowBlur=0;
-      x.fillStyle='#cbb489';x.font='30px Georgia';x.fillText('www.ophanark.com',W/2,1800);
+      
+      
+      
+      
+      
+      x.fillStyle='#f4e2a4';x.shadowColor='rgba(0,0,0,.82)';x.shadowBlur=10;fit(x,summary,W/2,W-240,360,1660);x.shadowBlur=0;
+      x.fillStyle='rgba(232,214,168,.66)';x.font='22px Georgia';x.fillText('www.ophanark.com',W/2,1812);
       c.toBlob(function(b){resolve(b);},'image/png');
     }
-    var need=[];if(!_bg)need.push(loadImg(location.origin+'/story_bg.jpg').then(function(i){_bg=i;}));if(!_logo)need.push(loadImg(location.origin+'/carklar.png').then(function(i){_logo=i;}));
+    var need=[];if(!_bg)need.push(loadImg(location.origin+'/story_bg.jpg').then(function(i){_bg=i;}));
     if(need.length)Promise.all(need).then(draw);else draw();
   });}
   function share(opts){opts=opts||{};var text=String(opts.text||'').replace(/<[^>]+>/g,' ').trim();if(!text||text==='…'){toast('Önce içeriği aç');return;}if(_busy)return;_busy=true;toast('Hikaye kartın hazırlanıyor…');

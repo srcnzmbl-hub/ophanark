@@ -3141,21 +3141,21 @@ window.OphShare=(function(){
   function build(title,summary){return new Promise(function(resolve){
     var W=1080,H=1920,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
     function draw(){
-      if(_bg){var ir=_bg.width/_bg.height,dw,dh;if(ir>W/H){dh=H;dw=H*ir;}else{dw=W;dh=W/ir;}x.drawImage(_bg,(W-dw)/2,(H-dh)/2,dw,dh);x.fillStyle='rgba(8,3,5,.42)';x.fillRect(0,0,W,H);}
+      if(_bg){var ir=_bg.width/_bg.height,dw,dh;if(ir>W/H){dh=H;dw=H*ir;}else{dw=W;dh=W/ir;}x.drawImage(_bg,(W-dw)/2,(H-dh)/2,dw,dh);x.fillStyle='rgba(6,2,4,.26)';x.fillRect(0,0,W,H);}
       else{var g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#5a1712');g.addColorStop(1,'#180605');x.fillStyle=g;x.fillRect(0,0,W,H);}
-      x.strokeStyle='rgba(233,200,120,.6)';x.lineWidth=6;rr(x,44,44,W-88,H-88,46);x.stroke();
-      x.strokeStyle='rgba(233,200,120,.28)';x.lineWidth=2;rr(x,74,74,W-148,H-148,34);x.stroke();
+      
+      
       x.textAlign='center';
-      if(_logo){var s=250;x.drawImage(_logo,W/2-s/2,190,s,s);}
-      x.fillStyle='#f2d489';x.font='bold 58px Georgia';x.fillText('O P H A N A R K',W/2,548);
-      var sub=(title||'').toString().toUpperCase().split('').join(' ');
-      if(sub){x.fillStyle='#e9c877';x.font='32px Georgia';x.fillText(sub,W/2,606);}
-      x.fillStyle='#e9c877';x.font='34px Georgia';x.fillText('✦   ✦   ✦',W/2,694);
-      x.fillStyle='#f4e2a4';x.shadowColor='rgba(0,0,0,.75)';x.shadowBlur=8;fit(x,summary,W/2,W-230,780,1700);x.shadowBlur=0;
-      x.fillStyle='#cbb489';x.font='30px Georgia';x.fillText('www.ophanark.com',W/2,1800);
+      
+      
+      
+      
+      
+      x.fillStyle='#f4e2a4';x.shadowColor='rgba(0,0,0,.82)';x.shadowBlur=10;fit(x,summary,W/2,W-240,360,1660);x.shadowBlur=0;
+      x.fillStyle='rgba(232,214,168,.66)';x.font='22px Georgia';x.fillText('www.ophanark.com',W/2,1812);
       c.toBlob(function(b){resolve(b);},'image/png');
     }
-    var need=[];if(!_bg)need.push(loadImg(location.origin+'/story_bg.jpg').then(function(i){_bg=i;}));if(!_logo)need.push(loadImg(location.origin+'/carklar.png').then(function(i){_logo=i;}));
+    var need=[];if(!_bg)need.push(loadImg(location.origin+'/story_bg.jpg').then(function(i){_bg=i;}));
     if(need.length)Promise.all(need).then(draw);else draw();
   });}
   function share(opts){opts=opts||{};var text=String(opts.text||'').replace(/<[^>]+>/g,' ').trim();if(!text||text==='…'){toast('Önce içeriği aç');return;}if(_busy)return;_busy=true;toast('Hikaye kartın hazırlanıyor…');
