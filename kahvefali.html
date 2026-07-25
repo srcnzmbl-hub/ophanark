@@ -109,6 +109,15 @@
     font-size:20px;display:flex;align-items:center;justify-content:center;transition:transform .15s,border-color .2s}
   .ab:active .ic{transform:scale(.9)} .ab.active .ic{border-color:var(--gold2);box-shadow:0 0 14px rgba(233,200,120,.35)}
   .ab .lb{font-size:9px;color:#cbb489}
+  .shareBtn{position:absolute;top:12px;right:14px;z-index:30;display:flex;align-items:center;gap:6px;
+    padding:9px 15px;border-radius:22px;border:1px solid var(--gold);background:linear-gradient(180deg,#7a2a1a,#4a1710);
+    color:var(--gold2);font-size:12.5px;letter-spacing:.05em;font-family:inherit;cursor:pointer;
+    box-shadow:0 4px 16px rgba(0,0,0,.4),0 0 14px rgba(233,200,120,.18)}
+  .shareBtn:active{transform:scale(.94)}
+  .toast{position:absolute;left:50%;bottom:96px;transform:translateX(-50%);background:rgba(20,7,9,.94);
+    border:1px solid var(--line);color:var(--gold2);padding:10px 16px;border-radius:12px;font-size:12px;
+    z-index:60;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:88%;text-align:center}
+  .toast.on{opacity:1}
 </style>
 </head>
 <body>
@@ -170,6 +179,7 @@
 
   <div class="screen" id="reading">
     <div class="back" data-back="home">‹</div>
+    <div class="shareBtn" id="shareBtn">↗ Paylaş</div>
     <div class="rwrap"><div class="rpanel"><div class="rh">KAHVE FALINIZ<span class="st">✦ ✦ ✦</span></div><div class="rbody" id="rbody"></div></div></div>
     <div class="audio">
       <div class="ab" id="abPlay"><div class="ic">▶</div><div class="lb">Devam</div></div>
@@ -178,6 +188,8 @@
       <div class="ab" id="abReplay"><div class="ic">↻</div><div class="lb">Baştan</div></div>
     </div>
   </div>
+
+  <div class="toast" id="toast"></div>
 
 </div>
 
@@ -326,6 +338,7 @@
   }
 
   function renderFal(text){
+    currentFal=String(text);
     var paras=String(text).split(/\n\s*\n/).map(function(s){return s.trim();}).filter(Boolean);
     if(paras.length<2){ var sents=String(text).match(/[^.!?]+[.!?]+|\S[^.!?]*$/g)||[String(text)]; paras=[]; for(var i=0;i<sents.length;i+=2){ paras.push(sents.slice(i,i+2).join(' ').trim()); } }
     if(!paras.length) paras=[String(text)];
@@ -353,6 +366,24 @@
   document.getElementById('abPause').addEventListener('click',function(){ tts.pause(); mark('abPause'); });
   document.getElementById('abMute').addEventListener('click',function(){ tts.muted=true; tts.stop(); mark('abMute'); });
   document.getElementById('abReplay').addEventListener('click',function(){ tts.replay(); mark('abPlay'); });
+
+  /* ---- Falı paylaş ---- */
+  var currentFal='';
+  function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(t._t); t._t=setTimeout(function(){ t.classList.remove('on'); },2800); }
+  function shareFal(){
+    var body=(currentFal||'').trim();
+    if(!body){ toast('Önce falına bakmalısın'); return; }
+    var payload=body+'\n\n☕ OPHANARK Kahve Falı — sen de baktır: https://www.ophanark.com';
+    if(navigator.share){
+      navigator.share({title:'OPHANARK · Kahve Falım', text:payload}).catch(function(){});
+    }else{
+      var done=false;
+      try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(payload); done=true; } }catch(e){}
+      try{ window.open('https://wa.me/?text='+encodeURIComponent(payload),'_blank'); done=true; }catch(e){}
+      toast(done?'Fal kopyalandı, istediğin yere yapıştır 📋':'Paylaşım bu cihazda desteklenmiyor');
+    }
+  }
+  document.getElementById('shareBtn').addEventListener('click',shareFal);
 })();
 </script>
 </body>
