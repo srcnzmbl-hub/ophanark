@@ -1080,6 +1080,7 @@ function openDetail(c){
   if(c.id==='tarot'){ if(window.openTarot)window.openTarot(); return; }
   if(c.id==='ruyat'){ if(window.openDream)window.openDream(); return; }
   if(c.id==='kahve'){ location.href='kahvefali.html'; return; }
+  if(c.id==='el'){ location.href='elfali.html'; return; }
   var det=$('detail');
   $('dbg').style.backgroundImage="url('"+c.img+".jpg')";
   $('dttl').textContent=c.title;
@@ -3217,15 +3218,17 @@ window.OphShare=(function(){
   function fmtT(ts){var d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes());}
   window.renderFalHistory=function(){
     var host=document.getElementById('falHistory'); if(!host)return;
-    var H=[];try{H=JSON.parse(localStorage.getItem('oph_kahve_history')||'[]');}catch(e){}
-    if(!H||!H.length){host.innerHTML='<div class="prow"><span class="v" style="opacity:.7">Henüz fal geçmişin yok.</span></div>';return;}
+    function load(k,pg){var a=[];try{a=JSON.parse(localStorage.getItem(k)||'[]');}catch(e){} return a.map(function(it){it._pg=pg;return it;});}
+    var H=load('oph_kahve_history','kahvefali.html').concat(load('oph_el_history','elfali.html'));
+    H.sort(function(a,b){return (b.ts||0)-(a.ts||0);}); H=H.slice(0,5);
+    if(!H.length){host.innerHTML='<div class="prow"><span class="v" style="opacity:.7">Henüz fal geçmişin yok.</span></div>';return;}
     function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
     host.innerHTML=H.map(function(it){
       var nm=(it.name||'').trim();
-      var label=(it.t||'Kahve Falı')+(nm?(' · '+esc(nm)):'')+' · '+fmtD(it.ts)+' · '+fmtT(it.ts);
-      return '<div class="falhist-row"><span class="fh-info">'+label+'</span><button class="fh-ozet" data-fal="'+b64u(it.text||'')+'">özet</button></div>';
+      var label=(it.t||'Fal')+(nm?(' · '+esc(nm)):'')+' · '+fmtD(it.ts)+' · '+fmtT(it.ts);
+      return '<div class="falhist-row"><span class="fh-info">'+label+'</span><button class="fh-ozet" data-fal="'+b64u(it.text||'')+'" data-pg="'+(it._pg||'kahvefali.html')+'">özet</button></div>';
     }).join('');
-    [].forEach.call(host.querySelectorAll('.fh-ozet'),function(b){b.addEventListener('click',function(){var e=b.getAttribute('data-fal');if(e)location.href='kahvefali.html?fal='+e;});});
+    [].forEach.call(host.querySelectorAll('.fh-ozet'),function(b){b.addEventListener('click',function(){var e=b.getAttribute('data-fal');var pg=b.getAttribute('data-pg')||'kahvefali.html';if(e)location.href=pg+'?fal='+e;});});
   };
   var pn=document.querySelector('.nb[data-s="profil"]'); if(pn)pn.addEventListener('click',function(){setTimeout(window.renderFalHistory,0);});
   try{window.renderFalHistory();}catch(e){}
