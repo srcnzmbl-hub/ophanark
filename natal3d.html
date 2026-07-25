@@ -53,6 +53,10 @@ font-size:13.5px;letter-spacing:1px;z-index:9;pointer-events:none}
 #cardClose{left:calc(50% - 37px);font-size:32px;line-height:1}
 #cardStop{left:calc(50% + 37px)}
 #cardReplay{left:calc(50% + 111px)}
+#cardShare{position:absolute;top:calc(env(safe-area-inset-top,0px) + 16px);right:16px;z-index:3;pointer-events:auto;width:46px;height:46px;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;background:radial-gradient(circle at 50% 36%,rgba(46,24,10,0.94),rgba(14,7,4,0.96));border:1.5px solid rgba(230,196,120,0.9);color:#e9c86e;display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(210,160,70,.32)}
+#cardShare svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#cardShare:active{transform:scale(.92)}
+#cardOverlay:not(.open) #cardShare{display:none}
 #cardSpeak svg,#cardStop svg,#cardReplay svg{width:23px;height:23px;fill:#e9c86e}
 #cardSpeak.on{border-color:#ffe08a;box-shadow:0 0 22px rgba(233,200,110,.75),inset 0 1px 2px rgba(255,225,150,.3)}
 #cardStop.off{opacity:.45}
@@ -84,6 +88,7 @@ font-size:13.5px;letter-spacing:1px;z-index:9;pointer-events:none}
   <button id="cardClose" aria-label="geri">‹</button>
   <button id="cardStop" aria-label="duraklat"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg></button>
   <button id="cardReplay" aria-label="baştan oku"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7.5 6.5 12 11V7.5a4.5 4.5 0 1 1-4.5 4.5H5.5A6.5 6.5 0 1 0 12 5z"/></svg></button>
+  <button id="cardShare" aria-label="paylaş"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/></svg></button>
 </div>
 
 <script type="importmap">
@@ -656,6 +661,8 @@ const cardStop=document.getElementById('cardStop');
 if(cardStop)cardStop.addEventListener('click',(e)=>{ e.stopPropagation(); pauseSpeak(); });
 const cardReplay=document.getElementById('cardReplay');
 if(cardReplay)cardReplay.addEventListener('click',(e)=>{ e.stopPropagation(); speakCard(); });
+const cardShareBtn=document.getElementById('cardShare');
+if(cardShareBtn)cardShareBtn.addEventListener('click',(e)=>{ e.stopPropagation(); if(window.OphShare){ var t=((NAMES[cardKey]||cardKey||'')+'. '+((INTERP[cardKey]||'').replace(/\s+/g,' ').trim())); window.OphShare.share({title:'Natal Harita',text:t}); } });
 // sayfadan çıkınca / arka plana geçince ses otomatik kapansın
 document.addEventListener('visibilitychange',function(){ if(document.hidden)stopSpeak(); });
 window.addEventListener('pagehide',stopSpeak);
@@ -990,5 +997,54 @@ if(logoReady && logoGroup.visible){ if(logoModel){ if(reveal.done)logoModel.rota
 composer.render();}
 loop();
 </script>
+<script>
+/* OPHANARK ortak "Instagram Story" paylaşım kartı üreticisi */
+window.OphShare=(function(){
+  var FN_OZET='https://lssyopqxthausyegeire.supabase.co/functions/v1/ozet';
+  var ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo';
+  var _bg=null,_logo=null,_busy=false;
+  function toast(m){var t=document.getElementById('__ophToast');if(!t){t=document.createElement('div');t.id='__ophToast';t.style.cssText='position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:rgba(20,7,9,.94);border:1px solid rgba(232,190,96,.4);color:#f2d489;padding:10px 16px;border-radius:12px;font:12px/1.4 Georgia,serif;z-index:99999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:86%;text-align:center';document.body.appendChild(t);}t.textContent=m;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';},2600);}
+  function loadImg(src){return new Promise(function(res){var i=new Image();i.onload=function(){res(i);};i.onerror=function(){res(null);};i.src=src;});}
+  function rr(x,rx,ry,rw,rh,r){x.beginPath();x.moveTo(rx+r,ry);x.arcTo(rx+rw,ry,rx+rw,ry+rh,r);x.arcTo(rx+rw,ry+rh,rx,ry+rh,r);x.arcTo(rx,ry+rh,rx,ry,r);x.arcTo(rx,ry,rx+rw,ry,r);x.closePath();}
+  function wrap(x,t,mw){var w=String(t).split(/\s+/),l='',o=[];for(var i=0;i<w.length;i++){var tt=l?l+' '+w[i]:w[i];if(x.measureText(tt).width>mw&&l){o.push(l);l=w[i];}else l=tt;}if(l)o.push(l);return o;}
+  function fit(x,t,cx,mw,top,bot){var sz,lh,ls;for(sz=52;sz>=30;sz-=2){x.font=sz+'px Georgia';ls=wrap(x,t,mw);lh=Math.round(sz*1.42);if(ls.length*lh<=(bot-top))break;}x.font=sz+'px Georgia';var th=ls.length*lh,sy=top+Math.max(0,((bot-top)-th)/2)+sz*0.8;for(var k=0;k<ls.length;k++)x.fillText(ls[k],cx,sy+k*lh);}
+  function clientSum(t){var s=String(t).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();var se=s.match(/[^.!?]+[.!?]+/g)||[s];var o='';for(var i=0;i<se.length;i++){if(o&&(o+se[i]).length>460)break;o+=se[i];}return (o||s.slice(0,460)).trim();}
+  function summarize(t,cb){var done=false;var to=setTimeout(function(){if(!done){done=true;cb(clientSum(t));}},9000);
+    fetch(FN_OZET,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({text:String(t).replace(/<[^>]+>/g,' ')})})
+      .then(function(r){return r.json();}).then(function(j){if(done)return;done=true;clearTimeout(to);cb((j&&j.summary&&j.summary.trim())?j.summary.trim():clientSum(t));})
+      .catch(function(){if(done)return;done=true;clearTimeout(to);cb(clientSum(t));});}
+  function build(title,summary){return new Promise(function(resolve){
+    var W=1080,H=1920,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+    function draw(){
+      if(_bg){var ir=_bg.width/_bg.height,dw,dh;if(ir>W/H){dh=H;dw=H*ir;}else{dw=W;dh=W/ir;}x.drawImage(_bg,(W-dw)/2,(H-dh)/2,dw,dh);x.fillStyle='rgba(8,3,5,.42)';x.fillRect(0,0,W,H);}
+      else{var g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#5a1712');g.addColorStop(1,'#180605');x.fillStyle=g;x.fillRect(0,0,W,H);}
+      x.strokeStyle='rgba(233,200,120,.6)';x.lineWidth=6;rr(x,44,44,W-88,H-88,46);x.stroke();
+      x.strokeStyle='rgba(233,200,120,.28)';x.lineWidth=2;rr(x,74,74,W-148,H-148,34);x.stroke();
+      x.textAlign='center';
+      if(_logo){var s=250;x.drawImage(_logo,W/2-s/2,190,s,s);}
+      x.fillStyle='#f2d489';x.font='bold 58px Georgia';x.fillText('O P H A N A R K',W/2,548);
+      var sub=(title||'').toString().toUpperCase().split('').join(' ');
+      if(sub){x.fillStyle='#e9c877';x.font='32px Georgia';x.fillText(sub,W/2,606);}
+      x.fillStyle='#e9c877';x.font='34px Georgia';x.fillText('✦   ✦   ✦',W/2,694);
+      x.fillStyle='#f4e2a4';x.shadowColor='rgba(0,0,0,.75)';x.shadowBlur=8;fit(x,summary,W/2,W-230,780,1700);x.shadowBlur=0;
+      x.fillStyle='#cbb489';x.font='30px Georgia';x.fillText('www.ophanark.com',W/2,1800);
+      c.toBlob(function(b){resolve(b);},'image/png');
+    }
+    var need=[];if(!_bg)need.push(loadImg(location.origin+'/story_bg.jpg').then(function(i){_bg=i;}));if(!_logo)need.push(loadImg(location.origin+'/carklar.png').then(function(i){_logo=i;}));
+    if(need.length)Promise.all(need).then(draw);else draw();
+  });}
+  function share(opts){opts=opts||{};var text=String(opts.text||'').replace(/<[^>]+>/g,' ').trim();if(!text||text==='…'){toast('Önce içeriği aç');return;}if(_busy)return;_busy=true;toast('Hikaye kartın hazırlanıyor…');
+    summarize(text,function(sum){build(opts.title||'',sum).then(function(blob){_busy=false;
+      if(!blob){toast('Kart oluşturulamadı');return;}
+      var file=null;try{file=new File([blob],'ophanark-hikaye.png',{type:'image/png'});}catch(e){}
+      if(file&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'OPHANARK'}).catch(function(){});return;}
+      try{var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ophanark-hikaye.png';a.click();toast('Kart indirildi — Instagram hikayene ekle');return;}catch(e){}
+      toast('Bu cihazda paylaşım desteklenmiyor');
+    });});
+  }
+  return {share:share};
+})();
+</script>
+
 </body>
 </html>
