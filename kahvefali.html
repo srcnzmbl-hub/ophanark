@@ -181,38 +181,54 @@
   document.getElementById('guideGrid').innerHTML=GUIDES.map(function(g){return '<div class="g">'+cupSVG(g.k)+'<div class="n">'+g.n+'</div></div>';}).join('');
 
   /* ---- Devam Et -> çoklu seçim ---- */
-  document.getElementById('devamBtn').addEventListener('click',function(){ document.getElementById('fileIn').click(); });
+  document.getElementById('devamBtn').addEventListener('click',function(){ var fi=document.getElementById('fileIn'); fi.value=''; fi.click(); });
   document.getElementById('fileIn').addEventListener('change',function(e){
     var files=[].slice.call(e.target.files||[]); if(!files.length) return;
-    downscaleAll(files, function(imgs){ startFal(imgs); });
+    document.getElementById('sheetWrap').classList.remove('on');
+    document.getElementById('loadSub').textContent='Fotoğraflar işleniyor…';
+    show('loading');
+    downscaleAll(files, function(imgs){
+      if(!imgs.length){ renderFal('Fotoğrafları okuyamadım. Lütfen fincan fotoğraflarını seçip tekrar dener misin?'); return; }
+      startFal(imgs);
+    });
   });
 
   function downscaleAll(files, cb){
-    var out=[], n=files.length, done=0;
-    files.slice(0,8).forEach(function(f,idx){
+    files=files.slice(0,8);
+    var out=new Array(files.length), settled=0, called=false;
+    function done(){ settled++; if(settled>=files.length && !called){ called=true; cb(out.filter(Boolean)); } }
+    setTimeout(function(){ if(!called){ called=true; cb(out.filter(Boolean)); } },15000);
+    files.forEach(function(f,idx){
       var r=new FileReader();
-      r.onload=function(ev){ var im=new Image(); im.onload=function(){
-        var s=512/Math.max(im.width,im.height); if(s>1)s=1;
-        var w=Math.round(im.width*s), h=Math.round(im.height*s);
-        var c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h);
-        out[idx]=c.toDataURL('image/jpeg',0.8); done++; if(done===Math.min(n,8))cb(out.filter(Boolean));
-      }; im.src=ev.target.result; };
-      r.readAsDataURL(f);
+      r.onload=function(ev){ var src=ev.target.result; var im=new Image();
+        im.onload=function(){
+          try{ var s=Math.min(1,512/Math.max(im.width,im.height));
+            var w=Math.max(1,Math.round(im.width*s)), h=Math.max(1,Math.round(im.height*s));
+            var c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h);
+            out[idx]=c.toDataURL('image/jpeg',0.82);
+          }catch(err){ out[idx]=src; } done();
+        };
+        im.onerror=function(){ out[idx]=src; done(); };
+        im.src=src;
+      };
+      r.onerror=function(){ done(); };
+      try{ r.readAsDataURL(f); }catch(err){ done(); }
     });
   }
 
   function startFal(imgs){
-    document.getElementById('sheetWrap').classList.remove('on');
     show('loading');
+    document.getElementById('loadSub').textContent='Telveler okunuyor…';
+    var slow=setTimeout(function(){ document.getElementById('loadSub').textContent='Falınız yazılıyor…'; },3500);
     var name=(document.getElementById('nameIn').value||'').trim();
     fetch(FN,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},
       body:JSON.stringify({name:name,images:imgs})})
     .then(function(r){return r.json();})
-    .then(function(j){
+    .then(function(j){ clearTimeout(slow);
       if(j && j.text){ renderFal(j.text); }
-      else { renderFal('Şu an telveyi net göremedim. Lütfen fincanın içini, ışığa doğru ve net bir şekilde tekrar çekip dener misin? (' + (j && j.error ? j.error : 'bilinmeyen hata') + ')'); }
+      else { renderFal('Şu an telveyi net göremedim. Fincanın içini ışığa doğru, net çekip tekrar dener misin? ('+((j&&j.error)||'')+')'); }
     })
-    .catch(function(e){ renderFal('Bağlantı hatası oldu, tekrar dener misin? ('+e+')'); });
+    .catch(function(e){ clearTimeout(slow); renderFal('Bağlantı hatası oldu, tekrar dener misin? ('+e+')'); });
   }
 
   function renderFal(text){
