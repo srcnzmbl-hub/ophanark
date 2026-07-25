@@ -3132,7 +3132,7 @@ window.OphShare=(function(){
   function loadImg(src){return new Promise(function(res){var i=new Image();i.onload=function(){res(i);};i.onerror=function(){res(null);};i.src=src;});}
   function rr(x,rx,ry,rw,rh,r){x.beginPath();x.moveTo(rx+r,ry);x.arcTo(rx+rw,ry,rx+rw,ry+rh,r);x.arcTo(rx+rw,ry+rh,rx,ry+rh,r);x.arcTo(rx,ry+rh,rx,ry,r);x.arcTo(rx,ry,rx+rw,ry,r);x.closePath();}
   function wrap(x,t,mw){var w=String(t).split(/\s+/),l='',o=[];for(var i=0;i<w.length;i++){var tt=l?l+' '+w[i]:w[i];if(x.measureText(tt).width>mw&&l){o.push(l);l=w[i];}else l=tt;}if(l)o.push(l);return o;}
-  function fit(x,t,cx,mw,top,bot){var sz,lh,ls;for(sz=52;sz>=30;sz-=2){x.font=sz+'px Georgia';ls=wrap(x,t,mw);lh=Math.round(sz*1.42);if(ls.length*lh<=(bot-top))break;}x.font=sz+'px Georgia';var th=ls.length*lh,sy=top+Math.max(0,((bot-top)-th)/2)+sz*0.8;for(var k=0;k<ls.length;k++)x.fillText(ls[k],cx,sy+k*lh);}
+  function fit(x,t,cx,mw,top,bot){var sz,lh,ls;for(sz=52;sz>=30;sz-=2){x.font=sz+"px 'Spectral',Georgia,serif";ls=wrap(x,t,mw);lh=Math.round(sz*1.42);if(ls.length*lh<=(bot-top))break;}x.font=sz+"px 'Spectral',Georgia,serif";var th=ls.length*lh,sy=top+Math.max(0,((bot-top)-th)/2)+sz*0.8;for(var k=0;k<ls.length;k++)x.fillText(ls[k],cx,sy+k*lh);}
   function clientSum(t){var s=String(t).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();var se=s.match(/[^.!?]+[.!?]+/g)||[s];var o='';for(var i=0;i<se.length;i++){if(o&&(o+se[i]).length>460)break;o+=se[i];}return (o||s.slice(0,460)).trim();}
   function summarize(t,cb){var done=false;var to=setTimeout(function(){if(!done){done=true;cb(clientSum(t));}},9000);
     fetch(FN_OZET,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({text:String(t).replace(/<[^>]+>/g,' ')})})
@@ -3151,12 +3151,12 @@ window.OphShare=(function(){
       
       
       
-      x.fillStyle='#f4e2a4';x.shadowColor='rgba(0,0,0,.82)';x.shadowBlur=10;fit(x,summary,W/2,W-240,360,1660);x.shadowBlur=0;
+      if(title){x.fillStyle='#f7d98a';x.font="600 60px 'Cinzel',serif";x.shadowColor='rgba(0,0,0,.7)';x.shadowBlur=8;x.fillText(String(title),W/2,300);x.shadowBlur=0;}var _tp=title?400:360;x.fillStyle='#f2d489';x.shadowColor='rgba(0,0,0,.82)';x.shadowBlur=10;fit(x,summary,W/2,W-240,_tp,1660);x.shadowBlur=0;
       x.fillStyle='rgba(232,214,168,.66)';x.font='22px Georgia';x.fillText('www.ophanark.com',W/2,1812);
       c.toBlob(function(b){resolve(b);},'image/png');
     }
     var need=[];if(!_bg)need.push(loadImg(location.origin+'/story_bg.jpg').then(function(i){_bg=i;}));
-    if(need.length)Promise.all(need).then(draw);else draw();
+    try{var _fp=Promise.race([Promise.all([document.fonts.load("600 60px 'Cinzel'").catch(function(){}),document.fonts.load("400 48px 'Spectral'").catch(function(){})]),new Promise(function(r){setTimeout(r,2500);})]);need.push(_fp);}catch(e){}Promise.all(need).then(draw).catch(function(){draw();});
   });}
   function share(opts){opts=opts||{};var text=String(opts.text||'').replace(/<[^>]+>/g,' ').trim();if(!text||text==='…'){toast('Önce içeriği aç');return;}if(_busy)return;_busy=true;toast('Hikaye kartın hazırlanıyor…');
     summarize(text,function(sum){build(opts.title||'',sum).then(function(blob){_busy=false;
