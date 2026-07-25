@@ -194,6 +194,38 @@
     font-family:inherit;font-size:14px;letter-spacing:.08em;cursor:pointer}
   .kvclose:active{transform:scale(.98)}
 
+
+  /* kaynak seçici */
+  #srcSheet{position:absolute;inset:0;display:none;z-index:70}
+  #srcSheet.on{display:block}
+  .ss-bg{position:absolute;inset:0;background:rgba(0,0,0,.6)}
+  .ss-card{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,#1a0d12,#12080e);border-top-left-radius:22px;border-top-right-radius:22px;border-top:1px solid var(--line);padding:18px 18px calc(env(safe-area-inset-bottom,0px) + 18px)}
+  .ss-title{text-align:center;color:var(--gold2);font-size:14px;letter-spacing:.08em;margin-bottom:14px}
+  .ss-opt{display:flex;align-items:center;gap:12px;width:100%;padding:15px 16px;margin-bottom:10px;border-radius:14px;border:1px solid var(--line);background:rgba(20,7,9,.5);color:var(--gold2);font-family:inherit;font-size:14.5px;cursor:pointer}
+  .ss-opt:active{transform:scale(.98)}
+  .ss-ic{font-size:20px}
+  .ss-cancel{width:100%;padding:13px;border:none;background:none;color:#cbb489;font-family:inherit;font-size:13px;cursor:pointer}
+  /* kamera */
+  #camera{background:#000;flex-direction:column}
+  .cam-stage{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center}
+  #camVideo{width:100%;height:100%;object-fit:cover;background:#000}
+  .cam-hint{position:absolute;left:12px;right:12px;top:12px;text-align:center;color:#f2d489;font-size:11px;letter-spacing:.02em;background:rgba(0,0,0,.42);padding:7px 10px;border-radius:10px;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+  .cam-hint #camCount{color:var(--gold);font-weight:bold}
+  #camera .back{background:rgba(0,0,0,.5);z-index:25}
+  .cam-shutter{position:absolute;left:50%;bottom:120px;transform:translateX(-50%);width:70px;height:70px;border-radius:50%;border:4px solid #f2d489;background:rgba(255,255,255,.14);z-index:22;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .cam-shutter span{width:54px;height:54px;border-radius:50%;background:#f2d489;display:block;transition:transform .1s}
+  .cam-shutter:active span{transform:scale(.84)}
+  .cam-shutter.flash span{transform:scale(.7)}
+  .cam-bar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:11px 11px calc(env(safe-area-inset-bottom,0px) + 11px);background:#0a0710;border-top:1px solid var(--line)}
+  .cam-slots{flex:1 1 auto;display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+  .cam-slot{aspect-ratio:1;border-radius:7px;border:1px solid var(--line);background:rgba(20,7,9,.55);display:flex;align-items:center;justify-content:center;color:#8f7a52;font-size:11px;overflow:hidden;position:relative}
+  .cam-slot img{width:100%;height:100%;object-fit:cover}
+  .cam-slot.filled{border-color:var(--gold)}
+  .cam-slot .cam-x{position:absolute;top:1px;right:3px;color:#fff;font-size:11px;text-shadow:0 1px 2px rgba(0,0,0,.9)}
+  .cam-done{flex:0 0 auto;padding:11px 15px;border-radius:12px;border:1px solid var(--gold);background:linear-gradient(180deg,#7a2a1a,#4a1710);color:var(--gold2);font-family:inherit;font-size:13.5px;letter-spacing:.04em;cursor:pointer;transition:opacity .2s,box-shadow .2s}
+  .cam-done[disabled]{opacity:.4;pointer-events:none}
+  .cam-done:not([disabled]){box-shadow:0 0 14px rgba(233,200,120,.4)}
+
 </style>
 </head>
 <body>
@@ -263,6 +295,31 @@
   </div>
   <input type="file" id="fileIn" accept="image/*" multiple>
 
+  <!-- kaynak seçici -->
+  <div id="srcSheet">
+    <div class="ss-bg" id="srcBg"></div>
+    <div class="ss-card">
+      <div class="ss-title">Fotoğraf ekle</div>
+      <button class="ss-opt" id="optCam" type="button"><span class="ss-ic">📷</span> Kamerayla Çek</button>
+      <button class="ss-opt" id="optGal" type="button"><span class="ss-ic">🖼️</span> Galeriden Seç</button>
+      <button class="ss-cancel" id="optCancel" type="button">Vazgeç</button>
+    </div>
+  </div>
+
+  <!-- kamera çekim ekranı -->
+  <div class="screen" id="camera">
+    <div class="back" id="camBack">‹</div>
+    <div class="cam-stage">
+      <video id="camVideo" playsinline autoplay muted></video>
+      <div class="cam-hint">Fincanın içini ışığa doğru, net görünecek şekilde çek · <span id="camCount">0/6</span></div>
+    </div>
+    <div class="cam-shutter" id="camShot" aria-label="Çek"><span></span></div>
+    <div class="cam-bar">
+      <div class="cam-slots" id="camSlots"></div>
+      <button class="cam-done" id="camDone" type="button" disabled>Tamam</button>
+    </div>
+  </div>
+
   <!-- ===== DOĞRULAMA / YÜKLENİYOR ===== -->
   <div class="screen" id="loading">
     <div class="back" data-back="upload">‹</div>
@@ -304,7 +361,7 @@
   function show(id){ document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');}); document.getElementById(id).classList.add('on'); }
   document.querySelectorAll('[data-back]').forEach(function(b){ b.addEventListener('click',function(){ tts.stop(); var t=b.getAttribute('data-back'); if(sharedMode || t==='app'){ location.href=location.origin+'/'; return; } show(t); }); });
   document.getElementById('introDevam').addEventListener('click',function(){ show('upload'); });
-  document.getElementById('plusBtn').addEventListener('click',function(){ var fi=document.getElementById('fileIn'); fi.value=''; fi.click(); });
+  document.getElementById('plusBtn').addEventListener('click',function(){ openSrc(); });
   var _gl=document.getElementById('guideLink'); if(_gl)_gl.addEventListener('click',function(){ document.getElementById('sheetWrap').classList.add('on'); });
   document.getElementById('sbg').addEventListener('click',function(){ document.getElementById('sheetWrap').classList.remove('on'); });
 
@@ -351,7 +408,7 @@
   document.getElementById('guideGrid').innerHTML=GUIDES.map(function(g){return '<div class="g">'+cupSVG(g.k)+'<div class="n">'+g.n+'</div></div>';}).join('');
 
   /* ---- Devam Et -> çoklu seçim ---- */
-  document.getElementById('devamBtn').addEventListener('click',function(){ document.getElementById('sheetWrap').classList.remove('on'); var fi=document.getElementById('fileIn'); fi.value=''; fi.click(); });
+  document.getElementById('devamBtn').addEventListener('click',function(){ document.getElementById('sheetWrap').classList.remove('on'); openSrc(); });
   var stagedImgs=null, photosLoaded=false;
   document.getElementById('fileIn').addEventListener('change',function(e){
     var files=[].slice.call(e.target.files||[]); if(!files.length) return;
@@ -368,6 +425,53 @@
     sq.classList.add('hasimg'); if(ic)ic.style.display='none';
     document.getElementById('upCount').textContent=imgs.length+' fotoğraf yüklendi · değiştirmek için kareye dokun';
   }
+
+  /* ---- kaynak seçici (kamera / galeri) ---- */
+  var srcSheet=document.getElementById('srcSheet');
+  function openSrc(){ if(srcSheet)srcSheet.classList.add('on'); }
+  function closeSrc(){ if(srcSheet)srcSheet.classList.remove('on'); }
+  var _sb=document.getElementById('srcBg'); if(_sb)_sb.addEventListener('click',closeSrc);
+  var _sc=document.getElementById('optCancel'); if(_sc)_sc.addEventListener('click',closeSrc);
+  var _sg=document.getElementById('optGal'); if(_sg)_sg.addEventListener('click',function(){ closeSrc(); var fi=document.getElementById('fileIn'); fi.value=''; fi.click(); });
+  var _sk=document.getElementById('optCam'); if(_sk)_sk.addEventListener('click',function(){ closeSrc(); openCamera(); });
+
+  /* ---- uygulama içi kamera (6 çekim) ---- */
+  var camStream=null, camShots=[];
+  function renderCamSlots(){
+    var host=document.getElementById('camSlots'); if(!host)return; var h2='';
+    for(var i=0;i<6;i++){ var s=camShots[i]; h2+='<div class="cam-slot'+(s?' filled':'')+'" data-i="'+i+'">'+(s?'<img src="'+s+'"><span class="cam-x">×</span>':(i+1))+'</div>'; }
+    host.innerHTML=h2;
+    [].forEach.call(host.querySelectorAll('.cam-slot.filled'),function(el){ el.addEventListener('click',function(){ var i=+el.getAttribute('data-i'); camShots.splice(i,1); renderCamSlots(); updateCamDone(); }); });
+  }
+  function updateCamDone(){ var b=document.getElementById('camDone'); if(b)b.disabled=camShots.length<6; var c=document.getElementById('camCount'); if(c)c.textContent=camShots.length+'/6'; }
+  function stopCam(){ try{ if(camStream){ camStream.getTracks().forEach(function(t){t.stop();}); camStream=null; } }catch(e){} var v=document.getElementById('camVideo'); if(v)v.srcObject=null; }
+  function camFallback(){ stopCam(); show('upload'); var fi=document.getElementById('fileIn'); fi.value=''; fi.click(); }
+  function openCamera(){
+    camShots=[]; renderCamSlots(); updateCamDone(); show('camera');
+    var v=document.getElementById('camVideo'); var md=navigator.mediaDevices;
+    if(!md||!md.getUserMedia){ camFallback(); return; }
+    md.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false})
+      .then(function(st){ camStream=st; v.srcObject=st; var p=v.play(); if(p&&p.catch)p.catch(function(){}); })
+      .catch(function(){ camFallback(); });
+  }
+  var _cb=document.getElementById('camBack'); if(_cb)_cb.addEventListener('click',function(){ stopCam(); show('upload'); });
+  var _cs=document.getElementById('camShot'); if(_cs)_cs.addEventListener('click',function(){
+    if(camShots.length>=6) return;
+    var v=document.getElementById('camVideo'); if(!v||!v.videoWidth) return;
+    try{
+      var vw=v.videoWidth, vh=v.videoHeight, s=Math.min(1,512/Math.max(vw,vh));
+      var w=Math.max(1,Math.round(vw*s)), hh=Math.max(1,Math.round(vh*s));
+      var c=document.createElement('canvas'); c.width=w; c.height=hh; c.getContext('2d').drawImage(v,0,0,w,hh);
+      camShots.push(c.toDataURL('image/jpeg',0.82));
+      renderCamSlots(); updateCamDone();
+      _cs.classList.add('flash'); setTimeout(function(){ _cs.classList.remove('flash'); },140);
+    }catch(e){}
+  });
+  var _cd=document.getElementById('camDone'); if(_cd)_cd.addEventListener('click',function(){
+    if(camShots.length<6) return;
+    var imgs=camShots.slice(0,6); stopCam();
+    stagedImgs=imgs; photosLoaded=true; renderThumbs(imgs); updateGate(); show('upload');
+  });
 
   /* ---- rıza kutuları + kapı (foto yüklendi && zorunlu onay) ---- */
   function updateGate(){
