@@ -660,6 +660,8 @@ if(cardReplay)cardReplay.addEventListener('click',(e)=>{ e.stopPropagation(); sp
 document.addEventListener('visibilitychange',function(){ if(document.hidden)stopSpeak(); });
 window.addEventListener('pagehide',stopSpeak);
 window.addEventListener('blur',function(){ if(document.hidden)stopSpeak(); });
+// üst uygulamadan (index.html) ekrandan çıkış mesajı gelince sesi kes
+window.addEventListener('message',function(e){ if(e&&e.data&&e.data.oph==='stopSpeak')stopSpeak(); });
 if(SPEECH_OK)window.speechSynthesis.onvoiceschanged=()=>{};
 function closeCard(){cardOverlay.classList.remove('open');try{parent.postMessage({oph:'cardClose'},'*');}catch(e){}if(revealTimer){clearInterval(revealTimer);revealTimer=null;}stopSpeak();stopCardPad();sfxWhoosh(true);
 if(transitioning){const n=transitioning;

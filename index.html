@@ -1143,6 +1143,7 @@ document.querySelectorAll('.nb').forEach(function(b){
     $('topH').textContent=TITLES[s];
     $('topbar').style.display = (s==='home'||s==='profil'||s==='natal3d'||s==='ophan')?'none':'flex';
     var bar3=document.getElementById('n3dbar'); if(bar3)bar3.style.display=(s==='natal3d')?'flex':'none';
+    if(s!=='natal3d'){try{var _n3=document.getElementById('n3dFrame');if(_n3&&_n3.contentWindow)_n3.contentWindow.postMessage({oph:'stopSpeak'},'*');}catch(e){}}
     if(s==='home'&&window.__homeWheel){requestAnimationFrame(function(){window.__homeWheel.layout();window.__homeWheel.render();});}
     if(s==='natal3d'&&window.__load3D)window.__load3D();
     if(window.OphNav)window.OphNav.sync();
