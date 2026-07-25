@@ -483,8 +483,8 @@ img{display:block}
 .rd-cbtn.rd-close{width:56px;height:56px;font-size:20px;border-color:rgba(232,190,96,.95)}
 .rd-cbtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .rd-cbtn:active{transform:scale(.93)}
-.rd-cbtn.rd-voice.on{background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;border-color:transparent}
-#reading:not(.reading) .rd-mute,#reading:not(.reading) .rd-voice,#reading:not(.reading) .rd-backc{display:none}
+.rd-cbtn.on{background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;border-color:transparent}
+#reading:not(.reading) .rd-vc,#reading:not(.reading) .rd-backc{display:none}
 
 /* ===== TAROT PAGE ===== */
 #tarot{position:fixed;inset:0;z-index:65;display:none;background:#0a0304}
@@ -781,8 +781,10 @@ img{display:block}
       </div>
       <div class="rd-frame"><span style="top:8px;left:11px">✦</span><span style="top:8px;right:11px">✦</span><span style="bottom:8px;left:11px">✦</span><span style="bottom:8px;right:11px">✦</span></div>
       <div class="rd-ctrls">
-        <button class="rd-cbtn rd-mute" id="rdMute" title="Stop"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5"/></svg></button>
-        <button class="rd-cbtn rd-voice" id="rdVoice" title="Read aloud"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a9 9 0 0 1 0 12"/></svg></button>
+        <button class="rd-cbtn rd-vc" id="rdPlay" title="Devam"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/></svg></button>
+        <button class="rd-cbtn rd-vc" id="rdPause" title="Duraklat"><svg viewBox="0 0 24 24"><rect x="7" y="5" width="3.2" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="13.8" y="5" width="3.2" height="14" rx="1" fill="currentColor" stroke="none"/></svg></button>
+        <button class="rd-cbtn rd-vc rd-mute" id="rdMute" title="Sustur"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5"/></svg></button>
+        <button class="rd-cbtn rd-vc" id="rdReplay" title="Baştan"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 3.5V9h5.5"/></svg></button>
       </div>
     </div>
   </div>
@@ -1477,7 +1479,16 @@ try{
   var PLABEL={daily:'Daily',weekly:'Weekly',monthly:'Monthly',yearly:'Yearly'};
   var LANGV={en:'en-US',tr:'tr-TR',de:'de-DE',fr:'fr-FR',es:'es-ES',it:'it-IT',pt:'pt-PT',ru:'ru-RU',ar:'ar-SA',zh:'zh-CN',ja:'ja-JP',ko:'ko-KR',hi:'hi-IN',nl:'nl-NL',pl:'pl-PL'};
   var TTS=window.speechSynthesis;
-  function stopVoice(){try{if(TTS)TTS.cancel();}catch(e){}var v=$('rdVoice');if(v)v.classList.remove('on');}
+  function chunkTr(txt){ var t=String(txt).replace(/\s+/g,' ').trim(); var sents=t.match(/[^.!?…]+[.!?…]+|\S[^.!?…]*$/g)||[t]; var out=[]; for(var i=0;i<sents.length;i++){ var s=sents[i].trim(); if(!s)continue; while(s.length>170){ var cut=s.lastIndexOf(' ',170); if(cut<80)cut=170; out.push(s.slice(0,cut).trim()); s=s.slice(cut).trim(); } if(s)out.push(s); } return out; }
+  function rdMark(id){ ['rdPlay','rdPause','rdMute','rdReplay'].forEach(function(x){var e=$(x);if(e)e.classList.toggle('on',x===id);}); }
+  var rdTts={chunks:[],ci:0,on:false,muted:false,
+    set:function(text){ this.chunks=chunkTr(text); this.ci=0; },
+    _n:function(){ var s=this; if(this.ci>=this.chunks.length){ this.on=false; rdMark(''); return; } try{ var u=new SpeechSynthesisUtterance(this.chunks[this.ci]); u.lang=LANGV[window.__lang||'en']||'en-US'; u.rate=.96; u.onend=function(){ if(s.on){ s.ci++; s._n(); } }; u.onerror=function(){ if(s.on){ s.ci++; s._n(); } }; TTS.speak(u); }catch(e){} },
+    start:function(from){ if(!TTS)return; if(from!=null)this.ci=from; this.muted=false; this.on=true; rdMark('rdPlay'); this._n(); },
+    pause:function(){ this.on=false; try{TTS.cancel();}catch(e){} rdMark('rdPause'); },
+    mute:function(){ this.on=false; this.muted=true; try{TTS.cancel();}catch(e){} rdMark('rdMute'); },
+    stop:function(){ this.on=false; this.ci=0; this.chunks=[]; try{if(TTS)TTS.cancel();}catch(e){} rdMark(''); } };
+  function stopVoice(){ rdTts.stop(); }
 
   function openReading(i){
     curSign=i;
@@ -1524,18 +1535,10 @@ try{
   window.__rdBack=rdBack;
   if($('rdBack2'))$('rdBack2').addEventListener('click',rdBack);
   if($('rdTopBack'))$('rdTopBack').addEventListener('click',rdBack);
-  if($('rdVoice'))$('rdVoice').addEventListener('click',function(){
-    if(!TTS)return;
-    var txt=$('rdBody').textContent||''; if(!txt||txt==='…')return;
-    TTS.cancel();
-    var u=new SpeechSynthesisUtterance(txt);
-    u.lang=LANGV[window.__lang||'en']||'en-US'; u.rate=.96;
-    u.onend=function(){var v=$('rdVoice');if(v)v.classList.remove('on');};
-    u.onerror=function(){var v=$('rdVoice');if(v)v.classList.remove('on');};
-    $('rdVoice').classList.add('on');
-    TTS.speak(u);
-  });
-  if($('rdMute'))$('rdMute').addEventListener('click',stopVoice);
+  if($('rdPlay'))$('rdPlay').addEventListener('click',function(){ if(!TTS)return; var txt=$('rdBody').textContent||''; if(!txt||txt==='…')return; if(rdTts.on)return; if(!rdTts.chunks.length)rdTts.set(txt); rdTts.start(rdTts.ci>=rdTts.chunks.length?0:rdTts.ci); });
+  if($('rdPause'))$('rdPause').addEventListener('click',function(){ rdTts.pause(); });
+  if($('rdMute'))$('rdMute').addEventListener('click',function(){ rdTts.mute(); });
+  if($('rdReplay'))$('rdReplay').addEventListener('click',function(){ if(!TTS)return; var txt=$('rdBody').textContent||''; if(!txt||txt==='…')return; rdTts.set(txt); rdTts.start(0); });
 })();
 
 /* ================= SKY MAP (real telescope, Aladin Lite) ================= */
