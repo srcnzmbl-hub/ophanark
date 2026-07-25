@@ -242,6 +242,11 @@
   .elsub{display:block;font-size:10.5px;letter-spacing:.02em;color:#cbb489;margin-top:2px}
   .elFig{margin:0 0 10px}
 
+
+  .cam-guide{position:absolute;left:0;right:0;top:52px;bottom:150px;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:6}
+  .cam-guide svg{height:86%;max-width:80%;opacity:.5;filter:drop-shadow(0 0 5px rgba(0,0,0,.6))}
+  #camera .cam-hint{z-index:9}
+
 </style>
 </head>
 <body>
@@ -266,7 +271,7 @@
   <div class="screen" id="upload">
     <div class="back" data-back="home">‹</div>
     <div class="upScroll">
-      <div class="note upNote">Toplam 6 fotoğraf: <b>sağ elinden 3</b>, <b>sol elinden 3</b>. Avucunu <b>ışığa doğru</b> aç, gölge olmasın; <b>çizgiler net</b> görünsün. Sağ el yaşamla şekillenen yanını, sol el doğuştan gelen yanını anlatır. <span class="upLink" id="guideLink">Nasıl çekmeliyim?</span></div>
+      <div class="note upNote">Her el için <b>3 fotoğraf</b>: 1) <b>avuç içi</b> yakın, 2) <b>parmaklar</b> yakın, 3) <b>tüm el</b> (çok uzaklaşmadan). Önce sağ, sonra sol — toplam 6. Kamerada beliren <b>ize göre</b> elini yerleştir, çizgiler net görünsün. <span class="upLink" id="guideLink">Nasıl çekmeliyim?</span></div>
       <div class="upSquare" id="plusBtn">
         <div class="plusBig" id="plusIcon">+</div>
         <div class="upThumbs" id="upThumbs"></div>
@@ -327,7 +332,8 @@
     <div class="back" id="camBack">‹</div>
     <div class="cam-stage">
       <video id="camVideo" playsinline autoplay muted></video>
-      <div class="cam-hint">Önce <b>SAĞ</b> elinden 3, sonra <b>SOL</b> elinden 3 avuç içi çek · <span id="camCount">0/6</span></div>
+      <div class="cam-guide" id="camGuide"></div>
+      <div class="cam-hint"><span id="camStep">Sağ el · avuç içini yakın çek</span> · <span id="camCount">0/6</span></div>
     </div>
     <div class="cam-shutter" id="camShot" aria-label="Çek"><span></span></div>
     <div class="cam-bar">
@@ -421,7 +427,7 @@
     {k:'left',n:'1 · Kulp solda'},{k:'top',n:'2 · Kulp yukarıda'},{k:'right',n:'3 · Kulp sağda'},
     {k:'bottom',n:'4 · Kulp aşağıda'},{k:'topdown',n:'5 · Tepeden'},{k:'plate',n:'6 · Tabak'}
   ];
-  document.getElementById('guideGrid').innerHTML='<div class="note" style="grid-column:1/-1">1) Sağ ve sol elin için 3\u2019er fotoğraf çek (toplam 6). 2) Avucunu tamamen aç, parmaklar hafif aralı. 3) Telefonu avucuna paralel, yakın tut; ışık karşıdan gelsin, gölge/parlama olmasın. 4) Kalp, kafa ve yaşam çizgileri net seçilsin. Sağ el bugünü/seçimleri, sol el doğuştan geleni anlatır.</div>';
+  document.getElementById('guideGrid').innerHTML='<div class="note" style="grid-column:1/-1">Her el için sırayla 3 kare çek. <b>1) Avuç içi</b> — avucun kadrajı doldursun, çizgiler net. <b>2) Parmaklar</b> — parmaklar yakın, boğum çizgileri görünsün. <b>3) Tüm el</b> — elin tamamı görünsün, çok uzaklaşma. Kameradaki altın ize göre yerleştir. Önce sağ el, sonra sol el.</div>';
 
   /* ---- Devam Et -> çoklu seçim ---- */
   document.getElementById('devamBtn').addEventListener('click',function(){ document.getElementById('sheetWrap').classList.remove('on'); openSrc(); });
@@ -453,19 +459,26 @@
 
   /* ---- uygulama içi kamera (6 çekim) ---- */
   var camStream=null, camShots=[];
+  var _AVUC="<svg viewBox='0 0 200 300' fill='none' stroke='#f4e2a4' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M44 150 C36 84 52 44 100 44 C148 44 164 84 156 150 C162 210 146 262 100 270 C54 262 38 210 44 150 Z' stroke-dasharray='9 8'/><path d='M60 44 L56 14 M84 40 L82 10 M116 40 L118 10 M140 44 L146 16' stroke-dasharray='9 8'/><path d='M62 132 C92 120 122 124 142 138' stroke-width='2' opacity='.8'/><path d='M58 156 C90 148 118 156 138 170' stroke-width='2' opacity='.8'/><path d='M72 142 C80 180 96 214 116 240' stroke-width='2' opacity='.8'/></svg>";
+  var _PARMAK="<svg viewBox='0 0 200 300' fill='none' stroke='#f4e2a4' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M28 285 L28 60 C28 34 58 34 58 60 L58 285' stroke-dasharray='9 8'/><path d='M66 285 L66 40 C66 12 98 12 98 40 L98 285' stroke-dasharray='9 8'/><path d='M106 285 L106 42 C106 14 138 14 138 42 L138 285' stroke-dasharray='9 8'/><path d='M146 285 L146 66 C146 40 174 40 174 66 L174 285' stroke-dasharray='9 8'/><path d='M28 150 H58 M28 205 H58 M66 140 H98 M66 200 H98 M106 142 H138 M106 202 H138 M146 152 H174 M146 208 H174' stroke-width='2' opacity='.55'/></svg>";
+  var _TUMEL="<svg viewBox='0 0 200 210' fill='none' stroke='#f4e2a4' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' stroke-dasharray='9 8'><rect x='52' y='30' width='16' height='72' rx='8'/><rect x='74' y='18' width='16' height='84' rx='8'/><rect x='96' y='22' width='16' height='82' rx='8'/><rect x='118' y='34' width='16' height='68' rx='8'/><path d='M52 98 C34 98 24 112 30 128 L48 152'/><path d='M44 94 L140 94 C151 132 147 170 120 192 C95 210 64 206 50 179 C41 161 42 150 42 122 Z'/></svg>";
+  var POSES=[{lbl:'Avuç',hint:'avuç içini yakın çek',svg:_AVUC},{lbl:'Parmak',hint:'parmakları yakın çek',svg:_PARMAK},{lbl:'El',hint:'tüm elin görünsün, çok uzaklaşma',svg:_TUMEL}];
+  function _curPose(){ return POSES[camShots.length%3]; }
+  function _curHand(){ return camShots.length<3?'Sağ':'Sol'; }
+  function updateCamGuide(){ var g=document.getElementById('camGuide'); if(g)g.innerHTML=(camShots.length<6)?_curPose().svg:''; var st=document.getElementById('camStep'); if(st)st.textContent=(camShots.length<6)?(_curHand()+' el · '+_curPose().hint):'Tüm fotoğraflar tamam'; var c=document.getElementById('camCount'); if(c)c.textContent=camShots.length+'/6'; }
   function renderCamSlots(){
     var host=document.getElementById('camSlots'); if(!host)return; var h2='';
-    for(var i=0;i<6;i++){ var s=camShots[i]; var hand=i<3?'Sağ':'Sol'; var num=(i%3)+1; var side=i<3?'sag':'sol';
-      var inner=s?('<img src="'+s+'"><span class="cam-tag">'+num+'</span><span class="cam-x">×</span>'):('<span class="cam-ph">'+hand+'<br>'+num+'</span>');
+    for(var i=0;i<6;i++){ var s=camShots[i]; var hand=i<3?'Sağ':'Sol'; var pl=POSES[i%3].lbl; var side=i<3?'sag':'sol';
+      var inner=s?('<img src="'+s+'"><span class="cam-tag">'+pl+'</span><span class="cam-x">×</span>'):('<span class="cam-ph">'+hand+'<br>'+pl+'</span>');
       h2+='<div class="cam-slot '+side+(s?' filled':'')+'" data-i="'+i+'">'+inner+'</div>'; }
     host.innerHTML=h2;
-    [].forEach.call(host.querySelectorAll('.cam-slot.filled'),function(el){ el.addEventListener('click',function(){ var i=+el.getAttribute('data-i'); camShots.splice(i,1); renderCamSlots(); updateCamDone(); }); });
+    [].forEach.call(host.querySelectorAll('.cam-slot.filled'),function(el){ el.addEventListener('click',function(){ var i=+el.getAttribute('data-i'); camShots.splice(i,1); renderCamSlots(); updateCamDone(); updateCamGuide(); }); });
   }
   function updateCamDone(){ var b=document.getElementById('camDone'); if(b)b.disabled=camShots.length<6; var c=document.getElementById('camCount'); if(c)c.textContent=camShots.length+'/6'; }
   function stopCam(){ try{ if(camStream){ camStream.getTracks().forEach(function(t){t.stop();}); camStream=null; } }catch(e){} var v=document.getElementById('camVideo'); if(v)v.srcObject=null; }
   function camFallback(){ stopCam(); show('upload'); var fi=document.getElementById('fileIn'); fi.value=''; fi.click(); }
   function openCamera(){
-    camShots=[]; renderCamSlots(); updateCamDone(); show('camera');
+    camShots=[]; renderCamSlots(); updateCamDone(); updateCamGuide(); show('camera');
     var v=document.getElementById('camVideo'); var md=navigator.mediaDevices;
     if(!md||!md.getUserMedia){ camFallback(); return; }
     md.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false})
@@ -481,7 +494,7 @@
       var w=Math.max(1,Math.round(vw*s)), hh=Math.max(1,Math.round(vh*s));
       var c=document.createElement('canvas'); c.width=w; c.height=hh; c.getContext('2d').drawImage(v,0,0,w,hh);
       camShots.push(c.toDataURL('image/jpeg',0.82));
-      renderCamSlots(); updateCamDone();
+      renderCamSlots(); updateCamDone(); updateCamGuide();
       _cs.classList.add('flash'); setTimeout(function(){ _cs.classList.remove('flash'); },140);
     }catch(e){}
   });
@@ -544,6 +557,7 @@
       body:JSON.stringify({name:name,right:right,left:left,lang:(navigator.language||'tr').slice(0,2).toLowerCase(),kvkk_onay:true,egitim_izni:true})})
     .then(function(r){return r.json();})
     .then(function(j){
+      if(j && j.gecersiz){ showErr('⚠ Fotoğraflarda net bir el/avuç içi ve el çizgileri göremedim. Lütfen avucunu ışığa doğru açıp kameradaki ize göre yerleştirip yeniden çek.'); return; }
       if(j && (j.sag||j.sol)){ renderElFal(j.sag||'', j.sol||'', right[0]||null, left[0]||null, j.text||''); }
       else if(j && j.text && String(j.text).trim().length>120){ renderFal(j.text); }
       else { showErr(); }
