@@ -933,7 +933,7 @@ var NAV_NAMES={
 var LANG_LABELS=[['en','English'],['tr','Türkçe'],['de','Deutsch'],['fr','Français'],['es','Español'],
  ['it','Italiano'],['pt','Português'],['ru','Русский'],['ar','العربية'],['zh','中文'],
  ['ja','日本語'],['ko','한국어'],['hi','हिन्दी'],['nl','Nederlands'],['pl','Polski']];
-window.__lang='en';
+window.__lang=(function(){try{var d=(navigator.language||navigator.userLanguage||'tr').slice(0,2).toLowerCase();var sup=['en','tr','de','fr','es','it','pt','ru','ar','zh','ja','ko','hi','nl','pl'];return sup.indexOf(d)>=0?d:'tr';}catch(e){return 'tr';}})();
 window.setAppLang=function(lang){
   window.__lang=lang;
   var names=CARD_NAMES[lang]||{};
@@ -1104,7 +1104,7 @@ $('detailBack').addEventListener('click',closeDetail);
   var dc=$('dreamCard'); if(!dc)return;
   var chat=$('dcChat'), listen=$('dcListen'), listenTxt=$('dcListenTxt'), input=$('dcInput');
   var dcMuted=false, lastResp='';
-  function TT(tr,en){try{return (window.tr&&window.tr())?tr:en;}catch(e){return en;}}
+  function TT(tr,en){try{return (window.__lang==='tr')?tr:en;}catch(e){return en;}}
   function msg(who,html){var d=document.createElement('div');d.className='dc-msg '+who;d.innerHTML=html;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d;}
   function stopTTS(){try{if(window.speechSynthesis)window.speechSynthesis.cancel();}catch(e){}}
   function say(text){ lastResp=text; if(dcMuted)return; if(window.__ophanSpeak){try{window.__ophanSpeak(text);}catch(e){}} }
@@ -1267,7 +1267,7 @@ window.__load3D=function(){
     var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',t.bg3);
     var vt=$('vTheme');if(vt)vt.textContent=t.name+' ›';
   }
-  var curTheme=ls('oph_theme')||'bordo', curLang=ls('oph_lang')||'en', curNotif=ls('oph_notif')||'on';
+  var curTheme=ls('oph_theme')||'bordo', curLang=ls('oph_lang')||window.__lang||'tr', curNotif=ls('oph_notif')||'on';
   applyTheme(curTheme);
   window.setAppLang(curLang);
   if($('vNotif'))$('vNotif').textContent=(curNotif==='on'?'On':'Off')+' ›';
