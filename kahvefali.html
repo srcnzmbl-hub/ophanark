@@ -124,6 +124,13 @@
     border:1px solid var(--line);color:var(--gold2);padding:10px 16px;border-radius:12px;font-size:12px;
     z-index:60;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:88%;text-align:center}
   .toast.on{opacity:1}
+  .storyNote{margin:22px 2px 4px;padding-top:16px;border-top:1px solid rgba(233,200,120,.28);
+    font-size:12px;line-height:1.65;color:#d8c49a;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.85)}
+  .storyNote b{color:var(--gold2)}
+  .storyBtn{display:inline-block;margin-top:11px;padding:10px 20px;border-radius:22px;border:1px solid var(--gold);
+    background:linear-gradient(180deg,#7a2a1a,#4a1710);color:var(--gold2);font-family:inherit;font-size:12.5px;
+    letter-spacing:.05em;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+  .storyBtn:active{transform:scale(.95)}
 </style>
 </head>
 <body>
@@ -353,7 +360,12 @@
     var paras=String(text).split(/\n\s*\n/).map(function(s){return s.trim();}).filter(Boolean);
     if(paras.length<2){ var sents=String(text).match(/[^.!?]+[.!?]+|\S[^.!?]*$/g)||[String(text)]; paras=[]; for(var i=0;i<sents.length;i+=2){ paras.push(sents.slice(i,i+2).join(' ').trim()); } }
     if(!paras.length) paras=[String(text)];
-    document.getElementById('rbody').innerHTML=paras.map(function(p){return '<p>'+p+'</p>';}).join('');
+    var html=paras.map(function(p){return '<p>'+p+'</p>';}).join('');
+    if(String(text).trim().length>80){
+      html+='<div class="storyNote">Falınızın kısa bir özetini <b>Instagram hikayenizde kart</b> olarak paylaşmak isterseniz <button class="storyBtn" id="storyBtn" type="button">tıklayınız</button></div>';
+    }
+    document.getElementById('rbody').innerHTML=html;
+    var sb=document.getElementById('storyBtn'); if(sb)sb.addEventListener('click',shareStory);
     tts.set(paras);
     show('reading');
     tts.start(0); mark('abPlay');
@@ -384,6 +396,7 @@
   function b64uEncode(str){ var b=btoa(unescape(encodeURIComponent(str))); return b.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
   function b64uDecode(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4)s+='='; return decodeURIComponent(escape(atob(s))); }
   var FN_FAL='https://lssyopqxthausyegeire.supabase.co/functions/v1/fal';
+  var FN_OZET='https://lssyopqxthausyegeire.supabase.co/functions/v1/ozet';
   function falLink(){ return location.origin+'/kahvefali.html?fal='+b64uEncode((currentFal||'').trim()); }
   /* kısa link üret: falı sunucuya kaydet, ?f=<id> döndür; olmazsa uzun linke düş */
   function buildShortLink(cb){
@@ -445,6 +458,55 @@
     });
   }
   document.getElementById('shareBtn').addEventListener('click',shareFal);
+
+  /* ---- Instagram hikaye kartı (fal özeti) ---- */
+  function getNatalURI(){ try{ var bg=getComputedStyle(document.getElementById('reading')).backgroundImage; var m=bg.match(/url\(["']?(data:[^"')]+)["']?\)/); return m?m[1]:null; }catch(e){ return null; } }
+  function wrapCenter(x,text,cx,startY,maxW,lh){ var words=String(text).split(/\s+/),line='',lines=[]; for(var i=0;i<words.length;i++){ var t=line?line+' '+words[i]:words[i]; if(x.measureText(t).width>maxW && line){ lines.push(line); line=words[i]; } else line=t; } if(line)lines.push(line); for(var k=0;k<lines.length;k++){ x.fillText(lines[k],cx,startY+k*lh); } return startY+lines.length*lh; }
+  function clientSummary(text){ var s=String(text).replace(/\s+/g,' ').trim(); var sents=s.match(/[^.!?]+[.!?]+/g)||[s]; var out=''; for(var i=0;i<sents.length;i++){ if(out && (out+sents[i]).length>220)break; out+=sents[i]; } return (out||s.slice(0,220)).trim(); }
+  function summarizeFal(text,cb){ var done=false; var to=setTimeout(function(){ if(!done){done=true;cb(clientSummary(text));} },8000);
+    fetch(FN_OZET,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({text:text})})
+      .then(function(r){return r.json();})
+      .then(function(j){ if(done)return; done=true; clearTimeout(to); cb((j&&j.summary&&j.summary.trim())?j.summary.trim():clientSummary(text)); })
+      .catch(function(){ if(done)return; done=true; clearTimeout(to); cb(clientSummary(text)); }); }
+  function makeStoryImage(summary){
+    return new Promise(function(resolve){
+      try{
+        var W=1080,H=1920,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+        function finish(){
+          x.strokeStyle='rgba(233,200,120,.6)';x.lineWidth=6;roundRect(x,44,44,W-88,H-88,46);x.stroke();
+          x.strokeStyle='rgba(233,200,120,.28)';x.lineWidth=2;roundRect(x,74,74,W-148,H-148,34);x.stroke();
+          x.textAlign='center';
+          var img=document.querySelector('#rvRings img');
+          if(img&&img.complete&&img.naturalWidth){ var s=280; x.drawImage(img,W/2-s/2,175,s,s); }
+          x.fillStyle='#f2d489';x.font='bold 60px Georgia';x.fillText('O P H A N A R K',W/2,560);
+          x.fillStyle='#e9c877';x.font='34px Georgia';x.fillText('K A H V E   F A L I',W/2,620);
+          x.fillStyle='#e9c877';x.font='36px Georgia';x.fillText('✦   ✦   ✦',W/2,715);
+          x.fillStyle='#f4e2a4';x.font='48px Georgia';x.shadowColor='rgba(0,0,0,.75)';x.shadowBlur=8;
+          wrapCenter(x,summary,W/2,865,W-250,70);
+          x.shadowBlur=0;
+          x.fillStyle='#cbb489';x.font='32px Georgia';x.fillText('www.ophanark.com',W/2,1800);
+          c.toBlob(function(b){resolve(b);},'image/png');
+        }
+        var natal=getNatalURI();
+        if(natal){ var bg=new Image(); bg.onload=function(){ var ir=bg.width/bg.height,dw,dh; if(ir>W/H){dh=H;dw=H*ir;}else{dw=W;dh=W/ir;} x.drawImage(bg,(W-dw)/2,(H-dh)/2,dw,dh); x.fillStyle='rgba(8,3,5,.4)';x.fillRect(0,0,W,H); finish(); };
+          bg.onerror=function(){ var g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#5a1712');g.addColorStop(1,'#180605');x.fillStyle=g;x.fillRect(0,0,W,H); finish(); }; bg.src=natal;
+        } else { var g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#5a1712');g.addColorStop(1,'#180605');x.fillStyle=g;x.fillRect(0,0,W,H); finish(); }
+      }catch(e){ resolve(null); }
+    });
+  }
+  function shareStory(){
+    var body=(currentFal||'').trim(); if(!body){ toast('Önce falına bakmalısın'); return; }
+    toast('Hikaye kartın hazırlanıyor…');
+    summarizeFal(body,function(summary){
+      makeStoryImage(summary).then(function(blob){
+        if(!blob){ toast('Kart oluşturulamadı, tekrar dener misin?'); return; }
+        var file=null; try{ file=new File([blob],'ophanark-kahve-fali-hikaye.png',{type:'image/png'}); }catch(e){}
+        if(file && navigator.canShare && navigator.canShare({files:[file]})){ navigator.share({files:[file],title:'OPHANARK Kahve Falı'}).catch(function(){}); return; }
+        try{ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ophanark-kahve-fali-hikaye.png'; a.click(); toast('Kart indirildi — Instagram hikayene ekleyebilirsin'); return; }catch(e){}
+        toast('Bu cihazda paylaşım desteklenmiyor');
+      });
+    });
+  }
 
   /* dönen çarklar logosunu okuma başlığına kopyala */
   (function(){ var src=document.querySelector('#rvRings img'); var host=document.getElementById('rLogo'); if(src&&host)host.appendChild(src.cloneNode(true)); })();
