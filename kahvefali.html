@@ -146,21 +146,21 @@
     letter-spacing:.16em;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.55),0 0 20px rgba(233,200,120,.22)}
   .introBtn:active{transform:scale(.96)}
   /* ===== UPLOAD (yeni) ===== */
-  #upload{background:#0a0710 var(--natal) center/cover no-repeat;align-items:center;justify-content:flex-start}
-  .upScroll{width:100%;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;
-    padding:58px 20px calc(env(safe-area-inset-bottom,0px) + 26px);display:flex;flex-direction:column;align-items:center;gap:14px}
-  .upSquare{width:min(62vw,240px);height:min(62vw,240px);flex:0 0 auto;border-radius:18px;border:2px dashed rgba(233,200,120,.6);
+  #upload{background:#0a0710 var(--natal) center/cover no-repeat;align-items:center;justify-content:center}
+  .upScroll{width:100%;height:100%;overflow:hidden;
+    padding:46px 20px calc(env(safe-area-inset-bottom,0px) + 16px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px}
+  .upSquare{width:min(42vw,158px);height:min(42vw,158px);flex:0 0 auto;border-radius:16px;border:2px dashed rgba(233,200,120,.6);
     background:rgba(20,7,9,.42);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;cursor:pointer;
     box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 0 40px rgba(233,200,120,.05)}
   .upSquare:active{transform:scale(.98)}
   .upSquare.hasimg{border-style:solid}
-  .plusBig{font-size:66px;color:var(--gold2);line-height:1;opacity:.9}
+  .plusBig{font-size:52px;color:var(--gold2);line-height:1;opacity:.9}
   .upThumbs{position:absolute;inset:0;display:grid;grid-template-columns:repeat(2,1fr);gap:5px;padding:6px}
   .upThumbs img{width:100%;height:100%;object-fit:cover;border-radius:9px;border:1px solid var(--line)}
   .upCount{font-size:11px;letter-spacing:.03em;color:var(--gold2);opacity:.9;min-height:14px;text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.8)}
   .upNote{width:100%;max-width:360px}
   .upLink{color:var(--gold2);text-decoration:underline;cursor:pointer;white-space:nowrap}
-  #upload .kvkk,#upload .field,#upload .consent{width:100%;max-width:360px}
+  #upload .field,#upload .consent,#upload .readLink{width:100%;max-width:360px}
   #upload .go{width:100%;max-width:360px}
   /* ===== LOADING / DOĞRULAMA (yeni) ===== */
   #loading .back{display:none}
@@ -173,6 +173,26 @@
     background:linear-gradient(180deg,#7a2a1a,#4a1710);color:var(--gold2);font-family:inherit;font-size:12.5px;
     letter-spacing:.03em;cursor:pointer}
   .loadBack:active{transform:scale(.95)}
+
+
+  .readLink{text-align:center;font-size:12px;color:#d8c49a;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+  .readBtn{background:none;border:none;color:var(--gold2);text-decoration:underline;font-family:inherit;font-size:12px;letter-spacing:.02em;cursor:pointer;padding:0}
+  #kvkkModal{position:absolute;inset:0;display:none;z-index:80}
+  #kvkkModal.on{display:block}
+  .kvbg{position:absolute;inset:0;background:rgba(0,0,0,.62)}
+  .kvcard{position:absolute;inset:18px;background:#0a0710 var(--natal) center/cover no-repeat;border:1px solid var(--gold);border-radius:16px;
+    box-shadow:0 22px 60px rgba(0,0,0,.7);display:flex;flex-direction:column;overflow:hidden}
+  .kvcard::before{content:'';position:absolute;inset:8px;border:1px solid rgba(233,200,120,.3);border-radius:10px;pointer-events:none;z-index:3}
+  .kvtitle{flex:0 0 auto;text-align:center;color:var(--gold2);font-size:15px;letter-spacing:.07em;padding:18px 18px 10px;text-shadow:0 2px 8px rgba(0,0,0,.85)}
+  .kvbody{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px 18px 12px;
+    color:#f2d489;font-size:12px;line-height:1.72;text-shadow:0 1px 3px rgba(0,0,0,.85)}
+  .kvbody p{margin:9px 0}
+  .kvbody b{color:var(--gold2)}
+  .kvbody .kv-about{padding:9px 11px;background:rgba(233,200,120,.06);border:1px solid var(--line);border-radius:9px}
+  .kvclose{flex:0 0 auto;margin:8px 18px calc(env(safe-area-inset-bottom,0px) + 16px);padding:13px;border-radius:14px;
+    border:1px solid var(--gold);background:linear-gradient(180deg,#7a2a1a,#4a1710);color:var(--gold2);
+    font-family:inherit;font-size:14px;letter-spacing:.08em;cursor:pointer}
+  .kvclose:active{transform:scale(.98)}
 
 </style>
 </head>
@@ -198,33 +218,36 @@
   <div class="screen" id="upload">
     <div class="back" data-back="home">‹</div>
     <div class="upScroll">
+      <div class="note upNote">Kareye dokunup <b>fincan fotoğraflarını</b> ekle. Fincanı <b>ışığa doğru</b> tut, dipte gölge olmasın; her karede <b>fincanın içi net</b> görünsün ve telve <b>iyice kurumuş</b> olsun. <span class="upLink" id="guideLink">Nasıl çekmeliyim?</span></div>
       <div class="upSquare" id="plusBtn">
         <div class="plusBig" id="plusIcon">+</div>
         <div class="upThumbs" id="upThumbs"></div>
       </div>
       <div class="upCount" id="upCount"></div>
-      <div class="note upNote">Kareye dokunup <b>fincan fotoğraflarını</b> ekle. Fincanı <b>ışığa doğru</b> tut, dipte gölge olmasın; her karede <b>fincanın içi net</b> görünsün ve telve <b>iyice kurumuş</b> olsun. En iyi sonuç için birkaç açıdan (kulp solda/üstte/sağda/aşağıda, bir <b>tepeden</b> ve bir <b>tabak</b>) çek. <span class="upLink" id="guideLink">Nasıl çekmeliyim?</span></div>
       <div class="field"><input id="nameIn" placeholder="İsmin (opsiyonel) — fal sana hitap etsin"></div>
-      <div class="kvkk">
-        <h4>KVKK Aydınlatma ve Açık Rıza Metni</h4>
-        <p>Veri sorumlusu <b>Ozark Collective Co.</b> olarak, kahve falı hizmetini sunabilmek için paylaştığınız <b>fincan fotoğraflarınızı</b> ve girdiyseniz <b>isminizi</b> işliyoruz.</p>
-        <p><b>İşleme amaçları:</b> (1) fal yorumunuzun oluşturulması, hizmetin sunulması ve iyileştirilmesi; (2) yalnızca ayrıca izin vermeniz hâlinde, kahve fincanı fotoğraflarınızın <b>Ophan AI</b> yapay zekâ modelimizin geliştirilmesi ve eğitilmesinde kullanılması.</p>
-        <p><b>Ophan AI eğitimi:</b> Kendi yapay zekâ modelimiz olan Ophan AI'yı geliştirmek için, <b>yalnızca aşağıdaki ek izni vermeniz durumunda</b>, kahve fincanı fotoğraflarınız <b>kimliğinizden arındırılmış (anonim)</b> biçimde model eğitiminde kullanılmak üzere saklanabilir. Bu izni vermezseniz falınız yine normal şekilde okunur; fotoğraflarınız yalnızca fal yorumu için kullanılır. Bu ek izni <b>dilediğiniz zaman geri çekebilirsiniz</b>.</p>
-        <p><b>Saklama:</b> Fotoğraflarınız fal görüntülendikten <b>24 saat sonra</b> hizmet sistemimizden otomatik silinir (Ophan AI izni verdiyseniz yalnızca anonim kopya eğitim amacıyla saklanır). Fal metniniz yalnızca profilinizdeki “Geçmiş” bölümünde <b>en yeni 3 fal</b> ile sınırlı tutulur; yeni fal geldikçe eski metin silinir.</p>
-        <p><b>Yurt dışına aktarım:</b> Fotoğraflarınız yorumun oluşturulması için yapay zekâ hizmet sağlayıcımızın altyapısında işlenir; bu kapsamda verileriniz yurt dışındaki sunuculara aktarılabilir.</p>
-        <p><b>Haklarınız:</b> KVKK m.11 kapsamında verilerinize erişme, düzeltilmesini/silinmesini isteme, işlemeye itiraz etme ve verdiğiniz açık rızayı geri alma haklarına sahipsiniz. Talepleriniz için: <b>info@ophanark.com</b></p>
-        <p>Aşağıdaki <b>zorunlu</b> kutuyu işaretleyerek, fotoğraflarınızın fal yorumu amacıyla işlenmesine ve yurt dışına aktarılmasına <b>açık rıza</b> vermiş olursunuz. Ophan AI eğitimi için kullanım <b>isteğe bağlıdır</b> ve ayrı olarak onaylanır.</p>
-        <p class="kv-about"><b>Ophan AI nedir?</b> Ophan AI, Ophanark'ın <b>görsel yorumlama yapay zekâ botudur</b>. Kahve fincanı görsellerini daha sağlıklı analiz etme becerisiyle <b>tutarlı ve isabetli fal yorumları</b> yapmamızı sağlar ve size <b>ücretsiz</b> bir yapay zekâ botu olarak hizmet eder. İzin vermeniz hâlinde paylaşacağınız anonim görseller, Ophan AI'nın zamanla daha doğru yorumlar üretmesine katkı sağlar.</p>
-      </div>
       <label class="consent" id="consentRow">
         <span class="cbox" id="cbox"></span>
-        <span>KVKK aydınlatma metnini okudum; verilerimin <b>kahve falı hizmeti</b> için işlenmesini <b>kabul ediyorum</b>. <i>(Zorunlu)</i></span>
+        <span>KVKK aydınlatma ve açık rıza metnini okudum; <b>kabul ediyorum</b>. <i>(Zorunlu)</i></span>
       </label>
-      <label class="consent" id="aiConsentRow">
-        <span class="cbox" id="aiCbox"></span>
-        <span>Kahve fincanı fotoğraflarımın, <b>Ophan AI</b> modelinin geliştirilip eğitilmesi amacıyla kimliğimle ilişkilendirilmeksizin kullanılmasına <b>izin veriyorum</b>. <i>(İsteğe bağlı)</i></span>
-      </label>
+      <div class="readLink">Sözleşmeyi okumak için <button type="button" class="readBtn" id="kvkkOpen">tıklayınız</button></div>
       <button class="go" id="yorumlaBtn" disabled>Falımı görmek istiyorum</button>
+    </div>
+  </div>
+
+  <div id="kvkkModal">
+    <div class="kvbg" id="kvkkBg"></div>
+    <div class="kvcard">
+      <div class="kvtitle">KVKK Aydınlatma ve Açık Rıza Metni</div>
+      <div class="kvbody">
+        <p>Veri sorumlusu <b>Ozark Collective Co.</b> olarak, kahve falı hizmetini sunabilmek için paylaştığınız <b>fincan fotoğraflarınızı</b> ve girdiyseniz <b>isminizi</b> işliyoruz.</p>
+        <p><b>İşleme amaçları:</b> (1) fal yorumunuzun oluşturulması, hizmetin sunulması ve iyileştirilmesi; (2) kahve fincanı fotoğraflarınızın, <b>Ophan AI</b> yapay zekâ modelimizin geliştirilmesi ve eğitilmesi amacıyla kimliğinizden arındırılmış (anonim) biçimde kullanılması.</p>
+        <p class="kv-about"><b>Ophan AI nedir?</b> Ophan AI, Ophanark'ın <b>görsel yorumlama yapay zekâ botudur</b>. Kahve fincanı görsellerini daha sağlıklı analiz etme becerisiyle <b>tutarlı ve isabetli fal yorumları</b> yapmamızı sağlar ve size <b>ücretsiz</b> bir yapay zekâ botu olarak hizmet eder. Paylaşacağınız anonim görseller, Ophan AI'nın zamanla daha doğru yorumlar üretmesine katkı sağlar.</p>
+        <p><b>Saklama:</b> Fotoğraflarınız fal görüntülendikten <b>24 saat sonra</b> hizmet sistemimizden otomatik silinir; Ophan AI eğitimi için yalnızca <b>anonim (kimliğinizle ilişkilendirilemeyen)</b> bir kopya saklanır. Fal metniniz yalnızca profilinizdeki “Geçmiş” bölümünde <b>en yeni 3 fal</b> ile sınırlı tutulur; yeni fal geldikçe eski metin silinir.</p>
+        <p><b>Yurt dışına aktarım:</b> Fotoğraflarınız yorumun oluşturulması için yapay zekâ hizmet sağlayıcımızın altyapısında işlenir; bu kapsamda verileriniz yurt dışındaki sunuculara aktarılabilir.</p>
+        <p><b>Haklarınız:</b> KVKK m.11 kapsamında verilerinize erişme, düzeltilmesini/silinmesini isteme, işlemeye itiraz etme ve verdiğiniz açık rızayı geri alma haklarına sahipsiniz. Talepleriniz için: <b>info@ophanark.com</b></p>
+        <p>Bu metni okuyup <b>kabul ediyorum</b> kutusunu işaretleyerek şunları beyan etmiş olursunuz: kahve fincanı fotoğraflarımın fal yorumu amacıyla işlenmesine ve yurt dışına aktarılmasına açık rıza veriyorum. Ayrıca: “Kahve fincanı fotoğraflarımın, Ophan AI yapay zekâ modelinin geliştirilip eğitilmesi amacıyla <b>kimliğimle ilişkilendirilmeksizin kullanılmasına izin veriyorum.</b>”</p>
+      </div>
+      <button class="kvclose" id="kvkkClose">Kapat</button>
     </div>
   </div>
 
@@ -329,7 +352,7 @@
 
   /* ---- Devam Et -> çoklu seçim ---- */
   document.getElementById('devamBtn').addEventListener('click',function(){ document.getElementById('sheetWrap').classList.remove('on'); var fi=document.getElementById('fileIn'); fi.value=''; fi.click(); });
-  var stagedImgs=null, photosLoaded=false, aiConsent=false;
+  var stagedImgs=null, photosLoaded=false;
   document.getElementById('fileIn').addEventListener('change',function(e){
     var files=[].slice.call(e.target.files||[]); if(!files.length) return;
     document.getElementById('sheetWrap').classList.remove('on');
@@ -353,7 +376,9 @@
     var b=document.getElementById('yorumlaBtn'); b.disabled=!ok; b.classList.toggle('ready',ok);
   }
   document.getElementById('consentRow').addEventListener('click',function(ev){ ev.preventDefault(); document.getElementById('cbox').classList.toggle('on'); updateGate(); });
-  document.getElementById('aiConsentRow').addEventListener('click',function(ev){ ev.preventDefault(); aiConsent=document.getElementById('aiCbox').classList.toggle('on'); });
+  document.getElementById('kvkkOpen').addEventListener('click',function(){ document.getElementById('kvkkModal').classList.add('on'); });
+  document.getElementById('kvkkClose').addEventListener('click',function(){ document.getElementById('kvkkModal').classList.remove('on'); });
+  document.getElementById('kvkkBg').addEventListener('click',function(){ document.getElementById('kvkkModal').classList.remove('on'); });
   document.getElementById('yorumlaBtn').addEventListener('click',function(){ if(this.disabled) return; startFalFlow(); });
 
   var DEF_WARN='⚠ Fincan görsellerini net okuyamadım. Lütfen boş/beyaz fincan değil, telvesi kurumuş fincanın içini ışığa doğru net çekip fotoğrafları yeniden yükle.';
@@ -393,7 +418,7 @@
   function fetchFal(imgs){
     var name=(document.getElementById('nameIn').value||'').trim();
     fetch(FN,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},
-      body:JSON.stringify({name:name,images:imgs,ai_consent:aiConsent})})
+      body:JSON.stringify({name:name,images:imgs,ai_consent:true})})
     .then(function(r){return r.json();})
     .then(function(j){
       if(j && j.text && String(j.text).trim().length>120){ renderFal(j.text); }
