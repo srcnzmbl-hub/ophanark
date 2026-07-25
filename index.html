@@ -353,6 +353,11 @@ img{display:block}
 .taprow{cursor:pointer;transition:opacity .2s}
 .taprow:active{opacity:.6}
 .pcard-hrow{display:flex;align-items:center;justify-content:space-between}
+.falhist-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid rgba(232,190,96,.14)}
+.falhist-row:first-child{border-top:0}
+.fh-info{font-family:'Spectral',Georgia,serif;color:#f2d489;font-size:13.5px;line-height:1.3}
+.fh-ozet{flex:0 0 auto;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.06em;color:var(--gold2);background:linear-gradient(180deg,rgba(58,26,8,.72),rgba(20,7,4,.9));border:1px solid rgba(232,190,96,.6);border-radius:16px;padding:7px 16px;cursor:pointer}
+.fh-ozet:active{transform:scale(.95)}
 .pedit{background:transparent;border:1px solid var(--line);color:var(--gold2);font-family:'Cinzel',serif;
   font-size:11px;letter-spacing:.06em;border-radius:9px;padding:5px 12px;cursor:pointer}
 .pedit:active{opacity:.6}
@@ -739,6 +744,10 @@ img{display:block}
         <div class="prow"><span>Birth Time</span><span class="v" id="uTime">—</span></div>
       </div>
       <div class="pcard">
+        <div class="pcard-h">GEÇMİŞ FALLARIM</div>
+        <div id="falHistory"><div class="prow"><span class="v" style="opacity:.7">Henüz fal geçmişin yok.</span></div></div>
+      </div>
+      <div class="pcard">
         <div class="pcard-h">SETTINGS</div>
         <div class="prow taprow" id="setTheme"><span>Theme</span><span class="v" id="vTheme">Maroon &amp; Gold ›</span></div>
         <div class="prow taprow" id="setLang"><span>Language</span><span class="v" id="vLang">English ›</span></div>
@@ -1065,6 +1074,7 @@ function openDetail(c){
   if(c.id==='sky'){ if(window.openSky)window.openSky(); return; }
   if(c.id==='tarot'){ if(window.openTarot)window.openTarot(); return; }
   if(c.id==='ruyat'){ if(window.openDream)window.openDream(); return; }
+  if(c.id==='kahve'){ location.href='kahvefali.html'; return; }
   var det=$('detail');
   $('dbg').style.backgroundImage="url('"+c.img+".jpg')";
   $('dttl').textContent=c.title;
@@ -3171,5 +3181,25 @@ window.OphShare=(function(){
 })();
 </script>
 
+<script>
+/* Profil > Geçmiş Fallarım (localStorage 'oph_kahve_history', en yeni 3) */
+(function(){
+  function b64u(str){try{var b=btoa(unescape(encodeURIComponent(str)));return b.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}catch(e){return '';}}
+  function pad(n){return (n<10?'0':'')+n;}
+  function fmtD(ts){var d=new Date(ts);return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear();}
+  function fmtT(ts){var d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes());}
+  window.renderFalHistory=function(){
+    var host=document.getElementById('falHistory'); if(!host)return;
+    var H=[];try{H=JSON.parse(localStorage.getItem('oph_kahve_history')||'[]');}catch(e){}
+    if(!H||!H.length){host.innerHTML='<div class="prow"><span class="v" style="opacity:.7">Henüz fal geçmişin yok.</span></div>';return;}
+    host.innerHTML=H.map(function(it){
+      return '<div class="falhist-row"><span class="fh-info">'+((it.t||'Kahve Falı'))+' · '+fmtD(it.ts)+' · '+fmtT(it.ts)+'</span><button class="fh-ozet" data-fal="'+b64u(it.text||'')+'">özet</button></div>';
+    }).join('');
+    [].forEach.call(host.querySelectorAll('.fh-ozet'),function(b){b.addEventListener('click',function(){var e=b.getAttribute('data-fal');if(e)location.href='kahvefali.html?fal='+e;});});
+  };
+  var pn=document.querySelector('.nb[data-s="profil"]'); if(pn)pn.addEventListener('click',function(){setTimeout(window.renderFalHistory,0);});
+  try{window.renderFalHistory();}catch(e){}
+})();
+</script>
 </body>
 </html>

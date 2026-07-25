@@ -357,6 +357,7 @@
 
   function renderFal(text){
     currentFal=String(text);
+    if(!sharedMode && String(text).trim().length>80){ try{ var _H=JSON.parse(localStorage.getItem('oph_kahve_history')||'[]'); _H.unshift({t:'Kahve Falı',ts:Date.now(),text:String(text)}); _H=_H.slice(0,3); localStorage.setItem('oph_kahve_history',JSON.stringify(_H)); }catch(e){} }
     var paras=String(text).split(/\n\s*\n/).map(function(s){return s.trim();}).filter(Boolean);
     if(paras.length<2){ var sents=String(text).match(/[^.!?]+[.!?]+|\S[^.!?]*$/g)||[String(text)]; paras=[]; for(var i=0;i<sents.length;i+=2){ paras.push(sents.slice(i,i+2).join(' ').trim()); } }
     if(!paras.length) paras=[String(text)];
