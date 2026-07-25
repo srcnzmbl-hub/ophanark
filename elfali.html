@@ -231,6 +231,17 @@
   .palmFig img{width:100%;border-radius:12px;border:1px solid var(--line);box-shadow:0 8px 22px rgba(0,0,0,.5)}
   .palmFig figcaption{margin-top:6px;font-size:11px;letter-spacing:.04em;color:#cbb489}
 
+
+  .cam-tag{position:absolute;top:2px;left:3px;font-size:9px;font-weight:bold;color:#fff;background:rgba(0,0,0,.55);padding:0 4px;border-radius:6px}
+  .cam-ph{font-size:9.5px;line-height:1.15;text-align:center;color:#a98b58}
+  .cam-slot.sag{border-color:rgba(233,200,120,.55)} .cam-slot.sol{border-color:rgba(150,180,233,.45)}
+  .cam-slot.filled.sag{border-color:var(--gold)} .cam-slot.filled.sol{border-color:#9db4e6}
+  .elsec{margin:0 0 16px}
+  .elhead{border-top:1px solid rgba(233,200,120,.28);padding-top:11px;margin:4px 0 8px}
+  .eltitle{display:block;font-size:16px;letter-spacing:.12em;color:var(--gold2);text-shadow:0 1px 4px rgba(0,0,0,.85)}
+  .elsub{display:block;font-size:10.5px;letter-spacing:.02em;color:#cbb489;margin-top:2px}
+  .elFig{margin:0 0 10px}
+
 </style>
 </head>
 <body>
@@ -255,7 +266,7 @@
   <div class="screen" id="upload">
     <div class="back" data-back="home">‹</div>
     <div class="upScroll">
-      <div class="note upNote">Kareye dokunup <b>avuç içi fotoğraflarını</b> ekle. Avucunu <b>ışığa doğru</b> aç, gölge olmasın; <b>çizgiler net</b> görünsün. En iyi sonuç için avucun tamamını, <b>düz ve yakın</b> çek. <span class="upLink" id="guideLink">Nasıl çekmeliyim?</span></div>
+      <div class="note upNote">Toplam 6 fotoğraf: <b>sağ elinden 3</b>, <b>sol elinden 3</b>. Avucunu <b>ışığa doğru</b> aç, gölge olmasın; <b>çizgiler net</b> görünsün. Sağ el yaşamla şekillenen yanını, sol el doğuştan gelen yanını anlatır. <span class="upLink" id="guideLink">Nasıl çekmeliyim?</span></div>
       <div class="upSquare" id="plusBtn">
         <div class="plusBig" id="plusIcon">+</div>
         <div class="upThumbs" id="upThumbs"></div>
@@ -316,7 +327,7 @@
     <div class="back" id="camBack">‹</div>
     <div class="cam-stage">
       <video id="camVideo" playsinline autoplay muted></video>
-      <div class="cam-hint">Avucunu ışığa doğru, çizgiler net görünecek şekilde çek · <span id="camCount">0/6</span></div>
+      <div class="cam-hint">Önce <b>SAĞ</b> elinden 3, sonra <b>SOL</b> elinden 3 avuç içi çek · <span id="camCount">0/6</span></div>
     </div>
     <div class="cam-shutter" id="camShot" aria-label="Çek"><span></span></div>
     <div class="cam-bar">
@@ -410,7 +421,7 @@
     {k:'left',n:'1 · Kulp solda'},{k:'top',n:'2 · Kulp yukarıda'},{k:'right',n:'3 · Kulp sağda'},
     {k:'bottom',n:'4 · Kulp aşağıda'},{k:'topdown',n:'5 · Tepeden'},{k:'plate',n:'6 · Tabak'}
   ];
-  document.getElementById('guideGrid').innerHTML='<div class="note" style="grid-column:1/-1">1) Avucunu tamamen aç, parmaklar hafif aralı. 2) Telefonu avucuna paralel, yakın tut. 3) Işık karşıdan gelsin; gölge ve parlama olmasın. 4) Kalp, kafa ve yaşam çizgileri net seçilsin. 5) İstersen farklı ışıkta birkaç kare çek.</div>';
+  document.getElementById('guideGrid').innerHTML='<div class="note" style="grid-column:1/-1">1) Sağ ve sol elin için 3\u2019er fotoğraf çek (toplam 6). 2) Avucunu tamamen aç, parmaklar hafif aralı. 3) Telefonu avucuna paralel, yakın tut; ışık karşıdan gelsin, gölge/parlama olmasın. 4) Kalp, kafa ve yaşam çizgileri net seçilsin. Sağ el bugünü/seçimleri, sol el doğuştan geleni anlatır.</div>';
 
   /* ---- Devam Et -> çoklu seçim ---- */
   document.getElementById('devamBtn').addEventListener('click',function(){ document.getElementById('sheetWrap').classList.remove('on'); openSrc(); });
@@ -444,7 +455,9 @@
   var camStream=null, camShots=[];
   function renderCamSlots(){
     var host=document.getElementById('camSlots'); if(!host)return; var h2='';
-    for(var i=0;i<6;i++){ var s=camShots[i]; h2+='<div class="cam-slot'+(s?' filled':'')+'" data-i="'+i+'">'+(s?'<img src="'+s+'"><span class="cam-x">×</span>':(i+1))+'</div>'; }
+    for(var i=0;i<6;i++){ var s=camShots[i]; var hand=i<3?'Sağ':'Sol'; var num=(i%3)+1; var side=i<3?'sag':'sol';
+      var inner=s?('<img src="'+s+'"><span class="cam-tag">'+num+'</span><span class="cam-x">×</span>'):('<span class="cam-ph">'+hand+'<br>'+num+'</span>');
+      h2+='<div class="cam-slot '+side+(s?' filled':'')+'" data-i="'+i+'">'+inner+'</div>'; }
     host.innerHTML=h2;
     [].forEach.call(host.querySelectorAll('.cam-slot.filled'),function(el){ el.addEventListener('click',function(){ var i=+el.getAttribute('data-i'); camShots.splice(i,1); renderCamSlots(); updateCamDone(); }); });
   }
@@ -526,11 +539,13 @@
 
   function fetchFal(imgs){
     var name=(document.getElementById('nameIn').value||'').trim();
+    var right=imgs.slice(0,3), left=imgs.slice(3,6);
     fetch(FN,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},
-      body:JSON.stringify({name:name,images:imgs,lang:(navigator.language||'tr').slice(0,2).toLowerCase(),kvkk_onay:true,egitim_izni:true})})
+      body:JSON.stringify({name:name,right:right,left:left,lang:(navigator.language||'tr').slice(0,2).toLowerCase(),kvkk_onay:true,egitim_izni:true})})
     .then(function(r){return r.json();})
     .then(function(j){
-      if(j && j.text && String(j.text).trim().length>120){ renderFal(j.text); }
+      if(j && (j.sag||j.sol)){ renderElFal(j.sag||'', j.sol||'', right[0]||null, left[0]||null, j.text||''); }
+      else if(j && j.text && String(j.text).trim().length>120){ renderFal(j.text); }
       else { showErr(); }
     })
     .catch(function(){ showErr('⚠ Bağlantı hatası oldu. İnternetini kontrol edip tekrar dener misin?'); });
@@ -577,6 +592,22 @@
       x.putImageData(out,0,0); cb(c.toDataURL('image/jpeg',0.85));
     }; im.onerror=function(){ cb(null); }; im.src=src;
     }catch(e){ cb(null); }
+  }
+  function _esc0(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function _pars(t){var a=String(t).split(/\n\s*\n/).map(function(s){return s.trim();}).filter(Boolean); if(!a.length)a=[String(t)]; return a;}
+  function renderElFal(sag, sol, rightSrc, leftSrc, full){
+    currentFal=String(full||('SAĞ EL\n\n'+sag+'\n\nSOL EL\n\n'+sol));
+    if(!sharedMode && currentFal.trim().length>80){ try{ var _nm=''; var _ni=document.getElementById('nameIn'); if(_ni)_nm=(_ni.value||'').trim(); var _H=JSON.parse(localStorage.getItem('oph_el_history')||'[]'); _H.unshift({t:'El Falı',ts:Date.now(),text:currentFal,name:_nm}); _H=_H.slice(0,3); localStorage.setItem('oph_el_history',JSON.stringify(_H)); }catch(e){} }
+    function section(title,sub,figId,text){ var ps=_pars(text).map(function(p){return '<p>'+_esc0(p)+'</p>';}).join(''); return '<div class="elsec"><div class="elhead"><span class="eltitle">'+title+'</span><span class="elsub">'+sub+'</span></div><figure class="palmFig elFig" id="'+figId+'"></figure>'+ps+'</div>'; }
+    var html=section('Sağ El','Yaşamla şekillenen · bugün, seçimler, gelecek','elFigR',sag)+
+             section('Sol El','Doğuştan gelen · potansiyel, iç dünya, mizaç','elFigL',sol)+
+             '<div class="storyNote">Falının kısa bir özetini <b>Instagram hikayende kart</b> olarak paylaşmak istersen <button class="storyBtn" id="storyBtn" type="button">tıklayınız</button></div>';
+    document.getElementById('rbody').innerHTML=html;
+    function fillFig(id,src,cap){ var fig=document.getElementById(id); if(!fig)return; if(sharedMode||!src){fig.style.display='none';return;} makePalmLines(src,function(url){ if(url) fig.innerHTML='<img src="'+url+'" alt=""><figcaption>'+cap+'</figcaption>'; else fig.style.display='none'; }); }
+    fillFig('elFigR',rightSrc,'Sağ avucundaki izler belirginleştirildi');
+    fillFig('elFigL',leftSrc,'Sol avucundaki izler belirginleştirildi');
+    var sb=document.getElementById('storyBtn'); if(sb)sb.addEventListener('click',shareStory);
+    tts.set(_pars(currentFal)); show('reading'); tts.start(0); mark('abPlay');
   }
   function renderFal(text){
     currentFal=String(text);
@@ -682,7 +713,7 @@
       });
     });
   }
-  document.getElementById('shareBtn').addEventListener('click',shareFal);
+  document.getElementById('shareBtn').addEventListener('click',shareStory);
 
   /* ---- Instagram hikaye kartı (fal özeti) ---- */
   function getNatalURI(){ try{ var bg=getComputedStyle(document.getElementById('reading')).backgroundImage; var m=bg.match(/url\(["']?(data:[^"')]+)["']?\)/); return m?m[1]:null; }catch(e){ return null; } }
