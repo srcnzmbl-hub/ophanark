@@ -550,11 +550,12 @@
     });
   }
 
+  function appLang(){ try{ var l=localStorage.getItem('oph_lang'); if(l) return String(l).slice(0,5); }catch(e){} return 'tr'; }
   function fetchFal(imgs){
     var name=(document.getElementById('nameIn').value||'').trim();
     var right=imgs.slice(0,3), left=imgs.slice(3,6);
     fetch(FN,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},
-      body:JSON.stringify({name:name,right:right,left:left,lang:(navigator.language||'tr').slice(0,2).toLowerCase(),kvkk_onay:true,egitim_izni:true})})
+      body:JSON.stringify({name:name,right:right,left:left,lang:appLang(),kvkk_onay:true,egitim_izni:true})})
     .then(function(r){return r.json();})
     .then(function(j){
       if(j && j.gecersiz){ showErr('⚠ Fotoğraflarda net bir el/avuç içi ve el çizgileri göremedim. Lütfen avucunu ışığa doğru açıp kameradaki ize göre yerleştirip yeniden çek.'); return; }
@@ -621,7 +622,7 @@
     fillFig('elFigR',rightSrc,'Sağ avucundaki izler belirginleştirildi');
     fillFig('elFigL',leftSrc,'Sol avucundaki izler belirginleştirildi');
     var sb=document.getElementById('storyBtn'); if(sb)sb.addEventListener('click',shareStory);
-    tts.set(_pars(currentFal)); show('reading'); tts.start(0); mark('abPlay');
+    tts.set(_pars(currentFal)); show('reading'); mark('');
   }
   function renderFal(text){
     currentFal=String(text);
@@ -638,7 +639,7 @@
     var sb=document.getElementById('storyBtn'); if(sb)sb.addEventListener('click',shareStory);
     tts.set(paras);
     show('reading');
-    tts.start(0); mark('abPlay');
+    mark('');
   }
 
   /* ---- TTS ---- */
