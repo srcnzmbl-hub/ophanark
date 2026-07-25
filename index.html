@@ -574,6 +574,11 @@ img{display:block}
 .tr-rname .rv{color:#d98b6a;font-style:italic;font-size:12px}
 .tr-rbody{color:#e4d3ac;font-size:12.8px;line-height:1.58;font-family:'Spectral',serif}
 .tr-combined{color:#f0e2c0;font-family:'Spectral',Georgia,serif;font-size:14px;line-height:1.68;text-align:center;padding:13px 8px;border-top:1px solid rgba(232,190,96,.22);border-bottom:1px solid rgba(232,190,96,.22);margin:8px 2px 14px}
+#trAI{text-align:left}
+#trAI p{margin:0 0 11px}
+#trAI p:last-child{margin-bottom:0}
+.tr-ai-load{text-align:center;font-style:italic;opacity:.85;padding:10px 0;animation:trAIPulse 1.3s ease-in-out infinite}
+@keyframes trAIPulse{0%,100%{opacity:.5}50%{opacity:.95}}
 .tr-actions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
 .tr-actions .gold-btn,.tr-actions .ghost-btn{margin-top:0;width:auto;padding:10px 16px;font-size:13px}
 .tr-natal{margin:10px 2px 6px;text-align:center}
@@ -2381,21 +2386,43 @@ try{
       out+='<div class="lc" style="'+st+'"><span class="num">'+(i+1)+'</span>'+faceHTML(c,picks[i].rev,'')+'</div>';}
     return out+'</div>';}
 
+  var FN_TAROT='https://lssyopqxthausyegeire.supabase.co/functions/v1/tarot';
+  var TAROT_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo';
+  function fillTarotAI(sp,pos){
+    var host=el('trAI'); if(!host)return;
+    var cards=picks.map(function(x,i){var c=T[x.idx];return {name:c.e,pos:(pos[i]&&pos[i].e)||('Card '+(i+1)),rev:!!x.rev};});
+    var fb=picks.map(function(x,i){var c=T[x.idx];return longRead(c,x.rev,pos[i]);}).join(' ')+' '+synth(picks);
+    var done=false;
+    function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+    function setAI(text){
+      var paras=String(text).split(/\n\s*\n/).map(function(s){return s.trim();}).filter(Boolean);
+      if(!paras.length)paras=[String(text)];
+      host.innerHTML=paras.map(function(p){return '<p>'+esc(p)+'</p>';}).join('');
+      lastVoice=picks.map(function(x,i){var c=T[x.idx];return (tr()?pos[i].t:pos[i].e)+': '+nameOf(c)+(x.rev?(tr()?' ters':' reversed'):'')+'.';}).join(' ')+' '+String(text);
+    }
+    var to=setTimeout(function(){ if(!done){done=true; setAI(fb);} },22000);
+    fetch(FN_TAROT,{method:'POST',headers:{'Content-Type':'application/json','apikey':TAROT_ANON,'Authorization':'Bearer '+TAROT_ANON},
+      body:JSON.stringify({spread:(tr()?sp.label.tr:sp.label.en),lang:(window.__lang||'tr'),cards:cards})})
+    .then(function(r){return r.json();})
+    .then(function(j){ if(done)return; done=true; clearTimeout(to); setAI((j&&j.text&&j.text.trim().length>80)?j.text.trim():fb); })
+    .catch(function(){ if(done)return; done=true; clearTimeout(to); setAI(fb); });
+  }
   function showReading(){stopV(); el('trPick').style.display='none'; var sp=SPREADS[curKey], pos=sp.pos, top='';
     if(sp.layout==='single'){var c=T[picks[0].idx]; top='<div class="tr-single"><div class="tr-flipcard">'+faceHTML(c,picks[0].rev)+'</div><div class="tr-cn" style="text-align:center">'+nameOf(c)+(picks[0].rev?' <span class="rv">'+(tr()?'ters':'reversed')+'</span>':'')+'</div></div>';}
     else if(sp.layout==='row'){top='<div class="tr-spread">'+picks.map(function(x,i){var c=T[x.idx];return '<div class="tr-slot"><div class="tr-pos">'+(tr()?pos[i].t:pos[i].e)+'</div><div class="tr-flipcard">'+faceHTML(c,x.rev)+'</div><div class="tr-cn">'+nameOf(c)+(x.rev?' <span class="rv">'+(tr()?'ters':'reversed')+'</span>':'')+'</div></div>';}).join('')+'</div>';}
     else if(sp.layout==='gyp'){var rows=['','',''];for(var i=0;i<9;i++){var c=T[picks[i].idx];rows[Math.floor(i/3)]+='<div class="gc">'+faceHTML(c,picks[i].rev,'')+'</div>';}top='<div class="tr-gyp"><div class="row">'+rows[0]+'</div><div class="row">'+rows[1]+'</div><div class="row">'+rows[2]+'</div></div>';}
     else{top=absLayout(sp.layout);}
     var list='<div class="tr-read">'+picks.map(function(x,i){var c=T[x.idx],pp=pos[i];
-      return '<div class="tr-ritem"><div class="tr-rimg"><img class="'+(x.rev?'rev':'')+'" src="cards/'+c.i+'.jpg" alt=""></div><div class="tr-rtext"><div class="tr-rpos">'+(i+1)+'. '+(tr()?pp.t:pp.e)+'</div><div class="tr-rname">'+nameOf(c)+(x.rev?' <span class="rv">'+(tr()?'ters':'reversed')+'</span>':'')+'</div><div class="tr-rbody">'+longRead(c,x.rev,pp)+'</div></div></div>';
+      return '<div class="tr-ritem"><div class="tr-rimg"><img class="'+(x.rev?'rev':'')+'" src="cards/'+c.i+'.jpg" alt=""></div><div class="tr-rtext"><div class="tr-rpos">'+(i+1)+'. '+(tr()?pp.t:pp.e)+'</div><div class="tr-rname">'+nameOf(c)+(x.rev?' <span class="rv">'+(tr()?'ters':'reversed')+'</span>':'')+'</div></div></div>';
     }).join('')+'</div>';
     var l={again:tr()?'Yeni Dizilim':'New Reading',listen:tr()?'🔊 Sesli Dinle':'🔊 Listen',mute:tr()?'⏹ Sustur':'⏹ Stop',
            natal:tr()?'Gezegen konumlarınızı ve hangi evde olduklarını bilmiyorsanız, natal haritanızı çıkarmak için dokunun.':'If you do not know your planetary positions and houses, tap to create your natal chart.',natalBtn:tr()?'Natal Haritam':'My Natal Chart'};
-    el('trResult').innerHTML=top+list+'<div class="tr-combined">'+synth(picks)+'</div>'+
+    el('trResult').innerHTML=top+list+'<div class="tr-combined" id="trAI"><div class="tr-ai-load">'+(tr()?'Ophan kartlarını okuyor…':'Ophan is reading your cards…')+'</div></div>'+
       '<div class="tr-audio"><div class="va" id="trPlay"><div class="vic">▶</div><div class="vlb">'+(tr()?'Devam':'Play')+'</div></div><div class="va" id="trPause"><div class="vic">⏸</div><div class="vlb">'+(tr()?'Duraklat':'Pause')+'</div></div><div class="va" id="trMute2"><div class="vic">🔇</div><div class="vlb">'+(tr()?'Sustur':'Mute')+'</div></div><div class="va" id="trReplay"><div class="vic">↻</div><div class="vlb">'+(tr()?'Baştan':'Restart')+'</div></div></div>'+
       '<div class="tr-actions"><button class="gold-btn" id="trAgain">'+l.again+'</button></div>'+
       '<div class="tr-natal"><div class="rd-natal-note">'+l.natal+'</div><button class="tr-natal-btn" id="trNatal">'+l.natalBtn+'</button></div>';
     lastVoice=picks.map(function(x,i){var c=T[x.idx];return (tr()?pos[i].t:pos[i].e)+': '+nameOf(c)+(x.rev?(tr()?' ters':' reversed'):'')+'. '+longRead(c,x.rev,pos[i]);}).join(' ')+' '+synth(picks);
+    try{fillTarotAI(sp,pos);}catch(e){}
     var a=el('trAgain'); if(a)a.addEventListener('click',backToSelect);
     var vp=el('trPlay'); if(vp)vp.addEventListener('click',function(){ if(trTts.on)return; if(!trTts.chunks.length)trTts.set(lastVoice); trTts.start(trTts.ci>=trTts.chunks.length?0:trTts.ci); });
     var vpa=el('trPause'); if(vpa)vpa.addEventListener('click',function(){ trTts.pause(); });
