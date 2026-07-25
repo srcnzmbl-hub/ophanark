@@ -114,6 +114,12 @@
     font-size:18px;display:flex;align-items:center;justify-content:center;transition:transform .15s,border-color .2s}
   .ab:active .ic{transform:scale(.9)} .ab.active .ic{border-color:var(--gold2);box-shadow:0 0 14px rgba(233,200,120,.35)}
   .ab .lb{font-size:9px;color:#cbb489}
+  .likeRow{flex:0 0 auto;margin-top:11px;display:flex;flex-direction:column;align-items:center;gap:7px}
+  .likeQ{font-size:12px;color:#cbb489;letter-spacing:.02em;text-align:center}
+  .likeBtns{display:flex;gap:18px}
+  .likeBtn{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:rgba(20,7,9,.55);font-size:22px;line-height:1;cursor:pointer;transition:transform .15s,border-color .2s,box-shadow .2s}
+  .likeBtn:active{transform:scale(.9)} .likeBtn.on{border-color:var(--gold2);box-shadow:0 0 14px rgba(233,200,120,.4)}
+  .likeThanks{font-size:11px;color:var(--gold)}
   .shareBtn{position:absolute;top:12px;right:14px;z-index:30;width:42px;height:42px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;border:1px solid var(--line);
     background:rgba(20,7,9,.5);color:var(--gold2);cursor:pointer;
@@ -369,6 +375,14 @@
       <div class="ab" id="abStop"><div class="ic">⏹</div><div class="lb">Bitir</div></div>
       <div class="ab" id="abMute"><div class="ic">🔇</div><div class="lb">Sustur</div></div>
     </div>
+    <div class="likeRow" id="likeRow" style="display:none">
+      <span class="likeQ">Bu yorum sana ne kadar isabetli geldi?</span>
+      <div class="likeBtns">
+        <button class="likeBtn" id="likeUp" type="button" aria-label="Beğendim">👍</button>
+        <button class="likeBtn" id="likeDown" type="button" aria-label="Beğenmedim">👎</button>
+      </div>
+      <span class="likeThanks" id="likeThanks" style="display:none">Teşekkürler, geri bildirimin kaydedildi ✦</span>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -379,6 +393,13 @@
 (function(){
   var FN='https://lssyopqxthausyegeire.supabase.co/functions/v1/el-fali';
   var ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo';
+  var FN_BEGENI='https://lssyopqxthausyegeire.supabase.co/functions/v1/fal-begeni';
+  var APP_VER='1.0';
+  var currentFalId=null;
+  function ozSession(){ try{ var k='oph_oturum'; var v=localStorage.getItem(k); if(!v){ v='oz_'+Date.now().toString(36)+Math.random().toString(36).slice(2,10); localStorage.setItem(k,v);} return v; }catch(e){ return null; } }
+  function ozPlatform(){ try{ if(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches) return 'pwa'; var ua=(navigator.userAgent||'').toLowerCase(); if(/android/.test(ua))return 'android'; if(/iphone|ipad|ipod/.test(ua))return 'ios'; return 'web'; }catch(e){ return 'web'; } }
+  function sendBegeni(v){ if(!currentFalId)return; try{ fetch(FN_BEGENI,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({fal_id:currentFalId,begeni:v})}).catch(function(){}); }catch(e){} }
+  function showLike(){ var r=document.getElementById('likeRow'); if(!r)return; if(currentFalId){ r.style.display=''; var t=document.getElementById('likeThanks'); if(t)t.style.display='none'; ['likeUp','likeDown'].forEach(function(id){var e=document.getElementById(id);if(e)e.classList.remove('on');}); } else { r.style.display='none'; } }
 
   var sharedMode=false;
   function show(id){ document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');}); document.getElementById(id).classList.add('on'); }
@@ -556,12 +577,13 @@
     var name=(document.getElementById('nameIn').value||'').trim();
     var right=imgs.slice(0,3), left=imgs.slice(3,6);
     fetch(FN,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},
-      body:JSON.stringify({name:name,right:right,left:left,lang:appLang(),kvkk_onay:true,egitim_izni:true})})
+      body:JSON.stringify({name:name,right:right,left:left,lang:appLang(),kvkk_onay:true,egitim_izni:true,oturum_id:ozSession(),platform:ozPlatform(),uygulama_surum:APP_VER})})
     .then(function(r){return r.json();})
     .then(function(j){
+      currentFalId=(j&&j.id)?j.id:null;
       if(j && j.gecersiz){ showErr('⚠ Fotoğraflarda net bir el/avuç içi ve el çizgileri göremedim. Lütfen avucunu ışığa doğru açıp kameradaki ize göre yerleştirip yeniden çek.'); return; }
-      if(j && (j.sag||j.sol)){ renderElFal(j.sag||'', j.sol||'', right[0]||null, left[0]||null, j.text||''); }
-      else if(j && j.text && String(j.text).trim().length>120){ renderFal(j.text); }
+      if(j && (j.sag||j.sol)){ renderElFal(j.sag||'', j.sol||'', right[0]||null, left[0]||null, j.text||''); showLike(); }
+      else if(j && j.text && String(j.text).trim().length>120){ renderFal(j.text); showLike(); }
       else { showErr(); }
     })
     .catch(function(){ showErr('⚠ Bağlantı hatası oldu. İnternetini kontrol edip tekrar dener misin?'); });
@@ -668,6 +690,10 @@
   document.getElementById('abPlay').addEventListener('click',function(){ tts.resume(); mark('abSpeak'); });
   document.getElementById('abStop').addEventListener('click',function(){ tts.stop(); mark(''); });
   document.getElementById('abMute').addEventListener('click',function(){ var mm=tts.toggleMute(); this.classList.toggle('active',mm); });
+  (function(){ var u=document.getElementById('likeUp'), d=document.getElementById('likeDown');
+    if(u)u.addEventListener('click',function(){ this.classList.add('on'); if(d)d.classList.remove('on'); sendBegeni(1); var t=document.getElementById('likeThanks'); if(t)t.style.display=''; });
+    if(d)d.addEventListener('click',function(){ this.classList.add('on'); if(u)u.classList.remove('on'); sendBegeni(-1); var t=document.getElementById('likeThanks'); if(t)t.style.display=''; });
+  })();
 
   /* ---- Falı paylaş ---- */
   var currentFal='';
