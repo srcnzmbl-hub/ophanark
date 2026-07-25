@@ -484,8 +484,8 @@ img{display:block}
   letter-spacing:.005em}
 .rd-body b,.rd-body strong{color:var(--gold2);font-weight:500}
 /* bottom control cluster (mute · X · voice · back) */
-.rd-ctrls{position:absolute;left:50%;bottom:-24px;transform:translateX(-50%);display:flex;align-items:center;gap:12px;z-index:6}
-.rd-cbtn{width:44px;height:44px;border-radius:50%;border:1px solid rgba(232,190,96,.75);
+.rd-ctrls{position:absolute;left:50%;bottom:-24px;transform:translateX(-50%);display:flex;align-items:center;gap:8px;z-index:6}
+.rd-cbtn{width:40px;height:40px;border-radius:50%;border:1px solid rgba(232,190,96,.75);
   background:linear-gradient(180deg,rgba(58,26,8,.72),rgba(20,7,4,.9));color:var(--gold2);
   display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   box-shadow:0 6px 18px rgba(0,0,0,.55),0 0 14px rgba(230,182,74,.28)}
@@ -494,9 +494,9 @@ img{display:block}
 .rd-cbtn:active{transform:scale(.93)}
 .rd-cbtn.on{background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;border-color:transparent}
 #reading:not(.reading) .rd-vc,#reading:not(.reading) .rd-backc{display:none}
-.tr-audio{display:flex;justify-content:center;gap:14px;margin:16px 0 6px}
+.tr-audio{display:flex;justify-content:center;gap:9px;margin:16px 0 6px}
 .va{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
-.va .vic{width:48px;height:48px;border-radius:50%;border:1px solid rgba(232,190,96,.6);background:rgba(20,7,9,.55);color:var(--gold2);font-size:19px;display:flex;align-items:center;justify-content:center;transition:transform .15s,border-color .2s}
+.va .vic{width:44px;height:44px;border-radius:50%;border:1px solid rgba(232,190,96,.6);background:rgba(20,7,9,.55);color:var(--gold2);font-size:18px;display:flex;align-items:center;justify-content:center;transition:transform .15s,border-color .2s}
 .va:active .vic{transform:scale(.9)}
 .va.on .vic{background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;border-color:transparent}
 .va .vlb{font-size:9px;color:#cbb489;letter-spacing:.02em}
@@ -806,10 +806,11 @@ img{display:block}
       </div>
       <div class="rd-frame"><span style="top:8px;left:11px">✦</span><span style="top:8px;right:11px">✦</span><span style="bottom:8px;left:11px">✦</span><span style="bottom:8px;right:11px">✦</span></div>
       <div class="rd-ctrls">
-        <button class="rd-cbtn rd-vc" id="rdPlay" title="Devam"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/></svg></button>
+        <button class="rd-cbtn rd-vc" id="rdSpeak" title="Sesli Oku"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/><path d="M16 8.8a3.6 3.6 0 0 1 0 6.4M18.6 6.2a7 7 0 0 1 0 11.6" fill="none"/></svg></button>
         <button class="rd-cbtn rd-vc" id="rdPause" title="Duraklat"><svg viewBox="0 0 24 24"><rect x="7" y="5" width="3.2" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="13.8" y="5" width="3.2" height="14" rx="1" fill="currentColor" stroke="none"/></svg></button>
+        <button class="rd-cbtn rd-vc" id="rdPlay" title="Devam"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/></svg></button>
+        <button class="rd-cbtn rd-vc" id="rdStop" title="Bitir"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.6" fill="currentColor" stroke="none"/></svg></button>
         <button class="rd-cbtn rd-vc rd-mute" id="rdMute" title="Sustur"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5"/></svg></button>
-        <button class="rd-cbtn rd-vc" id="rdReplay" title="Baştan"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 3.5V9h5.5"/></svg></button>
       </div>
     </div>
   </div>
@@ -1507,14 +1508,15 @@ try{
   var LANGV={en:'en-US',tr:'tr-TR',de:'de-DE',fr:'fr-FR',es:'es-ES',it:'it-IT',pt:'pt-PT',ru:'ru-RU',ar:'ar-SA',zh:'zh-CN',ja:'ja-JP',ko:'ko-KR',hi:'hi-IN',nl:'nl-NL',pl:'pl-PL'};
   var TTS=window.speechSynthesis;
   function chunkTr(txt){ var t=String(txt).replace(/\s+/g,' ').trim(); var sents=t.match(/[^.!?…]+[.!?…]+|\S[^.!?…]*$/g)||[t]; var out=[]; for(var i=0;i<sents.length;i++){ var s=sents[i].trim(); if(!s)continue; while(s.length>170){ var cut=s.lastIndexOf(' ',170); if(cut<80)cut=170; out.push(s.slice(0,cut).trim()); s=s.slice(cut).trim(); } if(s)out.push(s); } return out; }
-  function rdMark(id){ ['rdPlay','rdPause','rdMute','rdReplay'].forEach(function(x){var e=$(x);if(e)e.classList.toggle('on',x===id);}); }
+  function rdMark(id){ ['rdSpeak','rdPause','rdPlay','rdStop','rdMute'].forEach(function(x){var e=$(x);if(e)e.classList.toggle('on',x===id);}); }
   var rdTts={chunks:[],ci:0,on:false,muted:false,
-    set:function(text){ this.chunks=chunkTr(text); this.ci=0; },
-    _n:function(){ var s=this; if(this.ci>=this.chunks.length){ this.on=false; rdMark(''); return; } try{ var u=new SpeechSynthesisUtterance(this.chunks[this.ci]); u.lang=LANGV[window.__lang||'en']||'en-US'; u.rate=.96; u.onend=function(){ if(s.on){ s.ci++; s._n(); } }; u.onerror=function(){ if(s.on){ s.ci++; s._n(); } }; TTS.speak(u); }catch(e){} },
-    start:function(from){ if(!TTS)return; if(from!=null)this.ci=from; this.muted=false; this.on=true; rdMark('rdPlay'); this._n(); },
-    pause:function(){ this.on=false; try{TTS.cancel();}catch(e){} rdMark('rdPause'); },
-    mute:function(){ this.on=false; this.muted=true; try{TTS.cancel();}catch(e){} rdMark('rdMute'); },
-    stop:function(){ this.on=false; this.ci=0; this.chunks=[]; try{if(TTS)TTS.cancel();}catch(e){} rdMark(''); } };
+    set:function(text){ this.chunks=chunkTr(text); this.ci=0; this.on=false; this.muted=false; },
+    _n:function(){ var s=this; if(this.ci>=this.chunks.length){ this.on=false; rdMark(''); return; } try{ var u=new SpeechSynthesisUtterance(this.chunks[this.ci]); u.lang=LANGV[window.__lang||'en']||'en-US'; u.rate=.96; u.volume=this.muted?0:1; u.onend=function(){ if(s.on){ s.ci++; s._n(); } }; u.onerror=function(){ if(s.on){ s.ci++; s._n(); } }; try{TTS.cancel();}catch(e){} TTS.speak(u); }catch(e){} },
+    speak:function(){ if(!TTS)return; this.ci=0; this.muted=false; this.on=true; rdMark('rdSpeak'); this._n(); },
+    pause:function(){ if(this.on){ try{TTS.pause();}catch(e){} } rdMark('rdPause'); },
+    resume:function(){ if(!TTS)return; if(this.on){ try{TTS.resume();}catch(e){} rdMark('rdPlay'); } else { this.muted=false; this.on=true; rdMark('rdPlay'); this._n(); } },
+    stop:function(){ this.on=false; this.muted=false; this.ci=0; try{if(TTS)TTS.cancel();}catch(e){} rdMark(''); },
+    toggleMute:function(){ this.muted=!this.muted; if(this.on){ this._n(); } rdMark(this.muted?'rdMute':'rdSpeak'); return this.muted; } };
   function stopVoice(){ rdTts.stop(); }
 
   function openReading(i){
@@ -1563,10 +1565,11 @@ try{
   if($('rdBack2'))$('rdBack2').addEventListener('click',rdBack);
   if($('rdTopBack'))$('rdTopBack').addEventListener('click',rdBack);
   if($('rdShare'))$('rdShare').addEventListener('click',function(){ var name=($('rdSign')&&$('rdSign').textContent)||''; var txt=($('rdBody')&&$('rdBody').textContent)||''; if(window.OphShare)OphShare.share({title:name,text:txt}); });
-  if($('rdPlay'))$('rdPlay').addEventListener('click',function(){ if(!TTS)return; var txt=$('rdBody').textContent||''; if(!txt||txt==='…')return; if(rdTts.on)return; if(!rdTts.chunks.length)rdTts.set(txt); rdTts.start(rdTts.ci>=rdTts.chunks.length?0:rdTts.ci); });
+  if($('rdSpeak'))$('rdSpeak').addEventListener('click',function(){ if(!TTS)return; var txt=$('rdBody').textContent||''; if(!txt||txt==='…')return; rdTts.set(txt); rdTts.speak(); });
   if($('rdPause'))$('rdPause').addEventListener('click',function(){ rdTts.pause(); });
-  if($('rdMute'))$('rdMute').addEventListener('click',function(){ rdTts.mute(); });
-  if($('rdReplay'))$('rdReplay').addEventListener('click',function(){ if(!TTS)return; var txt=$('rdBody').textContent||''; if(!txt||txt==='…')return; rdTts.set(txt); rdTts.start(0); });
+  if($('rdPlay'))$('rdPlay').addEventListener('click',function(){ if(!TTS)return; if(!rdTts.chunks.length){ var txt=$('rdBody').textContent||''; if(!txt||txt==='…')return; rdTts.set(txt); rdTts.speak(); return; } rdTts.resume(); });
+  if($('rdStop'))$('rdStop').addEventListener('click',function(){ rdTts.stop(); });
+  if($('rdMute'))$('rdMute').addEventListener('click',function(){ rdTts.toggleMute(); });
 })();
 
 /* ================= SKY MAP (real telescope, Aladin Lite) ================= */
@@ -2098,14 +2101,15 @@ try{
   function nameOf(c){return tr()?c.t:c.e;}
   function meanOf(c,rev){return rev?(tr()?c.rt:c.re):(tr()?c.kt:c.ke);}
   function trChunk(txt){ var t=String(txt).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(); var sents=t.match(/[^.!?…]+[.!?…]+|\S[^.!?…]*$/g)||[t]; var out=[]; for(var i=0;i<sents.length;i++){ var s=sents[i].trim(); if(!s)continue; while(s.length>170){ var cut=s.lastIndexOf(' ',170); if(cut<80)cut=170; out.push(s.slice(0,cut).trim()); s=s.slice(cut).trim(); } if(s)out.push(s); } return out; }
-  function trMark(id){ ['trPlay','trPause','trMute2','trReplay'].forEach(function(x){var e=el(x);if(e)e.classList.toggle('on',x===id);}); }
+  function trMark(id){ ['trSpeak','trPause','trPlay','trStop','trMute2'].forEach(function(x){var e=el(x);if(e)e.classList.toggle('on',x===id);}); }
   var trTts={chunks:[],ci:0,on:false,muted:false,
-    set:function(t){ this.chunks=trChunk(t); this.ci=0; },
-    _n:function(){ var s=this; if(this.ci>=this.chunks.length){ this.on=false; trMark(''); return; } try{ var u=new SpeechSynthesisUtterance(this.chunks[this.ci]); u.lang=LV[lang()]||'en-US'; u.rate=.97; u.onend=function(){ if(s.on){ s.ci++; s._n(); } }; u.onerror=function(){ if(s.on){ s.ci++; s._n(); } }; window.speechSynthesis.speak(u); }catch(e){} },
-    start:function(from){ if(!window.speechSynthesis)return; if(from!=null)this.ci=from; this.muted=false; this.on=true; trMark('trPlay'); this._n(); },
-    pause:function(){ this.on=false; try{window.speechSynthesis.cancel();}catch(e){} trMark('trPause'); },
-    mute:function(){ this.on=false; this.muted=true; try{window.speechSynthesis.cancel();}catch(e){} trMark('trMute2'); },
-    stop:function(){ this.on=false; this.ci=0; this.chunks=[]; try{window.speechSynthesis.cancel();}catch(e){} trMark(''); } };
+    set:function(t){ this.chunks=trChunk(t); this.ci=0; this.on=false; this.muted=false; },
+    _n:function(){ var s=this; if(this.ci>=this.chunks.length){ this.on=false; trMark(''); return; } try{ var u=new SpeechSynthesisUtterance(this.chunks[this.ci]); u.lang=LV[lang()]||'en-US'; u.rate=.97; u.volume=this.muted?0:1; u.onend=function(){ if(s.on){ s.ci++; s._n(); } }; u.onerror=function(){ if(s.on){ s.ci++; s._n(); } }; try{window.speechSynthesis.cancel();}catch(e){} window.speechSynthesis.speak(u); }catch(e){} },
+    speak:function(){ if(!window.speechSynthesis)return; this.ci=0; this.muted=false; this.on=true; trMark('trSpeak'); this._n(); },
+    pause:function(){ if(this.on){ try{window.speechSynthesis.pause();}catch(e){} } trMark('trPause'); },
+    resume:function(){ if(!window.speechSynthesis)return; if(this.on){ try{window.speechSynthesis.resume();}catch(e){} trMark('trPlay'); } else { this.muted=false; this.on=true; trMark('trPlay'); this._n(); } },
+    stop:function(){ this.on=false; this.muted=false; this.ci=0; try{window.speechSynthesis.cancel();}catch(e){} trMark(''); },
+    toggleMute:function(){ this.muted=!this.muted; if(this.on){ this._n(); } trMark(this.muted?'trMute2':'trSpeak'); return this.muted; } };
   function stopV(){ trTts.stop(); }
   (function(){ var hs=el('trShare'); if(hs)hs.addEventListener('click',function(){ if(window.OphShare)OphShare.share({title:'Tarot',text:lastVoice||''}); }); })();
   var SUITSHORT={cups:{tr:'duygular ve ilişkiler',en:'emotions and relationships'},pentacles:{tr:'maddi hayat, iş ve sağlık',en:'material life, work and health'},swords:{tr:'zihin, kararlar ve iletişim',en:'the mind, decisions and communication'},wands:{tr:'tutku, enerji ve girişim',en:'passion, energy and initiative'},major:{tr:'hayatının büyük bir dönüm noktası',en:'a major turning point in your life'}};
@@ -2419,16 +2423,17 @@ try{
     var l={again:tr()?'Yeni Dizilim':'New Reading',listen:tr()?'🔊 Sesli Dinle':'🔊 Listen',mute:tr()?'⏹ Sustur':'⏹ Stop',
            natal:tr()?'Gezegen konumlarınızı ve hangi evde olduklarını bilmiyorsanız, natal haritanızı çıkarmak için dokunun.':'If you do not know your planetary positions and houses, tap to create your natal chart.',natalBtn:tr()?'Natal Haritam':'My Natal Chart'};
     el('trResult').innerHTML=top+list+'<div class="tr-combined" id="trAI"><div class="tr-ai-load">'+(tr()?'Ophan kartlarını okuyor…':'Ophan is reading your cards…')+'</div></div>'+
-      '<div class="tr-audio"><div class="va" id="trPlay"><div class="vic">▶</div><div class="vlb">'+(tr()?'Devam':'Play')+'</div></div><div class="va" id="trPause"><div class="vic">⏸</div><div class="vlb">'+(tr()?'Duraklat':'Pause')+'</div></div><div class="va" id="trMute2"><div class="vic">🔇</div><div class="vlb">'+(tr()?'Sustur':'Mute')+'</div></div><div class="va" id="trReplay"><div class="vic">↻</div><div class="vlb">'+(tr()?'Baştan':'Restart')+'</div></div></div>'+
+      '<div class="tr-audio"><div class="va" id="trSpeak"><div class="vic">🔊</div><div class="vlb">'+(tr()?'Sesli Oku':'Read')+'</div></div><div class="va" id="trPause"><div class="vic">⏸</div><div class="vlb">'+(tr()?'Duraklat':'Pause')+'</div></div><div class="va" id="trPlay"><div class="vic">▶</div><div class="vlb">'+(tr()?'Devam':'Play')+'</div></div><div class="va" id="trStop"><div class="vic">⏹</div><div class="vlb">'+(tr()?'Bitir':'Stop')+'</div></div><div class="va" id="trMute2"><div class="vic">🔇</div><div class="vlb">'+(tr()?'Sustur':'Mute')+'</div></div></div>'+
       '<div class="tr-actions"><button class="gold-btn" id="trAgain">'+l.again+'</button></div>'+
       '<div class="tr-natal"><div class="rd-natal-note">'+l.natal+'</div><button class="tr-natal-btn" id="trNatal">'+l.natalBtn+'</button></div>';
     lastVoice=picks.map(function(x,i){var c=T[x.idx];return (tr()?pos[i].t:pos[i].e)+': '+nameOf(c)+(x.rev?(tr()?' ters':' reversed'):'')+'. '+longRead(c,x.rev,pos[i]);}).join(' ')+' '+synth(picks);
     try{fillTarotAI(sp,pos);}catch(e){}
     var a=el('trAgain'); if(a)a.addEventListener('click',backToSelect);
-    var vp=el('trPlay'); if(vp)vp.addEventListener('click',function(){ if(trTts.on)return; if(!trTts.chunks.length)trTts.set(lastVoice); trTts.start(trTts.ci>=trTts.chunks.length?0:trTts.ci); });
+    var vs=el('trSpeak'); if(vs)vs.addEventListener('click',function(){ if(!lastVoice)return; trTts.set(lastVoice); trTts.speak(); });
     var vpa=el('trPause'); if(vpa)vpa.addEventListener('click',function(){ trTts.pause(); });
-    var vmu=el('trMute2'); if(vmu)vmu.addEventListener('click',function(){ trTts.mute(); });
-    var vrp=el('trReplay'); if(vrp)vrp.addEventListener('click',function(){ if(!lastVoice)return; trTts.set(lastVoice); trTts.start(0); });
+    var vp=el('trPlay'); if(vp)vp.addEventListener('click',function(){ if(!trTts.chunks.length){ if(!lastVoice)return; trTts.set(lastVoice); trTts.speak(); return; } trTts.resume(); });
+    var vst=el('trStop'); if(vst)vst.addEventListener('click',function(){ trTts.stop(); });
+    var vmu=el('trMute2'); if(vmu)vmu.addEventListener('click',function(){ trTts.toggleMute(); });
     var n=el('trNatal'); if(n)n.addEventListener('click',function(){if(window.__goNatal)window.__goNatal();});
     el('trBody').scrollTop=0;}
   function speakReading(){if(!window.speechSynthesis||!lastVoice)return; stopV(); var u=new SpeechSynthesisUtterance(lastVoice.replace(/<[^>]+>/g,'')); u.lang=LV[lang()]||'en-US'; u.rate=.97; window.speechSynthesis.speak(u);}
