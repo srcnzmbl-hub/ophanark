@@ -461,8 +461,10 @@
 
   /* ---- Instagram hikaye kartı (fal özeti) ---- */
   function getNatalURI(){ try{ var bg=getComputedStyle(document.getElementById('reading')).backgroundImage; var m=bg.match(/url\(["']?(data:[^"')]+)["']?\)/); return m?m[1]:null; }catch(e){ return null; } }
-  function wrapCenter(x,text,cx,startY,maxW,lh){ var words=String(text).split(/\s+/),line='',lines=[]; for(var i=0;i<words.length;i++){ var t=line?line+' '+words[i]:words[i]; if(x.measureText(t).width>maxW && line){ lines.push(line); line=words[i]; } else line=t; } if(line)lines.push(line); for(var k=0;k<lines.length;k++){ x.fillText(lines[k],cx,startY+k*lh); } return startY+lines.length*lh; }
-  function clientSummary(text){ var s=String(text).replace(/\s+/g,' ').trim(); var sents=s.match(/[^.!?]+[.!?]+/g)||[s]; var out=''; for(var i=0;i<sents.length;i++){ if(out && (out+sents[i]).length>220)break; out+=sents[i]; } return (out||s.slice(0,220)).trim(); }
+  function wrapLines(x,text,maxW){ var words=String(text).split(/\s+/),line='',out=[]; for(var i=0;i<words.length;i++){ var t=line?line+' '+words[i]:words[i]; if(x.measureText(t).width>maxW && line){ out.push(line); line=words[i]; } else line=t; } if(line)out.push(line); return out; }
+  /* özeti üst/alt sınır (çizgiye kadar) arasına ortalayıp taşmayacak şekilde sığdır */
+  function drawFitSummary(x,text,cx,maxW,top,bottom){ var size,lh,lines; for(size=52;size>=30;size-=2){ x.font=size+'px Georgia'; lines=wrapLines(x,text,maxW); lh=Math.round(size*1.42); if(lines.length*lh<=(bottom-top))break; } x.font=size+'px Georgia'; var totalH=lines.length*lh; var startY=top+Math.max(0,((bottom-top)-totalH)/2)+size*0.8; for(var k=0;k<lines.length;k++){ x.fillText(lines[k],cx,startY+k*lh); } }
+  function clientSummary(text){ var s=String(text).replace(/\s+/g,' ').trim(); var sents=s.match(/[^.!?]+[.!?]+/g)||[s]; var out=''; for(var i=0;i<sents.length;i++){ if(out && (out+sents[i]).length>460)break; out+=sents[i]; } return (out||s.slice(0,460)).trim(); }
   function summarizeFal(text,cb){ var done=false; var to=setTimeout(function(){ if(!done){done=true;cb(clientSummary(text));} },8000);
     fetch(FN_OZET,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({text:text})})
       .then(function(r){return r.json();})
@@ -481,8 +483,8 @@
           x.fillStyle='#f2d489';x.font='bold 60px Georgia';x.fillText('O P H A N A R K',W/2,560);
           x.fillStyle='#e9c877';x.font='34px Georgia';x.fillText('K A H V E   F A L I',W/2,620);
           x.fillStyle='#e9c877';x.font='36px Georgia';x.fillText('✦   ✦   ✦',W/2,715);
-          x.fillStyle='#f4e2a4';x.font='48px Georgia';x.shadowColor='rgba(0,0,0,.75)';x.shadowBlur=8;
-          wrapCenter(x,summary,W/2,865,W-250,70);
+          x.fillStyle='#f4e2a4';x.shadowColor='rgba(0,0,0,.75)';x.shadowBlur=8;
+          drawFitSummary(x,summary,W/2,W-230,795,1700);
           x.shadowBlur=0;
           x.fillStyle='#cbb489';x.font='32px Georgia';x.fillText('www.ophanark.com',W/2,1800);
           c.toBlob(function(b){resolve(b);},'image/png');
