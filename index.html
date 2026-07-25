@@ -485,6 +485,12 @@ img{display:block}
 .rd-cbtn:active{transform:scale(.93)}
 .rd-cbtn.on{background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;border-color:transparent}
 #reading:not(.reading) .rd-vc,#reading:not(.reading) .rd-backc{display:none}
+.tr-audio{display:flex;justify-content:center;gap:14px;margin:16px 0 6px}
+.va{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+.va .vic{width:48px;height:48px;border-radius:50%;border:1px solid rgba(232,190,96,.6);background:rgba(20,7,9,.55);color:var(--gold2);font-size:19px;display:flex;align-items:center;justify-content:center;transition:transform .15s,border-color .2s}
+.va:active .vic{transform:scale(.9)}
+.va.on .vic{background:linear-gradient(180deg,#f4d488,#d29b3a);color:#3a1e06;border-color:transparent}
+.va .vlb{font-size:9px;color:#cbb489;letter-spacing:.02em}
 
 /* ===== TAROT PAGE ===== */
 #tarot{position:fixed;inset:0;z-index:65;display:none;background:#0a0304}
@@ -2069,7 +2075,17 @@ try{
   var LV={en:'en-US',tr:'tr-TR'};
   function nameOf(c){return tr()?c.t:c.e;}
   function meanOf(c,rev){return rev?(tr()?c.rt:c.re):(tr()?c.kt:c.ke);}
-  function stopV(){try{window.speechSynthesis.cancel();}catch(e){}}
+  function trChunk(txt){ var t=String(txt).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(); var sents=t.match(/[^.!?…]+[.!?…]+|\S[^.!?…]*$/g)||[t]; var out=[]; for(var i=0;i<sents.length;i++){ var s=sents[i].trim(); if(!s)continue; while(s.length>170){ var cut=s.lastIndexOf(' ',170); if(cut<80)cut=170; out.push(s.slice(0,cut).trim()); s=s.slice(cut).trim(); } if(s)out.push(s); } return out; }
+  function trMark(id){ ['trPlay','trPause','trMute2','trReplay'].forEach(function(x){var e=el(x);if(e)e.classList.toggle('on',x===id);}); }
+  var trTts={chunks:[],ci:0,on:false,muted:false,
+    set:function(t){ this.chunks=trChunk(t); this.ci=0; },
+    _n:function(){ var s=this; if(this.ci>=this.chunks.length){ this.on=false; trMark(''); return; } try{ var u=new SpeechSynthesisUtterance(this.chunks[this.ci]); u.lang=LV[lang()]||'en-US'; u.rate=.97; u.onend=function(){ if(s.on){ s.ci++; s._n(); } }; u.onerror=function(){ if(s.on){ s.ci++; s._n(); } }; window.speechSynthesis.speak(u); }catch(e){} },
+    start:function(from){ if(!window.speechSynthesis)return; if(from!=null)this.ci=from; this.muted=false; this.on=true; trMark('trPlay'); this._n(); },
+    pause:function(){ this.on=false; try{window.speechSynthesis.cancel();}catch(e){} trMark('trPause'); },
+    mute:function(){ this.on=false; this.muted=true; try{window.speechSynthesis.cancel();}catch(e){} trMark('trMute2'); },
+    stop:function(){ this.on=false; this.ci=0; this.chunks=[]; try{window.speechSynthesis.cancel();}catch(e){} trMark(''); } };
+  function stopV(){ trTts.stop(); }
+  (function(){ var hm=el('trMute'); if(hm)hm.addEventListener('click',function(){ trTts.stop(); }); })();
   var SUITSHORT={cups:{tr:'duygular ve ilişkiler',en:'emotions and relationships'},pentacles:{tr:'maddi hayat, iş ve sağlık',en:'material life, work and health'},swords:{tr:'zihin, kararlar ve iletişim',en:'the mind, decisions and communication'},wands:{tr:'tutku, enerji ve girişim',en:'passion, energy and initiative'},major:{tr:'hayatının büyük bir dönüm noktası',en:'a major turning point in your life'}};
   var SUITNAME={cups:{tr:'Kupalar',en:'Cups'},pentacles:{tr:'Tılsımlar',en:'Pentacles'},swords:{tr:'Kılıçlar',en:'Swords'},wands:{tr:'Asalar',en:'Wands'},major:{tr:'Büyük Arkana',en:'Major Arcana'}};
 
@@ -2360,12 +2376,15 @@ try{
     var l={again:tr()?'Yeni Dizilim':'New Reading',listen:tr()?'🔊 Sesli Dinle':'🔊 Listen',mute:tr()?'⏹ Sustur':'⏹ Stop',
            natal:tr()?'Gezegen konumlarınızı ve hangi evde olduklarını bilmiyorsanız, natal haritanızı çıkarmak için dokunun.':'If you do not know your planetary positions and houses, tap to create your natal chart.',natalBtn:tr()?'Natal Haritam':'My Natal Chart'};
     el('trResult').innerHTML=top+list+'<div class="tr-combined">'+synth(picks)+'</div>'+
-      '<div class="tr-actions"><button class="gold-btn" id="trAgain">'+l.again+'</button><button class="ghost-btn" id="trVoice">'+l.listen+'</button><button class="ghost-btn" id="trMute2">'+l.mute+'</button></div>'+
+      '<div class="tr-audio"><div class="va" id="trPlay"><div class="vic">▶</div><div class="vlb">'+(tr()?'Devam':'Play')+'</div></div><div class="va" id="trPause"><div class="vic">⏸</div><div class="vlb">'+(tr()?'Duraklat':'Pause')+'</div></div><div class="va" id="trMute2"><div class="vic">🔇</div><div class="vlb">'+(tr()?'Sustur':'Mute')+'</div></div><div class="va" id="trReplay"><div class="vic">↻</div><div class="vlb">'+(tr()?'Baştan':'Restart')+'</div></div></div>'+
+      '<div class="tr-actions"><button class="gold-btn" id="trAgain">'+l.again+'</button></div>'+
       '<div class="tr-natal"><div class="rd-natal-note">'+l.natal+'</div><button class="tr-natal-btn" id="trNatal">'+l.natalBtn+'</button></div>';
     lastVoice=picks.map(function(x,i){var c=T[x.idx];return (tr()?pos[i].t:pos[i].e)+': '+nameOf(c)+(x.rev?(tr()?' ters':' reversed'):'')+'. '+longRead(c,x.rev,pos[i]);}).join(' ')+' '+synth(picks);
     var a=el('trAgain'); if(a)a.addEventListener('click',backToSelect);
-    var v=el('trVoice'); if(v)v.addEventListener('click',speakReading);
-    var m=el('trMute2'); if(m)m.addEventListener('click',stopV);
+    var vp=el('trPlay'); if(vp)vp.addEventListener('click',function(){ if(trTts.on)return; if(!trTts.chunks.length)trTts.set(lastVoice); trTts.start(trTts.ci>=trTts.chunks.length?0:trTts.ci); });
+    var vpa=el('trPause'); if(vpa)vpa.addEventListener('click',function(){ trTts.pause(); });
+    var vmu=el('trMute2'); if(vmu)vmu.addEventListener('click',function(){ trTts.mute(); });
+    var vrp=el('trReplay'); if(vrp)vrp.addEventListener('click',function(){ if(!lastVoice)return; trTts.set(lastVoice); trTts.start(0); });
     var n=el('trNatal'); if(n)n.addEventListener('click',function(){if(window.__goNatal)window.__goNatal();});
     el('trBody').scrollTop=0;}
   function speakReading(){if(!window.speechSynthesis||!lastVoice)return; stopV(); var u=new SpeechSynthesisUtterance(lastVoice.replace(/<[^>]+>/g,'')); u.lang=LV[lang()]||'en-US'; u.rate=.97; window.speechSynthesis.speak(u);}
