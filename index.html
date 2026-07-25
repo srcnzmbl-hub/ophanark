@@ -3192,8 +3192,11 @@ window.OphShare=(function(){
     var host=document.getElementById('falHistory'); if(!host)return;
     var H=[];try{H=JSON.parse(localStorage.getItem('oph_kahve_history')||'[]');}catch(e){}
     if(!H||!H.length){host.innerHTML='<div class="prow"><span class="v" style="opacity:.7">Henüz fal geçmişin yok.</span></div>';return;}
+    function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
     host.innerHTML=H.map(function(it){
-      return '<div class="falhist-row"><span class="fh-info">'+((it.t||'Kahve Falı'))+' · '+fmtD(it.ts)+' · '+fmtT(it.ts)+'</span><button class="fh-ozet" data-fal="'+b64u(it.text||'')+'">özet</button></div>';
+      var nm=(it.name||'').trim();
+      var label=(it.t||'Kahve Falı')+(nm?(' · '+esc(nm)):'')+' · '+fmtD(it.ts)+' · '+fmtT(it.ts);
+      return '<div class="falhist-row"><span class="fh-info">'+label+'</span><button class="fh-ozet" data-fal="'+b64u(it.text||'')+'">özet</button></div>';
     }).join('');
     [].forEach.call(host.querySelectorAll('.fh-ozet'),function(b){b.addEventListener('click',function(){var e=b.getAttribute('data-fal');if(e)location.href='kahvefali.html?fal='+e;});});
   };
