@@ -82,6 +82,8 @@
   .kvkk h4{font-size:12.5px;color:var(--gold2);letter-spacing:.05em;margin-bottom:8px;text-align:center}
   .kvkk p{font-size:10.8px;line-height:1.68;color:#cfbd93;margin:6px 0}
   .kvkk b{color:var(--gold2)}
+  .kvkk i{color:#c8a45f;font-style:italic}
+  .kv-about{margin-top:9px !important;padding:9px 10px;background:rgba(233,200,120,.06);border:1px solid var(--line);border-radius:9px}
   .consent{display:flex;align-items:flex-start;gap:10px;width:100%;cursor:pointer;font-size:11.5px;line-height:1.5;color:#d8c49a}
   .cbox{flex:0 0 auto;width:22px;height:22px;border-radius:6px;border:1.5px solid var(--gold);background:rgba(20,7,9,.5);position:relative;margin-top:1px}
   .cbox.on{background:linear-gradient(180deg,#7a2a1a,#4a1710)}
@@ -156,15 +158,21 @@
       <div class="kvkk">
         <h4>KVKK Aydınlatma ve Açık Rıza Metni</h4>
         <p>Veri sorumlusu <b>Ozark Collective Co.</b> olarak, kahve falı hizmetini sunabilmek için paylaştığınız <b>fincan fotoğraflarınızı</b> ve girdiyseniz <b>isminizi</b> işliyoruz.</p>
-        <p><b>Amaç:</b> Fal yorumunuzun oluşturulması, hizmetin sunulması ve iyileştirilmesi.</p>
-        <p><b>Saklama:</b> Fotoğraflarınız fal görüntülendikten <b>24 saat sonra</b> otomatik silinir. Fal metniniz yalnızca profilinizdeki “Geçmiş” bölümünde <b>en yeni 3 fal</b> ile sınırlı tutulur; yeni fal geldikçe eski metin silinir.</p>
+        <p><b>İşleme amaçları:</b> (1) fal yorumunuzun oluşturulması, hizmetin sunulması ve iyileştirilmesi; (2) yalnızca ayrıca izin vermeniz hâlinde, kahve fincanı fotoğraflarınızın <b>Ophan AI</b> yapay zekâ modelimizin geliştirilmesi ve eğitilmesinde kullanılması.</p>
+        <p><b>Ophan AI eğitimi:</b> Kendi yapay zekâ modelimiz olan Ophan AI'yı geliştirmek için, <b>yalnızca aşağıdaki ek izni vermeniz durumunda</b>, kahve fincanı fotoğraflarınız <b>kimliğinizden arındırılmış (anonim)</b> biçimde model eğitiminde kullanılmak üzere saklanabilir. Bu izni vermezseniz falınız yine normal şekilde okunur; fotoğraflarınız yalnızca fal yorumu için kullanılır. Bu ek izni <b>dilediğiniz zaman geri çekebilirsiniz</b>.</p>
+        <p><b>Saklama:</b> Fotoğraflarınız fal görüntülendikten <b>24 saat sonra</b> hizmet sistemimizden otomatik silinir (Ophan AI izni verdiyseniz yalnızca anonim kopya eğitim amacıyla saklanır). Fal metniniz yalnızca profilinizdeki “Geçmiş” bölümünde <b>en yeni 3 fal</b> ile sınırlı tutulur; yeni fal geldikçe eski metin silinir.</p>
         <p><b>Yurt dışına aktarım:</b> Fotoğraflarınız yorumun oluşturulması için yapay zekâ hizmet sağlayıcımızın altyapısında işlenir; bu kapsamda verileriniz yurt dışındaki sunuculara aktarılabilir.</p>
-        <p><b>Haklarınız:</b> KVKK m.11 kapsamında verilerinize erişme, düzeltilmesini/silinmesini isteme ve işlemeye itiraz etme haklarına sahipsiniz. Talepleriniz için: <b>info@ophanark.com</b></p>
-        <p>“Kabul ediyorum” kutusunu işaretleyerek, fotoğraflarınızın fal yorumu amacıyla işlenmesine ve yurt dışına aktarılmasına <b>açık rıza</b> vermiş olursunuz.</p>
+        <p><b>Haklarınız:</b> KVKK m.11 kapsamında verilerinize erişme, düzeltilmesini/silinmesini isteme, işlemeye itiraz etme ve verdiğiniz açık rızayı geri alma haklarına sahipsiniz. Talepleriniz için: <b>info@ophanark.com</b></p>
+        <p>Aşağıdaki <b>zorunlu</b> kutuyu işaretleyerek, fotoğraflarınızın fal yorumu amacıyla işlenmesine ve yurt dışına aktarılmasına <b>açık rıza</b> vermiş olursunuz. Ophan AI eğitimi için kullanım <b>isteğe bağlıdır</b> ve ayrı olarak onaylanır.</p>
+        <p class="kv-about"><b>Ophan AI nedir?</b> Ophan AI, Ophanark'ın <b>görsel yorumlama yapay zekâ botudur</b>. Kahve fincanı görsellerini daha sağlıklı analiz etme becerisiyle <b>tutarlı ve isabetli fal yorumları</b> yapmamızı sağlar ve size <b>ücretsiz</b> bir yapay zekâ botu olarak hizmet eder. İzin vermeniz hâlinde paylaşacağınız anonim görseller, Ophan AI'nın zamanla daha doğru yorumlar üretmesine katkı sağlar.</p>
       </div>
       <label class="consent" id="consentRow">
         <span class="cbox" id="cbox"></span>
-        <span>Yukarıdaki KVKK aydınlatma metnini okudum, <b>kabul ediyorum</b>.</span>
+        <span>KVKK aydınlatma metnini okudum; verilerimin <b>kahve falı hizmeti</b> için işlenmesini <b>kabul ediyorum</b>. <i>(Zorunlu)</i></span>
+      </label>
+      <label class="consent" id="aiConsentRow">
+        <span class="cbox" id="aiCbox"></span>
+        <span>Kahve fincanı fotoğraflarımın, <b>Ophan AI</b> modelinin geliştirilip eğitilmesi amacıyla kimliğimle ilişkilendirilmeksizin kullanılmasına <b>izin veriyorum</b>. <i>(İsteğe bağlı)</i></span>
       </label>
       <button class="go" id="yorumlaBtn" disabled>Falı Yorumla</button>
     </div>
@@ -279,6 +287,12 @@
     ev.preventDefault();
     document.getElementById('cbox').classList.toggle('on');
     updateYorumla();
+  });
+  var aiConsent=false;
+  document.getElementById('aiConsentRow').addEventListener('click',function(ev){
+    ev.preventDefault();
+    var on=document.getElementById('aiCbox').classList.toggle('on');
+    aiConsent=on;
   });
   document.getElementById('yorumlaBtn').addEventListener('click',function(){
     if(this.disabled) return;
