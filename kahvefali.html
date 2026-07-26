@@ -376,6 +376,7 @@
   var currentFalId=null;
   function ozSession(){ try{ var k='oph_oturum'; var v=localStorage.getItem(k); if(!v){ v='oz_'+Date.now().toString(36)+Math.random().toString(36).slice(2,10); localStorage.setItem(k,v);} return v; }catch(e){ return null; } }
   function ozPlatform(){ try{ if(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches) return 'pwa'; var ua=(navigator.userAgent||'').toLowerCase(); if(/android/.test(ua))return 'android'; if(/iphone|ipad|ipod/.test(ua))return 'ios'; return 'web'; }catch(e){ return 'web'; } }
+  function ozAuth(){ try{ for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k&&/^sb-.*-auth-token$/.test(k)){ var o=JSON.parse(localStorage.getItem(k)||'null'); if(!o)continue; var s=o.currentSession||o; if(s&&s.access_token){ return {token:s.access_token, uid:(s.user&&s.user.id)||null}; } } } }catch(e){} return {}; }
   function sendBegeni(v){ if(!currentFalId)return; try{ fetch(FN_BEGENI,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({fal_id:currentFalId,begeni:v})}).catch(function(){}); }catch(e){} }
   function showLike(){ var r=document.getElementById('likeRow'); if(!r)return; if(currentFalId){ r.style.display=''; var t=document.getElementById('likeThanks'); if(t)t.style.display='none'; ['likeUp','likeDown'].forEach(function(id){var e=document.getElementById(id);if(e)e.classList.remove('on');}); } else { r.style.display='none'; } }
 
@@ -543,8 +544,9 @@
 
   function fetchFal(imgs){
     var name=(document.getElementById('nameIn').value||'').trim();
-    fetch(FN,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},
-      body:JSON.stringify({name:name,images:imgs,ai_consent:true,kvkk_onay:true,egitim_izni:true,oturum_id:ozSession(),platform:ozPlatform(),uygulama_surum:APP_VER})})
+    var _au=ozAuth();
+    fetch(FN,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+(_au.token||ANON)},
+      body:JSON.stringify({name:name,images:imgs,ai_consent:true,kvkk_onay:true,egitim_izni:true,oturum_id:ozSession(),platform:ozPlatform(),uygulama_surum:APP_VER,kullanici_id:_au.uid||null})})
     .then(function(r){return r.json();})
     .then(function(j){
       currentFalId=(j&&j.id)?j.id:null;

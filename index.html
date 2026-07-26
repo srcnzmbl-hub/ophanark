@@ -2451,6 +2451,9 @@ try{
 
   var FN_TAROT='https://lssyopqxthausyegeire.supabase.co/functions/v1/tarot';
   var TAROT_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo';
+  function ozSession(){ try{ var k='oph_oturum'; var v=localStorage.getItem(k); if(!v){ v='oz_'+Date.now().toString(36)+Math.random().toString(36).slice(2,10); localStorage.setItem(k,v);} return v; }catch(e){ return null; } }
+  function ozPlatform(){ try{ if(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches) return 'pwa'; var ua=(navigator.userAgent||'').toLowerCase(); if(/android/.test(ua))return 'android'; if(/iphone|ipad|ipod/.test(ua))return 'ios'; return 'web'; }catch(e){ return 'web'; } }
+  function ozAuth(){ try{ for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k&&/^sb-.*-auth-token$/.test(k)){ var o=JSON.parse(localStorage.getItem(k)||'null'); if(!o)continue; var ss=o.currentSession||o; if(ss&&ss.access_token){ return {token:ss.access_token, uid:(ss.user&&ss.user.id)||null}; } } } }catch(e){} return {}; }
   function fillTarotAI(sp,pos){
     var host=el('trAI'); if(!host)return;
     var cards=picks.map(function(x,i){var c=T[x.idx];return {name:c.e,pos:(pos[i]&&pos[i].e)||('Card '+(i+1)),rev:!!x.rev};});
@@ -2464,8 +2467,9 @@ try{
       lastVoice=picks.map(function(x,i){var c=T[x.idx];return (tr()?pos[i].t:pos[i].e)+': '+nameOf(c)+(x.rev?(tr()?' ters':' reversed'):'')+'.';}).join(' ')+' '+String(text);
     }
     var to=setTimeout(function(){ if(!done){done=true; setAI(fb);} },22000);
-    fetch(FN_TAROT,{method:'POST',headers:{'Content-Type':'application/json','apikey':TAROT_ANON,'Authorization':'Bearer '+TAROT_ANON},
-      body:JSON.stringify({spread:(tr()?sp.label.tr:sp.label.en),lang:(window.__lang||'tr'),cards:cards})})
+    var _au=ozAuth();
+    fetch(FN_TAROT,{method:'POST',headers:{'Content-Type':'application/json','apikey':TAROT_ANON,'Authorization':'Bearer '+(_au.token||TAROT_ANON)},
+      body:JSON.stringify({spread:(tr()?sp.label.tr:sp.label.en),lang:(window.__lang||'tr'),cards:cards,kullanici_id:_au.uid||null,oturum_id:ozSession(),platform:ozPlatform(),uygulama_surum:'1.0'})})
     .then(function(r){return r.json();})
     .then(function(j){ if(done)return; done=true; clearTimeout(to); setAI((j&&j.text&&j.text.trim().length>80)?j.text.trim():fb); })
     .catch(function(){ if(done)return; done=true; clearTimeout(to); setAI(fb); });
