@@ -64,6 +64,7 @@
   /* LOADING */
   #loading{align-items:center;justify-content:center;background:radial-gradient(120% 90% at 50% 40%,#241016,#08060a 70%)}
   .ring{width:66px;height:66px;border-radius:50%;border:3px solid rgba(233,200,120,.2);border-top-color:var(--gold2);animation:spin 1s linear infinite}
+  .cark3d{width:160px;height:160px;filter:drop-shadow(0 0 10px rgba(233,200,120,.5))}
   @keyframes spin{to{transform:rotate(360deg)}}
   #loading .lt{margin-top:20px;font-size:14px;letter-spacing:.18em;color:var(--gold2)}
   #loading .ls{margin-top:7px;font-size:11px;color:#b48b52}
@@ -233,6 +234,9 @@
   .cam-done:not([disabled]){box-shadow:0 0 14px rgba(233,200,120,.4)}
 
 </style>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
+</script>
 </head>
 <body>
 <div id="app">
@@ -330,6 +334,7 @@
   <div class="screen" id="loading">
     <div class="back" data-back="upload">‹</div>
     <div class="ring"></div>
+    <div class="cark3d" id="carkKap3d"></div>
     <div class="lt" id="loadStatus">Fotoğraflar inceleniyor…</div>
     <div class="ls" id="loadSub">Telveler okunuyor…</div>
     <div class="loadWarn" id="loadWarn">
@@ -777,6 +782,16 @@
     }
     try{ var p=qs.get('fal'); if(p){ var t=b64uDecode(p); if(t && t.trim()){ sharedMode=true; renderFal(t); } } }catch(e){}
   })();
+})();
+</script>
+<script type="module">
+import { OphanCarklar } from "./ophan_carklar.js";
+(function(){
+  var kap=document.getElementById("carkKap3d"); if(!kap) return;
+  try{
+    OphanCarklar.olustur(kap,{ url:"model/carklar_m.glb", dracoPath:"./vendor/addons/libs/draco/",
+      onYuklendi:function(){ var r=document.querySelector("#loading .ring"); if(r) r.style.display="none"; } });
+  }catch(e){ console.warn("3D cark yuklenemedi",e); }
 })();
 </script>
 </body>
