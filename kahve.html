@@ -108,11 +108,11 @@
 
   <section class="sec" id="k-upload">
     <div class="num rv">02</div>
-    <h2 class="big rv d1">Add Your<br>Six Frames</h2>
+    <h2 class="big rv d1">Add Your Six Frames</h2>
     <input type="file" id="k-file" accept="image/*" multiple style="display:none">
     <div class="drop rv d2" id="k-drop">
       <div class="plus">+</div>
-      <div class="dt" id="k-count">Tap to add photos · 0 / 6</div>
+      <div class="dt"><span class="cntlbl">Tap to add photos</span> · <span id="k-count">0 / 6</span></div>
       <div class="thumbs" id="k-thumbs"></div>
     </div>
     <div class="field rv d2"><label>Your name</label><input type="text" id="k-name" placeholder="Write your name"></div>
@@ -175,7 +175,7 @@
   function refreshThumbs(){
     var t=document.getElementById('k-thumbs'); t.innerHTML='';
     images.forEach(function(d){ var im=document.createElement('img'); im.src=d; t.appendChild(im); });
-    document.getElementById('k-count').textContent='Tap to add photos · '+images.length+' / 6';
+    document.getElementById('k-count').textContent=images.length+' / 6';
     gate();
   }
   var consent=false;
