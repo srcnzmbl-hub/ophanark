@@ -1,5 +1,5 @@
 /* Ophanark PWA service worker */
-var CACHE = 'ophanark-v75';
+var CACHE = 'ophanark-v76';
 var CORE = [
 './','./index.html','./manifest.webmanifest','./opening.jpg','./emblem.png','./natal_splash.jpg','./natal_bg.jpg','./zodiac.ttf',
 './app-icon-192.png','./app-icon-512.png','./app-apple-touch.png'
@@ -34,6 +34,17 @@ return;
 if(url.origin === self.location.origin && /\.html$/.test(url.pathname)){
 e.respondWith(
 fetch(req).then(function(res){
+if(res && res.status === 200){ var copy = res.clone(); caches.open(CACHE).then(function(c){ c.put(req, copy); }); }
+return res;
+}).catch(function(){ return caches.match(req); })
+);
+return;
+}
+// app JS (oph_app.js, spiral.js, signimg.js, ophan_*.js — NOT /vendor/): network-first, bypass HTTP cache
+// so code updates reach users immediately; fall back to cache offline.
+if(url.origin === self.location.origin && /\.js$/.test(url.pathname) && !/\/vendor\//.test(url.pathname)){
+e.respondWith(
+fetch(new Request(url.pathname, { cache: 'reload' })).then(function(res){
 if(res && res.status === 200){ var copy = res.clone(); caches.open(CACHE).then(function(c){ c.put(req, copy); }); }
 return res;
 }).catch(function(){ return caches.match(req); })
