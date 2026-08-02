@@ -76,6 +76,15 @@
   /* chart */
   .who{font-family:var(--serif);font-style:italic;font-size:clamp(15px,4vw,19px);color:#5a4a44;margin-top:6px}
   #n-chart{position:relative;height:200vh}
+  #n-halves{position:relative;height:270vh}
+  .halves-sticky{position:sticky;top:0;height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center;gap:12px;padding:3vh 14px;overflow:hidden;-webkit-perspective:1600px;perspective:1600px}
+  .hv-stage{flex:none;width:min(48vw,290px);height:min(96vw,580px);position:relative;transform-style:preserve-3d;will-change:transform}
+  .hv-wheel{position:absolute;inset:0;overflow:hidden}
+  .hv-wheel .wheelimg,.hv-wheel .wheelov{position:absolute;top:50%;left:0;width:200%;height:auto;aspect-ratio:1;transform:translateY(-50%)}
+  .hv-panel{flex:1 1 auto;max-width:340px;min-width:0;text-align:left}
+  .hv-item{margin:10px 0;font-family:var(--disp);font-size:clamp(14px,3.7vw,18px);letter-spacing:.02em;color:var(--ink);line-height:1.26}
+  .hv-item .hg{font-family:'ophzod';margin-right:6px;color:var(--muted)}
+  .hv-item .hs{color:var(--muted);font-size:.82em;margin-left:4px}
   .chart-sticky{position:sticky;top:0;height:100vh;height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow:hidden}
   .chart-sticky .chartHead{flex:none;text-align:center;padding:2.2vh 20px 0}
   .fold-wrap{position:relative;flex:1 1 auto;width:100vw;max-width:640px;-webkit-perspective:1500px;perspective:1500px}
@@ -156,6 +165,16 @@
         <div class="fold-half fold-right"><div class="chartInner" id="ci-right"></div></div>
       </div>
       <div class="chartcue">↓</div>
+    </div>
+  </section>
+
+  <!-- HALF-CIRCLE READING PATH (left half, then right half) -->
+  <section id="n-halves">
+    <div class="halves-sticky">
+      <div class="hv-stage" id="hv-stage">
+        <div class="hv-wheel" id="hv-wheel"></div>
+      </div>
+      <div class="hv-panel" id="hv-panel"></div>
     </div>
   </section>
 
@@ -513,6 +532,7 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
       var body=NL.hd[j]+' '+NL.sd[hs.si]+' '+ND.hc[j%6];
       addRow(ZCH[hs.si], (j+1)+'. '+NL.houseWord+' · '+hdeg+'° '+NL.names[hs.si]+(pin?' <span class="rp">'+pin+'</span>':''), body);
     }
+    window.__natalHalves={c:c, NL:NL}; buildHalfPanel(0);
     reveal(); setTimeout(buildSpiral,200); setTimeout(function(){buildSpiral();reveal();},900);
   }
 
@@ -572,9 +592,38 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
   function buildChart(c){
     var html=chartInnerHTML(c);
     ['ci-left','ci-right'].forEach(function(id){ var el=document.getElementById(id); if(el) el.innerHTML=html; });
+    var hw=document.getElementById('hv-wheel'); if(hw) hw.innerHTML=html;
     layoutFold(); setTimeout(layoutFold,250); setTimeout(layoutFold,800);
   }
   addEventListener('resize', layoutFold);
+  // ---- half-circle reading path (left half + labels, then right half) ----
+  function buildHalfPanel(side){
+    var d=window.__natalHalves; if(!d) return;
+    var panel=document.getElementById('hv-panel'); if(!panel) return;
+    if(panel.__side===side) return; panel.__side=side;
+    var c=d.c, NL=d.NL, start=side?6:0, html='';
+    for(var k=start;k<start+6;k++){ var hs=c.houses[k];
+      var pin=(c.inH&&c.inH[k])?c.inH[k].map(function(p){return p[1];}).join(' '):'';
+      html+='<div class="hv-item"><span class="hg">'+ZCH[hs.si]+'</span>'+(k+1)+'. '+NL.houseWord+' · '+Math.round(hs.deg||0)+'° '+NL.names[hs.si]+(pin?' <span class="hs">'+pin+'</span>':'')+'</div>';
+    }
+    panel.innerHTML=html;
+  }
+  function halfScroll(){
+    var sec=document.getElementById('n-halves'); if(!sec) return;
+    var st=document.getElementById('hv-stage'), wheel=document.getElementById('hv-wheel'); if(!st||!wheel) return;
+    var len=sec.offsetHeight-app.clientHeight;
+    var p=(app.scrollTop-sec.offsetTop)/Math.max(1,len); p=p<0?0:p>1?1:p;
+    var rot, right;
+    if(p<0.45){ rot=0; right=false; }
+    else if(p>0.55){ rot=0; right=true; }
+    else { var q=(p-0.45)/0.10; rot=-90*Math.sin(q*Math.PI); right=q>=0.5; }
+    st.style.transform='rotateY('+rot.toFixed(1)+'deg)';
+    var off=right?'-100%':'0';
+    var img=wheel.querySelector('.wheelimg'), ov=wheel.querySelector('.wheelov');
+    if(img) img.style.left=off;
+    if(ov) ov.style.left=off;
+    buildHalfPanel(right?1:0);
+  }
 
   function drawWheel(c){
     var svg=document.getElementById('wheel');
@@ -764,7 +813,7 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
   function reveal(){ var vh=app.clientHeight, appTop=app.getBoundingClientRect().top;
     app.querySelectorAll('.rv:not(.in)').forEach(function(el){ if(el.getBoundingClientRect().top-appTop < vh*0.92) el.classList.add('in'); }); }
   var ticking=false;
-  app.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(function(){ticking=false;updateSpiral();reveal();foldScroll();});} },{passive:true});
+  app.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(function(){ticking=false;updateSpiral();reveal();foldScroll();halfScroll();});} },{passive:true});
   addEventListener('resize',function(){ buildSpiral(); reveal(); });
   reveal(); setTimeout(reveal,400);
 </script>
