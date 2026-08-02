@@ -207,6 +207,9 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
       + '.field label,.set-label,.rlab,.hint,.note,.opt,.foot-strip{font-size:16.5px !important;}'
       + '.field input,.field select,select,input[type=text],input[type=email],input[type=password],input[type=date],input[type=time]{font-size:18.5px !important;}'
       + '.cardname{font-size:clamp(19px,5vw,23px) !important;}'
+      + '.brand{font-size:clamp(33px,8.6vw,40px) !important;}'
+      + 'nav{flex-wrap:wrap !important;justify-content:center !important;}'
+      + 'nav a{font-size:16px !important;}'
       // proportionally enlarge home/intro visuals (transform keeps layout box → no reflow/overflow)
       + '.cup{transform:scale(1.18) !important;}'
       + '.handimg{transform:scale(1.18) !important;}'
