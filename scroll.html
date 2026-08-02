@@ -282,6 +282,8 @@
 
   <footer class="foot" aria-label="site footer">
     <span class="foot-end"></span>
+    <button class="totop" type="button" aria-label="back to top">Back to the top</button>
+    <div class="totop-arrow" aria-hidden="true">↑</div>
     <a class="foot-site" href="https://www.ophanark.com">www.ophanark.com</a>
     <div class="foot-strip">OZARK COLLECTIVE CO.&nbsp;&nbsp;·&nbsp;&nbsp;© 2026&nbsp;&nbsp;·&nbsp;&nbsp;ALL RIGHTS RESERVED</div>
   </footer>
@@ -323,6 +325,8 @@
       var t=document.getElementById(a.dataset.go); if(t) app.scrollTo({top:t.offsetTop+2, behavior:'smooth'}); });
   });
   setVH(); frame();
+  var _totop=document.querySelector('.totop');
+  if(_totop) _totop.addEventListener('click', function(){ app.scrollTo({top:0, behavior:'smooth'}); });
 </script>
 <script src="oph_app.js"></script>
 <script src="spiral.js"></script>
