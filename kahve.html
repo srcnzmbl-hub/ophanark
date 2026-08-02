@@ -213,6 +213,7 @@
     images.slice(0,3).forEach(function(d){ var im=document.createElement('img'); im.src=d; tv.appendChild(im); });
     var paras=String(text).trim().split(/\n\s*\n/).map(function(p){return '<p>'+p.replace(/\n/g,'<br>')+'</p>';}).join('');
     document.getElementById('k-text').innerHTML=paras;
+    try{var _kt=document.getElementById('k-text'); if(window.OphApp&&OphApp.mountTTS) OphApp.mountTTS(_kt,[_kt]);}catch(e){}
     reveal(); goTo('k-reading');
   }
 

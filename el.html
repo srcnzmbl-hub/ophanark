@@ -222,6 +222,7 @@
     document.getElementById('k-rtext').innerHTML=paras(sag);
     if(sol){ document.getElementById('k-ltext').innerHTML=paras(sol); }
     else { document.getElementById('k-limg').closest('.resrow').style.display='none'; }
+    try{var _r=document.getElementById('k-rtext'),_l=document.getElementById('k-ltext'); if(window.OphApp&&OphApp.mountTTS){var _row=(_r.closest('.resrow')||_r); OphApp.mountTTS(_row, sol?[_r,_l]:[_r]);}}catch(e){}
     reveal(); goTo('k-reading');
   }
 

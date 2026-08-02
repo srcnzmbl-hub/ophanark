@@ -206,9 +206,72 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
       + '.cup{transform:scale(1.18) !important;}'
       + '.handimg{transform:scale(1.18) !important;}'
       + '.tt,.tb{transform:scale(1.12) !important;}'
-      + '.kicker ~ div canvas{transform:scale(1.16) !important;}';
+      + '.kicker ~ div canvas{transform:scale(1.16) !important;}'
+      // audio (TTS) controls + word-follow highlight
+      + '.oph-tts{display:flex;gap:.3cm;justify-content:center;align-items:center;margin:22px auto 8px;}'
+      + '.oph-tts button{width:46px;height:46px;border-radius:50%;border:1px solid var(--ink);background:transparent;color:var(--ink);font-size:15px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;padding:0;-webkit-tap-highlight-color:transparent;}'
+      + '.oph-tts button:disabled{opacity:.32;cursor:default;}'
+      + '.ttw-on{background:rgba(190,150,70,.40);border-radius:3px;}'
+      + 'html[data-theme="dark"] .ttw-on{background:rgba(255,215,130,.34);color:#fff !important;}';
     var st = d.createElement('style'); st.id = 'oph-scale'; st.textContent = css;
     (d.head || d.documentElement).appendChild(st);
+  }
+
+  // ---- Sesli dinleme (Text-to-Speech) ----
+  function ttsLangCode() {
+    var m = { en: 'en-US', tr: 'tr-TR', de: 'de-DE', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-PT', ru: 'ru-RU', ar: 'ar-SA', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', hi: 'hi-IN', nl: 'nl-NL', pl: 'pl-PL' };
+    return m[getLang()] || 'en-US';
+  }
+  var _tts = { spans: null, paused: false };
+  function _ttsClear() { if (_tts.spans) { for (var i = 0; i < _tts.spans.length; i++) _tts.spans[i].el.classList.remove('ttw-on'); } }
+  // insertBeforeEl: node to place the control bar before; textEls: array of elements whose text is read + highlighted
+  function mountTTS(insertBeforeEl, textEls) {
+    if (!insertBeforeEl || !insertBeforeEl.parentNode || !('speechSynthesis' in w)) return null;
+    if (insertBeforeEl.parentNode.querySelector(':scope > .oph-tts')) return null; // already mounted here
+    var spans = [], full = '';
+    for (var t = 0; t < textEls.length; t++) {
+      var el = textEls[t]; if (!el) continue;
+      var tw = d.createTreeWalker(el, NodeFilter.SHOW_TEXT, null), nodes = [], n;
+      while ((n = tw.nextNode())) nodes.push(n);
+      for (var k = 0; k < nodes.length; k++) {
+        var tn = nodes[k]; if (!tn.parentNode) continue;
+        if (/^(SCRIPT|STYLE)$/.test(tn.parentNode.tagName)) continue;
+        var parts = (tn.nodeValue || '').split(/(\s+)/), frag = d.createDocumentFragment();
+        for (var p = 0; p < parts.length; p++) {
+          var wd = parts[p]; if (wd === '') continue;
+          if (/^\s+$/.test(wd)) { frag.appendChild(d.createTextNode(wd)); full += wd; }
+          else { var sp = d.createElement('span'); sp.className = 'ttw'; sp.textContent = wd; frag.appendChild(sp); spans.push({ el: sp, start: full.length, len: wd.length }); full += wd; }
+        }
+        tn.parentNode.replaceChild(frag, tn);
+      }
+      full += '\n\n';
+    }
+    full = full.trim();
+    if (!full) return null;
+    var bar = d.createElement('div'); bar.className = 'oph-tts';
+    function mk(sym, lab) { var b = d.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', lab); b.textContent = sym; return b; }
+    var pl = mk('▶', 'Dinle'), pa = mk('❙❙', 'Duraklat'), stp = mk('■', 'Durdur');
+    bar.appendChild(pl); bar.appendChild(pa); bar.appendChild(stp);
+    insertBeforeEl.parentNode.insertBefore(bar, insertBeforeEl);
+    function setState(s) { pa.disabled = (s !== 'playing'); stp.disabled = (s === 'idle'); }
+    setState('idle');
+    function start() {
+      try { w.speechSynthesis.cancel(); } catch (e) {}
+      _ttsClear();
+      var u = new w.SpeechSynthesisUtterance(full); u.lang = ttsLangCode(); u.rate = 0.98;
+      u.onboundary = function (e) {
+        var ci = e.charIndex; if (ci == null) return; _ttsClear();
+        for (var i = 0; i < spans.length; i++) { if (ci >= spans[i].start && ci < spans[i].start + spans[i].len) { spans[i].el.classList.add('ttw-on'); try { spans[i].el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e2) {} break; } }
+      };
+      u.onend = function () { _ttsClear(); _tts.paused = false; setState('idle'); };
+      u.onerror = function () { _ttsClear(); _tts.paused = false; setState('idle'); };
+      _tts.spans = spans; _tts.paused = false;
+      w.speechSynthesis.speak(u); setState('playing');
+    }
+    pl.onclick = function () { if (_tts.paused && w.speechSynthesis.paused) { try { w.speechSynthesis.resume(); } catch (e) {} _tts.paused = false; setState('playing'); } else { start(); } };
+    pa.onclick = function () { if (w.speechSynthesis.speaking && !w.speechSynthesis.paused) { try { w.speechSynthesis.pause(); } catch (e) {} _tts.paused = true; setState('paused'); } };
+    stp.onclick = function () { try { w.speechSynthesis.cancel(); } catch (e) {} _ttsClear(); _tts.paused = false; setState('idle'); };
+    return bar;
   }
 
   function boot() { injectScale(); applyTheme(getTheme()); applyLang(getLang()); }
@@ -219,6 +282,7 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     getTheme: getTheme, setTheme: setTheme,
     getLang: getLang, setLang: setLang,
     applyTheme: applyTheme, applyLang: applyLang,
-    tByText: tByText, tById: tById, langName: langName, LABELS: LABELS
+    tByText: tByText, tById: tById, langName: langName, LABELS: LABELS,
+    mountTTS: mountTTS
   };
 })(window, document);
