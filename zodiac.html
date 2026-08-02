@@ -168,8 +168,9 @@
 
   function todayKey(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function firstPara(t){ t=String(t).trim(); return t.split(/\n\s*\n/)[0].replace(/\n/g,' '); }
+  function horoLang(){var L=(localStorage.getItem('oph_lang')||'en').toLowerCase().slice(0,2);var OK={en:1,tr:1,de:1,fr:1,es:1,it:1,pt:1,ru:1,ar:1,zh:1,ja:1,ko:1,hi:1,nl:1,pl:1,id:1};return OK[L]?L:'en';}
   function fetchDaily(sign,cb){
-    var base=SB_URL+'/rest/v1/horoscope?select=data,pkey&period=eq.daily&lang=eq.en&sign=eq.'+sign;
+    var base=SB_URL+'/rest/v1/horoscope?select=data,pkey&period=eq.daily&lang=eq.'+horoLang()+'&sign=eq.'+sign;
     var hd={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY};
     fetch(base+'&pkey=eq.'+todayKey(),{headers:hd}).then(function(r){return r.json();}).then(function(rows){
       if(rows&&rows.length){cb(rows[0].data);return;}
