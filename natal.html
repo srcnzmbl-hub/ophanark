@@ -75,11 +75,15 @@
 
   /* chart */
   .who{font-family:var(--serif);font-style:italic;font-size:clamp(15px,4vw,19px);color:#5a4a44;margin-top:6px}
-  .chartsec{height:100vh;height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0;position:relative}
-  .chartHead{flex:none;text-align:center;padding:2.4vh 20px 0.4vh}
-  .chartView{position:relative;overflow:hidden;width:100vw;max-width:640px;flex:1 1 auto}
-  .chartStage{position:absolute;top:0;left:0;width:700px;height:700px;transform-origin:0 0;will-change:transform}
-  .chartStage .wheelimg,.chartStage .wheelov{position:absolute;top:0;left:0;width:100%;height:100%}
+  #n-chart{position:relative;height:460vh}
+  .chart-sticky{position:sticky;top:0;height:100vh;height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow:hidden}
+  .chart-sticky .chartHead{flex:none;text-align:center;padding:2.2vh 20px 0}
+  .fold-wrap{position:relative;flex:1 1 auto;width:100vw;max-width:640px;-webkit-perspective:1500px;perspective:1500px}
+  .fold-half{position:absolute;overflow:hidden;-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:transform}
+  .fold-left{transform-origin:100% 50%}
+  .fold-right{transform-origin:0% 50%}
+  .chartInner{position:absolute;top:0}
+  .chartInner .wheelimg,.chartInner .wheelov{position:absolute;top:0;left:0;width:100%;height:100%}
   .chartcue{flex:none;padding:.6vh 0 2vh;font-family:var(--sans);font-size:12px;letter-spacing:.12em;color:var(--muted)}
   .chartsec > .go{flex:none;margin:0 0 3vh}
   .htable{width:min(370px,94%);margin:24px auto 0;border-top:1px solid var(--line)}
@@ -96,6 +100,14 @@
   .rrow{position:relative;z-index:2;display:flex;gap:14px;align-items:flex-start;max-width:520px;margin:0 auto;padding:2vh 18px;text-align:left}
   .rrow .zg{font-family:'ophzod';font-size:38px;line-height:1;color:var(--ink);flex:none;width:44px;text-align:center}
   .rrow .rt .rl{font-family:var(--disp);text-transform:uppercase;letter-spacing:.06em;color:var(--ink);font-size:clamp(16px,4.4vw,21px);line-height:1.05}
+  .rrow .rt .rl .rp{font-family:var(--sans);font-size:10px;letter-spacing:.08em;color:var(--muted);text-transform:none;margin-left:6px;vertical-align:1px}
+  /* readings build in 3 steps as the row scrolls in: glyph -> title+degrees -> text */
+  .rrow.rv{opacity:1;transform:none}
+  .rrow .zg,.rrow .rt .rl,.rrow .rt .rb{opacity:0;transform:translateY(16px);transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.2,.7,.2,1)}
+  .rrow.in .zg{opacity:1;transform:none}
+  .rrow.in .rt .rl{opacity:1;transform:none;transition-delay:.16s}
+  .rrow.in .rt .rb{opacity:1;transform:none;transition-delay:.36s}
+  @media(prefers-reduced-motion:reduce){.rrow .zg,.rrow .rt .rl,.rrow .rt .rb{opacity:1;transform:none}}
   .rrow .rt .rb{font-family:var(--serif);font-size:clamp(14px,3.7vw,16px);color:#3f332f;line-height:1.5;margin-top:7px}
 
   @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.loadtxt{animation:none;opacity:1}}
@@ -134,21 +146,16 @@
     <p class="loadsub">Ophan is mapping the sky of your birth.</p>
   </section>
 
-  <!-- CHART: whole -->
-  <section class="chartsec" id="n-chart">
-    <div class="chartHead"><h2 class="big rv d1">Your Sky</h2><div class="who rv d1" id="n-who"></div></div>
-    <div class="chartView" data-frame="whole"><div class="chartStage" id="cs-whole"></div></div>
-    <div class="chartcue rv d2">↓</div>
-  </section>
-  <!-- CHART: right half -->
-  <section class="chartsec" id="n-chart-r">
-    <div class="chartView" data-frame="right"><div class="chartStage" id="cs-r"></div></div>
-    <div class="chartcue">↓</div>
-  </section>
-  <!-- CHART: left half -->
-  <section class="chartsec" id="n-chart-l">
-    <div class="chartView" data-frame="left"><div class="chartStage" id="cs-l"></div></div>
-    <button class="go rv" data-go="reads" style="margin-top:8px">Continue for the detailed reading <span>↓</span></button>
+  <!-- CHART: fold-scroll (assembles as you scroll) -->
+  <section id="n-chart">
+    <div class="chart-sticky">
+      <div class="chartHead"><h2 class="big" id="ch-title">Your Sky</h2><div class="who" id="n-who"></div></div>
+      <div class="fold-wrap" id="fold-wrap">
+        <div class="fold-half fold-left"><div class="chartInner" id="ci-left"></div></div>
+        <div class="fold-half fold-right"><div class="chartInner" id="ci-right"></div></div>
+      </div>
+      <div class="chartcue">↓</div>
+    </div>
   </section>
 
   <!-- HOUSE READINGS -->
@@ -481,7 +488,8 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
     for(var j=0;j<12;j++){ var hs=c.houses[j], sign=hs.sign;
       var row=document.createElement('div'); row.className='rrow rv';
       var txt=NL.hd[j]+' '+NL.sd[hs.si];
-      row.innerHTML='<span class="zg">'+ZCH[hs.si]+'</span><div class="rt"><div class="rl">'+(j+1)+'. '+NL.houseWord+' · '+NL.names[hs.si]+'</div><div class="rb">'+txt+'</div></div>';
+      var hdeg=Math.round(hs.deg||0), pin=(c.inH&&c.inH[j])?c.inH[j].map(function(p){return p[1];}).join(' '):'';
+      row.innerHTML='<span class="zg">'+ZCH[hs.si]+'</span><div class="rt"><div class="rl">'+(j+1)+'. '+NL.houseWord+' · '+hdeg+'° '+NL.names[hs.si]+(pin?' <span class="rp">'+pin+'</span>':'')+'</div><div class="rb">'+txt+'</div></div>';
       rd.appendChild(row);
     }
     reveal(); setTimeout(buildSpiral,200); setTimeout(function(){buildSpiral();reveal();},900);
@@ -489,20 +497,8 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
 
   // ---- illustrated wheel (fixed signs, Aries top) + real planet/angle overlay ----
   var CM=38; // ~1cm at 96dpi
-  var CFRAMES={ whole:[42,42,658,658], right:[350,42,658,658], left:[42,42,350,658] };
   function wpos(lon,r){ var f=(lon-30)*Math.PI/180; return [350+r*Math.sin(f), 350-r*Math.cos(f)]; }
-  function layoutChart(){
-    document.querySelectorAll('.chartView').forEach(function(v){
-      var st=v.querySelector('.chartStage'); if(!st) return;
-      var r=CFRAMES[v.getAttribute('data-frame')]||CFRAMES.whole;
-      var vw=v.clientWidth-2*CM, vh=v.clientHeight-2*CM; if(vw<10||vh<10) return;
-      var rw=r[2]-r[0], rh=r[3]-r[1], rcx=(r[0]+r[2])/2, rcy=(r[1]+r[3])/2;
-      var sc=Math.min(vw/rw, vh/rh);
-      var tx=CM+vw/2-sc*rcx, ty=CM+vh/2-sc*rcy;
-      st.style.transform='translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px) scale('+sc.toFixed(4)+')';
-    });
-  }
-  function buildChart(c){
+  function chartInnerHTML(c){
     var Rc=262, ov='';
     var pl=PL.map(function(p){ var d=c.planets[p[0]]; return {ab:p[1], lon:d.lon, deg:Math.round(d.deg)}; })
              .sort(function(a,b){ return a.lon-b.lon; });
@@ -520,12 +516,45 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
       ov+='<line x1="'+a[0].toFixed(1)+'" y1="'+a[1].toFixed(1)+'" x2="'+b[0].toFixed(1)+'" y2="'+b[1].toFixed(1)+'" stroke="'+col+'" stroke-width="1.7"/>';
       ov+='<text x="'+t[0].toFixed(1)+'" y="'+(t[1]+3).toFixed(1)+'" font-family="DM Sans,sans-serif" font-size="11.5" font-weight="700" letter-spacing="1" fill="'+col+'" text-anchor="middle">'+lbl+' '+d+'°</text>'; }
     ang(c.asc.lon,'ASC','#b1502e'); ang(c.asc.lon+180,'DSC','#9c8666'); ang(c.mc.lon,'MC','#6a4b8a'); ang(c.mc.lon+180,'IC','#9c8666');
-    var html='<img class="wheelimg" src="natal_wheel.png" alt="Natal chart">'+
-             '<svg class="wheelov" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">'+ov+'</svg>';
-    ['cs-whole','cs-r','cs-l'].forEach(function(id){ var el=document.getElementById(id); if(el) el.innerHTML=html; });
-    layoutChart(); setTimeout(layoutChart,200); setTimeout(layoutChart,700);
+    return '<img class="wheelimg" src="natal_wheel.png" alt="Natal chart">'+
+           '<svg class="wheelov" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">'+ov+'</svg>';
   }
-  addEventListener('resize', layoutChart);
+  function layoutFold(){
+    var wrap=document.getElementById('fold-wrap'); if(!wrap) return;
+    var vw=wrap.clientWidth-2*CM, vh=wrap.clientHeight-2*CM; if(vw<20||vh<20) return;
+    var fit=Math.min(vw,vh), half=fit/2;
+    var left0=(wrap.clientWidth-fit)/2, top0=(wrap.clientHeight-fit)/2;
+    var L=wrap.querySelector('.fold-left'), R=wrap.querySelector('.fold-right'); if(!L||!R) return;
+    [L,R].forEach(function(h){ h.style.height=fit+'px'; h.style.width=half+'px'; h.style.top=top0+'px'; });
+    L.style.left=left0+'px'; R.style.left=(left0+half)+'px';
+    var ciL=L.querySelector('.chartInner'), ciR=R.querySelector('.chartInner');
+    if(ciL){ ciL.style.width=fit+'px'; ciL.style.height=fit+'px'; ciL.style.left='0'; }
+    if(ciR){ ciR.style.width=fit+'px'; ciR.style.height=fit+'px'; ciR.style.left=(-half)+'px'; }
+    foldScroll();
+  }
+  function applyFold(p){
+    var wrap=document.getElementById('fold-wrap'); if(!wrap) return;
+    var L=wrap.querySelector('.fold-left'), R=wrap.querySelector('.fold-right'); if(!L||!R) return;
+    function seg(a,b){ var v=(p-a)/(b-a); return v<0?0:v>1?1:v; }
+    var asm=seg(0,0.20), foldR=seg(0.24,0.46), unfoldR=seg(0.50,0.60), foldL=seg(0.62,0.82), unfoldL=seg(0.86,1);
+    var lY=(1-asm)*-118, rY=(1-asm)*118;
+    var rAng = unfoldR>0 ? -180*(1-unfoldR) : -180*foldR;
+    var lAng = unfoldL>0 ? 180*(1-unfoldL) : 180*foldL;
+    L.style.transform='translateY('+lY.toFixed(1)+'%) rotateY('+lAng.toFixed(1)+'deg)';
+    R.style.transform='translateY('+rY.toFixed(1)+'%) rotateY('+rAng.toFixed(1)+'deg)';
+  }
+  function foldScroll(){
+    var sec=document.getElementById('n-chart'); if(!sec) return;
+    var len=sec.offsetHeight-app.clientHeight;
+    var p=(app.scrollTop-sec.offsetTop)/Math.max(1,len); p=p<0?0:p>1?1:p;
+    applyFold(p);
+  }
+  function buildChart(c){
+    var html=chartInnerHTML(c);
+    ['ci-left','ci-right'].forEach(function(id){ var el=document.getElementById(id); if(el) el.innerHTML=html; });
+    layoutFold(); setTimeout(layoutFold,250); setTimeout(layoutFold,800);
+  }
+  addEventListener('resize', layoutFold);
 
   function drawWheel(c){
     var svg=document.getElementById('wheel');
@@ -715,7 +744,7 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
   function reveal(){ var vh=app.clientHeight, appTop=app.getBoundingClientRect().top;
     app.querySelectorAll('.rv:not(.in)').forEach(function(el){ if(el.getBoundingClientRect().top-appTop < vh*0.92) el.classList.add('in'); }); }
   var ticking=false;
-  app.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(function(){ticking=false;updateSpiral();reveal();});} },{passive:true});
+  app.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(function(){ticking=false;updateSpiral();reveal();foldScroll();});} },{passive:true});
   addEventListener('resize',function(){ buildSpiral(); reveal(); });
   reveal(); setTimeout(reveal,400);
 </script>
