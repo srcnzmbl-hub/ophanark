@@ -111,21 +111,54 @@
 
   function translate(root, lang) {
     var map = L[lang]; if (!map) return;
-    var els = root.querySelectorAll(SEL);
-    for (var i = 0; i < els.length; i++) {
-      var el = els[i];
-      var tn = firstTextNode(el); if (!tn) continue;
-      var key = tn.nodeValue.trim();
-      var id = REV[key];
-      if (id && map[id]) tn.nodeValue = tn.nodeValue.replace(key, map[id]);
+    // 1) every text node anywhere (in-dictionary strings), skipping script/style
+    try {
+      var w = d.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), tn, nodes = [];
+      while ((tn = w.nextNode())) nodes.push(tn);
+      for (var j = 0; j < nodes.length; j++) {
+        var n = nodes[j], p = n.parentNode;
+        if (p && /^(SCRIPT|STYLE|NOSCRIPT)$/.test(p.tagName)) continue;
+        var key = (n.nodeValue || '').trim();
+        if (!key) continue;
+        var id = REV[key];
+        if (id && map[id]) n.nodeValue = n.nodeValue.replace(key, map[id]);
+      }
+    } catch (e) {
+      var els = root.querySelectorAll(SEL);
+      for (var i = 0; i < els.length; i++) { var el = els[i]; var t = firstTextNode(el); if (!t) continue; var k = t.nodeValue.trim(); var ii = REV[k]; if (ii && map[ii]) t.nodeValue = t.nodeValue.replace(k, map[ii]); }
     }
+    // 2) translatable attributes (placeholder / title / aria-label / value on buttons)
+    try {
+      var ae = root.querySelectorAll('[placeholder],[title],[aria-label]');
+      for (var a = 0; a < ae.length; a++) {
+        var e2 = ae[a], attrs = ['placeholder', 'title', 'aria-label'];
+        for (var b = 0; b < attrs.length; b++) {
+          var v = e2.getAttribute(attrs[b]); if (!v) continue;
+          var kk = v.trim(), di = REV[kk];
+          if (di && map[di]) e2.setAttribute(attrs[b], v.replace(kk, map[di]));
+        }
+      }
+    } catch (e) {}
   }
 
+  var _langObs = null;
   function applyLang(lang, root) {
     root = root || d.body;
     d.documentElement.setAttribute('lang', lang);
     d.documentElement.setAttribute('dir', RTL[lang] ? 'rtl' : 'ltr');
-    if (lang !== 'en' && root) translate(root, lang);
+    if (lang !== 'en' && root) {
+      translate(root, lang);
+      // re-translate content added dynamically after boot (readings, results, etc.)
+      if (_langObs) { try { _langObs.disconnect(); } catch (e) {} }
+      try {
+        var pending = false;
+        _langObs = new MutationObserver(function () {
+          if (pending) return; pending = true;
+          (window.requestAnimationFrame || setTimeout)(function () { pending = false; translate(d.body, lang); }, 0);
+        });
+        _langObs.observe(d.body, { childList: true, subtree: true, characterData: true });
+      } catch (e) {}
+    }
   }
 
   // translate a known English UI string into the current language (dynamic messages)
