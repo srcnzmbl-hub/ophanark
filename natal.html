@@ -460,7 +460,10 @@ return new kd(this.curr.time,a,b)};$jscomp.global.Object.defineProperties(H.prot
     function houseOf(lon){ var a=norm(lon-asc); return Math.floor(a/30); }
     var inH=[[],[],[],[],[],[],[],[],[],[],[],[]];
     PL.forEach(function(p){ inH[houseOf(planets[p[0]].lon)].push(p); });
-    return {planets:planets, asc:sd(asc), mc:sd(mc), houses:houses, inH:inH};
+    // mean lunar node (North=KAD, South=GAD)
+    var jd=dateUTC.getTime()/86400000+2440587.5, Tc=(jd-2451545.0)/36525;
+    var omega=norm(125.0445479-1934.1362891*Tc+0.0020754*Tc*Tc+Tc*Tc*Tc/467441);
+    return {planets:planets, asc:sd(asc), mc:sd(mc), houses:houses, inH:inH, nnode:sd(omega), snode:sd(norm(omega+180))};
   }
 
   function ordinal(n){var s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
@@ -481,7 +484,16 @@ return new kd(this.curr.time,a,b)};$jscomp.global.Object.defineProperties(H.prot
 function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'en').toLowerCase().slice(0,2); return NATAL_I18N[l]?l:'en'; }catch(e){ return 'en'; } }
   function render(name, c){
     var NL=NATAL_I18N[NLANG()];
-    document.getElementById('n-who').textContent = (name?name+' · ':'') + NL.rising.replace('{S}', NL.names[c.asc.si]);
+    var _lg=NLANG();
+    var LB=(_lg==='tr')?{ris:'Yükselen',moon:'Ay Burcu',sn:'Güney Ay Düğümü (GAD)',nn:'Kuzey Ay Düğümü (KAD)'}
+      :(_lg==='de')?{ris:'Aszendent',moon:'Mondzeichen',sn:'Südknoten (SK)',nn:'Nordknoten (NK)'}
+      :{ris:'Rising',moon:'Moon Sign',sn:'South Node (SN)',nn:'North Node (NN)'};
+    var _fs='font-family:var(--disp);font-style:normal;font-weight:600;font-size:clamp(19px,5.1vw,25px);letter-spacing:.02em;color:var(--ink);margin:7px 0;line-height:1.18';
+    document.getElementById('n-who').innerHTML =
+      '<div style="'+_fs+'">'+LB.ris+': '+NL.names[c.asc.si]+'</div>'+
+      '<div style="'+_fs+'">'+LB.moon+': '+NL.names[c.planets.Moon.si]+'</div>'+
+      '<div style="'+_fs+'">'+LB.sn+': '+NL.names[c.snode.si]+'</div>'+
+      '<div style="'+_fs+'">'+LB.nn+': '+NL.names[c.nnode.si]+'</div>';
     buildChart(c);
     // readings
     var rd=document.getElementById('n-reads'); rd.innerHTML='';
