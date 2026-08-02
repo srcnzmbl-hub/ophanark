@@ -52,6 +52,17 @@
   .fld input{width:100%;margin-top:6px;padding:11px 4px;border:0;border-bottom:1px solid var(--line);background:none;
     font-family:var(--serif);font-size:17px;color:var(--ink);outline:none}
   .fld input::placeholder{color:#b9ac93}
+  .fld select{width:100%;margin-top:6px;padding:11px 4px;border:0;border-bottom:1px solid var(--line);background:none;
+    font-family:var(--serif);font-size:17px;color:var(--ink);outline:none;-webkit-appearance:none;appearance:none;border-radius:0}
+  .fld select:disabled{opacity:.5}
+  .cityfld{position:relative}
+  .citylist{position:absolute;left:0;right:0;top:100%;z-index:30;list-style:none;margin:3px 0 0;padding:0;
+    background:#fffdf7;border:1px solid var(--line);max-height:210px;overflow:auto;display:none;box-shadow:0 10px 26px rgba(37,24,28,.14)}
+  .citylist.on{display:block}
+  .citylist li{padding:9px 12px;cursor:pointer;font-family:var(--serif);font-size:15px;color:var(--ink);border-bottom:1px solid rgba(37,24,28,.06)}
+  .citylist li:last-child{border-bottom:0}
+  .citylist li:hover,.citylist li.hl{background:#f3ecda}
+  .citylist li small{color:var(--muted);font-family:var(--sans);font-size:11px;letter-spacing:.04em;margin-left:7px}
   .two{display:flex;gap:12px}.two .fld{flex:1}
   .err{color:#b12a1e;font-family:var(--serif);font-style:italic;font-size:13px;margin-top:6px;min-height:1px}
 
@@ -68,7 +79,7 @@
 
   /* chart */
   .who{font-family:var(--serif);font-style:italic;font-size:clamp(15px,4vw,19px);color:#5a4a44;margin-top:6px}
-  #wheelWrap{width:min(86vw,360px);margin:20px auto 0}
+  #wheelWrap{width:min(100%,600px);margin:14px auto 0}
   #wheel{width:100%;height:auto;display:block}
   .htable{width:min(370px,94%);margin:24px auto 0;border-top:1px solid var(--line)}
   .hrow{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;padding:9px 2px;border-bottom:1px solid var(--line);text-align:left}
@@ -107,8 +118,8 @@
         <div class="fld"><label>Birth time</label><input id="f-time" type="time"></div>
       </div>
       <div class="two">
-        <div class="fld"><label>Birth city</label><input id="f-city" type="text" placeholder="City"></div>
-        <div class="fld"><label>Country</label><input id="f-country" type="text" placeholder="Country"></div>
+        <div class="fld"><label>Country</label><select id="f-country" disabled><option value="">…</option></select></div>
+        <div class="fld cityfld"><label>Birth city</label><input id="f-city" type="text" placeholder="City" autocomplete="off" disabled><ul id="city-list" class="citylist"></ul></div>
       </div>
       <div class="fld"><label>Email</label><input id="f-mail" type="email" placeholder="you@email.com"></div>
       <div class="err" id="f-err"></div>
@@ -124,10 +135,10 @@
   </section>
 
   <!-- CHART -->
-  <section class="sec" id="n-chart" style="justify-content:flex-start;padding-top:11vh">
+  <section class="sec" id="n-chart" style="justify-content:flex-start;padding-top:5vh">
     <h2 class="big rv d1">Your Sky</h2>
     <div class="who rv d1" id="n-who"></div>
-    <div id="wheelWrap" class="rv d2"><svg id="wheel" viewBox="0 0 400 400"></svg></div>
+    <div id="wheelWrap" class="rv d2"><svg id="wheel" viewBox="0 0 1000 1000"></svg></div>
     <div class="htable rv d3" id="n-table"></div>
     <button class="go rv d3" data-go="reads" style="margin-top:26px">Continue for the detailed reading <span>↓</span></button>
   </section>
@@ -477,34 +488,61 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; return NATAL_I
   }
 
   function drawWheel(c){
-    var svg=document.getElementById('wheel'); var cx=200,cy=200,R=190,Rin=150,Rpl=120,Rhub=54;
+    var svg=document.getElementById('wheel');
+    var NL=NATAL_I18N[NLANG()];
+    var cx=500,cy=500;
+    var rO=496, rO2=486, rNameMid=466, rBandOut=444, rBandIn=372, rFig=406,
+        rTick5=364, rTick30=352, rHouseOut=352, rHub=152, rPlanet=296, rHouseNum=rHub+28;
     var asc=c.asc.lon;
     function pos(lon,r){ var th=(180+(lon-asc))*D; return [cx+r*Math.cos(th), cy-r*Math.sin(th)]; }
-    var s='<circle cx="200" cy="200" r="190" fill="#fbf7ec" stroke="rgba(37,24,28,.35)" stroke-width="1"/>'
-        + '<circle cx="200" cy="200" r="150" fill="none" stroke="rgba(37,24,28,.18)"/>'
-        + '<circle cx="200" cy="200" r="54" fill="none" stroke="rgba(37,24,28,.14)"/>';
-    // sign divisions + glyphs
-    for(var k=0;k<12;k++){ var a=pos(k*30,R), b=pos(k*30,Rin);
-      s+='<line x1="'+a[0].toFixed(1)+'" y1="'+a[1].toFixed(1)+'" x2="'+b[0].toFixed(1)+'" y2="'+b[1].toFixed(1)+'" stroke="rgba(37,24,28,.16)"/>';
-      var g=pos(k*30+15,(R+Rin)/2);
-      s+='<text x="'+g[0].toFixed(1)+'" y="'+(g[1]+5).toFixed(1)+'" font-family="ophzod" font-size="17" fill="#9c8666" text-anchor="middle">'+ZCH[k]+'</text>';
+    function P(x){ return x.toFixed(1); }
+    function angDist(a,b){ var d=Math.abs(a-b)%360; return d>180?360-d:d; }
+    var INK='#2a1d20', GOLD='#b0894e', SOFT='rgba(42,29,32,.30)', FAINT='rgba(42,29,32,.13)';
+    var s='';
+    // background + concentric decorative rings
+    s+='<circle cx="500" cy="500" r="496" fill="#fbf7ec"/>';
+    s+='<circle cx="500" cy="500" r="'+rO+'" fill="none" stroke="'+INK+'" stroke-width="1.5"/>';
+    s+='<circle cx="500" cy="500" r="'+rO2+'" fill="none" stroke="'+SOFT+'"/>';
+    s+='<circle cx="500" cy="500" r="'+rBandOut+'" fill="none" stroke="'+SOFT+'"/>';
+    s+='<circle cx="500" cy="500" r="'+rBandIn+'" fill="none" stroke="'+SOFT+'"/>';
+    s+='<circle cx="500" cy="500" r="'+rHouseOut+'" fill="none" stroke="'+FAINT+'"/>';
+    s+='<circle cx="500" cy="500" r="'+rHub+'" fill="#f6efdd" stroke="'+SOFT+'"/>';
+    // degree ticks (every 5deg, longer at sign boundaries)
+    for(var t=0;t<360;t+=5){ var rr=(t%30===0)?rTick30:rTick5; var a=pos(t,rBandIn), b=pos(t,rr);
+      s+='<line x1="'+P(a[0])+'" y1="'+P(a[1])+'" x2="'+P(b[0])+'" y2="'+P(b[1])+'" stroke="'+(t%30===0?SOFT:FAINT)+'" stroke-width="'+(t%30===0?'1.1':'.7')+'"/>'; }
+    // zodiac band: dividers, illustrated figure, sign name
+    for(var k=0;k<12;k++){ var la=pos(k*30,rBandOut), lb=pos(k*30,rBandIn);
+      s+='<line x1="'+P(la[0])+'" y1="'+P(la[1])+'" x2="'+P(lb[0])+'" y2="'+P(lb[1])+'" stroke="'+SOFT+'"/>';
+      var fg=pos(k*30+15,rFig);
+      s+='<text x="'+P(fg[0])+'" y="'+P(fg[1]+18)+'" font-family="ophzod" font-size="50" fill="'+INK+'" text-anchor="middle">'+ZCH[k]+'</text>';
+      var nm=pos(k*30+15,rNameMid);
+      s+='<text x="'+P(nm[0])+'" y="'+P(nm[1]+5)+'" font-family="Cormorant Garamond" font-size="19" letter-spacing="1.4" fill="#6b5842" text-anchor="middle">'+String(NL.names[k]||'').toUpperCase()+'</text>';
     }
-    // house cusps (equal)
-    for(var h=0;h<12;h++){ var lon=asc+h*30, p1=pos(lon,Rin), p2=pos(lon,Rhub);
-      var wide=(h%3===0);
-      s+='<line x1="'+p1[0].toFixed(1)+'" y1="'+p1[1].toFixed(1)+'" x2="'+p2[0].toFixed(1)+'" y2="'+p2[1].toFixed(1)+'" stroke="rgba(37,24,28,'+(wide?'.4':'.16')+')" stroke-width="'+(wide?'1.3':'1')+'"/>';
-      var hn=pos(lon+15,Rhub+16);
-      s+='<text x="'+hn[0].toFixed(1)+'" y="'+(hn[1]+4).toFixed(1)+'" font-family="Cormorant Garamond" font-style="italic" font-size="13" fill="#b7a98a" text-anchor="middle">'+(h+1)+'</text>';
+    // house cusps + numbers (equal houses from Ascendant)
+    for(var h=0;h<12;h++){ var lon=asc+h*30, p1=pos(lon,rHouseOut), p2=pos(lon,rHub); var wide=(h%3===0);
+      s+='<line x1="'+P(p1[0])+'" y1="'+P(p1[1])+'" x2="'+P(p2[0])+'" y2="'+P(p2[1])+'" stroke="'+(wide?INK:FAINT)+'" stroke-width="'+(wide?'1.3':'.8')+'"'+(wide?'':' stroke-dasharray="2,4"')+'/>';
+      var hn=pos(lon+15,rHouseNum);
+      s+='<text x="'+P(hn[0])+'" y="'+P(hn[1]+5)+'" font-family="Cormorant Garamond" font-style="italic" font-size="19" fill="#b7a98a" text-anchor="middle">'+(h+1)+'</text>';
     }
-    // ASC / MC markers
-    var ap=pos(asc,R+2); s+='<text x="'+(ap[0]-10).toFixed(1)+'" y="'+ap[1].toFixed(1)+'" font-family="DM Sans" font-size="9" letter-spacing="1" fill="#b12a1e" text-anchor="end">ASC</text>';
-    var mp=pos(c.mc.lon,R+2); s+='<text x="'+mp[0].toFixed(1)+'" y="'+(mp[1]-2).toFixed(1)+'" font-family="DM Sans" font-size="9" letter-spacing="1" fill="#6a4b8a" text-anchor="middle">MC</text>';
-    // planets
-    PL.forEach(function(p){ var pl=c.planets[p[0]], pp=pos(pl.lon,Rpl);
-      s+='<circle cx="'+pp[0].toFixed(1)+'" cy="'+pp[1].toFixed(1)+'" r="2.4" fill="#25181c"/>';
-      s+='<text x="'+pp[0].toFixed(1)+'" y="'+(pp[1]-6).toFixed(1)+'" font-family="DM Sans" font-size="9.5" fill="#25181c" text-anchor="middle">'+p[1]+'</text>';
-      s+='<text x="'+pp[0].toFixed(1)+'" y="'+(pp[1]+12).toFixed(1)+'" font-family="DM Sans" font-size="7.5" fill="#9c8666" text-anchor="middle">'+Math.round(pl.deg)+'°</text>';
+    // planets (nudge radius when angularly close to reduce overlap)
+    var used=[];
+    PL.forEach(function(p){ var pl=c.planets[p[0]], rp=rPlanet;
+      used.forEach(function(u){ if(angDist(pl.lon,u.lon)<8 && Math.abs(u.rp-rp)<1) rp-=30; });
+      used.push({lon:pl.lon,rp:rp}); var pp=pos(pl.lon,rp);
+      s+='<circle cx="'+P(pp[0])+'" cy="'+P(pp[1])+'" r="3.2" fill="'+INK+'"/>';
+      s+='<text x="'+P(pp[0])+'" y="'+P(pp[1]-9)+'" font-family="DM Sans" font-size="15" fill="'+INK+'" text-anchor="middle">'+p[1]+'</text>';
+      s+='<text x="'+P(pp[0])+'" y="'+P(pp[1]+17)+'" font-family="DM Sans" font-size="11" fill="#9c8666" text-anchor="middle">'+Math.round(pl.deg)+'°</text>';
     });
+    // ASC / MC markers
+    var ap=pos(asc,rBandOut+10); s+='<text x="'+P(ap[0]+5)+'" y="'+P(ap[1]+5)+'" font-family="DM Sans" font-size="15" letter-spacing="2" fill="#b12a1e" text-anchor="start">ASC</text>';
+    var mp=pos(c.mc.lon,rBandOut+10); s+='<text x="'+P(mp[0])+'" y="'+P(mp[1]-5)+'" font-family="DM Sans" font-size="15" letter-spacing="2" fill="#6a4b8a" text-anchor="middle">MC</text>';
+    // center sun medallion with the rising sign figure
+    s+='<g transform="translate(500,500)">';
+    var rayN=24; for(var r0=0;r0<rayN;r0++){ var ang=r0/rayN*Math.PI*2, r1=rHub-16, r2=rHub-5;
+      s+='<line x1="'+P(Math.cos(ang)*r1)+'" y1="'+P(Math.sin(ang)*r1)+'" x2="'+P(Math.cos(ang)*r2)+'" y2="'+P(Math.sin(ang)*r2)+'" stroke="'+GOLD+'" stroke-width="'+(r0%2?'.8':'1.5')+'"/>'; }
+    s+='<circle r="78" fill="none" stroke="'+SOFT+'"/>';
+    s+='<text x="0" y="30" font-family="ophzod" font-size="84" fill="'+INK+'" text-anchor="middle">'+ZCH[c.asc.si]+'</text>';
+    s+='</g>';
     svg.innerHTML=s;
   }
 
@@ -525,28 +563,69 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; return NATAL_I
   }
   window.__natalDemo=function(){ renderFromCoords('Sercan',1990,6,15,14,30,41.01,28.98,'Europe/Istanbul'); };
 
+  // ---- Country + city pickers, sourced from Supabase public.cities ----
+  var CITY_API='https://lssyopqxthausyegeire.supabase.co/rest/v1';
+  var CITY_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo';
+  var cityHdr={apikey:CITY_KEY,Authorization:'Bearer '+CITY_KEY};
+  var selCity=null; // {name, lat, lon, tz}
+  function esc2(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  (function initCountries(){
+    var sel=document.getElementById('f-country'); if(!sel) return;
+    fetch(CITY_API+'/city_countries?select=country_code&order=country_code',{headers:cityHdr})
+      .then(function(r){return r.json();})
+      .then(function(rows){
+        if(!Array.isArray(rows)||!rows.length) return;
+        var lang=(window.OphApp?OphApp.getLang():'en'), dn=null;
+        try{ dn=new Intl.DisplayNames([lang],{type:'region'}); }catch(e){}
+        var list=rows.map(function(r){ var code=r.country_code, nm=code; try{ if(dn) nm=dn.of(code)||code; }catch(e){} return {code:code,name:nm}; })
+          .filter(function(x){return x.code;})
+          .sort(function(a,b){ return String(a.name).localeCompare(String(b.name),lang); });
+        sel.innerHTML='<option value="">—</option>'+list.map(function(x){ return '<option value="'+x.code+'">'+esc2(x.name)+'</option>'; }).join('');
+        sel.disabled=false;
+      }).catch(function(){});
+  })();
+  (function initCity(){
+    var cinp=document.getElementById('f-city'), clist=document.getElementById('city-list'), csel=document.getElementById('f-country');
+    if(!cinp||!clist||!csel) return;
+    var tmr=null, hi=-1;
+    function hide(){ clist.className='citylist'; hi=-1; }
+    function pick(li){ selCity={name:li.getAttribute('data-name'), lat:parseFloat(li.getAttribute('data-lat')), lon:parseFloat(li.getAttribute('data-lon')), tz:li.getAttribute('data-tz')}; cinp.value=selCity.name; hide(); }
+    function search(){
+      var q=cinp.value.trim(), cc=csel.value; selCity=null;
+      if(!cc || q.length<1){ hide(); return; }
+      var url=CITY_API+'/cities?select=name,tz,lat_e6,lon_e6&country_code=eq.'+encodeURIComponent(cc)+'&name=ilike.'+encodeURIComponent(q+'%')+'&order=population.desc.nullslast&limit=12';
+      fetch(url,{headers:cityHdr}).then(function(r){return r.json();}).then(function(rows){
+        if(!Array.isArray(rows)||!rows.length){ hide(); return; }
+        clist.innerHTML=rows.map(function(r,i){ return '<li data-i="'+i+'" data-name="'+esc2(r.name)+'" data-lat="'+(r.lat_e6/1e6)+'" data-lon="'+(r.lon_e6/1e6)+'" data-tz="'+esc2(r.tz||'UTC')+'">'+esc2(r.name)+'<small>'+esc2(r.tz||'')+'</small></li>'; }).join('');
+        clist.className='citylist on'; hi=-1;
+        [].forEach.call(clist.querySelectorAll('li'), function(li){ li.addEventListener('mousedown', function(e){ e.preventDefault(); pick(li); }); });
+      }).catch(hide);
+    }
+    csel.addEventListener('change', function(){ selCity=null; cinp.value=''; cinp.disabled=!csel.value; hide(); clist.innerHTML=''; if(csel.value) cinp.focus(); });
+    cinp.addEventListener('input', function(){ selCity=null; clearTimeout(tmr); tmr=setTimeout(search,200); });
+    cinp.addEventListener('keydown', function(e){ var lis=clist.querySelectorAll('li'); if(!lis.length) return;
+      if(e.key==='ArrowDown'){ e.preventDefault(); hi=Math.min(hi+1,lis.length-1); }
+      else if(e.key==='ArrowUp'){ e.preventDefault(); hi=Math.max(hi-1,0); }
+      else if(e.key==='Enter'){ if(hi>=0){ e.preventDefault(); pick(lis[hi]); } return; }
+      else return;
+      [].forEach.call(lis,function(l,i){ l.className=(i===hi?'hl':''); }); if(lis[hi]) lis[hi].scrollIntoView({block:'nearest'});
+    });
+    cinp.addEventListener('blur', function(){ setTimeout(hide,150); });
+  })();
+
   document.getElementById('buildBtn').addEventListener('click', function(){
-    var name=val('f-name'), date=val('f-date'), time=val('f-time'), city=val('f-city'), country=val('f-country'), mail=val('f-mail');
+    var name=val('f-name'), date=val('f-date'), time=val('f-time'), mail=val('f-mail');
     var err=document.getElementById('f-err');
-    if(!name||!date||!time||!city||!mail){ err.textContent='Please fill in name, birth date, time, city and email.'; return; }
+    if(!name||!date||!time||!mail){ err.textContent='Please fill in name, birth date, time and email.'; return; }
+    if(!selCity){ err.textContent='Please choose your country, then pick your birth city from the list.'; return; }
     err.textContent='';
     var gl=document.getElementById('gearsLoad'); if(!gearsLoad){ try{ gearsLoad=OphanCarklar.olustur(gl,GOPT); }catch(e){} }
     goTo('n-loading');
-    // geocode via open-meteo (keyless)
-    var q=encodeURIComponent(city);
-    fetch('https://geocoding-api.open-meteo.com/v1/search?name='+q+'&count=5&language=en&format=json')
-      .then(function(r){return r.json();})
-      .then(function(j){
-        var res=(j&&j.results)||[]; var hit=res[0];
-        if(country){ var cc=country.trim().toLowerCase();
-          var m=res.filter(function(x){return (x.country||'').toLowerCase().indexOf(cc)>=0 || (x.country_code||'').toLowerCase()===cc;});
-          if(m.length) hit=m[0]; }
-        if(!hit){ err.textContent='Could not find that city — try a larger nearby city.'; goTo('n-form'); return; }
-        var dp=date.split('-'), tp=time.split(':');
-        renderFromCoords(name, +dp[0],+dp[1],+dp[2], +tp[0],+tp[1], hit.latitude, hit.longitude, hit.timezone||'UTC');
-        setTimeout(function(){ goTo('n-chart'); }, 1400);
-      })
-      .catch(function(){ err.textContent='Could not reach the location service. Please try again.'; goTo('n-form'); });
+    var dp=date.split('-'), tp=time.split(':'), sc=selCity;
+    setTimeout(function(){
+      renderFromCoords(name, +dp[0],+dp[1],+dp[2], +tp[0],+tp[1], sc.lat, sc.lon, sc.tz||'UTC');
+      setTimeout(function(){ goTo('n-chart'); }, 1200);
+    }, 400);
   });
   function val(id){ return (document.getElementById(id).value||'').trim(); }
 
