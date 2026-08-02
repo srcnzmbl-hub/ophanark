@@ -187,19 +187,25 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     var css = ''
       + 'html[data-theme="dark"]{--bg:#000 !important;--ink:#ffffff !important;--line:rgba(255,255,255,.18) !important;--muted:#AEB6C2 !important;}'
       + 'html[data-theme="dark"] body{background:#000 !important;}'
-      + '.kicker{font-size:14px !important;}'
-      + '.backlink{font-size:13.5px !important;}'
-      + '.brandmini{font-size:16.5px !important;}'
-      + '.num{font-size:17px !important;}'
-      + '.lead{font-size:clamp(17px,4.6vw,23px) !important;}'
-      + '.tagline{font-size:clamp(20px,5.6vw,28px) !important;}'
-      + '.continue{font-size:15px !important;}'
-      + '.go{font-size:clamp(13px,3.2vw,15px) !important;}'
-      + '.cap{font-size:12.5px !important;}'
-      + '.consent{font-size:14px !important;}'
-      + '.loadsub{font-size:13px !important;}'
-      + '.loadtxt{font-size:clamp(22px,6vw,30px) !important;}'
-      + '.rtext{font-size:clamp(17px,4.5vw,20.5px) !important;line-height:1.62 !important;}';
+      + '.kicker{font-size:15.5px !important;letter-spacing:.34em !important;}'
+      + '.backlink{font-size:14.5px !important;}'
+      + '.brandmini{font-size:17.5px !important;}'
+      + '.num{font-size:18px !important;}'
+      + '.lead{font-size:clamp(18px,5vw,25px) !important;}'
+      + '.tagline{font-size:clamp(22px,6.2vw,31px) !important;}'
+      + '.continue{font-size:16.5px !important;}'
+      + '.go{font-size:clamp(14px,3.5vw,16.5px) !important;}'
+      + '.cap{font-size:13.5px !important;}'
+      + '.consent{font-size:14.5px !important;}'
+      + '.loadsub{font-size:13.5px !important;}'
+      + '.loadtxt{font-size:clamp(23px,6.4vw,32px) !important;}'
+      + '.rtext{font-size:clamp(18px,4.9vw,22px) !important;line-height:1.64 !important;}'
+      + '.field label,.set-label{font-size:13px !important;}'
+      // proportionally enlarge home/intro visuals (transform keeps layout box → no reflow/overflow)
+      + '.cup{transform:scale(1.18) !important;}'
+      + '.handimg{transform:scale(1.18) !important;}'
+      + '.tt,.tb{transform:scale(1.12) !important;}'
+      + '.kicker ~ div canvas{transform:scale(1.16) !important;}';
     var st = d.createElement('style'); st.id = 'oph-scale'; st.textContent = css;
     (d.head || d.documentElement).appendChild(st);
   }
