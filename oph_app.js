@@ -188,20 +188,23 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
       + 'html[data-theme="dark"]{--bg:#121216 !important;--ink:#ffffff !important;--line:rgba(255,255,255,.18) !important;--muted:#AEB6C2 !important;}'
       + 'html[data-theme="dark"] body{background:#121216 !important;}'
       + 'html[data-theme="dark"] .rbody,html[data-theme="dark"] .rtext,html[data-theme="dark"] .lead,html[data-theme="dark"] .rmeta{color:#EDEDF1 !important;}'
-      + '.kicker{font-size:15.5px !important;letter-spacing:.34em !important;}'
-      + '.backlink{font-size:14.5px !important;}'
-      + '.brandmini{font-size:17.5px !important;}'
-      + '.num{font-size:18px !important;}'
-      + '.lead{font-size:clamp(18px,5vw,25px) !important;}'
-      + '.tagline{font-size:clamp(22px,6.2vw,31px) !important;}'
-      + '.continue{font-size:16.5px !important;}'
-      + '.go{font-size:clamp(14px,3.5vw,16.5px) !important;}'
-      + '.cap{font-size:13.5px !important;}'
-      + '.consent{font-size:14.5px !important;}'
-      + '.loadsub{font-size:13.5px !important;}'
-      + '.loadtxt{font-size:clamp(23px,6.4vw,32px) !important;}'
-      + '.rtext{font-size:clamp(18px,4.9vw,22px) !important;line-height:1.64 !important;}'
-      + '.field label,.set-label{font-size:13px !important;}'
+      + '.backlink,.backlink a{font-size:21px !important;letter-spacing:.06em !important;text-transform:none !important;}'
+      + '.brandmini{font-size:20px !important;}'
+      + '.kicker{font-size:18px !important;letter-spacing:.32em !important;}'
+      + '.num{font-size:26px !important;}'
+      + '.lead{font-size:clamp(21px,6vw,30px) !important;line-height:1.5 !important;}'
+      + '.tagline{font-size:clamp(28px,8vw,42px) !important;line-height:1.12 !important;}'
+      + '.big{font-size:clamp(36px,12vw,62px) !important;}'
+      + '.continue{font-size:20px !important;}'
+      + '.go{font-size:clamp(17px,4.4vw,21px) !important;}'
+      + '.cap{font-size:16.5px !important;}'
+      + '.consent{font-size:17px !important;line-height:1.5 !important;}'
+      + '.loadsub{font-size:16px !important;}'
+      + '.loadtxt{font-size:clamp(27px,7.4vw,38px) !important;}'
+      + '.rtext,.rbody,.rbd{font-size:clamp(21px,5.6vw,26px) !important;line-height:1.66 !important;}'
+      + '.field label,.set-label,.rlab,.hint,.note,.sub,.opt,.foot-strip{font-size:16.5px !important;}'
+      + '.field input,.field select,select,input[type=text],input[type=email],input[type=password],input[type=date],input[type=time]{font-size:18.5px !important;}'
+      + '.cardname{font-size:clamp(19px,5vw,23px) !important;}'
       // proportionally enlarge home/intro visuals (transform keeps layout box → no reflow/overflow)
       + '.cup{transform:scale(1.18) !important;}'
       + '.handimg{transform:scale(1.18) !important;}'
@@ -274,7 +277,16 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     return bar;
   }
 
-  function boot() { injectScale(); applyTheme(getTheme()); applyLang(getLang()); }
+  // Relabel the top-left back link to a clear, localized "Home" (was "Fortunes")
+  function fixBackHome() {
+    var H = { en: 'Home', tr: 'Ana Ekran', de: 'Startseite', fr: 'Accueil', es: 'Inicio', it: 'Home', pt: 'Início', ru: 'Главная', ar: 'الرئيسية', zh: '主页', ja: 'ホーム', ko: '홈', hi: 'होम', nl: 'Home', pl: 'Główna' };
+    var t = H[getLang()] || 'Home';
+    try {
+      var a = d.querySelector('.backlink a'); if (a) a.textContent = '← ' + t;
+    } catch (e) {}
+  }
+
+  function boot() { injectScale(); applyTheme(getTheme()); applyLang(getLang()); fixBackHome(); }
   if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', boot);
   else boot();
 
