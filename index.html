@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>(function(){try{var t=localStorage.getItem('oph_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>OPHANARK</title>
 <style>
@@ -54,6 +55,9 @@
   .msg{min-height:18px;margin-top:16px;font-family:var(--serif);font-style:italic;font-size:14px;text-align:center;color:#5a4a44}
   .fine{margin-top:14px;font-family:var(--sans);font-size:10px;letter-spacing:.05em;color:var(--muted);text-align:center;max-width:320px}
   @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.loginBtn span.ln{animation:none}}
+  /* inverse dark theme */
+  :root[data-theme="dark"]{--bg:#080C17;--ink:#DAE7E3;--line:rgba(218,231,227,.16);--muted:#637999}
+  html[data-theme="dark"],html[data-theme="dark"] body{background:#080C17}
 </style>
 </head>
 <body>
@@ -152,5 +156,6 @@
   document.getElementById('googleBtn').addEventListener('click',function(){ oauth('google'); });
   document.getElementById('appleBtn').addEventListener('click',function(){ oauth('apple'); });
 </script>
+<script src="oph_app.js"></script>
 </body>
 </html>
