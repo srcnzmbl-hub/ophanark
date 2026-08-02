@@ -49,6 +49,16 @@ body{background:var(--bg)}
 .lang-select{background:transparent;border:1px solid var(--line);color:var(--ink);font-family:var(--sans);font-size:12px;letter-spacing:.08em;padding:11px 14px;cursor:pointer;outline:none;min-width:150px;-webkit-appearance:none;appearance:none}
 .lang-select:focus{border-color:var(--ink)}
 html[data-theme="dark"] .lang-select option{background:#0f1626;color:var(--ink)}
+.hist{margin-top:2px}
+.hitem{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.hitem:last-child{border-bottom:0}
+.hmain{min-width:0}
+.htype{font-family:var(--sans);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.hname{font-family:var(--serif);font-size:18px;color:var(--ink);line-height:1.2}
+.hmeta{text-align:end;flex:none}
+.hdate{font-family:var(--sans);font-size:12px;letter-spacing:.04em;color:var(--ink);opacity:.82}
+.htime{font-family:var(--sans);font-size:11px;letter-spacing:.06em;color:var(--muted);margin-top:2px}
+.hist-empty{font-family:var(--sans);font-size:12px;letter-spacing:.04em;color:var(--muted);padding:8px 0}
 .signout{margin-top:46px;text-align:center}
 .signout button{color:#b12a1e;border-color:rgba(177,42,30,.4)}
 .signout button:hover{border-color:#b12a1e}
@@ -90,6 +100,11 @@ html[data-theme="dark"] .lang-select option{background:#0f1626;color:var(--ink)}
           <button data-theme-val="dark">Dark</button>
         </div>
       </div>
+    </div>
+
+    <div class="sec">
+      <h2>History</h2>
+      <div id="hist-list" class="hist"><div class="hist-empty">Loading...</div></div>
     </div>
 
     <div class="signout"><button class="btn" id="signout">Sign out</button></div>
@@ -164,6 +179,35 @@ html[data-theme="dark"] .lang-select option{background:#0f1626;color:var(--ink)}
   }
   document.querySelectorAll('#seg-theme button').forEach(function(b){ b.addEventListener('click', function(){ if(window.OphApp){ OphApp.setTheme(b.dataset.themeVal); paint(); } }); });
   paint();
+
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  // Reading history from Supabase (RLS returns only the current user's rows)
+  (async function(){
+    var list=document.getElementById('hist-list'); if(!list) return;
+    function setMsg(m){ list.innerHTML='<div class="hist-empty">'+esc(m)+'</div>'; }
+    if(!sb){ setMsg(T('No readings yet.')); return; }
+    try{
+      var r=await sb.from('fal_kayitlari').select('id,fal_turu,created_at').order('created_at',{ascending:false}).limit(50);
+      if(r.error || !r.data || !r.data.length){ setMsg(T('No readings yet.')); return; }
+      var loc=(window.OphApp?OphApp.getLang():'en');
+      var SHORT={kahve:'ft_kahve',el:'ft_el',tarot:'ft_tarot',ruya:'ft_ruya'};
+      var FULL={kahve:'card_coffee',el:'card_palm',tarot:'card_tarot',ruya:'nav_dream'};
+      function tid(id){ return (window.OphApp && id)?OphApp.tById(id):id; }
+      var dfmt,tfmt;
+      try{ dfmt=new Intl.DateTimeFormat(loc,{year:'numeric',month:'2-digit',day:'2-digit'}); }catch(e){ dfmt=new Intl.DateTimeFormat('en',{year:'numeric',month:'2-digit',day:'2-digit'}); }
+      try{ tfmt=new Intl.DateTimeFormat(loc,{hour:'2-digit',minute:'2-digit'}); }catch(e){ tfmt=new Intl.DateTimeFormat('en',{hour:'2-digit',minute:'2-digit'}); }
+      list.innerHTML=r.data.map(function(row){
+        var t=row.fal_turu||'';
+        var typ=tid(SHORT[t])||t;
+        var nm=tid(FULL[t])||t;
+        var dt=new Date(String(row.created_at||'').replace(' ','T'));
+        var ds=isNaN(dt.getTime())?'':dfmt.format(dt);
+        var ts=isNaN(dt.getTime())?'':tfmt.format(dt);
+        return '<div class="hitem"><div class="hmain"><div class="htype">'+esc(typ)+'</div><div class="hname">'+esc(nm)+'</div></div>'+
+               '<div class="hmeta"><div class="hdate">'+esc(ds)+'</div><div class="htime">'+esc(ts)+'</div></div></div>';
+      }).join('');
+    }catch(e){ setMsg(T('No readings yet.')); }
+  })();
 
   document.getElementById('signout').addEventListener('click', async function(){
     try{ if(sb) await sb.auth.signOut(); }catch(e){}
