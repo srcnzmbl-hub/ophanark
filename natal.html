@@ -568,14 +568,10 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; return NATAL_I
   var _stateCache={};
   function initCountries(){
     if(!elCtry) return;
-    sbGet('cities?select=country_code&limit=8000').then(function(rows){
-      var seen={}, codes=[];
-      (rows||[]).forEach(function(r){ var c=r.country_code; if(c&&!seen[c]){seen[c]=1;codes.push(c);} });
-      var dn; try{ dn=new Intl.DisplayNames([uiLang()],{type:'region'}); }catch(e){ dn=null; }
-      var list=codes.map(function(c){ var nm=c; try{ nm=(dn&&dn.of(c))||c; }catch(e){} return {code:c,name:nm}; });
-      list.sort(function(a,b){ return a.name.localeCompare(b.name); });
+    sbGet('geo_countries?select=code,name&order=name.asc').then(function(rows){
+      var list=(rows||[]).filter(function(r){ return r.code && r.name; });
       var h='<option value="">'+T('Ülke seçin…','Select country…')+'</option>';
-      list.forEach(function(x){ h+='<option value="'+x.code+'">'+esc(x.name)+'</option>'; });
+      list.forEach(function(r){ h+='<option value="'+esc(r.code)+'">'+esc(r.name)+'</option>'; });
       elCtry.innerHTML=h;
     }).catch(function(){});
   }
@@ -585,16 +581,36 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; return NATAL_I
     var fill=function(rows){
       rows=rows||[];
       var h='<option value="">'+T('Eyalet / bölge (opsiyonel)','State / region (optional)')+'</option>';
-      rows.forEach(function(r){ h+='<option value="'+esc(r.name)+'" data-lat="'+r.lat_e6+'" data-lon="'+r.lon_e6+'" data-tz="'+esc(r.tz||'')+'">'+esc(r.name)+'</option>'; });
+      rows.forEach(function(r){ h+='<option value="'+esc(r.name)+'" data-lat="'+(r.lat==null?'':r.lat)+'" data-lon="'+(r.lon==null?'':r.lon)+'" data-tz="'+esc(r.tz||'')+'">'+esc(r.name)+'</option>'; });
       elState.innerHTML=h; elState.disabled=false;
-      if(elCitySug){ var s=''; rows.slice(0,80).forEach(function(r){ s+='<option value="'+esc(r.name)+'">'; }); elCitySug.innerHTML=s; }
     };
     if(_stateCache[cc]){ fill(_stateCache[cc]); return; }
-    sbGet('cities?country_code=eq.'+encodeURIComponent(cc)+'&select=name,lat_e6,lon_e6,tz&order=name.asc').then(function(rows){ _stateCache[cc]=rows; fill(rows); }).catch(function(){ elState.innerHTML='<option value="">—</option>'; });
+    sbGet('geo_states?country_code=eq.'+encodeURIComponent(cc)+'&select=name,lat,lon,tz&order=name.asc').then(function(rows){ _stateCache[cc]=rows; fill(rows); }).catch(function(){ elState.innerHTML='<option value="">—</option>'; });
   }
+  // Live city suggestions via open-meteo, narrowed by the selected country (and state if any).
+  var _cityTimer=null;
+  function suggestCities(){
+    if(!elCitySug) return;
+    var q=(document.getElementById('f-city').value||'').trim();
+    var cc=elCtry?elCtry.value:'';
+    if(q.length<2){ elCitySug.innerHTML=''; return; }
+    fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=20&language='+uiLang()+'&format=json')
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        var res=(j&&j.results)||[];
+        if(cc){ var f=res.filter(function(x){ return (x.country_code||'').toUpperCase()===cc.toUpperCase(); }); if(f.length) res=f; }
+        var st=stateData();
+        if(st){ var sn=st.name.toLowerCase(); var g=res.filter(function(x){ var a=(x.admin1||'').toLowerCase(); return a&&(a.indexOf(sn)>=0||sn.indexOf(a)>=0); }); if(g.length) res=g; }
+        var seen={}, s='';
+        res.forEach(function(x){ var lbl=x.name+(x.admin1?', '+x.admin1:''); if(!seen[lbl]){ seen[lbl]=1; s+='<option value="'+esc(x.name)+'">'+esc(lbl)+'</option>'; } });
+        elCitySug.innerHTML=s;
+      }).catch(function(){});
+  }
+  var _elCityInput=document.getElementById('f-city');
+  if(_elCityInput){ _elCityInput.addEventListener('input', function(){ clearTimeout(_cityTimer); _cityTimer=setTimeout(suggestCities, 260); }); }
   if(elCtry){ elCtry.addEventListener('change', function(){ if(this.value) loadStates(this.value); else { elState.disabled=true; elState.innerHTML='<option value="">'+T('Önce ülke seçin…','Select country first…')+'</option>'; if(elCitySug) elCitySug.innerHTML=''; } }); initCountries(); }
 
-  function stateData(){ var o=elState&&elState.selectedOptions&&elState.selectedOptions[0]; if(o&&o.value){ var la=+o.getAttribute('data-lat'), lo=+o.getAttribute('data-lon'); if(isFinite(la)&&isFinite(lo)) return {name:o.value, lat:la/1e6, lon:lo/1e6, tz:o.getAttribute('data-tz')||'UTC'}; } return null; }
+  function stateData(){ var o=elState&&elState.selectedOptions&&elState.selectedOptions[0]; if(o&&o.value){ var la=parseFloat(o.getAttribute('data-lat')), lo=parseFloat(o.getAttribute('data-lon')); return {name:o.value, lat:isFinite(la)?la:null, lon:isFinite(lo)?lo:null, tz:o.getAttribute('data-tz')||'UTC'}; } return null; }
   function gdist(x,st){ var dy=(x.latitude-st.lat), dx=(x.longitude-st.lon); return dy*dy+dx*dx; }
   function geocodeCity(city, cc, st){
     var q=encodeURIComponent(city);
@@ -626,10 +642,10 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; return NATAL_I
     var go=function(lat,lon,tz){ renderFromCoords(name, +dp[0],+dp[1],+dp[2], +tp[0],+tp[1], lat, lon, tz||'UTC'); setTimeout(function(){ goTo('n-chart'); }, 1400); };
     geocodeCity(city, cc, st).then(function(hit){
       if(hit){ go(hit.latitude, hit.longitude, hit.timezone||(st&&st.tz)||'UTC'); return; }
-      if(st){ go(st.lat, st.lon, st.tz); return; }
+      if(st&&st.lat!=null){ go(st.lat, st.lon, st.tz); return; }
       err.textContent=T('Bu şehir bulunamadı — yakın daha büyük bir şehir deneyin ya da eyalet seçin.','Could not find that city — try a larger nearby city or pick a state.'); goTo('n-form');
     }).catch(function(){
-      if(st){ go(st.lat, st.lon, st.tz); return; }
+      if(st&&st.lat!=null){ go(st.lat, st.lon, st.tz); return; }
       err.textContent=T('Konum servisine ulaşılamadı. Lütfen tekrar deneyin.','Could not reach the location service. Please try again.'); goTo('n-form');
     });
   });
