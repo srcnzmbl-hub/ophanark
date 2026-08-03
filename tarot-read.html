@@ -120,17 +120,19 @@
   /* reveal + reading */
   #tr-result{display:none}
   #tr-result.on{display:block}
-  .tr-spread{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(8px,2.4vw,14px);margin:.6cm auto 1cm;max-width:600px}
-  .tr-card{width:clamp(74px,20vw,110px)}
-  .tr-card img{width:100%;height:auto;aspect-ratio:2/3;object-fit:cover;border-radius:7px;box-shadow:0 8px 18px rgba(20,14,10,.24);display:block}
+  .tr-stage{position:relative;width:min(94vw,540px);margin:.7cm auto .3cm}
+  .tr-card{position:absolute;transform:translate(-50%,-50%)}
+  .tr-card img{width:100%;height:auto;aspect-ratio:2/3;object-fit:cover;border-radius:5px;box-shadow:0 6px 14px rgba(20,14,10,.30);display:block}
   .tr-card.rev img{outline:2px solid #a8532e;outline-offset:-2px}
-  .tr-card .cn{font-family:var(--sans);font-size:10.5px;letter-spacing:.04em;color:var(--ink);margin-top:6px;line-height:1.2}
-  .tr-card .cp{font-family:var(--sans);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:2px}
-  .tr-card .co{font-size:9px;color:#a8532e}
-  /* single card side layout */
-  .tr-spread.single{flex-wrap:nowrap;align-items:flex-start;gap:18px;text-align:left}
-  .tr-spread.single .tr-card{width:clamp(96px,30vw,150px);flex:none}
-  .tr-read{font-family:var(--serif);color:#3f332f;font-size:clamp(15px,4vw,18px);line-height:1.62;
+  .tr-badge{position:absolute;top:-7px;left:-7px;width:18px;height:18px;border-radius:50%;background:var(--ink);color:var(--bg);
+    font-family:var(--sans);font-size:10px;display:flex;align-items:center;justify-content:center;z-index:3}
+  .tr-legend{max-width:520px;margin:.3cm auto 1cm;text-align:left;border-top:1px solid var(--line)}
+  .tr-legrow{display:flex;gap:10px;align-items:baseline;padding:8px 4px;border-bottom:1px solid var(--line)}
+  .tr-legrow .ln{font-family:var(--serif);font-style:italic;color:var(--muted);font-size:13px;min-width:18px}
+  .tr-legrow .lp{font-family:var(--sans);text-transform:uppercase;letter-spacing:.07em;font-size:10.5px;color:var(--muted);flex:0 0 40%}
+  .tr-legrow .lc{font-family:var(--disp);font-size:15px;color:var(--ink)}
+  .tr-legrow .lc .lo{font-size:11px;color:#a8532e}
+  .tr-read{font-family:var(--serif);color:#3f332f;font-size:clamp(17px,4.9vw,21px);line-height:1.66;
     text-align:left;max-width:600px;margin:0 auto;white-space:pre-wrap}
   html[data-theme="dark"] .tr-read{color:#EDEDF1}
   .tr-seebtn{margin:.4cm auto 0}
@@ -169,7 +171,8 @@
     </section>
 
     <section id="tr-result">
-      <div class="tr-spread" id="tr-spread"></div>
+      <div class="tr-stage" id="tr-stage"></div>
+      <div class="tr-legend" id="tr-legend"></div>
       <button class="tr-btn tr-seebtn" id="tr-see" style="display:none">Yorumu Gör</button>
       <div class="tr-read" id="tr-read" style="display:none"></div>
       <div class="tr-err" id="tr-err" style="display:none"></div>
@@ -254,14 +257,40 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
 
   function orient(seed){ return ((Date.now()+seed*263)%10) < 3 ? 'ters' : 'duz'; }
 
+  // --- geometric layouts per spread (x%,y% of a fitted stage; 3rd = rotation deg) ---
+  var row5=[[11,50],[30.5,50],[50,50],[69.5,50],[89,50]];
+  var cingenePos=[]; for(var _k=0;_k<21;_k++){ cingenePos.push([8+(_k%7)*14, 18+Math.floor(_k/7)*32]); }
+  var yillikPos=[]; for(var _i=0;_i<12;_i++){ var _a=(-90+_i*30)*Math.PI/180; yillikPos.push([50+40*Math.cos(_a), 50+40*Math.sin(_a)]); } yillikPos.push([50,50]);
+  var LAYOUTS={
+    'tek-kart':{ar:1.0,cw:42,pos:[[50,50]]},
+    'evet-hayir':{ar:1.0,cw:42,pos:[[50,50]]},
+    'uc-kart':{ar:0.62,cw:27,pos:[[20,50],[50,50],[80,50]]},
+    'kariyer':{ar:0.44,cw:17,pos:row5}, 'ask':{ar:0.44,cw:17,pos:row5}, 'ruhsal-rehberlik':{ar:0.44,cw:17,pos:row5},
+    'pentagram':{ar:0.95,cw:23,pos:[[50,13],[85,44],[70,87],[30,87],[15,44]]},
+    'at-nali':{ar:0.6,cw:15,pos:[[9,82],[20,50],[35,26],[50,17],[65,26],[80,50],[91,82]]},
+    'iliski':{ar:0.95,cw:24,pos:[[24,50],[76,50],[50,84],[50,50],[50,16]]},
+    'karar-iki-yol':{ar:0.9,cw:22,pos:[[50,82],[50,50],[50,18],[18,50],[82,50]]},
+    'yildiz':{ar:1.0,cw:22,pos:[[50,12],[86,32],[86,68],[50,88],[14,68],[14,32]]},
+    'kelt-haci':{ar:1.0,cw:18,pos:[[33,50],[33,50,90],[33,80],[13,50],[33,20],[53,50],[80,83],[80,61],[80,39],[80,17]]},
+    'cingene':{ar:0.66,cw:12,pos:cingenePos},
+    'yillik-on-iki-ay':{ar:1.0,cw:14,pos:yillikPos}
+  };
   function go(idx){
     var chosen = idx.map(function(i,k){ var c=order[i]; return { id:c.id, name:c.name, position:S.pos[k]||('Kart '+(k+1)), orientation:orient(i+k) }; });
-    // reveal cards
-    var sp=$('tr-spread'); sp.innerHTML=''; sp.className='tr-spread'+(need===1?' single':'');
-    chosen.forEach(function(c){
+    // reveal cards in the spread's geometric shape
+    var L=LAYOUTS[sid] || {ar:0.5,cw:16,pos:chosen.map(function(_,i){ return [100*(i+0.5)/chosen.length,50]; })};
+    var stage=$('tr-stage'); stage.innerHTML=''; stage.style.aspectRatio=(1/L.ar).toFixed(3);
+    var leg=$('tr-legend'); leg.innerHTML='';
+    chosen.forEach(function(c,i){
+      var p=L.pos[i]||[50,50]; var rot=p[2]||0;
       var el=document.createElement('div'); el.className='tr-card'+(c.orientation==='ters'?' rev':'');
-      el.innerHTML='<img src="cards/'+c.id+'.webp" style="'+(c.orientation==='ters'?'transform:rotate(180deg)':'')+'" alt="'+c.name+'"><div class="cp">'+c.position+'</div><div class="cn">'+c.name+(c.orientation==='ters'?' <span class="co">(ters)</span>':'')+'</div>';
-      sp.appendChild(el);
+      el.style.left=p[0]+'%'; el.style.top=p[1]+'%'; el.style.width=L.cw+'%';
+      el.style.transform='translate(-50%,-50%) rotate('+rot+'deg)';
+      el.innerHTML='<span class="tr-badge">'+(i+1)+'</span><img src="cards/'+c.id+'.webp" style="'+(c.orientation==='ters'?'transform:rotate(180deg)':'')+'" alt="'+c.name+'">';
+      stage.appendChild(el);
+      var lr=document.createElement('div'); lr.className='tr-legrow';
+      lr.innerHTML='<span class="ln">'+(i+1)+'</span><span class="lp">'+c.position+'</span><span class="lc">'+c.name+(c.orientation==='ters'?' <span class="lo">(ters)</span>':'')+'</span>';
+      leg.appendChild(lr);
     });
     $('tr-pick').style.display='none'; $('tr-result').style.display='block';
     $('tr-read').style.display='none'; $('tr-err').style.display='none'; $('tr-see').style.display='none';
