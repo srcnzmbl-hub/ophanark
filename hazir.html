@@ -113,9 +113,7 @@
   .hz-read{font-family:var(--serif);color:var(--ink);font-size:clamp(16px,4.6vw,19px);line-height:1.72}
   .hz-read p{margin:0 0 .8em}
   .hz-read p:last-child{margin-bottom:0}
-  /* yüklenince tek seferlik yumuşak giriş (görünürlük observer'a bağlı değil) */
-  .hz{animation:hzin .7s ease both}
-  @keyframes hzin{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  /* fallar her zaman görünür (görünürlük hiçbir animasyona/observer'a bağlı değil) */
   /* geçmişten bir fal açıldığında kısa vurgu */
   .hz.hz-hi{animation:hzhi 2.4s ease}
   @keyframes hzhi{0%{background:rgba(210,59,46,.12)}12%{background:rgba(210,59,46,.12)}100%{background:transparent}}
@@ -171,10 +169,10 @@
     for(var i=0;i<items.length;i++){ if(items[i].getBoundingClientRect().top < vh*0.55){ markRead(items[i]); } }
   }
   function trackScroll(){
-    var tick=false;
-    window.addEventListener('scroll',function(){ if(tick) return; tick=true;
-      (window.requestAnimationFrame||setTimeout)(function(){ tick=false; checkRead(); }); },{passive:true});
+    var last=0;
+    window.addEventListener('scroll',function(){ var n=+new Date(); if(n-last<140) return; last=n; checkRead(); },{passive:true});
     checkRead();
+    setTimeout(checkRead,300); setTimeout(checkRead,1200);
   }
   // geçmişten '#fal-<id>' ile gelindiyse o fala kaydır ve vurgula
   function goHash(){
