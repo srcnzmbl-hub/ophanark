@@ -47,10 +47,10 @@
     text-transform:uppercase;color:var(--ink);text-decoration:none;opacity:.68;transition:opacity .25s;
     white-space:nowrap;cursor:pointer}
   nav a:hover,nav a.act{opacity:1}
-  .quicklinks{display:flex;justify-content:center;flex-wrap:wrap;gap:clamp(7px,2.4vw,14px);margin:.32cm auto .2cm;padding:0 8px;max-width:calc(100% - 2.6cm)}
-  .quicklinks a{font-family:var(--sans);font-weight:400;font-size:clamp(9px,2.4vw,11.5px);letter-spacing:.1em;
+  .quicklinks{display:flex;justify-content:center;flex-wrap:nowrap;gap:clamp(4px,1.5vw,10px);margin:.32cm auto .2cm;padding:0 6px;max-width:100%}
+  .quicklinks a{font-family:var(--sans);font-weight:400;font-size:clamp(7.5px,2.05vw,11px);letter-spacing:.04em;
     text-transform:uppercase;color:var(--ink);text-decoration:none;border:1px solid var(--line);border-radius:999px;
-    padding:6px 13px;white-space:nowrap;transition:background .2s,border-color .2s}
+    padding:6px clamp(7px,2vw,13px);white-space:nowrap;transition:background .2s,border-color .2s}
   .quicklinks a:active,.quicklinks a:hover{border-color:var(--ink);background:rgba(37,24,28,.05)}
 
   /* HERO */
@@ -196,6 +196,7 @@
       <a data-go="s-natal">Natal Chart</a>
       <a data-go="s-ruya">Dream Interpretations</a>
       <a href="profil.html" class="navprofile">Profile</a>
+      <a href="hazir.html" class="navready">My Readings</a>
     </nav>
     <div class="quicklinks">
       <a href="kahve.html">Kahve Falı</a>
