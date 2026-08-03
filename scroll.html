@@ -47,6 +47,11 @@
     text-transform:uppercase;color:var(--ink);text-decoration:none;opacity:.68;transition:opacity .25s;
     white-space:nowrap;cursor:pointer}
   nav a:hover,nav a.act{opacity:1}
+  .quicklinks{display:flex;justify-content:center;flex-wrap:wrap;gap:clamp(7px,2.4vw,14px);margin:.32cm auto .2cm;padding:0 8px;max-width:calc(100% - 2.6cm)}
+  .quicklinks a{font-family:var(--sans);font-weight:400;font-size:clamp(9px,2.4vw,11.5px);letter-spacing:.1em;
+    text-transform:uppercase;color:var(--ink);text-decoration:none;border:1px solid var(--line);border-radius:999px;
+    padding:6px 13px;white-space:nowrap;transition:background .2s,border-color .2s}
+  .quicklinks a:active,.quicklinks a:hover{border-color:var(--ink);background:rgba(37,24,28,.05)}
 
   /* HERO */
   .hero{min-height:var(--vh);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
@@ -192,9 +197,15 @@
       <a data-go="s-ruya">Dream Interpretations</a>
       <a href="profil.html" class="navprofile">Profile</a>
     </nav>
+    <div class="quicklinks">
+      <a href="kahve.html">Kahve Falı</a>
+      <a href="el.html">El Falı</a>
+      <a href="katina.html">Katina Falı</a>
+      <a href="tarot.html">Tarot</a>
+    </div>
   </header>
 
-  <p class="sub" style="max-width:620px;margin:26px auto 0;padding:0 24px;text-align:center;line-height:1.55">This app has a scroll-based layout: as you scroll down you reach each section of the menu in turn. If there is a section you want to go to directly, pick it from the menu to jump straight to that page.</p>
+  <p class="sub" style="max-width:620px;margin:calc(26px + 1.5cm) auto 0;padding:0 24px;text-align:center;line-height:1.55">This app has a scroll-based layout: as you scroll down you reach each section of the menu in turn. If there is a section you want to go to directly, pick it from the menu to jump straight to that page.</p>
 
   <!-- 1 · HERO -->
   <section class="hero" id="s-fal">
