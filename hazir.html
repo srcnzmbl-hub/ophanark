@@ -113,9 +113,9 @@
   .hz-read{font-family:var(--serif);color:var(--ink);font-size:clamp(16px,4.6vw,19px);line-height:1.72}
   .hz-read p{margin:0 0 .8em}
   .hz-read p:last-child{margin-bottom:0}
-  /* scroll reveal */
-  .hz{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
-  .hz.seen{opacity:1;transform:none}
+  /* yüklenince tek seferlik yumuşak giriş (görünürlük observer'a bağlı değil) */
+  .hz{animation:hzin .7s ease both}
+  @keyframes hzin{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
   /* geçmişten bir fal açıldığında kısa vurgu */
   .hz.hz-hi{animation:hzhi 2.4s ease}
   @keyframes hzhi{0%{background:rgba(210,59,46,.12)}12%{background:rgba(210,59,46,.12)}100%{background:transparent}}
@@ -164,18 +164,23 @@
   try{ tfmt=new Intl.DateTimeFormat(loc,{hour:'2-digit',minute:'2-digit'}); }catch(e){ tfmt=new Intl.DateTimeFormat('en',{hour:'2-digit',minute:'2-digit'}); }
 
   function markRead(el){ try{ okunduIsaretle(el.getAttribute('data-fid')); }catch(e){} }
-  function reveal(){
-    var items=list.querySelectorAll('.hz');
-    try{
-      var io=new IntersectionObserver(function(en){ en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('seen'); markRead(x.target); io.unobserve(x.target); } }); },{threshold:.12});
-      items.forEach(function(el){ io.observe(el); });
-    }catch(e){ items.forEach(function(el){ el.classList.add('seen'); markRead(el); }); }
+  // ekranın üst yarısına gelen (okunmuş sayılan) falları işaretle
+  function checkRead(){
+    var vh=window.innerHeight||document.documentElement.clientHeight||800;
+    var items=document.querySelectorAll('.hz');
+    for(var i=0;i<items.length;i++){ if(items[i].getBoundingClientRect().top < vh*0.55){ markRead(items[i]); } }
+  }
+  function trackScroll(){
+    var tick=false;
+    window.addEventListener('scroll',function(){ if(tick) return; tick=true;
+      (window.requestAnimationFrame||setTimeout)(function(){ tick=false; checkRead(); }); },{passive:true});
+    checkRead();
   }
   // geçmişten '#fal-<id>' ile gelindiyse o fala kaydır ve vurgula
   function goHash(){
     var m=/^#fal-(.+)$/.exec(location.hash||''); if(!m) return;
     var el=document.getElementById('fal-'+m[1]); if(!el) return;
-    el.classList.add('seen'); markRead(el);
+    markRead(el);
     setTimeout(function(){ try{ el.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){ el.scrollIntoView(); }
       el.classList.add('hz-hi'); setTimeout(function(){ el.classList.remove('hz-hi'); },2600); }, 140);
   }
@@ -201,7 +206,7 @@
                '<div class="hz-date">'+esc(ds)+(ts?' \u00b7 '+esc(ts):'')+'</div>'+
                '<div class="hz-read">'+paras(row.yorum)+'</div></section>';
       }).join('');
-      reveal();
+      trackScroll();
       goHash();
     }catch(e){ setMsg('hz-empty', tid('hz_empty')); }
   })();
