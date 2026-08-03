@@ -224,7 +224,7 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
       + 'html[data-theme="dark"] .ttw-on{background:rgba(255,215,130,.34);color:#fff !important;}'
       + '.sub{font-size:clamp(14px,3.7vw,17px) !important;line-height:1.5 !important;}'
       + '.herotag{font-size:clamp(13px,3.6vw,16px) !important;}'
-      + '.hero h1{font-size:clamp(40px,12vw,76px) !important;}'
+      + '.hero h1{font-size:clamp(27px,8vw,51px) !important;}'
       + '.zlist{margin-top:1.4cm !important;width:min(94vw,560px) !important;}'
       + '.zcircle{width:min(30vw,112px) !important;}'
       + '.zrow .zn{font-size:16px !important;}'
