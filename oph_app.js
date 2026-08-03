@@ -307,15 +307,64 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     } catch (e) {}
   }
 
-  function boot() { injectScale(); applyTheme(getTheme()); applyLang(getLang()); fixBackHome(); }
+  function regSW(){ try{ if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(function(){}); } }catch(e){} }
+  function boot() { injectScale(); applyTheme(getTheme()); applyLang(getLang()); fixBackHome(); regSW(); }
   if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', boot);
   else boot();
+
+  /* ---- Web Push: kapalı uygulamaya bildirim planlama ---- */
+  var PUSH_SB = 'https://lssyopqxthausyegeire.supabase.co';
+  var PUSH_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo';
+  var VAPID_PUB = 'BM_IgsPXfteJkZR9lLXxe6kDXFO1b2oJpy4E-mBzFDGC1LZrcZVvxFoXIs9ZxIXigGgKQZUzpa4MSoe_N-dxUH0';
+
+  function b64ToU8(base64){
+    var pad = '='.repeat((4 - base64.length % 4) % 4);
+    var b = (base64 + pad).replace(/-/g,'+').replace(/_/g,'/');
+    var raw = atob(b); var out = new Uint8Array(raw.length);
+    for(var i=0;i<raw.length;i++) out[i] = raw.charCodeAt(i);
+    return out;
+  }
+  function pushSession(){
+    try{ var k='oph_oturum',v=localStorage.getItem(k);
+      if(!v){ v='oz_'+Date.now().toString(36)+Math.random().toString(36).slice(2,10); localStorage.setItem(k,v);} return v;
+    }catch(e){ return 'oz_anon'; }
+  }
+  // İzin ister, aboneliği alır, push-planla'ya gecikmeli bildirim kaydeder.
+  // opts: {gecikme_sn, baslik, govde, url}  -> Promise<boolean>
+  function pushPlanla(opts){
+    opts = opts || {};
+    if(!('serviceWorker' in navigator) || !('PushManager' in window)) return Promise.resolve(false);
+    return Promise.resolve().then(function(){
+      return (Notification.permission==='granted') ? 'granted' : Notification.requestPermission();
+    }).then(function(perm){
+      if(perm!=='granted') return false;
+      return navigator.serviceWorker.ready.then(function(reg){
+        return reg.pushManager.getSubscription().then(function(sub){
+          if(sub) return sub;
+          return reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: b64ToU8(VAPID_PUB) });
+        });
+      }).then(function(sub){
+        return fetch(PUSH_SB+'/functions/v1/push-planla',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':PUSH_ANON,'Authorization':'Bearer '+PUSH_ANON},
+          body:JSON.stringify({
+            oturum_id: pushSession(),
+            abonelik: sub,
+            gecikme_sn: (opts.gecikme_sn!=null ? opts.gecikme_sn : 180),
+            baslik: opts.baslik || 'OPHANARK',
+            govde: opts.govde || 'Falınız hazır ✨',
+            url: opts.url || './'
+          })
+        }).then(function(r){ return r.ok; }).catch(function(){ return false; });
+      }).catch(function(){ return false; });
+    }).catch(function(){ return false; });
+  }
 
   w.OphApp = {
     getTheme: getTheme, setTheme: setTheme,
     getLang: getLang, setLang: setLang,
     applyTheme: applyTheme, applyLang: applyLang,
     tByText: tByText, tById: tById, langName: langName, LABELS: LABELS,
-    mountTTS: mountTTS
+    mountTTS: mountTTS, pushPlanla: pushPlanla
   };
 })(window, document);

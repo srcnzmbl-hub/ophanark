@@ -202,7 +202,7 @@
   function nmeVal(){ var e=document.getElementById('k-name'); return e?(e.value||'').trim():''; }
   function filledCount(){ return images.filter(function(x){return !!x;}).length; }
   function gate(){ var ok=filledCount()===4 && consent; document.getElementById('interpretBtn').disabled=!ok; }
-  function delayReveal(cb){ var wait=Math.max(0,180000-(Date.now()-loadStart)); setTimeout(function(){ try{ if('Notification' in window && Notification.permission==='granted') new Notification('OPHANARK',{body:'El falınız hazır ✨'}); }catch(e){} cb(); }, wait); }
+  function delayReveal(cb){ var wait=Math.max(0,180000-(Date.now()-loadStart)); setTimeout(function(){ cb(); }, wait); }
 
   function goTo(id){ var t=document.getElementById(id); if(t) app.scrollTo({top:t.offsetTop,behavior:'smooth'}); }
   app.querySelectorAll('[data-go]').forEach(function(b){ b.addEventListener('click',function(){
@@ -218,7 +218,7 @@
     document.getElementById('k-lerr').classList.remove('on'); document.getElementById('k-retry').style.display='none';
     goTo('k-loading');
     loadStart=Date.now();
-    try{ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); }catch(e){}
+    try{ if(window.OphApp && OphApp.pushPlanla) OphApp.pushPlanla({gecikme_sn:180, baslik:'OPHANARK', govde:'El falınız hazır ✨', url:location.pathname}); }catch(e){}
     var _au=ozAuth();
     fetch(FN,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+(_au.token||ANON)},
       body:JSON.stringify({name:nmeVal(),right:[images[0],images[1]],left:[images[2],images[3]],lang:(window.OphApp?OphApp.getLang():'en'),kvkk_onay:true,egitim_izni:true,oturum_id:ozSession(),platform:ozPlatform(),uygulama_surum:APP_VER,kullanici_id:_au.uid||null})})

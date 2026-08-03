@@ -303,7 +303,8 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
     $('tr-load').classList.add('on'); makeGears();
     var total=180;
     $('tr-loadsub').textContent='Yorumunuz hazırlanıyor, hazır olunca size bildirim göndereceğiz.';
-    try{ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); }catch(e){}
+    // Kapalı uygulama bildirimi: 3 dk sonra sunucudan web push gönder
+    try{ if(window.OphApp && OphApp.pushPlanla) OphApp.pushPlanla({gecikme_sn:total, baslik:'OPHANARK', govde:'Tarot falınız hazır ✨', url:location.pathname+location.search}); }catch(e){}
     // start the actual reading fetch in parallel; reveal only after 3 min AND fetch done
     var fetchDone=null;
     fetchReading(chosen).then(function(r){ fetchDone=r; });
@@ -312,7 +313,6 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
       if(Date.now()-t0 >= total*1000 && fetchDone!==null){
         clearInterval(chk);
         $('tr-load').classList.remove('on');
-        try{ if('Notification' in window && Notification.permission==='granted') new Notification('OPHANARK', {body:'Tarot falınız hazır ✨'}); }catch(e){}
         showReading(fetchDone);
       }
     }, 1000);

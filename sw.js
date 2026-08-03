@@ -1,5 +1,5 @@
 /* Ophanark PWA service worker */
-var CACHE = 'ophanark-v77';
+var CACHE = 'ophanark-v78';
 var CORE = [
 './','./index.html','./manifest.webmanifest','./opening.jpg','./emblem.png','./natal_splash.jpg','./natal_bg.jpg','./zodiac.ttf',
 './app-icon-192.png','./app-icon-512.png','./app-apple-touch.png'
@@ -16,6 +16,39 @@ e.waitUntil(
 caches.keys().then(function(keys){
 return Promise.all(keys.map(function(k){ if(k!==CACHE) return caches.delete(k); }));
 }).then(function(){ return self.clients.claim(); })
+);
+});
+
+/* --- Web Push: kapalı uygulamaya bildirim --- */
+self.addEventListener('push', function(e){
+var d = {};
+try{ d = e.data ? e.data.json() : {}; }catch(err){ try{ d = { govde: e.data && e.data.text() }; }catch(e2){ d = {}; } }
+var baslik = d.baslik || d.title || 'OPHANARK';
+var govde  = d.govde  || d.body  || 'Falınız hazır ✨';
+var url    = d.url    || './';
+e.waitUntil(
+self.registration.showNotification(baslik, {
+body: govde,
+icon: './app-icon-192.png',
+badge: './app-icon-192.png',
+tag: d.tag || 'ophanark-fal',
+renotify: true,
+data: { url: url }
+})
+);
+});
+
+self.addEventListener('notificationclick', function(e){
+e.notification.close();
+var url = (e.notification.data && e.notification.data.url) || './';
+e.waitUntil(
+self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(cl){
+for(var i=0;i<cl.length;i++){
+var c = cl[i];
+if('focus' in c){ try{ c.navigate(url); }catch(err){} return c.focus(); }
+}
+if(self.clients.openWindow) return self.clients.openWindow(url);
+})
 );
 });
 
