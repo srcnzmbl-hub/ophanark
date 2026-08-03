@@ -52,6 +52,10 @@ html[data-theme="dark"] .lang-select option{background:#0f1626;color:var(--ink)}
 .hist{margin-top:2px}
 .hitem{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
 .hitem:last-child{border-bottom:0}
+a.hitem-btn{text-decoration:none;color:inherit;cursor:pointer;margin:0 -10px;padding-left:10px;padding-right:34px;border-radius:9px;transition:background .15s;-webkit-tap-highlight-color:transparent}
+a.hitem-btn:active,a.hitem-btn:hover{background:rgba(37,24,28,.05)}
+a.hitem-btn .hmeta{position:relative}
+a.hitem-btn .hmeta::after{content:'\203A';position:absolute;right:-22px;top:50%;transform:translateY(-50%);font-size:20px;line-height:1;color:var(--muted)}
 .hmain{min-width:0}
 .htype{font-family:var(--sans);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
 .hname{font-family:var(--serif);font-size:18px;color:var(--ink);line-height:1.2}
@@ -187,7 +191,7 @@ html[data-theme="dark"] .lang-select option{background:#0f1626;color:var(--ink)}
     function setMsg(m){ list.innerHTML='<div class="hist-empty">'+esc(m)+'</div>'; }
     if(!sb){ setMsg(T('No readings yet.')); return; }
     try{
-      var r=await sb.from('fal_kayitlari').select('id,fal_turu,created_at').order('created_at',{ascending:false}).limit(50);
+      var r=await sb.from('fal_kayitlari').select('id,fal_turu,created_at,durum').order('created_at',{ascending:false}).limit(50);
       if(r.error || !r.data || !r.data.length){ setMsg(T('No readings yet.')); return; }
       var loc=(window.OphApp?OphApp.getLang():'en');
       var SHORT={kahve:'ft_kahve',el:'ft_el',tarot:'ft_tarot',ruya:'ft_ruya'};
@@ -203,8 +207,12 @@ html[data-theme="dark"] .lang-select option{background:#0f1626;color:var(--ink)}
         var dt=new Date(String(row.created_at||'').replace(' ','T'));
         var ds=isNaN(dt.getTime())?'':dfmt.format(dt);
         var ts=isNaN(dt.getTime())?'':tfmt.format(dt);
-        return '<div class="hitem"><div class="hmain"><div class="htype">'+esc(typ)+'</div><div class="hname">'+esc(nm)+'</div></div>'+
-               '<div class="hmeta"><div class="hdate">'+esc(ds)+'</div><div class="htime">'+esc(ts)+'</div></div></div>';
+        var inner='<div class="hmain"><div class="htype">'+esc(typ)+'</div><div class="hname">'+esc(nm)+'</div></div>'+
+               '<div class="hmeta"><div class="hdate">'+esc(ds)+'</div><div class="htime">'+esc(ts)+'</div></div>';
+        if(row.durum==='tamam'){
+          return '<a class="hitem hitem-btn" href="hazir.html#fal-'+esc(row.id)+'">'+inner+'</a>';
+        }
+        return '<div class="hitem">'+inner+'</div>';
       }).join('');
     }catch(e){ setMsg(T('No readings yet.')); }
   })();

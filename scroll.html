@@ -52,6 +52,12 @@
     text-transform:uppercase;color:var(--ink);text-decoration:none;border:1px solid var(--line);border-radius:999px;
     padding:6px clamp(7px,2vw,13px);white-space:nowrap;transition:background .2s,border-color .2s}
   .quicklinks a:active,.quicklinks a:hover{border-color:var(--ink);background:rgba(37,24,28,.05)}
+  /* HAZIR FALLARIM bildirim rozeti */
+  .navready{position:relative}
+  .nav-badge{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;
+    padding:0 4px;margin-left:6px;border-radius:999px;background:#d23b2e;color:#fff;
+    font-family:var(--sans);font-weight:600;font-size:10px;letter-spacing:0;line-height:1;
+    vertical-align:middle;transform:translateY(-1px)}
 
   /* HERO */
   .hero{min-height:var(--vh);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
@@ -347,5 +353,35 @@
 </script>
 <script src="oph_app.js"></script>
 <script src="spiral.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* HAZIR FALLARIM: okunmamış hazır fal sayısını kırmızı rozet olarak göster */
+(function(){
+  var SB='https://lssyopqxthausyegeire.supabase.co';
+  var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo';
+  var RKEY='oph_okunan_fallar';
+  function okunanArr(){ try{ return JSON.parse(localStorage.getItem(RKEY)||'[]'); }catch(e){ return []; } }
+  var sb=null; try{ sb=window.supabase.createClient(SB,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); }catch(e){}
+  if(!sb) return;
+  function paint(){
+    sb.from('fal_kayitlari').select('id').eq('durum','tamam').not('yorum','is',null).limit(200)
+      .then(function(r){
+        var link=document.querySelector('.navready'); if(!link) return;
+        var old=link.querySelector('.nav-badge'); if(old) old.remove();
+        var rows=(r&&r.data)||[]; if(!rows.length) return;
+        var read=okunanArr();
+        var unread=rows.filter(function(x){ return read.indexOf(x.id)<0; }).length;
+        if(unread>0){
+          var b=document.createElement('span'); b.className='nav-badge';
+          b.textContent=unread>99?'99+':String(unread);
+          link.appendChild(b);
+        }
+      }).catch(function(){});
+  }
+  paint();
+  // sekmeye geri dönülünce (fal okunmuş olabilir) rozeti tazele
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) paint(); });
+})();
+</script>
 </body>
 </html>

@@ -116,6 +116,9 @@
   /* scroll reveal */
   .hz{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
   .hz.seen{opacity:1;transform:none}
+  /* geçmişten bir fal açıldığında kısa vurgu */
+  .hz.hz-hi{animation:hzhi 2.4s ease}
+  @keyframes hzhi{0%{background:rgba(210,59,46,.12)}12%{background:rgba(210,59,46,.12)}100%{background:transparent}}
 </style>
 </head>
 
@@ -149,6 +152,10 @@
   }
   var list=document.getElementById('hz-list');
   function setMsg(cls,m){ list.innerHTML='<div class="'+cls+'">'+esc(m)+'</div>'; }
+  // okunan fal id'leri (rozet bunları düşer)
+  var RKEY='oph_okunan_fallar';
+  function okunanArr(){ try{ return JSON.parse(localStorage.getItem(RKEY)||'[]'); }catch(e){ return []; } }
+  function okunduIsaretle(id){ if(!id) return; try{ var a=okunanArr(); if(a.indexOf(id)<0){ a.push(id); localStorage.setItem(RKEY, JSON.stringify(a)); } }catch(e){} }
 
   var FULL={kahve:'card_coffee',el:'card_palm',tarot:'card_tarot',ruya:'nav_dream'};
   var loc=(window.OphApp?OphApp.getLang():'en');
@@ -156,12 +163,21 @@
   try{ dfmt=new Intl.DateTimeFormat(loc,{year:'numeric',month:'2-digit',day:'2-digit'}); }catch(e){ dfmt=new Intl.DateTimeFormat('en',{year:'numeric',month:'2-digit',day:'2-digit'}); }
   try{ tfmt=new Intl.DateTimeFormat(loc,{hour:'2-digit',minute:'2-digit'}); }catch(e){ tfmt=new Intl.DateTimeFormat('en',{hour:'2-digit',minute:'2-digit'}); }
 
+  function markRead(el){ try{ okunduIsaretle(el.getAttribute('data-fid')); }catch(e){} }
   function reveal(){
     var items=list.querySelectorAll('.hz');
     try{
-      var io=new IntersectionObserver(function(en){ en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('seen'); io.unobserve(x.target); } }); },{threshold:.12});
+      var io=new IntersectionObserver(function(en){ en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('seen'); markRead(x.target); io.unobserve(x.target); } }); },{threshold:.12});
       items.forEach(function(el){ io.observe(el); });
-    }catch(e){ items.forEach(function(el){ el.classList.add('seen'); }); }
+    }catch(e){ items.forEach(function(el){ el.classList.add('seen'); markRead(el); }); }
+  }
+  // geçmişten '#fal-<id>' ile gelindiyse o fala kaydır ve vurgula
+  function goHash(){
+    var m=/^#fal-(.+)$/.exec(location.hash||''); if(!m) return;
+    var el=document.getElementById('fal-'+m[1]); if(!el) return;
+    el.classList.add('seen'); markRead(el);
+    setTimeout(function(){ try{ el.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){ el.scrollIntoView(); }
+      el.classList.add('hz-hi'); setTimeout(function(){ el.classList.remove('hz-hi'); },2600); }, 140);
   }
 
   (async function(){
@@ -181,11 +197,12 @@
         var dt=new Date(String(row.created_at||'').replace(' ','T'));
         var ds=isNaN(dt.getTime())?'':dfmt.format(dt);
         var ts=isNaN(dt.getTime())?'':tfmt.format(dt);
-        return '<section class="hz"><h2 class="hz-type">'+esc(nm)+'</h2>'+
+        return '<section class="hz" id="fal-'+esc(row.id)+'" data-fid="'+esc(row.id)+'"><h2 class="hz-type">'+esc(nm)+'</h2>'+
                '<div class="hz-date">'+esc(ds)+(ts?' \u00b7 '+esc(ts):'')+'</div>'+
                '<div class="hz-read">'+paras(row.yorum)+'</div></section>';
       }).join('');
       reveal();
+      goHash();
     }catch(e){ setMsg('hz-empty', tid('hz_empty')); }
   })();
 })();
