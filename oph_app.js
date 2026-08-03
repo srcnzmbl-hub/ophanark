@@ -363,11 +363,108 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     }).catch(function(){ return false; });
   }
 
+  /* ================= KVKK: oku-onayla kapısı (her falda ortak) ================= */
+  var KVKK_METIN =
+    '<h3>KVKK Aydınlatma ve Açık Rıza Metni</h3>'
+    + '<p>Bu metin, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında, OPHANARK (OZARK COLLECTIVE CO. — "veri sorumlusu") tarafından kişisel verilerinizin nasıl işlendiğini açıklar ve açık rızanıza sunar.</p>'
+    + '<h4>1. İşlenen kişisel veriler</h4>'
+    + '<p>Seçtiğiniz fal türüne göre şunlar işlenebilir: adınız; doğum tarihi, saati ve yeri (natal harita, burç ve tarot için); el veya kahve falı için gönderdiğiniz fotoğraflar; rüya metniniz; giriş yaparsanız e-posta ve profil bilginiz; uygulamanın çalışması için tarayıcı/cihaz türü gibi standart teknik veriler.</p>'
+    + '<h4>2. İşleme amaçları</h4>'
+    + '<p>Verileriniz; natal harita, tarot, kahve falı, el falı, rüya tabiri ve burç yorumlarını üretmek; doğum yerinizi enlem/boylam ve saat dilimine çevirmek; girişinizi hatırlamak ve deneyiminizi kişiselleştirmek amacıyla işlenir. Ayrıca, yalnızca ayrı olarak onay verirseniz, hizmet kalitesini artırmak üzere yapay zekâ modelinin eğitiminde kullanılabilir.</p>'
+    + '<h4>3. Aktarım ve hizmet sağlayıcılar</h4>'
+    + '<p>Yorumların üretilmesi için verileriniz güvenli yapay zekâ sağlayıcısına; doğum yeri koordinatları için yalnızca yer adı Open-Meteo coğrafi kodlama servisine; hesap girişi ve kayıt için Supabase altyapısına aktarılır. Tüm iletişim HTTPS/SSL ile şifrelenir.</p>'
+    + '<h4>4. Saklama ve silme</h4>'
+    + '<p>Doğum bilgileri öncelikle cihazınızın belleğinde (localStorage) tutulur; tarayıcı/uygulama verilerini temizleyerek dilediğiniz an silebilirsiniz. Hesabınızın ve ilişkili verilerin silinmesi için hello@ozarkcollective.co adresinden bize ulaşabilirsiniz.</p>'
+    + '<h4>5. Haklarınız (KVKK md. 11)</h4>'
+    + '<p>Kişisel verilerinizin işlenip işlenmediğini öğrenme, bilgi talep etme, düzeltilmesini, silinmesini veya yok edilmesini isteme, işlemeye itiraz etme ve zararın giderilmesini talep etme haklarına sahipsiniz. Taleplerinizi yukarıdaki e-posta adresine iletebilirsiniz.</p>'
+    + '<h4>6. Açık rıza</h4>'
+    + '<p>Bu metni okudum ve anladım. Seçtiğim falın oluşturulabilmesi için yukarıda belirtilen kişisel verilerimin bu amaçlarla işlenmesine ve gerekli hizmet sağlayıcılara aktarılmasına açık rıza veriyorum. Uygulama 13 yaşın altındaki çocuklara yönelik değildir.</p>';
+
+  var _kvkkOkundu = false, _kvkkCb = null;
+  function kvkkCssInjekte(){
+    if (d.getElementById('kvkk-css')) return;
+    var st = d.createElement('style'); st.id = 'kvkk-css';
+    st.textContent =
+      '.consent{display:flex;align-items:flex-start;gap:10px;width:min(370px,90%);margin:18px auto 0;text-align:left;cursor:pointer}'
+    + '.consent .cb{width:19px;height:19px;min-width:19px;border:1px solid var(--muted,#8a7a72);border-radius:3px;margin-top:2px;position:relative}'
+    + '.consent .cb.on{background:var(--ink,#231613);border-color:var(--ink,#231613)}'
+    + '.consent .cb.on::after{content:\'\\2713\';position:absolute;inset:0;color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center}'
+    + '.consent p{font-size:15px!important;line-height:1.5!important;color:var(--ink,#5a4a44)}'
+    + '.consent a{color:var(--ink,#231613);font-weight:600;text-decoration:underline}'
+    + '.consent.kvkk-lock{opacity:.72}'
+    + '.consent.kvkk-lock .cb{border-style:dashed}'
+    + '.kvkk-ov{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;'
+    + 'background:rgba(15,9,8,.82);backdrop-filter:blur(4px);padding:5vh 18px}'
+    + '.kvkk-ov.on{display:flex}'
+    + '.kvkk-box{width:min(560px,94%);max-height:88vh;display:flex;flex-direction:column;background:var(--bg,#fbf7ef);'
+    + 'border:1px solid var(--line,rgba(0,0,0,.15));border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45)}'
+    + '.kvkk-metin{overflow:auto;-webkit-overflow-scrolling:touch;padding:22px 22px 8px;color:var(--ink,#231613)}'
+    + '.kvkk-metin h3{font-family:var(--disp,serif);font-size:22px;letter-spacing:.02em;margin:0 0 12px}'
+    + '.kvkk-metin h4{font-family:var(--sans,sans-serif);font-size:14px;letter-spacing:.02em;margin:16px 0 4px}'
+    + '.kvkk-metin p{font-family:var(--serif,serif);font-size:15px;line-height:1.6;margin:0 0 10px;color:var(--ink,#231613)}'
+    + '.kvkk-foot{flex:none;padding:14px 22px 18px;border-top:1px solid var(--line,rgba(0,0,0,.12));text-align:center}'
+    + '.kvkk-ok{font-family:var(--sans,sans-serif);text-transform:uppercase;letter-spacing:.12em;font-size:13px;'
+    + 'color:#fff;background:var(--ink,#231613);border:none;border-radius:999px;padding:13px 30px;cursor:pointer}'
+    + '.kvkk-ok[disabled]{opacity:.32;cursor:default}'
+    + '.kvkk-hint{font-family:var(--sans,sans-serif);font-size:11px;letter-spacing:.06em;color:var(--muted,#8a7a72);margin:0 0 9px}';
+    (d.head || d.documentElement).appendChild(st);
+  }
+  function kvkkModalKur(){
+    if (d.getElementById('kvkk-ov')) return;
+    kvkkCssInjekte();
+    var ov = d.createElement('div'); ov.id = 'kvkk-ov'; ov.className = 'kvkk-ov';
+    ov.innerHTML = '<div class="kvkk-box"><div class="kvkk-metin" id="kvkk-metin">' + KVKK_METIN + '</div>'
+      + '<div class="kvkk-foot"><p class="kvkk-hint" id="kvkk-hint">Metni sonuna kadar okuyun</p>'
+      + '<button class="kvkk-ok" id="kvkk-ok" disabled>Okudum, anladım</button></div></div>';
+    d.body.appendChild(ov);
+    var metin = ov.querySelector('#kvkk-metin'), ok = ov.querySelector('#kvkk-ok'), hint = ov.querySelector('#kvkk-hint');
+    function acilabilir(){ ok.disabled = false; if (hint) hint.style.display = 'none'; }
+    function chk(){ if (metin.scrollTop + metin.clientHeight >= metin.scrollHeight - 6) acilabilir(); }
+    metin.addEventListener('scroll', chk);
+    ov.__acilabilir = acilabilir; ov.__chk = chk;
+    ok.addEventListener('click', function(){ _kvkkOkundu = true; ov.classList.remove('on'); var cb = _kvkkCb; _kvkkCb = null; if (cb) cb(); });
+    ov.addEventListener('click', function(e){ if (e.target === ov) ov.classList.remove('on'); });
+  }
+  // Metni aç; okununca (Okudum, anladım) onRead() çalışır
+  function kvkkAc(onRead){
+    kvkkModalKur();
+    _kvkkCb = onRead || null;
+    var ov = d.getElementById('kvkk-ov'), metin = d.getElementById('kvkk-metin'), ok = d.getElementById('kvkk-ok'), hint = d.getElementById('kvkk-hint');
+    ov.classList.add('on');
+    if (_kvkkOkundu){ ov.__acilabilir(); }
+    else {
+      ok.disabled = true; if (hint) hint.style.display = '';
+      metin.scrollTop = 0;
+      // metin kutudan kısa ise (scroll gerekmiyorsa) butonu doğrudan aç
+      setTimeout(function(){ if (metin.scrollHeight <= metin.clientHeight + 6) ov.__acilabilir(); else ov.__chk(); }, 60);
+    }
+  }
+  // Bir .consent bloğunu yükselt: kutuyu kilitle → "oku" modalı açar → okununca kutu tıklanabilir
+  function kvkkConsent(consentEl, onChange){
+    if (!consentEl) return null;
+    kvkkCssInjekte();
+    consentEl.classList.add('kvkk-lock');
+    var cb = consentEl.querySelector('.cb');
+    var st = { checked:false, unlocked:false };
+    function unlock(){ st.unlocked = true; consentEl.classList.remove('kvkk-lock'); }
+    var link = consentEl.querySelector('a');
+    if (link){ link.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); kvkkAc(unlock); }); }
+    consentEl.addEventListener('click', function(e){
+      if (e.target && e.target.tagName === 'A') return;      // "oku" linki kendi işini yapar
+      if (!st.unlocked){ kvkkAc(unlock); return; }            // önce metni okut
+      st.checked = !st.checked; if (cb) cb.classList.toggle('on', st.checked);
+      if (onChange) onChange(st.checked);
+    });
+    return { isChecked:function(){ return st.checked && st.unlocked; },
+             reset:function(){ st.checked=false; if(cb) cb.classList.remove('on'); if(onChange) onChange(false); } };
+  }
+
   w.OphApp = {
     getTheme: getTheme, setTheme: setTheme,
     getLang: getLang, setLang: setLang,
     applyTheme: applyTheme, applyLang: applyLang,
     tByText: tByText, tById: tById, langName: langName, LABELS: LABELS,
-    mountTTS: mountTTS, pushPlanla: pushPlanla
+    mountTTS: mountTTS, pushPlanla: pushPlanla,
+    kvkkConsent: kvkkConsent, kvkkAc: kvkkAc
   };
 })(window, document);

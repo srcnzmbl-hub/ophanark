@@ -117,7 +117,7 @@
     </div>
     <div class="field rv d2"><label>Your name</label><input type="text" id="k-name" placeholder="Write your name"></div>
     <div class="consent rv d3" id="k-consent"><span class="cb" aria-hidden="true"></span>
-      <p>I have read and accept the privacy &amp; consent notice, and allow Ophan to read my photos. <a href="#" onclick="return false">Read the agreement</a></p></div>
+      <p>Gizlilik ve rıza metnini okudum, kabul ediyorum; Ophan'ın fotoğraflarımı okumasına izin veriyorum. <a href="#" onclick="return false">Sözleşmeyi oku</a></p></div>
     <button class="go rv d4" id="interpretBtn" disabled>Interpret my cup <span>↗</span></button>
   </section>
 
@@ -179,7 +179,9 @@
     gate();
   }
   var consent=false;
-  document.getElementById('k-consent').addEventListener('click',function(){ consent=!consent; this.querySelector('.cb').classList.toggle('on',consent); gate(); });
+  (window.OphApp&&OphApp.kvkkConsent)
+    ? OphApp.kvkkConsent(document.getElementById('k-consent'),function(c){ consent=c; gate(); })
+    : document.getElementById('k-consent').addEventListener('click',function(){ consent=!consent; this.querySelector('.cb').classList.toggle('on',consent); gate(); });
   function nmeVal(){ return (document.getElementById('k-name').value||'').trim(); }
   document.getElementById('k-name').addEventListener('input',gate);
   function gate(){ var ok=images.length>=1 && consent && nmeVal().length>0; document.getElementById('interpretBtn').disabled=!ok; }

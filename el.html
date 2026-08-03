@@ -198,7 +198,9 @@
     });
   });
   var consent=false;
-  document.getElementById('k-consent').addEventListener('click',function(){ consent=!consent; this.querySelector('.cb').classList.toggle('on',consent); gate(); });
+  (window.OphApp&&OphApp.kvkkConsent)
+    ? OphApp.kvkkConsent(document.getElementById('k-consent'),function(c){ consent=c; gate(); })
+    : document.getElementById('k-consent').addEventListener('click',function(){ consent=!consent; this.querySelector('.cb').classList.toggle('on',consent); gate(); });
   function nmeVal(){ var e=document.getElementById('k-name'); return e?(e.value||'').trim():''; }
   function filledCount(){ return images.filter(function(x){return !!x;}).length; }
   function gate(){ var ok=filledCount()===4 && consent; document.getElementById('interpretBtn').disabled=!ok; }

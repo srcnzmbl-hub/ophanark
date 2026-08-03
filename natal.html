@@ -151,6 +151,8 @@
       <div class="fld"><label>Email</label><input id="f-mail" type="email" placeholder="you@email.com"></div>
       <div class="err" id="f-err"></div>
     </div>
+    <div class="consent rv in d3" id="n-consent"><span class="cb" aria-hidden="true"></span>
+      <p>Gizlilik ve rıza metnini okudum, kabul ediyorum; natal haritamın oluşturulması için verilerimin işlenmesine izin veriyorum. <a href="#" onclick="return false">Sözleşmeyi oku</a></p></div>
     <button class="go rv in d3" id="buildBtn">Continue <span>↓</span></button>
   </section>
 
@@ -765,11 +767,15 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
       });
   }
 
+  var natalConsent=false;
+  if(window.OphApp&&OphApp.kvkkConsent){ OphApp.kvkkConsent(document.getElementById('n-consent'),function(c){ natalConsent=c; }); }
+  else { natalConsent=true; }
   document.getElementById('buildBtn').addEventListener('click', function(){
     var name=val('f-name'), date=val('f-date'), time=val('f-time'), city=val('f-city'), mail=val('f-mail');
     var cc=elCtry?elCtry.value:''; var st=stateData();
     var err=document.getElementById('f-err');
     if(!name||!date||!time||!cc||!city||!mail){ err.textContent=T('Lütfen ad, doğum tarihi, saat, ülke, şehir ve e-postayı doldurun.','Please fill in name, birth date, time, country, city and email.'); return; }
+    if(!natalConsent){ err.textContent=T('Devam etmek için KVKK metnini okuyup onay kutusunu işaretleyin.','Please read the KVKK notice and tick the consent box to continue.'); return; }
     err.textContent='';
     var gl=document.getElementById('gearsLoad'); if(!gearsLoad){ try{ gearsLoad=OphanCarklar.olustur(gl,GOPT); }catch(e){} }
     goTo('n-loading');

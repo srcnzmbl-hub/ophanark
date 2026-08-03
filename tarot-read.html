@@ -146,7 +146,9 @@
       <p class="tr-cue" id="tr-cue"></p>
       <p class="tr-hint" id="tr-hint"></p>
       <div class="tr-scatter" id="tr-scatter"></div>
-      <button class="tr-btn" id="tr-shuffle">Desteyi Karıştır</button>
+      <div class="consent" id="tr-consent"><span class="cb" aria-hidden="true"></span>
+        <p>Gizlilik ve rıza metnini okudum, kabul ediyorum; falımın oluşturulması için verilerimin işlenmesine izin veriyorum. <a href="#" onclick="return false">Sözleşmeyi oku</a></p></div>
+      <button class="tr-btn" id="tr-shuffle" disabled>Desteyi Karıştır</button>
     </section>
 
     <section id="tr-pick" style="display:none">
@@ -233,6 +235,9 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
     $('tr-pick').scrollIntoView({behavior:'smooth', block:'start'});
   }
   $('tr-shuffle').addEventListener('click', shuffle);
+  var trConsent=false;
+  if(window.OphApp&&OphApp.kvkkConsent){ OphApp.kvkkConsent($('tr-consent'),function(c){ trConsent=c; $('tr-shuffle').disabled=!c; }); }
+  else { $('tr-shuffle').disabled=false; }
 
   var picked=[];
   function onPick(e){
@@ -326,7 +331,7 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
 
   function fetchReading(chosen){
     return fetch(SB+'/functions/v1/tarot-fali',{method:'POST',headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY},
-      body:JSON.stringify({ spread_name:S.name, lang:lang(), cards:chosen.map(function(c){return {position:c.position,name:c.name,orientation:c.orientation};}) })})
+      body:JSON.stringify({ spread_name:S.name, lang:lang(), kvkk_onay:true, cards:chosen.map(function(c){return {position:c.position,name:c.name,orientation:c.orientation};}) })})
       .then(function(r){return r.json();}).catch(function(){return {error:'net'};});
   }
 
