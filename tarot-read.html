@@ -85,8 +85,8 @@
 
 <style>
   #tr-app{max-width:640px;margin:0 auto;padding:11vh 14px 10vh;text-align:center}
-  .tr-title{font-family:var(--disp);text-transform:uppercase;font-weight:400;letter-spacing:.03em;
-    font-size:clamp(26px,7.5vw,44px);line-height:1.05;margin:0 0 .5cm}
+  .tr-title{font-family:var(--disp);text-transform:uppercase;font-weight:400;letter-spacing:.02em;
+    white-space:nowrap;width:calc(100vw - 3cm);max-width:100%;margin:0 auto .5cm;line-height:1.05;font-size:40px;padding:0}
   .tr-cue{font-family:var(--serif);font-style:italic;color:var(--ink);font-size:clamp(16px,4.6vw,21px);margin:0 0 22px}
   .tr-hint{font-family:var(--sans);color:var(--muted);font-size:clamp(12px,3.4vw,14px);letter-spacing:.02em;max-width:440px;margin:0 auto 26px;line-height:1.5}
   .tr-btn{display:inline-block;font-family:var(--sans);text-transform:uppercase;letter-spacing:.16em;
@@ -98,8 +98,9 @@
   .tr-scatter img{position:absolute;width:34%;border-radius:6px;box-shadow:0 8px 18px rgba(20,14,10,.28);
     left:33%;top:22%}
   /* face-down deck grid */
-  .tr-deck{display:grid;grid-template-columns:repeat(7,1fr);gap:clamp(3px,1.2vw,7px);margin:.6cm auto 0;max-width:560px}
-  .tr-slot{padding:0;border:none;background:transparent;cursor:pointer;line-height:0;border-radius:4px;overflow:hidden;
+  .tr-deck{--tg:clamp(3px,1.2vw,7px);display:flex;flex-direction:column;align-items:center;gap:var(--tg);margin:.6cm auto 0;max-width:560px}
+  .tr-row{display:flex;justify-content:center;gap:var(--tg);width:100%}
+  .tr-slot{flex:0 0 auto;width:calc((100% - 6*var(--tg))/7);padding:0;border:none;background:transparent;cursor:pointer;line-height:0;border-radius:4px;overflow:hidden;
     -webkit-tap-highlight-color:transparent;transition:transform .16s, box-shadow .16s;position:relative}
   .tr-slot img{width:100%;height:auto;aspect-ratio:2/3;object-fit:cover;display:block}
   .tr-slot.sel{transform:translateY(-8px) scale(1.04);box-shadow:0 8px 16px rgba(150,90,40,.5);outline:2px solid #b98b3e;outline-offset:-2px;z-index:2}
@@ -190,6 +191,20 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
 
   document.title = 'OPHANARK · ' + S.name;
   $('tr-name').textContent = S.name.replace(/ Dizilimi$/,'').toUpperCase();
+  function fitTitle(){
+    var el=$('tr-name'); if(!el) return;
+    el.style.fontSize='40px';
+    var avail=el.clientWidth, w=el.scrollWidth;
+    if(w>4 && avail>4){
+      var fs=40*avail/w; fs=Math.min(fs, avail*0.62);
+      el.style.fontSize=fs.toFixed(1)+'px';
+      var w2=el.scrollWidth; if(w2>4){ el.style.fontSize=Math.min(fs*avail/w2, avail*0.62).toFixed(1)+'px'; }
+    }
+  }
+  fitTitle();
+  var _rt; addEventListener('resize', function(){ clearTimeout(_rt); _rt=setTimeout(fitTitle,120); });
+  if(document.fonts&&document.fonts.ready){ document.fonts.ready.then(fitTitle); }
+  setTimeout(fitTitle,300);
   $('tr-cue').textContent = S.cue;
   $('tr-cue2').textContent = S.cue;
   $('tr-hint').textContent = S.hint;
@@ -206,10 +221,15 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
     order = DECK.slice();
     for(var i=order.length-1;i>0;i--){ var j=Math.floor(( (i+1) * (parseFloat('0.'+(String(Date.now()+i*97).slice(-6))) ) ) )%(i+1); var t=order[i];order[i]=order[j];order[j]=t; }
     var d=$('tr-deck'); d.innerHTML='';
-    for(var k=0;k<order.length;k++){
-      var b=document.createElement('button'); b.className='tr-slot'; b.setAttribute('data-i',k);
-      b.innerHTML='<img src="cards/back.webp" alt="">'; d.appendChild(b);
-      b.addEventListener('click', onPick);
+    var pattern=[7,6,7,6,7,6,7,6,7,6,7,6]; var k=0; // 12 sıra, 7/6 dönüşümlü = 78, altta tek kart kalmaz
+    for(var rI=0;rI<pattern.length;rI++){
+      var row=document.createElement('div'); row.className='tr-row';
+      for(var cI=0;cI<pattern[rI] && k<order.length;cI++){
+        var b=document.createElement('button'); b.className='tr-slot'; b.setAttribute('data-i',k);
+        b.innerHTML='<img src="cards/back.webp" alt="">'; row.appendChild(b);
+        b.addEventListener('click', onPick); k++;
+      }
+      d.appendChild(row);
     }
     $('tr-count').textContent = need===1 ? '1 kart seç' : (need+' kart seç');
     $('tr-intro').style.display='none'; $('tr-pick').style.display='block';
@@ -257,20 +277,18 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
 
   function loadThenReading(chosen){
     $('tr-load').classList.add('on');
-    var total=180, left=total;
-    $('tr-loadsub').textContent='';
+    var total=180;
+    $('tr-loadsub').textContent='Yorumunuz hazırlanıyor, hazır olunca size bildirim göndereceğiz.';
     try{ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); }catch(e){}
-    var iv=setInterval(function(){ left--; var m=Math.floor(left/60), s=left%60; $('tr-loadsub').textContent='yaklaşık '+m+':'+(s<10?'0':'')+s+' kaldı';
-      if(left<=0){ clearInterval(iv); } }, 1000);
     // start the actual reading fetch in parallel; reveal only after 3 min AND fetch done
     var fetchDone=null;
     fetchReading(chosen).then(function(r){ fetchDone=r; });
     var t0=Date.now();
     var chk=setInterval(function(){
       if(Date.now()-t0 >= total*1000 && fetchDone!==null){
-        clearInterval(chk); clearInterval(iv);
+        clearInterval(chk);
         $('tr-load').classList.remove('on');
-        try{ if('Notification' in window && Notification.permission==='granted') new Notification('OPHANARK', {body:'Tarot falın hazır ✨'}); }catch(e){}
+        try{ if('Notification' in window && Notification.permission==='granted') new Notification('OPHANARK', {body:'Tarot falınız hazır ✨'}); }catch(e){}
         showReading(fetchDone);
       }
     }, 1000);
@@ -278,6 +296,7 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
 
   function startReading(chosen, delay){
     $('tr-load').classList.add('on');
+    $('tr-loadsub').textContent='Yorumunuz hazırlanıyor…';
     fetchReading(chosen).then(function(r){ $('tr-load').classList.remove('on'); showReading(r); });
   }
 
