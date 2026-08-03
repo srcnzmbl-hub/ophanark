@@ -193,13 +193,14 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
   $('tr-name').textContent = S.name.replace(/ Dizilimi$/,'').toUpperCase();
   function fitTitle(){
     var el=$('tr-name'); if(!el) return;
+    var target=el.clientWidth; if(target<=4) return;      // fixed box width = 100vw - 3cm
     el.style.fontSize='40px';
-    var avail=el.clientWidth, w=el.scrollWidth;
-    if(w>4 && avail>4){
-      var fs=40*avail/w; fs=Math.min(fs, avail*0.62);
-      el.style.fontSize=fs.toFixed(1)+'px';
-      var w2=el.scrollWidth; if(w2>4){ el.style.fontSize=Math.min(fs*avail/w2, avail*0.62).toFixed(1)+'px'; }
-    }
+    // measure natural text width at 40px by letting the box shrink to content
+    var pw=el.style.width, pd=el.style.display;
+    el.style.width='auto'; el.style.display='inline-block';
+    var textW=el.offsetWidth;
+    el.style.width=pw; el.style.display=pd;
+    if(textW>4){ var fs=Math.min(40*target/textW, target*0.7); el.style.fontSize=fs.toFixed(1)+'px'; }
   }
   fitTitle();
   var _rt; addEventListener('resize', function(){ clearTimeout(_rt); _rt=setTimeout(fitTitle,120); });
