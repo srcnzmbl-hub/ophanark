@@ -75,7 +75,10 @@
 
   /* chart */
   .who{font-family:var(--serif);font-style:italic;font-size:clamp(15px,4vw,19px);color:#5a4a44;margin-top:6px}
-  #n-chart{position:relative;height:140vh}
+  #n-chart{position:relative;padding:1.5vh 0 3vh}
+  .chartHead{text-align:center;padding:2.6vh 20px 0}
+  .chartFull{position:relative;width:min(90vw,520px);aspect-ratio:1;margin:1.5cm auto 0}
+  .chartFull .chartInner{position:absolute;inset:0;width:100%;height:100%}
   #n-halves{position:relative;height:270vh}
   .halves-sticky{position:sticky;top:0;height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center;gap:12px;padding:3vh 14px;overflow:hidden;-webkit-perspective:1600px;perspective:1600px}
   .hv-stage{flex:none;width:min(48vw,290px);height:min(96vw,580px);position:relative;transform-style:preserve-3d;will-change:transform}
@@ -168,26 +171,11 @@
       <path id="sPath" d="" fill="none" stroke="url(#sg)" stroke-width="2.4" stroke-linecap="round" opacity=".7" filter="url(#glow)"/>
       <g id="sStar" filter="url(#glow)"><circle r="13" fill="url(#starGlow)"/><path d="M0,-8 L2,-2 L8,0 L2,2 L0,8 L-2,2 L-8,0 L-2,-2 Z" fill="#fff6d8"/></g>
     </svg>
-  <!-- CHART: fold-scroll (assembles as you scroll) -->
+  <!-- CHART: full wheel, static (normal scroll — no scrubbed animation) -->
   <section id="n-chart">
-    <div class="chart-sticky">
-      <div class="chartHead"><h2 class="big" id="ch-title">Your Sky</h2><div class="who" id="n-who"></div></div>
-      <div class="fold-wrap" id="fold-wrap">
-        <div class="fold-half fold-left"><div class="chartInner" id="ci-left"></div></div>
-        <div class="fold-half fold-right"><div class="chartInner" id="ci-right"></div></div>
-      </div>
-      <div class="chartcue">↓</div>
-    </div>
-  </section>
-
-  <!-- HALF-CIRCLE READING PATH (left half, then right half) -->
-  <section id="n-halves">
-    <div class="halves-sticky">
-      <div class="hv-stage" id="hv-stage">
-        <div class="hv-wheel" id="hv-wheel"></div>
-      </div>
-      <div class="hv-panel" id="hv-panel"></div>
-    </div>
+    <div class="chartHead"><h2 class="big" id="ch-title">Your Sky</h2><div class="who" id="n-who"></div></div>
+    <div class="chartFull"><div class="chartInner" id="ci-full"></div></div>
+    <div class="chartcue">↓</div>
   </section>
 
   <!-- HOUSE READINGS -->
@@ -595,9 +583,7 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
   }
   function buildChart(c){
     var html=chartInnerHTML(c);
-    ['ci-left','ci-right'].forEach(function(id){ var el=document.getElementById(id); if(el) el.innerHTML=html; });
-    var hw=document.getElementById('hv-wheel'); if(hw) hw.innerHTML=html;
-    layoutFold(); setTimeout(layoutFold,250); setTimeout(layoutFold,800);
+    var el=document.getElementById('ci-full'); if(el) el.innerHTML=html;
   }
   addEventListener('resize', layoutFold);
   // ---- half-circle reading path (left half + labels, then right half) ----
@@ -788,7 +774,7 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
     var gl=document.getElementById('gearsLoad'); if(!gearsLoad){ try{ gearsLoad=OphanCarklar.olustur(gl,GOPT); }catch(e){} }
     goTo('n-loading');
     var dp=date.split('-'), tp=time.split(':');
-    var go=function(lat,lon,tz){ renderFromCoords(name, +dp[0],+dp[1],+dp[2], +tp[0],+tp[1], lat, lon, tz||'UTC'); setTimeout(function(){ goTo('n-chart'); }, 1400); };
+    var go=function(lat,lon,tz){ renderFromCoords(name, +dp[0],+dp[1],+dp[2], +tp[0],+tp[1], lat, lon, tz||'UTC'); setTimeout(function(){ goTo('n-chart'); }, 500); };
     geocodeCity(city, cc, st).then(function(hit){
       if(hit){ go(hit.latitude, hit.longitude, hit.timezone||(st&&st.tz)||'UTC'); return; }
       if(st&&st.lat!=null){ go(st.lat, st.lon, st.tz); return; }
@@ -820,7 +806,7 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
   function reveal(){ var vh=app.clientHeight, appTop=app.getBoundingClientRect().top;
     app.querySelectorAll('.rv:not(.in)').forEach(function(el){ if(el.getBoundingClientRect().top-appTop < vh*0.92) el.classList.add('in'); }); }
   var ticking=false;
-  app.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(function(){ticking=false;updateSpiral();reveal();foldScroll();halfScroll();});} },{passive:true});
+  app.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(function(){ticking=false;updateSpiral();reveal();});} },{passive:true});
   addEventListener('resize',function(){ buildSpiral(); reveal(); });
   reveal(); setTimeout(reveal,400);
 </script>
