@@ -592,7 +592,7 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     consentEl.classList.add('kvkk-lock');
     var cb = consentEl.querySelector('.cb');
     var st = { checked:false, unlocked:false };
-    function unlock(){ st.unlocked = true; consentEl.classList.remove('kvkk-lock'); }
+    function unlock(){ st.unlocked = true; consentEl.classList.remove('kvkk-lock'); st.checked = true; if (cb) cb.classList.add('on'); if (onChange) onChange(true); }
     var link = consentEl.querySelector('a');
     if (link){ link.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); kvkkAc(unlock); }); }
     consentEl.addEventListener('click', function(e){
