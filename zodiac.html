@@ -65,6 +65,9 @@
     color:var(--muted);margin-top:6px}
   .srow .txt .rbody{font-family:var(--serif);font-size:clamp(14px,3.7vw,16.5px);color:#3f332f;
     line-height:1.5;margin-top:10px}
+  .srow .txt .rbody p{margin:0 0 .6em}
+  .srow .txt .rbody p:last-child{margin:0}
+  html[data-theme="dark"] .srow .txt .rbody{color:#EDEDF1}
 
   .rv{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
   .rv.in{opacity:1;transform:none}
@@ -197,9 +200,15 @@
     try{ var st=document.getElementById('stage'); if(st){ var d=document.createElement('div'); d.className='z-period-title';
       d.style.cssText='text-align:center;font-family:var(--disp,serif);text-transform:uppercase;letter-spacing:.06em;font-size:clamp(24px,7vw,40px);padding:5.5vh 20px 0;color:var(--ink)';
       d.textContent=t; st.insertBefore(d, st.firstChild); } }catch(e){} })();
+  function escH(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function bodyHtml(txt){
+    var blocks=String(txt||'').replace(/\r/g,'').split(/\n{2,}/);
+    var out=''; for(var i=0;i<blocks.length;i++){ var b=blocks[i].replace(/\n/g,' ').trim(); if(b) out+='<p>'+escH(b)+'</p>'; }
+    return out || '<p>'+escH(txt)+'</p>';
+  }
   document.querySelectorAll('.srow').forEach(function(row){
     fetchPeriod(+row.dataset.sign,function(data){
-      if(data&&data.body){ row.querySelector('.rbody').textContent=firstPara(data.body); requestAnimationFrame(buildSpiral); }
+      if(data&&data.body){ row.querySelector('.rbody').innerHTML=bodyHtml(data.body); requestAnimationFrame(buildSpiral); }
     });
   });
 
