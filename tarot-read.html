@@ -287,7 +287,7 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
     var cards=[];
     // zaman cizelgesi (ms)
     var RAIN=[0,1350], WA=[1450,1900], WB=[1950,2400], WC=[2450,2950], WD=[3000,3450], GA=[3550,4350];
-    var DEAL_START=GA[1]+3000;               // toplandiktan 3sn sonra
+    var DEAL_START=GA[1]+700;               // toplandiktan ~0.7sn sonra (bekleme kisaltildi)
     var DEAL_DUR=340, DEAL_GAP=(3500-DEAL_DUR)/Math.max(1,N-1);  // toplam 3.5sn
     var END=DEAL_START + (N-1)*DEAL_GAP + DEAL_DUR + 60;
     function scat(){ return {x:rr(W*0.10,W*0.90), y:rr(H*0.42,H*0.78), r:rr(-32,32)}; }
@@ -404,6 +404,23 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
       lr.innerHTML='<span class="ln">'+(i+1)+'</span><span class="lp">'+c.position+'</span><span class="lc">'+c.name+(c.orientation==='ters'?' <span class="lo">(ters)</span>':'')+'</span>';
       leg.appendChild(lr);
     });
+    // Kartlar ile yorum/legend arasinda HER ZAMAN >=1cm bosluk birak
+    (function(){
+      function fitGap(){
+        try{
+          var sr=stage.getBoundingClientRect(), maxB=sr.bottom;
+          var cs=stage.querySelectorAll('.tr-card');
+          for(var k=0;k<cs.length;k++){ var b=cs[k].getBoundingClientRect().bottom; if(b>maxB) maxB=b; }
+          var over=Math.max(0, maxB - sr.bottom);
+          stage.style.marginBottom=(over + 37.8).toFixed(1)+'px';
+          leg.style.marginTop='0';
+        }catch(e){}
+      }
+      requestAnimationFrame(function(){ requestAnimationFrame(fitGap); });
+      var imgs=stage.querySelectorAll('img');
+      for(var k=0;k<imgs.length;k++){ if(!imgs[k].complete){ imgs[k].addEventListener('load',fitGap,{once:true}); } }
+      window.addEventListener('resize', fitGap);
+    })();
     $('tr-pick').style.display='none'; $('tr-result').style.display='block';
     $('tr-read').style.display='none'; $('tr-err').style.display='none'; $('tr-see').style.display='none';
     $('tr-result').scrollIntoView({behavior:'smooth', block:'start'});
