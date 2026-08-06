@@ -341,7 +341,18 @@
   addEventListener('resize', function(){ setVH(); frame(); });
   app.querySelectorAll('[data-go]').forEach(function(a){
     a.addEventListener('click', function(e){ e.preventDefault();
-      var t=document.getElementById(a.dataset.go); if(t){ var hh=(document.querySelector('header')||{}).offsetHeight||0; app.scrollTo({top:Math.max(0,t.offsetTop - hh + 2), behavior:'smooth'}); } });
+      var t=document.getElementById(a.dataset.go); if(!t) return;
+      // Fortunes/hero -> en tepe
+      if(a.dataset.go==='s-fal' || t===hero){ app.scrollTo({top:0, behavior:'smooth'}); return; }
+      // Sahnelerde icerik, kaydirma ilerlemesiyle animasyonla girer; sahne TEPESI bos gorunur.
+      // O yuzden butun icerik yerlesene kadarki ilerlemeye (son animasyonun bitisi) in ki
+      // kullanici dogrudan bolumun "yerlesmis final" haline dussun.
+      var maxTo=0, has=false;
+      for(var i=0;i<items.length;i++){ if(items[i].scene===t){ has=true; if(items[i].to>maxTo) maxTo=items[i].to; } }
+      var prog = has ? Math.min(0.9, maxTo + 0.03) : 0;
+      var range = Math.max(0, t.offsetHeight - app.clientHeight);
+      app.scrollTo({top:Math.max(0, t.offsetTop + range*prog), behavior:'smooth'});
+    });
   });
   setVH(); frame();
   // Re-measure header height once web fonts finish loading (brand uses a custom
