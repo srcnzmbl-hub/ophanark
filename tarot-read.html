@@ -286,7 +286,7 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
     var ov=document.createElement('div'); ov.className='tr-anim';
     var cards=[];
     // zaman cizelgesi (ms)
-    var RAIN=[0,1350], WA=[1450,1900], WB=[1950,2400], WC=[2450,2950], WD=[3000,3450], GA=[3550,4350];
+    var RAIN=[0,3000], WA=[4500,5000], WB=[5050,5550], WC=[5600,6150], WD=[6200,6700], GA=[6800,7600];
     var DEAL_START=GA[1];                    // toplanma biter bitmez, DURAKLAMA YOK
     var DEAL_DUR=340, DEAL_GAP=(3000-DEAL_DUR)/Math.max(1,N-1);  // duraklamasiz 3sn'e yayilir
     var END=DEAL_START + (N-1)*DEAL_GAP + DEAL_DUR + 60;
@@ -328,7 +328,7 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
         var c=cards[i], segs=c.segs, seg=null;
         // aktif ya da en son biten segmenti bul
         for(var k=0;k<segs.length;k++){
-          if(t < segs[k].t0){ if(k===0) seg={x:segs[0].x0,y:segs[0].y0,r:segs[0].r0,sc:segs[0].s0}; break; }
+          if(t < segs[k].t0){ if(k===0){ seg={x:segs[0].x0,y:segs[0].y0,r:segs[0].r0,sc:segs[0].s0}; } else { var pv=segs[k-1]; seg={x:pv.x1,y:pv.y1,r:pv.r1,sc:pv.s1}; } break; }
           if(t>=segs[k].t0 && t<=segs[k].t1){ var p=(t-segs[k].t0)/(segs[k].t1-segs[k].t0); var e=segs[k].e(p);
             seg={x:segs[k].x0+(segs[k].x1-segs[k].x0)*e, y:segs[k].y0+(segs[k].y1-segs[k].y0)*e, r:segs[k].r0+(segs[k].r1-segs[k].r0)*e, sc:segs[k].s0+(segs[k].s1-segs[k].s0)*e}; break; }
           if(k===segs.length-1){ seg={x:segs[k].x1,y:segs[k].y1,r:segs[k].r1,sc:segs[k].s1}; }
