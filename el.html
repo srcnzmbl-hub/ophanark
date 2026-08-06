@@ -234,8 +234,8 @@
     .then(function(r){return r.json();})
     .then(function(j){
       if(j && j.gecersiz){ showErr('⚠ I could not clearly see your palm and its lines. Please open your hand toward the light and retake the photos.'); return; }
-      if(j && (j.sag||j.sol)){ delayReveal(function(){ renderReading(j.sag||'', j.sol||''); }); }
-      else if(j && j.text && String(j.text).trim().length>120){ delayReveal(function(){ renderReading(j.text,''); }); }
+      if(j && (j.sag||j.sol)){ delayReveal(function(){ renderReading(j.sag||'', j.sol||'', j.id); }); }
+      else if(j && j.text && String(j.text).trim().length>120){ delayReveal(function(){ renderReading(j.text,'', j.id); }); }
       else { showErr('⚠ The reading could not be prepared. Please try again with clearer photos.'); }
     })
     .catch(function(){ showErr('⚠ Connection error. Please check your internet and try again.'); });
@@ -275,7 +275,9 @@
     box.innerHTML='<span class="ph">✋</span>';
     stylizeHand(src,function(d){ box.classList.add('stylized'); box.innerHTML='<img src="'+d+'"><span class="rsweep"></span>'; });
   }
-  function renderReading(sag,sol){
+  function okundu(id){ if(!id) return; try{ var a=JSON.parse(localStorage.getItem('oph_okunan_fallar')||'[]'); var i=a.indexOf(id); if(i>=0)a.splice(i,1); a.push(id); localStorage.setItem('oph_okunan_fallar', JSON.stringify(a)); }catch(e){} }
+  function renderReading(sag,sol,falId){
+    try{ okundu(falId); }catch(e){}
     if(images[0]) setHand('k-rimg',images[0]);
     if(images[2]) setHand('k-limg',images[2]);
     document.getElementById('k-rtext').innerHTML=paras(sag);
