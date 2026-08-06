@@ -365,13 +365,11 @@
   var sb=null; try{ sb=window.supabase.createClient(SB,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); }catch(e){}
   if(!sb) return;
   function paint(){
-    sb.from('fal_kayitlari').select('id').eq('durum','tamam').not('yorum','is',null).limit(200)
+    sb.from('fal_kayitlari').select('id',{count:'exact',head:true}).eq('durum','tamam').not('yorum','is',null).is('okundu_at',null)
       .then(function(r){
         var link=document.querySelector('.navready'); if(!link) return;
         var old=link.querySelector('.nav-badge'); if(old) old.remove();
-        var rows=(r&&r.data)||[]; if(!rows.length) return;
-        var read=okunanArr();
-        var unread=rows.filter(function(x){ return read.indexOf(x.id)<0; }).length;
+        var unread=(r&&r.count)||0;
         if(unread>0){
           var b=document.createElement('span'); b.className='nav-badge';
           b.textContent=unread>99?'99+':String(unread);

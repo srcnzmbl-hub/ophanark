@@ -210,7 +210,7 @@
     .catch(function(){ showErr('⚠ Connection error. Please check your internet and try again.'); });
   });
   function showErr(msg){ var e=document.getElementById('k-lerr'); e.textContent=msg; e.classList.add('on'); document.getElementById('k-retry').style.display=''; }
-  function okundu(id){ if(!id) return; try{ var a=JSON.parse(localStorage.getItem('oph_okunan_fallar')||'[]'); var i=a.indexOf(id); if(i>=0)a.splice(i,1); a.push(id); localStorage.setItem('oph_okunan_fallar', JSON.stringify(a)); }catch(e){} }
+  function okundu(id){ if(!id) return; try{ fetch('https://lssyopqxthausyegeire.supabase.co/functions/v1/fal-okundu',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({id:id})}); }catch(e){} }
   function renderReading(text, falId){
     try{ okundu(falId); }catch(e){}
     var tv=document.getElementById('k-telve'); tv.innerHTML='';

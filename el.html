@@ -275,7 +275,7 @@
     box.innerHTML='<span class="ph">✋</span>';
     stylizeHand(src,function(d){ box.classList.add('stylized'); box.innerHTML='<img src="'+d+'"><span class="rsweep"></span>'; });
   }
-  function okundu(id){ if(!id) return; try{ var a=JSON.parse(localStorage.getItem('oph_okunan_fallar')||'[]'); var i=a.indexOf(id); if(i>=0)a.splice(i,1); a.push(id); localStorage.setItem('oph_okunan_fallar', JSON.stringify(a)); }catch(e){} }
+  function okundu(id){ if(!id) return; try{ fetch('https://lssyopqxthausyegeire.supabase.co/functions/v1/fal-okundu',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({id:id})}); }catch(e){} }
   function renderReading(sag,sol,falId){
     try{ okundu(falId); }catch(e){}
     if(images[0]) setHand('k-rimg',images[0]);

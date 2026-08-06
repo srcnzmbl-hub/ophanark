@@ -132,7 +132,7 @@
     return o||'<p>'+esc(txt)+'</p>'; }
   // okundu: en sona tasi (en son bakilan olsun)
   var RKEY='oph_okunan_fallar';
-  function okundu(id){ if(!id) return; try{ var a=JSON.parse(localStorage.getItem(RKEY)||'[]'); var i=a.indexOf(id); if(i>=0) a.splice(i,1); a.push(id); localStorage.setItem(RKEY, JSON.stringify(a)); }catch(e){} }
+  function okundu(id){ if(!id) return; try{ fetch('https://lssyopqxthausyegeire.supabase.co/functions/v1/fal-okundu',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY},body:JSON.stringify({id:id})}); }catch(e){} }
   var FULL={kahve:'card_coffee',el:'card_palm',tarot:'card_tarot',ruya:'nav_dream'};
   var qid=(function(){ try{ return new URLSearchParams(location.search).get('id')||''; }catch(e){ return ''; } })();
   var back=document.getElementById('f-back');
