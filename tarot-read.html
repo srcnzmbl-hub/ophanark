@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- ophanark tarot: karistir/dagit animasyonu + KVKK onay duzeltmesi + buton boslugu (deploy 3) -->
+<!-- ophanark tarot: karistir/dagit animasyonu + KVKK onay + buton boslugu + kart secim ekrani yeniden (Acilimi Olustur + otomatik sec) (deploy 5) -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -64,6 +64,8 @@
   .consent p{font-family:var(--serif);font-size:13px;color:#5a4a44;line-height:1.4}
   .consent a{color:var(--ink)}
   #tr-shuffle{margin-top:1cm}
+  #tr-create{display:block;margin:.2cm auto 0}
+  #tr-auto.tr-auto{display:block;margin:1.5cm auto 0;opacity:.85;font-size:clamp(10px,2.7vw,12px)}
   .go{margin-top:28px;font-family:var(--sans);font-size:clamp(11px,2.7vw,12.5px);letter-spacing:.22em;text-transform:uppercase;color:var(--ink);background:none;cursor:pointer;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);padding:11px 26px;display:inline-flex;align-items:center;gap:9px}
   .go[disabled]{opacity:.35;pointer-events:none}
   .loadtxt{font-family:var(--serif);font-style:italic;font-size:clamp(19px,5.2vw,26px);color:#4a3d38;margin-top:24px;animation:breathe 2.4s ease-in-out infinite}
@@ -163,7 +165,8 @@
       <p class="tr-count" id="tr-count"></p>
       <div class="tr-deck" id="tr-deck"></div>
       <p class="tr-pickline">Kartların üstüne tıklayarak içinizden geçen kartı seçebilirsiniz</p>
-      <button class="tr-btn" id="tr-auto">Benim İçin Fal Aç</button>
+      <button class="tr-btn" id="tr-create" disabled>Açılımı Oluştur</button>
+      <button class="tr-btn tr-auto" id="tr-auto">Benim Yerime Otomatik Kart Seç</button>
     </section>
 
     <section id="tr-load">
@@ -340,17 +343,28 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
   }
 
   var picked=[];
+  function updateCreateBtn(){ var b=$('tr-create'); if(b) b.disabled = (picked.length!==need); }
   function onPick(e){
     var b=e.currentTarget; var i=+b.getAttribute('data-i');
-    if(b.classList.contains('sel')){ b.classList.remove('sel'); picked=picked.filter(function(x){return x!==i;}); return; }
-    if(picked.length>=need) return;
-    b.classList.add('sel'); picked.push(i);
-    if(picked.length===need) setTimeout(function(){ go(picked.slice()); }, 350);
+    if(b.classList.contains('sel')){ b.classList.remove('sel'); picked=picked.filter(function(x){return x!==i;}); updateCreateBtn(); return; }
+    if(picked.length>=need) return;      // tam sayiya ulasildiysa yeni secim yok
+    b.classList.add('sel'); picked.push(i); updateCreateBtn();
   }
+  // Tam kart secilince "Acilimi Olustur" ile fal olusturulur
+  $('tr-create').addEventListener('click', function(){
+    if(this.disabled) return;
+    if(picked.length===need) go(picked.slice());
+  });
+  // Otomatik: kullanici ugrasmak istemezse - rastgele sec + gorsel isaretle + direkt olustur
   $('tr-auto').addEventListener('click', function(){
     if(!order.length) return;
-    var idx=[]; while(idx.length<need){ var r=Math.floor(( (parseFloat('0.'+String(Date.now()+idx.length*131).slice(-6))) )*order.length); if(idx.indexOf(r)<0) idx.push(r); }
-    go(idx);
+    picked=[];
+    var slots=$('tr-deck').querySelectorAll('.tr-slot');
+    for(var s=0;s<slots.length;s++) slots[s].classList.remove('sel');
+    var idx=[]; var guard=0; while(idx.length<need && guard++<2000){ var r=Math.floor(Math.random()*order.length); if(idx.indexOf(r)<0) idx.push(r); }
+    idx.forEach(function(i2){ picked.push(i2); var el=$('tr-deck').querySelector('.tr-slot[data-i="'+i2+'"]'); if(el) el.classList.add('sel'); });
+    updateCreateBtn();
+    setTimeout(function(){ go(idx); }, 500);   // once secim gorunsun, sonra olustur
   });
 
   function orient(seed){ return ((Date.now()+seed*263)%10) < 3 ? 'ters' : 'duz'; }
