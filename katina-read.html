@@ -287,8 +287,8 @@ var SPREADS={"tek-kart": {"name": "Tek Kart", "hint": "Aşk hayatına dair aklı
     var cards=[];
     // zaman cizelgesi (ms)
     var RAIN=[0,1350], WA=[1450,1900], WB=[1950,2400], WC=[2450,2950], WD=[3000,3450], GA=[3550,4350];
-    var DEAL_START=GA[1]+700;               // toplandiktan ~0.7sn sonra (bekleme kisaltildi)
-    var DEAL_DUR=340, DEAL_GAP=(3500-DEAL_DUR)/Math.max(1,N-1);  // toplam 3.5sn
+    var DEAL_START=GA[1];                    // toplanma biter bitmez, DURAKLAMA YOK
+    var DEAL_DUR=340, DEAL_GAP=(3000-DEAL_DUR)/Math.max(1,N-1);  // duraklamasiz 3sn'e yayilir
     var END=DEAL_START + (N-1)*DEAL_GAP + DEAL_DUR + 60;
     function scat(){ return {x:rr(W*0.10,W*0.90), y:rr(H*0.42,H*0.78), r:rr(-32,32)}; }
     for(var i=0;i<N;i++){
