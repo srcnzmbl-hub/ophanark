@@ -52,10 +52,9 @@
   .etraits{font-family:var(--serif);font-style:italic;font-size:clamp(13px,3.4vw,17px);color:#5a4a44;
     max-width:78%;margin:8px auto 0;line-height:1.42}
 
-  .srow{position:relative;z-index:2;display:flex;gap:15px;align-items:center;justify-content:center;
-    padding:2.4vh 18px;max-width:520px;margin:0 auto;min-height:100svh}
-  .srow .card{width:54%;max-width:322px;flex:none}
-  .srow .card img{transform:scaleY(1.06);transform-origin:center}
+  .srow{position:relative;z-index:2;display:flex;gap:15px;align-items:center;
+    padding:2.4vh 18px;max-width:520px;margin:0 auto}
+  .srow .card{width:42%;flex:none}
   .srow .card img{width:100%;display:block;border-radius:8px;
     box-shadow:0 10px 24px rgba(37,24,28,.26);border:1px solid rgba(156,134,102,.4)}
   .srow .txt{flex:1;text-align:left}
@@ -167,20 +166,39 @@
 
   var app=document.getElementById('app');
 
-  function todayKey(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  // Dönem: ?period=daily|weekly|monthly (varsayılan daily)
+  var PERIOD=(function(){ try{ var p=(new URLSearchParams(location.search).get('period')||'daily').toLowerCase(); return (p==='weekly'||p==='monthly'||p==='daily')?p:'daily'; }catch(e){ return 'daily'; } })();
+  var LANG=(function(){ try{ return (window.OphApp?OphApp.getLang():'tr')||'tr'; }catch(e){ return 'tr'; } })();
+  function pad2(n){ return String(n).padStart(2,'0'); }
+  function todayKey(){var d=new Date();return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
+  function monthKey(){var d=new Date();return d.getFullYear()+'-'+pad2(d.getMonth()+1);}
+  function isoWeekKey(){ var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+3-((d.getDay()+6)%7));
+    var w1=new Date(d.getFullYear(),0,4); var wk=1+Math.round(((d-w1)/86400000-3+((w1.getDay()+6)%7))/7); return d.getFullYear()+'-W'+pad2(wk); }
+  function periodKey(){ return PERIOD==='weekly'?isoWeekKey():PERIOD==='monthly'?monthKey():todayKey(); }
   function firstPara(t){ t=String(t).trim(); return t.split(/\n\s*\n/)[0].replace(/\n/g,' '); }
-  function horoLang(){var L=(localStorage.getItem('oph_lang')||'en').toLowerCase().slice(0,2);var OK={en:1,tr:1,de:1,fr:1,es:1,it:1,pt:1,ru:1,ar:1,zh:1,ja:1,ko:1,hi:1,nl:1,pl:1,id:1};return OK[L]?L:'en';}
-  function fetchDaily(sign,cb){
-    var base=SB_URL+'/rest/v1/horoscope?select=data,pkey&period=eq.daily&lang=eq.'+horoLang()+'&sign=eq.'+sign;
+  function fetchPeriod(sign,cb){
+    var base=SB_URL+'/rest/v1/horoscope?select=data,pkey&period=eq.'+PERIOD+'&lang=eq.'+LANG+'&sign=eq.'+sign;
     var hd={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY};
-    fetch(base+'&pkey=eq.'+todayKey(),{headers:hd}).then(function(r){return r.json();}).then(function(rows){
+    fetch(base+'&pkey=eq.'+periodKey(),{headers:hd}).then(function(r){return r.json();}).then(function(rows){
       if(rows&&rows.length){cb(rows[0].data);return;}
+      // güncel dönem yoksa: en son yayınlanan bu dilde
       fetch(base+'&order=pkey.desc&limit=1',{headers:hd}).then(function(r){return r.json();})
-        .then(function(r2){cb(r2&&r2.length?r2[0].data:null);}).catch(function(){cb(null);});
+        .then(function(r2){ if(r2&&r2.length){cb(r2[0].data);return;}
+          // bu dilde hiç yoksa İngilizce'ye düş
+          var enb=SB_URL+'/rest/v1/horoscope?select=data,pkey&period=eq.'+PERIOD+'&lang=eq.en&sign=eq.'+sign+'&order=pkey.desc&limit=1';
+          fetch(enb,{headers:hd}).then(function(r){return r.json();}).then(function(r3){cb(r3&&r3.length?r3[0].data:null);}).catch(function(){cb(null);});
+        }).catch(function(){cb(null);});
     }).catch(function(){cb(null);});
   }
+  // Dönem başlığını sayfanın en üstüne ekle
+  (function(){ var T={daily:{tr:'Günlük Burçlar',en:'Daily Horoscopes'},weekly:{tr:'Haftalık Burçlar',en:'Weekly Horoscopes'},monthly:{tr:'Aylık Burçlar',en:'Monthly Horoscopes'}};
+    var t=(T[PERIOD]&&(T[PERIOD][LANG]||T[PERIOD].en))||''; if(!t) return;
+    try{ document.title='OPHANARK · '+t; }catch(e){}
+    try{ var st=document.getElementById('stage'); if(st){ var d=document.createElement('div'); d.className='z-period-title';
+      d.style.cssText='text-align:center;font-family:var(--disp,serif);text-transform:uppercase;letter-spacing:.06em;font-size:clamp(24px,7vw,40px);padding:5.5vh 20px 0;color:var(--ink)';
+      d.textContent=t; st.insertBefore(d, st.firstChild); } }catch(e){} })();
   document.querySelectorAll('.srow').forEach(function(row){
-    fetchDaily(+row.dataset.sign,function(data){
+    fetchPeriod(+row.dataset.sign,function(data){
       if(data&&data.body){ row.querySelector('.rbody').textContent=firstPara(data.body); requestAnimationFrame(buildSpiral); }
     });
   });
