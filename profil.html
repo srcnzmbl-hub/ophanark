@@ -210,7 +210,7 @@ a.hitem-btn .hmeta::after{content:'\203A';position:absolute;right:-22px;top:50%;
         var inner='<div class="hmain"><div class="htype">'+esc(typ)+'</div><div class="hname">'+esc(nm)+'</div></div>'+
                '<div class="hmeta"><div class="hdate">'+esc(ds)+'</div><div class="htime">'+esc(ts)+'</div></div>';
         if(row.durum==='tamam'){
-          return '<a class="hitem hitem-btn" href="hazir.html#fal-'+esc(row.id)+'">'+inner+'</a>';
+          return '<a class="hitem hitem-btn" href="fal.html?id='+esc(row.id)+'">'+inner+'</a>';
         }
         return '<div class="hitem">'+inner+'</div>';
       }).join('');

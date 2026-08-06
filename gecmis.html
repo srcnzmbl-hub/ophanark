@@ -70,16 +70,9 @@
   .lerr{display:none;font-family:var(--serif);font-style:italic;color:#b12a1e;font-size:15px;margin-top:18px;max-width:82%}
   .lerr.on{display:block}
   .resrow{display:flex;gap:15px;align-items:flex-start;width:min(94%,600px);margin:0 auto;padding:2.4vh 6px;text-align:left}
-  .rimg{position:relative;width:40%;flex:none;aspect-ratio:3/4;border-radius:8px;border:1px solid rgba(156,134,102,.5);background:radial-gradient(circle at 50% 38%,#efe7d2,#d9c9a6);overflow:hidden;display:flex;align-items:center;justify-content:center}
-  .rimg.stylized{background:#141010;border-color:rgba(230,184,86,.4)}
+  .rimg{width:40%;flex:none;aspect-ratio:3/4;border-radius:8px;border:1px solid rgba(156,134,102,.5);background:radial-gradient(circle at 50% 38%,#efe7d2,#d9c9a6);overflow:hidden;display:flex;align-items:center;justify-content:center}
   .rimg img{width:100%;height:100%;object-fit:cover}
   .rimg .ph{font-size:34px;opacity:.4}
-  /* avuç çizgileri üstünden geçen ince ışık animasyonu */
-  .rimg .rsweep{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
-    background:linear-gradient(115deg,transparent 42%,rgba(255,224,150,.55) 50%,transparent 58%);
-    transform:translateX(-120%);animation:rsweep 3.4s ease-in-out infinite}
-  @keyframes rsweep{0%{transform:translateX(-120%)}55%,100%{transform:translateX(120%)}}
-  @media (prefers-reduced-motion:reduce){ .rimg .rsweep{animation:none;opacity:.35;transform:none} }
   .rtx{flex:1}
   .rtx .rlab{font-family:var(--disp);text-transform:uppercase;letter-spacing:.09em;color:var(--ink);font-size:clamp(17px,4.6vw,22px)}
   .rtx .rbd{font-family:var(--serif);font-size:clamp(14px,3.7vw,16px);color:#3f332f;line-height:1.55;margin-top:8px}
@@ -102,195 +95,91 @@
   .hslot .hi{font-size:26px;line-height:1}
   .hslot .ht{font-family:var(--sans);font-size:11px;letter-spacing:.06em;text-transform:uppercase;text-align:center;padding:0 6px;line-height:1.3}
 </style>
+
+<style>
+  #lst-wrap{max-width:640px;margin:0 auto;padding:12vh 22px 16vh}
+  #lst-title{font-family:var(--disp);font-weight:400;line-height:1.02;text-transform:uppercase;
+    text-align:center;font-size:clamp(30px,9vw,56px);letter-spacing:.02em;margin:0 0 .35cm}
+  #lst-sub{font-family:var(--serif);font-style:italic;color:var(--ink);opacity:.85;text-align:center;
+    font-size:clamp(15px,4.4vw,19px);line-height:1.5;max-width:470px;margin:0 auto 1.6cm}
+  .lst-empty,.lst-loading{font-family:var(--serif);color:var(--muted);text-align:center;
+    font-size:clamp(15px,4.4vw,18px);line-height:1.6;margin:2cm auto;max-width:420px}
+  .lrow{display:block;text-decoration:none;color:inherit;border-top:1px solid var(--line);
+    padding:20px 2px;position:relative;transition:background .15s;-webkit-tap-highlight-color:transparent}
+  .lrow:first-child{border-top:none}
+  .lrow:active,.lrow:hover{background:rgba(37,24,28,.045)}
+  .lrow-type{font-family:var(--disp);text-transform:uppercase;letter-spacing:.05em;
+    font-size:clamp(20px,5.6vw,28px);color:var(--ink);line-height:1.12;padding-right:26px}
+  .lrow-date{font-family:var(--sans);text-transform:uppercase;letter-spacing:.14em;
+    font-size:clamp(9.5px,2.6vw,11px);color:var(--muted);margin:.24cm 0 .18cm}
+  .lrow-prev{font-family:var(--serif);color:var(--ink);opacity:.82;font-size:clamp(14px,4vw,16px);
+    line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .lrow::after{content:'\203A';position:absolute;right:2px;top:22px;font-size:22px;line-height:1;color:var(--muted)}
+  .lrow.unread .lrow-type::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;
+    background:#d23b2e;margin-right:9px;vertical-align:middle;transform:translateY(-2px)}
+</style>
 </head>
+
 <body>
 <div id="app">
-  <div class="backlink"><a href="scroll.html">← Fortunes</a><span class="brandmini">OPHANARK</span></div>
-
-  <section class="sec" id="k-intro">
-    <h1 class="big rv in" id="el-title">Palm Reading</h1>
-    <p class="tagline rv in d1">The Divine Galgalim are Turning For You</p>
-    <div class="elform rv in d2">
-      <div class="field"><label>Ad Soyad</label><input id="k-name" type="text" placeholder="Adınız ve soyadınız"></div>
-      <div class="field"><label>Doğum Tarihi</label><input id="k-bdate" type="date"></div>
-      <div class="field"><label>Doğum Yeri</label><input id="k-bplace" type="text" placeholder="Şehir / ülke"></div>
-    </div>
-    <button class="continue rv in d3" data-go="k-guide">Devam<span class="ln"></span></button>
-    <div id="gears" style="display:none"></div>
-  </section>
-
-  <section class="sec" id="k-guide">
-    <div class="num rv">01</div>
-    <h2 class="big rv d1">How to Photograph<br>Your Palms</h2>
-    <p class="lead rv d2">Relax your open hand under good light so the lines show clearly. Capture your right hand first (three frames), then your left, so Ophan can read both palms.</p>
-    <div class="ggrid">
-      <div class="gcell rv d1"><span class="gi">✋</span><span class="gt">Right Palm</span><span class="gd">Open, toward the light</span></div>
-      <div class="gcell rv d1"><span class="gi">🖐</span><span class="gt">Right Hand</span><span class="gd">Full, fingers spread</span></div>
-      <div class="gcell rv d2"><span class="gi">🔍</span><span class="gt">Right Lines</span><span class="gd">Close-up, lines clear</span></div>
-      <div class="gcell rv d2"><span class="gi">✋</span><span class="gt">Left Palm</span><span class="gd">Open, toward the light</span></div>
-      <div class="gcell rv d3"><span class="gi">🖐</span><span class="gt">Left Hand</span><span class="gd">Full, fingers spread</span></div>
-      <div class="gcell rv d3"><span class="gi">🔍</span><span class="gt">Left Lines</span><span class="gd">Close-up, lines clear</span></div>
-    </div>
-    <button class="go rv d4" data-go="k-upload">I'm ready <span>↓</span></button>
-  </section>
-
-  <section class="sec" id="k-upload">
-    <div class="num rv">02</div>
-    <h2 class="big rv d1">Ellerinin Fotoğrafları</h2>
-    <p class="lead rv d2">Her elin için iki fotoğraf çek: yakın avuç içi ve tüm el. Elini ışığa doğru aç, çizgiler net görünsün. Butona basınca kamera ya da galeri açılır.</p>
-    <div class="handgrid rv d2">
-      <button class="hslot" type="button" data-slot="0"><input type="file" accept="image/*" style="display:none"><span class="hi">＋</span><span class="ht">Sağ El · Avuç İçi</span></button>
-      <button class="hslot" type="button" data-slot="1"><input type="file" accept="image/*" style="display:none"><span class="hi">＋</span><span class="ht">Sağ El · Tüm El</span></button>
-      <button class="hslot" type="button" data-slot="2"><input type="file" accept="image/*" style="display:none"><span class="hi">＋</span><span class="ht">Sol El · Avuç İçi</span></button>
-      <button class="hslot" type="button" data-slot="3"><input type="file" accept="image/*" style="display:none"><span class="hi">＋</span><span class="ht">Sol El · Tüm El</span></button>
-    </div>
-    <div class="consent rv d3" id="k-consent"><span class="cb" aria-hidden="true"></span>
-      <p>Gizlilik ve rıza metnini okudum, kabul ediyorum; Ophan'ın fotoğraflarımı okumasına izin veriyorum. <a href="#" onclick="return false">Sözleşmeyi oku</a></p></div>
-    <button class="go rv d4" id="interpretBtn" disabled>Benim için fal aç <span>↗</span></button>
-  </section>
-
-  <section class="sec" id="k-loading">
-    <div id="gearsLoad"></div>
-    <p class="loadtxt">Yorumunuz hazırlanıyor…</p>
-    <p class="loadsub">Hazır olunca size bildirim göndereceğiz.</p>
-    <p class="lerr" id="k-lerr"></p>
-    <button class="go" id="k-retry" style="display:none" data-go="k-upload">Try again <span>↑</span></button>
-  </section>
-
-  <section class="sec" id="k-reading" style="justify-content:flex-start;padding-top:12vh">
-    <div class="num rv">03</div>
-    <h2 class="big rv d1">Your Reading</h2>
-    <div class="resrow rv d2"><div class="rimg" id="k-rimg"><span class="ph">✋</span></div>
-      <div class="rtx"><div class="rlab">Right Hand</div><div class="rbd" id="k-rtext"></div></div></div>
-    <div class="resrow rv d2"><div class="rimg" id="k-limg"><span class="ph">✋</span></div>
-      <div class="rtx"><div class="rlab">Left Hand</div><div class="rbd" id="k-ltext"></div></div></div>
-    <button class="go rv d3" data-go="k-intro" style="margin-top:5vh">Read another reading <span>↑</span></button>
-  </section>
+  <div class="backlink"><a href="scroll.html">&larr; Fortunes</a><span class="brandmini">OPHANARK</span></div>
+  <div id="lst-wrap">
+    <h1 id="lst-title">My Past Readings</h1>
+    <p id="lst-sub"></p>
+    <div id="lst"><div class="lst-loading">Loading...</div></div>
+  </div>
 </div>
-
-<script type="importmap">{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }</script>
-<script type="module">
-  import { OphanCarklar } from "./ophan_carklar.js";
-  var app=document.getElementById('app');
-  var GOPT={ url:"model/carklar_m.glb", dracoPath:"./vendor/addons/libs/draco/", hiz:1.15 };
-  var gearsIntro=null, gearsLoad=null;
-  try{ gearsIntro=OphanCarklar.olustur(document.getElementById('gears'), GOPT); }catch(e){}
-
-  var SB='https://lssyopqxthausyegeire.supabase.co';
-  var ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo';
-  var FN=SB+'/functions/v1/el-fali';
-  var APP_VER='2.0';
-  function ozSession(){ try{ var k='oph_oturum',v=localStorage.getItem(k); if(!v){ v='oz_'+Date.now().toString(36)+Math.random().toString(36).slice(2,10); localStorage.setItem(k,v);} return v; }catch(e){ return null; } }
-  function ozPlatform(){ try{ if(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches) return 'pwa'; var ua=(navigator.userAgent||'').toLowerCase(); if(/android/.test(ua))return 'android'; if(/iphone|ipad|ipod/.test(ua))return 'ios'; return 'web'; }catch(e){ return 'web'; } }
-  function ozAuth(){ try{ for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k&&/^sb-.*-auth-token$/.test(k)){ var o=JSON.parse(localStorage.getItem(k)||'null'); if(!o)continue; var s=o.currentSession||o; if(s&&s.access_token) return {token:s.access_token,uid:(s.user&&s.user.id)||null}; } } }catch(e){} return {}; }
-
-  var images=[null,null,null,null];
-  var loadStart=0;
-  function downscale(file,cb){ var r=new FileReader();
-    r.onload=function(){ var im=new Image(); im.onload=function(){
-      var s=Math.min(1,960/Math.max(im.width,im.height)), w=Math.max(1,Math.round(im.width*s)), h=Math.max(1,Math.round(im.height*s));
-      var c=document.createElement('canvas'); c.width=w; c.height=h; var ctx=c.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h); ctx.drawImage(im,0,0,w,h);
-      try{ cb(c.toDataURL('image/jpeg',0.9)); }catch(e){ cb(null); } };
-      im.onerror=function(){ cb(null); }; im.src=r.result; };
-    r.onerror=function(){ cb(null); }; r.readAsDataURL(file); }
-
-  document.querySelectorAll('.hslot').forEach(function(btn){
-    var idx=+btn.getAttribute('data-slot');
-    var inp=btn.querySelector('input[type=file]');
-    btn.addEventListener('click',function(e){ if(e.target!==inp) inp.click(); });
-    inp.addEventListener('change',function(){
-      var f=(inp.files||[])[0]; if(!f) return;
-      downscale(f,function(d){ if(d){ images[idx]=d; btn.classList.add('filled'); btn.style.backgroundImage='url('+d+')'; } gate(); });
-      inp.value='';
-    });
-  });
-  var consent=false;
-  (window.OphApp&&OphApp.kvkkConsent)
-    ? OphApp.kvkkConsent(document.getElementById('k-consent'),function(c){ consent=c; gate(); })
-    : document.getElementById('k-consent').addEventListener('click',function(){ consent=!consent; this.querySelector('.cb').classList.toggle('on',consent); gate(); });
-  function nmeVal(){ var e=document.getElementById('k-name'); return e?(e.value||'').trim():''; }
-  function filledCount(){ return images.filter(function(x){return !!x;}).length; }
-  function gate(){ var ok=filledCount()===4 && consent; document.getElementById('interpretBtn').disabled=!ok; }
-  function delayReveal(cb){ var wait=Math.max(0,180000-(Date.now()-loadStart)); setTimeout(function(){ cb(); }, wait); }
-
-  function goTo(id){ var t=document.getElementById(id); if(t) app.scrollTo({top:t.offsetTop,behavior:'smooth'}); }
-  app.querySelectorAll('[data-go]').forEach(function(b){ b.addEventListener('click',function(){
-    var id=b.dataset.go;
-    if(id==='k-intro'){ document.getElementById('gears').style.display=''; document.getElementById('gearsLoad').style.display='none'; }
-    if(id==='k-upload'){ document.getElementById('k-lerr').classList.remove('on'); document.getElementById('k-retry').style.display='none'; document.getElementById('gearsLoad').style.display='none'; document.getElementById('gears').style.display=''; }
-    goTo(id); setTimeout(reveal,650); }); });
-
-  document.getElementById('interpretBtn').addEventListener('click',function(){
-    if(this.disabled) return;
-    document.getElementById('gears').style.display='none';
-    var gl=document.getElementById('gearsLoad'); gl.style.display=''; if(!gearsLoad){ try{ gearsLoad=OphanCarklar.olustur(gl,GOPT); }catch(e){} }
-    document.getElementById('k-lerr').classList.remove('on'); document.getElementById('k-retry').style.display='none';
-    goTo('k-loading');
-    loadStart=Date.now();
-    try{ if(window.OphApp && OphApp.pushPlanla) OphApp.pushPlanla({gecikme_sn:180, baslik:'OPHANARK', govde:'El falınız hazır ✨', url:location.pathname}); }catch(e){}
-    var _au=ozAuth();
-    fetch(FN,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+(_au.token||ANON)},
-      body:JSON.stringify({name:nmeVal(),right:[images[0],images[1]],left:[images[2],images[3]],lang:(window.OphApp?OphApp.getLang():'en'),kvkk_onay:true,egitim_izni:true,oturum_id:ozSession(),platform:ozPlatform(),uygulama_surum:APP_VER,kullanici_id:_au.uid||null})})
-    .then(function(r){return r.json();})
-    .then(function(j){
-      if(j && j.gecersiz){ showErr('⚠ I could not clearly see your palm and its lines. Please open your hand toward the light and retake the photos.'); return; }
-      if(j && (j.sag||j.sol)){ delayReveal(function(){ renderReading(j.sag||'', j.sol||''); }); }
-      else if(j && j.text && String(j.text).trim().length>120){ delayReveal(function(){ renderReading(j.text,''); }); }
-      else { showErr('⚠ The reading could not be prepared. Please try again with clearer photos.'); }
-    })
-    .catch(function(){ showErr('⚠ Connection error. Please check your internet and try again.'); });
-  });
-  function showErr(msg){ var e=document.getElementById('k-lerr'); e.textContent=msg; e.classList.add('on'); document.getElementById('k-retry').style.display=''; }
-  function paras(t){ return String(t||'').trim().split(/\n\s*\n/).map(function(p){return '<p>'+p.replace(/\n/g,'<br>')+'</p>';}).join(''); }
-  // Eli gri/altın-çizgi stiline çevir (kenar algılama) — verilen referans görsele benzer
-  function stylizeHand(src,cb){
-    try{
-      var im=new Image();
-      im.onload=function(){
-        try{
-          var W=Math.min(340,im.width||340), s=W/(im.width||W), H=Math.max(1,Math.round((im.height||W)*s));
-          var c=document.createElement('canvas'); c.width=W; c.height=H; var x=c.getContext('2d');
-          x.drawImage(im,0,0,W,H);
-          var d=x.getImageData(0,0,W,H), p=d.data, g=new Float32Array(W*H), i;
-          for(i=0;i<W*H;i++){ g[i]=0.299*p[i*4]+0.587*p[i*4+1]+0.114*p[i*4+2]; }
-          var out=x.createImageData(W,H), o=out.data;
-          for(var yy=1;yy<H-1;yy++){ for(var xx=1;xx<W-1;xx++){ var idx=yy*W+xx;
-            var gx=-g[idx-W-1]-2*g[idx-1]-g[idx+W-1]+g[idx-W+1]+2*g[idx+1]+g[idx+W+1];
-            var gy=-g[idx-W-1]-2*g[idx-W]-g[idx-W+1]+g[idx+W-1]+2*g[idx+W]+g[idx+W+1];
-            var e=Math.min(1,Math.sqrt(gx*gx+gy*gy)/255*1.5); var oi=idx*4;
-            o[oi]=Math.round(24+e*(230-24)); o[oi+1]=Math.round(19+e*(184-19)); o[oi+2]=Math.round(16+e*(86-16)); o[oi+3]=255;
-          }}
-          // kenarları koyu arka plana otur (üst/alt satırlar)
-          for(xx=0;xx<W;xx++){ var t0=xx*4,tb=((H-1)*W+xx)*4; o[t0]=24;o[t0+1]=19;o[t0+2]=16;o[t0+3]=255; o[tb]=24;o[tb+1]=19;o[tb+2]=16;o[tb+3]=255; }
-          x.putImageData(out,0,0);
-          cb(c.toDataURL('image/jpeg',0.85));
-        }catch(e){ cb(src); }
-      };
-      im.onerror=function(){ cb(src); };
-      im.src=src;
-    }catch(e){ cb(src); }
-  }
-  function setHand(boxId,src){
-    var box=document.getElementById(boxId); if(!box) return;
-    box.innerHTML='<span class="ph">✋</span>';
-    stylizeHand(src,function(d){ box.classList.add('stylized'); box.innerHTML='<img src="'+d+'"><span class="rsweep"></span>'; });
-  }
-  function renderReading(sag,sol){
-    if(images[0]) setHand('k-rimg',images[0]);
-    if(images[2]) setHand('k-limg',images[2]);
-    document.getElementById('k-rtext').innerHTML=paras(sag);
-    if(sol){ document.getElementById('k-ltext').innerHTML=paras(sol); }
-    else { document.getElementById('k-limg').closest('.resrow').style.display='none'; }
-    try{var _r=document.getElementById('k-rtext'),_l=document.getElementById('k-ltext'); if(window.OphApp&&OphApp.mountTTS){var _row=(_r.closest('.resrow')||_r); OphApp.mountTTS(_row, sol?[_r,_l]:[_r]);}}catch(e){}
-    reveal(); goTo('k-reading');
-  }
-
-  function reveal(){ var vh=app.clientHeight, appTop=app.getBoundingClientRect().top;
-    app.querySelectorAll('.rv:not(.in)').forEach(function(el){ if(el.getBoundingClientRect().top-appTop < vh*0.9) el.classList.add('in'); }); }
-  app.addEventListener('scroll',reveal,{passive:true});
-  reveal(); setTimeout(reveal,400);
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="oph_app.js"></script>
-<script src="spiral.js"></script>
+<script>
+(function(){
+  var SB='https://lssyopqxthausyegeire.supabase.co';
+  var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo';
+  var UNREAD_ONLY=false;
+  var sb=null; try{ sb=window.supabase.createClient(SB,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); }catch(e){}
+  function tid(id){ try{ return window.OphApp?OphApp.tById(id):id; }catch(e){ return id; } }
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  var RKEY='oph_okunan_fallar';
+  function okunanArr(){ try{ return JSON.parse(localStorage.getItem(RKEY)||'[]'); }catch(e){ return []; } }
+  try{ document.getElementById('lst-sub').textContent=tid('gecmis_list_sub'); }catch(e){}
+  var FULL={kahve:'card_coffee',el:'card_palm',tarot:'card_tarot',ruya:'nav_dream'};
+  var loc=(window.OphApp?OphApp.getLang():'en');
+  var dfmt,tfmt;
+  try{ dfmt=new Intl.DateTimeFormat(loc,{year:'numeric',month:'2-digit',day:'2-digit'}); }catch(e){ dfmt=new Intl.DateTimeFormat('en',{year:'numeric',month:'2-digit',day:'2-digit'}); }
+  try{ tfmt=new Intl.DateTimeFormat(loc,{hour:'2-digit',minute:'2-digit'}); }catch(e){ tfmt=new Intl.DateTimeFormat('en',{hour:'2-digit',minute:'2-digit'}); }
+  var list=document.getElementById('lst');
+  function setMsg(cls,m){ list.innerHTML='<div class="'+cls+'">'+esc(m)+'</div>'; }
+  function prev(t){ t=String(t||'').replace(/[#◆*]/g,' ').replace(/\s+/g,' ').trim(); return t.slice(0,150); }
+  (async function(){
+    if(!sb){ setMsg('lst-empty', tid('gecmis_empty')); return; }
+    try{
+      var r=await sb.from('fal_kayitlari').select('id,fal_turu,yorum,created_at,durum')
+        .eq('durum','tamam').not('yorum','is',null).order('created_at',{ascending:false}).limit(100);
+      var rows=(r&&r.data)||[];
+      rows=rows.filter(function(x){ return x.yorum && String(x.yorum).trim().length>0; });
+      var read=okunanArr();
+      if(UNREAD_ONLY){
+        rows=rows.filter(function(x){ return read.indexOf(x.id)<0; });   // okunmamis hazir fallar (tarih azalan)
+      } else {
+        // Gecmis: yalnizca son 7 bakilan fal (en yeni ustte); daha eskiler Supabase'de arsivde kalir
+        var recent7=read.slice(-7).reverse(); var pos={}; recent7.forEach(function(id,i){ pos[id]=i; });
+        rows=rows.filter(function(x){ return Object.prototype.hasOwnProperty.call(pos,x.id); });
+        rows.sort(function(a,b){ return pos[a.id]-pos[b.id]; });
+      }
+      if(r.error || !rows.length){ setMsg('lst-empty', tid('gecmis_empty')); return; }
+      list.innerHTML=rows.map(function(row){
+        var nm=tid(FULL[row.fal_turu])||row.fal_turu||'';
+        var dt=new Date(String(row.created_at||'').replace(' ','T'));
+        var ds=isNaN(dt.getTime())?'':dfmt.format(dt);
+        var ts=isNaN(dt.getTime())?'':tfmt.format(dt);
+        return '<a class="lrow'+(UNREAD_ONLY?' unread':'')+'" href="fal.html?id='+esc(row.id)+'">'+
+               '<div class="lrow-type">'+esc(nm)+'</div>'+
+               '<div class="lrow-date">'+esc(ds)+(ts?' \u00b7 '+esc(ts):'')+'</div>'+
+               '<div class="lrow-prev">'+esc(prev(row.yorum))+'</div></a>';
+      }).join('');
+    }catch(e){ setMsg('lst-empty', tid('gecmis_empty')); }
+  })();
+})();
+</script>
 </body>
 </html>
