@@ -312,13 +312,131 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     function _flash(msg) {
       try { var t = d.createElement('div'); t.textContent = msg; t.style.cssText = 'position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink,#231613);color:#fff;font-family:var(--sans,sans-serif);font-size:13px;padding:9px 16px;border-radius:999px;z-index:9999;opacity:0;transition:opacity .2s'; d.body.appendChild(t); requestAnimationFrame(function(){ t.style.opacity = '1'; }); setTimeout(function(){ t.style.opacity = '0'; setTimeout(function(){ try { t.remove(); } catch (e) {} }, 300); }, 1600); } catch (e) {}
     }
+    // metinden sik bir alinti cikar
+    function _exc(t, max) {
+      t = String(t || '').replace(/[#◆*✦"]/g, ' ').replace(/\s+/g, ' ').trim();
+      if (t.length <= max) return t;
+      var cut = t.slice(0, max);
+      var dot = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
+      if (dot > max * 0.5) return cut.slice(0, dot + 1);
+      var sp = cut.lastIndexOf(' '); return (sp > 0 ? cut.slice(0, sp) : cut) + '…';
+    }
+    // fal turu basligini sayfadan sez
+    function _titleTxt() {
+      var el = d.querySelector('#f-type, #tr-name, .tr-title');
+      if (el && el.textContent && el.textContent.trim()) return el.textContent.trim();
+      var p = location.pathname;
+      if (/kahve/.test(p)) return 'Kahve Falı';
+      if (/el\.html/.test(p)) return 'El Falı';
+      if (/tarot/.test(p)) return 'Tarot Falı';
+      var dt = (d.title || '').replace(/OPHANARK[\s·•|\-]*/i, '').trim();
+      return dt || 'OPHANARK Falı';
+    }
+    function _spc(x, txt, cx, cy, sp) { var o; try { o = x.letterSpacing; x.letterSpacing = sp + 'px'; } catch (e) {} x.fillText(txt, cx, cy); try { x.letterSpacing = o; } catch (e) {} }
+    function _wrap(x, txt, cx, cy, maxW, lh, maxLines) {
+      var words = txt.split(' '), line = '', lines = [];
+      for (var i = 0; i < words.length; i++) {
+        var test = line ? line + ' ' + words[i] : words[i];
+        if (x.measureText(test).width > maxW && line) { lines.push(line); line = words[i]; if (lines.length >= maxLines) break; }
+        else line = test;
+      }
+      if (line && lines.length < maxLines) lines.push(line);
+      if (lines.length >= maxLines && line && lines[lines.length - 1] !== line) { lines[maxLines - 1] = lines[maxLines - 1].replace(/[\s.,;:]+$/, '') + '…'; }
+      lines = lines.slice(0, maxLines);
+      for (var j = 0; j < lines.length; j++) x.fillText(lines[j], cx, cy + j * lh);
+    }
+    // metni en fazla 3 paragrafa ayir (toplam uzunlugu sinirla)
+    function _paras(text, maxTotal) {
+      var arr = String(text || '').replace(/[#◆*✦]/g, ' ').split(/\n{2,}/).map(function (s) { return s.replace(/\s+/g, ' ').trim(); }).filter(Boolean).slice(0, 3);
+      if (!arr.length) arr = [String(text || '').replace(/\s+/g, ' ').trim()];
+      var total = 0; for (var i = 0; i < arr.length; i++) total += arr[i].length;
+      if (total > maxTotal) {
+        var acc = 0, out = [];
+        for (var j = 0; j < arr.length; j++) {
+          var remain = maxTotal - acc; if (remain < 40) break;
+          if (arr[j].length <= remain) { out.push(arr[j]); acc += arr[j].length; }
+          else { var cut = arr[j].slice(0, remain); var sp = cut.lastIndexOf(' '); out.push((sp > 40 ? cut.slice(0, sp) : cut).replace(/[\s.,;:]+$/, '') + '…'); break; }
+        }
+        arr = out.length ? out : arr.slice(0, 1);
+      }
+      return arr;
+    }
+    function _wrapLines(x, txt, maxW) { var w = txt.split(' '), line = '', out = []; for (var i = 0; i < w.length; i++) { var t = line ? line + ' ' + w[i] : w[i]; if (x.measureText(t).width > maxW && line) { out.push(line); line = w[i]; } else line = t; } if (line) out.push(line); return out; }
+    // galgalim carklari (ic ice halkalar) - kanatsiz filigran
+    function _rings(x, cx, cy, R, alpha) {
+      x.save(); x.globalAlpha = alpha; x.strokeStyle = '#a9791f'; x.lineCap = 'round';
+      for (var a = 0; a < 3; a++) {
+        x.save(); x.translate(cx, cy); x.rotate(a * Math.PI / 3);
+        x.lineWidth = 11; x.beginPath(); x.ellipse(0, 0, R, R * 0.40, 0, 0, Math.PI * 2); x.stroke();
+        x.lineWidth = 4; x.beginPath(); x.ellipse(0, 0, R * 0.86, R * 0.335, 0, 0, Math.PI * 2); x.stroke();
+        x.restore();
+      }
+      x.lineWidth = 7; x.beginPath(); x.arc(cx, cy, R * 0.64, 0, Math.PI * 2); x.stroke();
+      x.lineWidth = 3; x.beginPath(); x.arc(cx, cy, R * 0.15, 0, Math.PI * 2); x.stroke();
+      x.restore();
+    }
+    // dikey hikaye karti (1080x1920): galgalim carklari filigrani + OPHANARK + 3 paragraf
+    function _card(title, text) {
+      return new Promise(function (resolve) {
+        var done = false;
+        function go() { if (done) return; done = true; draw(); }
+        try { if (d.fonts && d.fonts.ready) { d.fonts.ready.then(go, go); } else go(); } catch (e) { go(); }
+        setTimeout(go, 1200);
+        function draw() {
+          try {
+            var W = 1080, H = 1920, cv = d.createElement('canvas'); cv.width = W; cv.height = H; var x = cv.getContext('2d');
+            var ink = '#241712', gold = '#9a6c2e', muted = '#8f7d69';
+            x.fillStyle = '#F3ECDD'; x.fillRect(0, 0, W, H);
+            var g = x.createRadialGradient(W / 2, H * 0.46, 150, W / 2, H * 0.5, H * 0.72); g.addColorStop(0, 'rgba(255,252,245,0.55)'); g.addColorStop(1, 'rgba(120,90,50,0.10)'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+            // GALGALIM CARKLARI FILIGRANI — buyuk, dusuk opaklik, yazinin arkasinda
+            _rings(x, W / 2, H / 2 + 40, W * 0.36, 0.17);
+            x.strokeStyle = 'rgba(154,108,46,0.55)'; x.lineWidth = 3; x.strokeRect(56, 56, W - 112, H - 112);
+            x.strokeStyle = 'rgba(154,108,46,0.30)'; x.lineWidth = 1; x.strokeRect(74, 74, W - 148, H - 148);
+            x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+            x.fillStyle = ink; x.font = '600 76px "Cormorant Garamond", Georgia, serif'; _spc(x, 'OPHANARK', W / 2, 236, 12);
+            x.strokeStyle = gold; x.lineWidth = 2; x.beginPath(); x.moveTo(W / 2 - 130, 278); x.lineTo(W / 2 + 130, 278); x.stroke();
+            x.fillStyle = gold; x.font = '600 32px "DM Sans", Arial, sans-serif'; _spc(x, (title || 'FAL').toUpperCase(), W / 2, 356, 7);
+            // 3 paragrafi alana sigacak sekilde otomatik boyutla ve dikeyde ortala
+            var paras = _paras(text, 620), maxW = W - 250, yTop = 430, yBottom = 1700, areaH = yBottom - yTop, chosen = null;
+            for (var fs = 56; fs >= 34; fs -= 2) {
+              x.font = 'italic ' + fs + 'px "Cormorant Garamond", Georgia, serif';
+              var lh = Math.round(fs * 1.42), pg = Math.round(fs * 0.95);
+              var wrapped = paras.map(function (p) { return _wrapLines(x, p, maxW); });
+              var tl = 0; for (var w2 = 0; w2 < wrapped.length; w2++) tl += wrapped[w2].length;
+              var th = tl * lh + (wrapped.length - 1) * pg;
+              if (th <= areaH) { chosen = { fs: fs, lh: lh, pg: pg, wrapped: wrapped, th: th }; break; }
+            }
+            if (!chosen) { x.font = 'italic 34px "Cormorant Garamond", Georgia, serif'; var lh0 = 48, pg0 = 32, wr0 = paras.map(function (p) { return _wrapLines(x, p, maxW); }); chosen = { fs: 34, lh: lh0, pg: pg0, wrapped: wr0, th: areaH }; }
+            x.fillStyle = ink; x.font = 'italic ' + chosen.fs + 'px "Cormorant Garamond", Georgia, serif';
+            var y = yTop + Math.max(0, (areaH - chosen.th) / 2) + chosen.fs;
+            for (var pi = 0; pi < chosen.wrapped.length; pi++) {
+              var lines = chosen.wrapped[pi];
+              for (var li = 0; li < lines.length; li++) { x.fillText(lines[li], W / 2, y); y += chosen.lh; }
+              if (pi < chosen.wrapped.length - 1) y += chosen.pg;
+            }
+            x.fillStyle = gold; x.font = '40px "Cormorant Garamond", Georgia, serif'; x.fillText('✦', W / 2, H - 208);
+            x.fillStyle = muted; x.font = '600 27px "DM Sans", Arial, sans-serif'; _spc(x, 'WWW.OPHANARK.COM', W / 2, H - 150, 5);
+            cv.toBlob(function (b) { resolve(b); }, 'image/png');
+          } catch (e) { resolve(null); }
+        }
+      });
+    }
     shr.onclick = function () {
       var body = full.length > 1600 ? full.slice(0, 1600) + '…' : full;
       var url = 'https://www.ophanark.com';
-      if (navigator.share) { navigator.share({ title: 'OPHANARK', text: body, url: url }).catch(function () {}); return; }
-      var copyTxt = body + '\n\n' + url;
-      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(copyTxt).then(function () { _flash('Panoya kopyalandı'); }).catch(function () { _flash('Kopyalanamadı'); }); }
-      else { try { var ta = d.createElement('textarea'); ta.value = copyTxt; ta.style.cssText = 'position:fixed;opacity:0'; d.body.appendChild(ta); ta.select(); d.execCommand('copy'); ta.remove(); _flash('Panoya kopyalandı'); } catch (e) { _flash('Kopyalanamadı'); } }
+      var teaser = _exc(full, 180);
+      _card(_titleTxt(), full).then(function (blob) {
+        var file = null; try { if (blob) file = new File([blob], 'ophanark-fal.png', { type: 'image/png' }); } catch (e) {}
+        // 1) hikaye kartini gorsel olarak paylas (Instagram/WhatsApp story vb.)
+        if (file && navigator.canShare && navigator.share) { try { if (navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: 'OPHANARK', text: teaser }).catch(function () {}); return; } } catch (e) {} }
+        // 2) yalniz metin paylas
+        if (navigator.share) { navigator.share({ title: 'OPHANARK', text: body, url: url }).catch(function () {}); return; }
+        // 3) masaustu: karti indir + metni kopyala
+        if (file) { try { var a = d.createElement('a'); a.href = URL.createObjectURL(file); a.download = 'ophanark-fal.png'; d.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { try { URL.revokeObjectURL(a.href); } catch (e) {} }, 5000); _flash('Kart indirildi'); } catch (e) {} }
+        var copyTxt = body + '\n\n' + url;
+        if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(copyTxt).then(function () { if (!file) _flash('Panoya kopyalandı'); }).catch(function () {}); }
+        else { try { var ta = d.createElement('textarea'); ta.value = copyTxt; ta.style.cssText = 'position:fixed;opacity:0'; d.body.appendChild(ta); ta.select(); d.execCommand('copy'); ta.remove(); if (!file) _flash('Panoya kopyalandı'); } catch (e) {} }
+      });
     };
     return bar;
   }
