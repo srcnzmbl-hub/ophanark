@@ -133,6 +133,11 @@
   html[data-theme="dark"] .tr-read{color:#EDEDF1}
   .tr-seebtn{margin:.4cm auto 0}
   .tr-err{color:#b23b2e;font-family:var(--sans);font-size:14px;margin-top:14px}
+  /* deste karistirma / dagitma animasyonu */
+  .tr-anim{position:fixed;inset:0;z-index:8000;pointer-events:none;overflow:hidden}
+  .tr-anim .ac{position:absolute;left:0;top:0;will-change:transform;border-radius:5px;overflow:hidden;
+    box-shadow:0 7px 16px rgba(20,14,10,.4);background:#141010}
+  .tr-anim .ac img{width:100%;height:100%;display:block;object-fit:cover}
 </style>
 </head>
 
@@ -214,13 +219,15 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
   for(var i=0;i<6;i++){ var im=document.createElement('img'); im.src='cards/back.webp';
     im.style.transform='rotate('+rot[i]+'deg)'; im.style.left=lx[i]+'%'; im.style.top=(14+ (i%2)*16)+'%'; sc.appendChild(im); }
 
-  // shuffle: build 78 face-down grid with a shuffled hidden deck
+  // ---- desteyi hazirla + 78'lik gizli grid (7/6 donusumlu, 12 sira) ----
   var order=[];
-  function shuffle(){
+  function buildOrder(){
     order = DECK.slice();
-    for(var i=order.length-1;i>0;i--){ var j=Math.floor(( (i+1) * (parseFloat('0.'+(String(Date.now()+i*97).slice(-6))) ) ) )%(i+1); var t=order[i];order[i]=order[j];order[j]=t; }
+    for(var i=order.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=order[i];order[i]=order[j];order[j]=t; }
+  }
+  function buildGrid(){
     var d=$('tr-deck'); d.innerHTML='';
-    var pattern=[7,6,7,6,7,6,7,6,7,6,7,6]; var k=0; // 12 sıra, 7/6 dönüşümlü = 78, altta tek kart kalmaz
+    var pattern=[7,6,7,6,7,6,7,6,7,6,7,6]; var k=0;
     for(var rI=0;rI<pattern.length;rI++){
       var row=document.createElement('div'); row.className='tr-row';
       for(var cI=0;cI<pattern[rI] && k<order.length;cI++){
@@ -231,13 +238,104 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
       d.appendChild(row);
     }
     $('tr-count').textContent = need===1 ? '1 kart seç' : (need+' kart seç');
-    $('tr-intro').style.display='none'; $('tr-pick').style.display='block';
-    $('tr-pick').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  function shuffle(){
+    if(shuffle._busy) return; shuffle._busy=true;
+    buildOrder(); buildGrid();
+    $('tr-intro').style.display='none';
+    // pick bolumunu olcum icin yerlestir ama gorunmez tut
+    var pick=$('tr-pick'); pick.style.display='block'; pick.style.visibility='hidden';
+    try{ pick.scrollIntoView({block:'start'}); }catch(e){}
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      runDealAnimation(function(){ pick.style.visibility='visible'; shuffle._busy=false; });
+    }); });
   }
   $('tr-shuffle').addEventListener('click', shuffle);
+
+  // ---- KVKK onay baglama: oph_app.js sayfanin sonunda yuklenir; hazir olana kadar dene ----
   var trConsent=false;
-  if(window.OphApp&&OphApp.kvkkConsent){ OphApp.kvkkConsent($('tr-consent'),function(c){ trConsent=c; $('tr-shuffle').disabled=!c; }); }
-  else { $('tr-shuffle').disabled=false; }
+  (function wireConsent(){
+    if(window.OphApp && OphApp.kvkkConsent){
+      OphApp.kvkkConsent($('tr-consent'), function(c){ trConsent=c; $('tr-shuffle').disabled=!c; });
+    } else { setTimeout(wireConsent, 60); }
+  })();
+
+  // ---- KART DAGITMA ANIMASYONU: yagmur -> yerde 4 karisma -> altta tek deste -> 3sn -> mermi gibi grid'e ----
+  function runDealAnimation(done){
+    var W=window.innerWidth, H=window.innerHeight;
+    var slots=[].slice.call($('tr-deck').querySelectorAll('.tr-slot'));
+    var rects=slots.map(function(s){ var r=s.getBoundingClientRect(); return {cx:r.left+r.width/2, cy:r.top+r.height/2, w:r.width}; });
+    var N=rects.length; if(!N){ if(done)done(); return; }
+    var CW=Math.max(28, rects[0].w), CH=CW*1.5;
+    var cx0=W*0.5, cy0=H*0.6;                 // yer merkezi
+    var deckX=W*0.5, deckY=H*0.85;            // en alt orta (tek deste)
+    var rr=function(a,b){ return a+Math.random()*(b-a); };
+    // easing
+    var E={
+      outCubic:function(t){ return 1-Math.pow(1-t,3); },
+      inOutQuad:function(t){ return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; },
+      outBack:function(t){ var c1=1.70158,c3=c1+1; return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2); },
+      inOutSine:function(t){ return -(Math.cos(Math.PI*t)-1)/2; },
+      outQuint:function(t){ return 1-Math.pow(1-t,5); }
+    };
+    var ov=document.createElement('div'); ov.className='tr-anim';
+    var cards=[];
+    // zaman cizelgesi (ms)
+    var RAIN=[0,1350], WA=[1450,1900], WB=[1950,2400], WC=[2450,2950], WD=[3000,3450], GA=[3550,4350];
+    var DEAL_START=GA[1]+3000;               // toplandiktan 3sn sonra
+    var DEAL_DUR=340, DEAL_GAP=(3500-DEAL_DUR)/Math.max(1,N-1);  // toplam 3.5sn
+    var END=DEAL_START + (N-1)*DEAL_GAP + DEAL_DUR + 60;
+    function scat(){ return {x:rr(W*0.10,W*0.90), y:rr(H*0.42,H*0.78), r:rr(-32,32)}; }
+    for(var i=0;i<N;i++){
+      var el=document.createElement('div'); el.className='ac';
+      el.style.width=CW+'px'; el.style.height=CH+'px';
+      el.innerHTML='<img src="cards/back.webp" alt="">';
+      ov.appendChild(el);
+      var s1=scat();                                   // yagmur sonu
+      var a={x:cx0+(i<N/2?-1:1)*rr(W*0.06,W*0.30), y:rr(H*0.44,H*0.72), r:(i<N/2?-1:1)*rr(6,20)}; // riffle
+      // swirl: s1 etrafinda merkezden dondur
+      var dx=s1.x-cx0, dy=s1.y-cy0, ang=130*Math.PI/180, ca=Math.cos(ang), sa=Math.sin(ang);
+      var b={x:cx0+dx*ca-dy*sa, y:cy0+dx*sa+dy*ca, r:s1.r+130};
+      var c=scat();                                    // patlayarak yeniden dagil
+      var dd={x:c.x+rr(-12,12), y:c.y+rr(-12,12), r:c.r+rr(-18,18)}; // titreme
+      cards.push({el:el, s:1, segs:[
+        {t0:rr(0,520), t1:RAIN[1]+rr(-120,120), x0:rr(W*0.04,W*0.96), y0:-CH-rr(0,H*0.5), r0:rr(-45,45), x1:s1.x,y1:s1.y,r1:s1.r, s0:1,s1:1, e:E.outCubic},
+        {t0:WA[0],t1:WA[1], x0:s1.x,y0:s1.y,r0:s1.r, x1:a.x,y1:a.y,r1:a.r, s0:1,s1:1, e:E.inOutQuad},
+        {t0:WB[0],t1:WB[1], x0:a.x,y0:a.y,r0:a.r, x1:b.x,y1:b.y,r1:b.r, s0:1,s1:1, e:E.inOutSine},
+        {t0:WC[0],t1:WC[1], x0:b.x,y0:b.y,r0:b.r, x1:c.x,y1:c.y,r1:c.r, s0:1,s1:1, e:E.outBack},
+        {t0:WD[0],t1:WD[1], x0:c.x,y0:c.y,r0:c.r, x1:dd.x,y1:dd.y,r1:dd.r, s0:1.0,s1:1.12, e:E.inOutSine},
+        {t0:GA[0],t1:GA[1], x0:dd.x,y0:dd.y,r0:dd.r, x1:deckX+rr(-3,3),y1:deckY+rr(-2,2),r1:rr(-4,4), s0:1.12,s1:1, e:E.outCubic}
+      ], deal:null});
+    }
+    // deal segmentleri: mermi gibi (siralı, hizli firlatma)
+    var orderIdx=[]; for(var q=0;q<N;q++) orderIdx.push(q);
+    for(var q2=orderIdx.length-1;q2>0;q2--){ var j2=Math.floor(Math.random()*(q2+1)); var tt=orderIdx[q2];orderIdx[q2]=orderIdx[j2];orderIdx[j2]=tt; }
+    for(var oi=0;oi<N;oi++){
+      var ci=orderIdx[oi]; var cd=cards[ci]; var last=cd.segs[cd.segs.length-1];
+      var st=DEAL_START+oi*DEAL_GAP;
+      cd.segs.push({t0:st,t1:st+DEAL_DUR, x0:last.x1,y0:last.y1,r0:last.r1, x1:rects[ci].cx,y1:rects[ci].cy,r1:0, s0:1,s1:1, e:E.outQuint});
+    }
+    document.body.appendChild(ov);
+    var t0=performance.now();
+    function frame(now){
+      var t=now-t0;
+      for(var i=0;i<N;i++){
+        var c=cards[i], segs=c.segs, seg=null;
+        // aktif ya da en son biten segmenti bul
+        for(var k=0;k<segs.length;k++){
+          if(t < segs[k].t0){ if(k===0) seg={x:segs[0].x0,y:segs[0].y0,r:segs[0].r0,sc:segs[0].s0}; break; }
+          if(t>=segs[k].t0 && t<=segs[k].t1){ var p=(t-segs[k].t0)/(segs[k].t1-segs[k].t0); var e=segs[k].e(p);
+            seg={x:segs[k].x0+(segs[k].x1-segs[k].x0)*e, y:segs[k].y0+(segs[k].y1-segs[k].y0)*e, r:segs[k].r0+(segs[k].r1-segs[k].r0)*e, sc:segs[k].s0+(segs[k].s1-segs[k].s0)*e}; break; }
+          if(k===segs.length-1){ seg={x:segs[k].x1,y:segs[k].y1,r:segs[k].r1,sc:segs[k].s1}; }
+        }
+        if(!seg) seg={x:segs[0].x0,y:segs[0].y0,r:segs[0].r0,sc:segs[0].s0};
+        c.el.style.transform='translate('+(seg.x-CW/2).toFixed(1)+'px,'+(seg.y-CH/2).toFixed(1)+'px) rotate('+seg.r.toFixed(1)+'deg) scale('+seg.sc.toFixed(3)+')';
+      }
+      if(t < END){ requestAnimationFrame(frame); }
+      else { if(done)done(); try{ ov.parentNode && ov.parentNode.removeChild(ov); }catch(e){} }
+    }
+    requestAnimationFrame(frame);
+  }
 
   var picked=[];
   function onPick(e){
