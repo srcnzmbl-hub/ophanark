@@ -377,8 +377,10 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     + '<p>Doğum bilgileri öncelikle cihazınızın belleğinde (localStorage) tutulur; tarayıcı/uygulama verilerini temizleyerek dilediğiniz an silebilirsiniz. Hesabınızın ve ilişkili verilerin silinmesi için hello@ozarkcollective.co adresinden bize ulaşabilirsiniz.</p>'
     + '<h4>5. Haklarınız (KVKK md. 11)</h4>'
     + '<p>Kişisel verilerinizin işlenip işlenmediğini öğrenme, bilgi talep etme, düzeltilmesini, silinmesini veya yok edilmesini isteme, işlemeye itiraz etme ve zararın giderilmesini talep etme haklarına sahipsiniz. Taleplerinizi yukarıdaki e-posta adresine iletebilirsiniz.</p>'
+    + '<div class="kvkk-onem"><h4>Ophan AI\'ye Destek ve Görsel Analiz İzni</h4>'
+    + '<p>Uygulamamızın yapay zekâ motoru olan <b>Ophan AI</b>, daha iyi görsel analiz yapabilmesi için sizin desteğinizle gelişmeye devam ediyor. Ophan AI\'nin gelişmesine destek olmak amacıyla; paylaştığım tüm bilgilerin ve görsellerin — el falı ve kahve falı için gönderdiğim fotoğraflar dâhil — daha isabetli analiz edilmesi için Ophan AI tarafından işlenmesine, OPHANARK belleğinde saklanmasına ve modelin eğitilip geliştirilmesinde süresiz olarak kullanılmasına açık ve özgür irademle rıza veriyorum. Bu izni istediğim zaman hello@ozarkcollective.co adresine yazarak geri çekebilirim.</p></div>'
     + '<h4>6. Açık rıza</h4>'
-    + '<p>Bu metni okudum ve anladım. Seçtiğim falın oluşturulabilmesi için yukarıda belirtilen kişisel verilerimin bu amaçlarla işlenmesine ve gerekli hizmet sağlayıcılara aktarılmasına açık rıza veriyorum. Uygulama 13 yaşın altındaki çocuklara yönelik değildir.</p>';
+    + '<p>Bu metni okudum ve anladım. Seçtiğim falın oluşturulabilmesi için yukarıda belirtilen kişisel verilerimin bu amaçlarla işlenmesine, saklanmasına ve gerekli hizmet sağlayıcılara aktarılmasına açık rıza veriyorum. Uygulama 13 yaşın altındaki çocuklara yönelik değildir.</p>';
 
   var _kvkkOkundu = false, _kvkkCb = null;
   function kvkkCssInjekte(){
@@ -402,6 +404,10 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     + '.kvkk-metin h3{font-family:var(--disp,serif);font-size:22px;letter-spacing:.02em;margin:0 0 12px}'
     + '.kvkk-metin h4{font-family:var(--sans,sans-serif);font-size:14px;letter-spacing:.02em;margin:16px 0 4px}'
     + '.kvkk-metin p{font-family:var(--serif,serif);font-size:15px;line-height:1.6;margin:0 0 10px;color:var(--ink,#231613)}'
+    + '.kvkk-onem{margin:18px 0;padding:15px 16px;border:1.5px solid var(--ink,#231613);border-radius:11px;background:rgba(210,59,46,.06)}'
+    + '.kvkk-onem h4{font-family:var(--disp,serif)!important;font-size:17px!important;font-weight:700!important;letter-spacing:.01em;margin:0 0 7px!important;color:var(--ink,#231613)}'
+    + '.kvkk-onem p{font-family:var(--serif,serif);font-size:16px!important;font-weight:600;line-height:1.6!important;margin:0!important;color:var(--ink,#231613)}'
+    + '.kvkk-onem b{font-weight:800}'
     + '.kvkk-foot{flex:none;padding:14px 22px 18px;border-top:1px solid var(--line,rgba(0,0,0,.12));text-align:center}'
     + '.kvkk-ok{font-family:var(--sans,sans-serif);text-transform:uppercase;letter-spacing:.12em;font-size:13px;'
     + 'color:#fff;background:var(--ink,#231613);border:none;border-radius:999px;padding:13px 30px;cursor:pointer}'
