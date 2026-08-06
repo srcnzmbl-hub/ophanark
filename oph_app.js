@@ -192,6 +192,7 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
   function injectScale() {
     if (d.getElementById('oph-scale')) return;
     var css = ''
+      + '#spiral{display:none !important;}'
       + 'html[data-theme="dark"]{--bg:#121216 !important;--ink:#ffffff !important;--line:rgba(255,255,255,.18) !important;--muted:#AEB6C2 !important;}'
       + 'html[data-theme="dark"] body{background:#121216 !important;}'
       + 'html[data-theme="dark"] .rbody,html[data-theme="dark"] .rtext,html[data-theme="dark"] .lead,html[data-theme="dark"] .sub,html[data-theme="dark"] .rmeta{color:#EDEDF1 !important;}'
