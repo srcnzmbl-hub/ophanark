@@ -70,9 +70,16 @@
   .lerr{display:none;font-family:var(--serif);font-style:italic;color:#b12a1e;font-size:15px;margin-top:18px;max-width:82%}
   .lerr.on{display:block}
   .resrow{display:flex;gap:15px;align-items:flex-start;width:min(94%,600px);margin:0 auto;padding:2.4vh 6px;text-align:left}
-  .rimg{width:40%;flex:none;aspect-ratio:3/4;border-radius:8px;border:1px solid rgba(156,134,102,.5);background:radial-gradient(circle at 50% 38%,#efe7d2,#d9c9a6);overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .rimg{position:relative;width:40%;flex:none;aspect-ratio:3/4;border-radius:8px;border:1px solid rgba(156,134,102,.5);background:radial-gradient(circle at 50% 38%,#efe7d2,#d9c9a6);overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .rimg.stylized{background:#141010;border-color:rgba(230,184,86,.4)}
   .rimg img{width:100%;height:100%;object-fit:cover}
   .rimg .ph{font-size:34px;opacity:.4}
+  /* avuç çizgileri üstünden geçen ince ışık animasyonu */
+  .rimg .rsweep{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
+    background:linear-gradient(115deg,transparent 42%,rgba(255,224,150,.55) 50%,transparent 58%);
+    transform:translateX(-120%);animation:rsweep 3.4s ease-in-out infinite}
+  @keyframes rsweep{0%{transform:translateX(-120%)}55%,100%{transform:translateX(120%)}}
+  @media (prefers-reduced-motion:reduce){ .rimg .rsweep{animation:none;opacity:.35;transform:none} }
   .rtx{flex:1}
   .rtx .rlab{font-family:var(--disp);text-transform:uppercase;letter-spacing:.09em;color:var(--ink);font-size:clamp(17px,4.6vw,22px)}
   .rtx .rbd{font-family:var(--serif);font-size:clamp(14px,3.7vw,16px);color:#3f332f;line-height:1.55;margin-top:8px}
@@ -161,10 +168,11 @@
       if(UNREAD_ONLY){
         rows=rows.filter(function(x){ return read.indexOf(x.id)<0; });   // okunmamis hazir fallar (tarih azalan)
       } else {
-        // Gecmis: yalnizca son 7 bakilan fal (en yeni ustte); daha eskiler Supabase'de arsivde kalir
-        var recent7=read.slice(-7).reverse(); var pos={}; recent7.forEach(function(id,i){ pos[id]=i; });
-        rows=rows.filter(function(x){ return Object.prototype.hasOwnProperty.call(pos,x.id); });
-        rows.sort(function(a,b){ return pos[a.id]-pos[b.id]; });
+        // Gecmis: kume = son 7 bakilan fal (daha eskiler Supabase'de arsivde kalir);
+        // ama SIRALAMA okunma tarihine gore degil, olusturulma tarihine gore yeniden eskiye.
+        var set7={}; read.slice(-7).forEach(function(id){ set7[id]=1; });
+        rows=rows.filter(function(x){ return set7[x.id]; });
+        rows.sort(function(a,b){ return String(b.created_at||'').localeCompare(String(a.created_at||'')); }); // created_at DESC
       }
       if(r.error || !rows.length){ setMsg('lst-empty', tid('gecmis_empty')); return; }
       list.innerHTML=rows.map(function(row){
