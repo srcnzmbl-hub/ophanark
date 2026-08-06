@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- ophanark tarot: karistir/dagit animasyonu + KVKK onay + buton boslugu + kart secim ekrani yeniden (Acilimi Olustur + otomatik sec) (deploy 6, buton adi Kaderini Sansa Birak) -->
+<!-- ophanark tarot: karistir/dagit animasyonu + KVKK onay + buton boslugu + kart secim ekrani yeniden (Acilimi Olustur + otomatik sec) (deploy 7, tum fallara sesli dinleme + paylas) -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -453,8 +453,9 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
     var rd=$('tr-read');
     if(r && r.text){
       rd.textContent=r.text;
-      if(need>3){ $('tr-see').style.display='inline-block'; $('tr-see').onclick=function(){ rd.style.display='block'; $('tr-see').style.display='none'; rd.scrollIntoView({behavior:'smooth'}); }; }
-      else { rd.style.display='block'; }
+      var _mntTTS=function(){ try{ if(window.OphApp&&OphApp.mountTTS) OphApp.mountTTS(rd,[rd]); }catch(e){} };
+      if(need>3){ $('tr-see').style.display='inline-block'; $('tr-see').onclick=function(){ rd.style.display='block'; $('tr-see').style.display='none'; _mntTTS(); rd.scrollIntoView({behavior:'smooth'}); }; }
+      else { rd.style.display='block'; _mntTTS(); }
     } else {
       var e=$('tr-err'); e.style.display='block'; e.textContent='Yorum alınamadı, lütfen tekrar deneyin.';
     }

@@ -154,6 +154,7 @@
       var dt=new Date(String(row.created_at||'').replace(' ','T'));
       document.getElementById('f-date').textContent=isNaN(dt.getTime())?'':(dfmt.format(dt)+' \u00b7 '+tfmt.format(dt));
       document.getElementById('f-read').innerHTML=paras(row.yorum);
+      try{ var _fr=document.getElementById('f-read'); if(window.OphApp&&OphApp.mountTTS) OphApp.mountTTS(_fr,[_fr]); }catch(e){}
       okundu(row.id);   // acilinca okundu -> gecmise gecer, hazirdan dusar
     }catch(e){ show(tid('hz_empty')); }
   })();

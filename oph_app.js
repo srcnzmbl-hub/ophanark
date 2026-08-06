@@ -305,6 +305,21 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     pl.onclick = function () { if (_tts.paused && w.speechSynthesis.paused) { try { w.speechSynthesis.resume(); } catch (e) {} _tts.paused = false; setState('playing'); } else { start(); } };
     pa.onclick = function () { if (w.speechSynthesis.speaking && !w.speechSynthesis.paused) { try { w.speechSynthesis.pause(); } catch (e) {} _tts.paused = true; setState('paused'); } };
     stp.onclick = function () { try { w.speechSynthesis.cancel(); } catch (e) {} _ttsClear(); _tts.paused = false; setState('idle'); };
+    // ---- Paylas (Ilet) butonu: her platformda calisir ----
+    var shr = d.createElement('button'); shr.type = 'button'; shr.className = 'oph-share'; shr.setAttribute('aria-label', 'İlet');
+    shr.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"/><path d="M8 7l4-4 4 4"/><path d="M5 12v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-6"/></svg>';
+    bar.appendChild(shr);
+    function _flash(msg) {
+      try { var t = d.createElement('div'); t.textContent = msg; t.style.cssText = 'position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink,#231613);color:#fff;font-family:var(--sans,sans-serif);font-size:13px;padding:9px 16px;border-radius:999px;z-index:9999;opacity:0;transition:opacity .2s'; d.body.appendChild(t); requestAnimationFrame(function(){ t.style.opacity = '1'; }); setTimeout(function(){ t.style.opacity = '0'; setTimeout(function(){ try { t.remove(); } catch (e) {} }, 300); }, 1600); } catch (e) {}
+    }
+    shr.onclick = function () {
+      var body = full.length > 1600 ? full.slice(0, 1600) + '…' : full;
+      var url = 'https://www.ophanark.com';
+      if (navigator.share) { navigator.share({ title: 'OPHANARK', text: body, url: url }).catch(function () {}); return; }
+      var copyTxt = body + '\n\n' + url;
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(copyTxt).then(function () { _flash('Panoya kopyalandı'); }).catch(function () { _flash('Kopyalanamadı'); }); }
+      else { try { var ta = d.createElement('textarea'); ta.value = copyTxt; ta.style.cssText = 'position:fixed;opacity:0'; d.body.appendChild(ta); ta.select(); d.execCommand('copy'); ta.remove(); _flash('Panoya kopyalandı'); } catch (e) { _flash('Kopyalanamadı'); } }
+    };
     return bar;
   }
 
