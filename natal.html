@@ -678,7 +678,7 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
   }
 
   // ---- flow ----
-  function goTo(id){ var t=document.getElementById(id); if(t) app.scrollTo({top:t.offsetTop, behavior:'smooth'}); }
+  function goTo(id){ var t=document.getElementById(id); if(!t) return; var y=0,el=t; while(el&&el!==app){ y+=el.offsetTop; el=el.offsetParent; } app.scrollTo({top:y, behavior:'smooth'}); }
   app.querySelectorAll('[data-go]').forEach(function(b){ b.addEventListener('click', function(){ goTo(b.dataset.go); setTimeout(reveal,650); }); });
 
   function offsetOf(tz,date){ try{
