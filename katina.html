@@ -97,8 +97,18 @@
   .zrow .zn{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink);letter-spacing:.08em}
   .zrow .zl{font-family:var(--sans);font-weight:400;font-size:clamp(10px,2.6vw,12px);
     letter-spacing:.18em;text-transform:uppercase}
-  /* force the 2cm gap under the subtitle (beats the app's injected .zlist rule via id specificity) */
-  #t-spreads{margin-top:2cm !important}
+  /* Katina "nedir" bilgi kutusu */
+  .katinfo{width:min(560px,92%);margin:.7cm auto 0;text-align:left;
+    border:1px solid var(--line);border-radius:14px;padding:20px 22px;
+    background:linear-gradient(180deg,rgba(154,108,46,.055),rgba(154,108,46,.012))}
+  .katinfo h2{font-family:var(--disp);font-weight:400;text-transform:uppercase;letter-spacing:.06em;
+    font-size:clamp(15px,4.2vw,19px);margin:0 0 .35cm;color:var(--gold)}
+  .katinfo p{font-family:var(--serif);font-size:clamp(14px,3.7vw,16px);line-height:1.72;
+    margin:0 0 .32cm;color:var(--ink);opacity:.92}
+  .katinfo p:last-child{margin-bottom:0}
+  .katinfo p .lbl{font-style:italic;color:var(--gold);opacity:.95}
+  /* gap under the bilgi kutusu (beats the app's injected .zlist rule via id specificity) */
+  #t-spreads{margin-top:1cm !important}
   .t-deck{display:inline-block;margin:1.4cm auto 0;font-family:var(--sans);text-transform:uppercase;
     letter-spacing:.16em;font-size:clamp(11px,2.9vw,13px);color:var(--ink);text-decoration:none;
     border:1.5px solid var(--ink);border-radius:999px;padding:12px 30px;-webkit-tap-highlight-color:transparent}
@@ -113,6 +123,14 @@
   <section id="t-pick">
     <h1 class="big" id="t-title">Katina Falı</h1>
     <p id="t-sub">Kalbindeki sorulara kartlar yanıt versin</p>
+
+    <div class="katinfo">
+      <h2>Katina Falı Nedir?</h2>
+      <p><span class="lbl">Adı nereden gelir?</span> Rivayete göre Katina, iskambil destesinde “sevgiliyi” temsil eden kadın kartından — Yunanca Katina (Katerina) isminden — gelir. Avrupa’nın kâğıt falı geleneğinden Anadolu’ya geçmiş, zamanla aşka odaklanan kendine has bir fal biçimine dönüşmüştür.</p>
+      <p><span class="lbl">Ne için bakılır?</span> Katina, gönül işlerinin falıdır. Karşındakinin sana dair hisleri, ilişkinin gidişatı, bir barışma ya da yeni bir başlangıç ihtimali ve kalbindeki “acaba” sorularının yanıtı için bakılır.</p>
+      <p><span class="lbl">Nasıl bakılır?</span> Niyetini kalbinden geçirir, kartları karıştırırsın; seçtiğin kartlar bir dizilime açılır. Her kartın bir düz bir de ters anlamı vardır — düz gelen kart doğrudan, ters gelen kart ise bir engeli ya da içe dönük hâli anlatır. Kartların aşk bağlamındaki anlamları birleşerek sorunun hikâyesini kurar. Aşağıdan niyetine en uygun dizilimi seç ve kalbini kartlara aç.</p>
+    </div>
+
     <div class="zlist" id="t-spreads">
       <a class="zrow" href="katina-read.html?s=tek-kart"><span class="zn">01</span><span class="zl">Tek Kart</span></a>
       <a class="zrow" href="katina-read.html?s=uc-kart"><span class="zn">02</span><span class="zl">Geçmiş – Şimdi – Gelecek</span></a>
