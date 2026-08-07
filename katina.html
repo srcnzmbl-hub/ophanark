@@ -107,6 +107,14 @@
     margin:0 0 .32cm;color:var(--ink);opacity:.92}
   .katinfo p:last-child{margin-bottom:0}
   .katinfo p .lbl{font-style:italic;color:var(--gold);opacity:.95}
+  /* Devam Et butonu + kademeli acilma */
+  .kat-devam{display:inline-block;margin:.85cm auto 0;font-family:var(--sans);text-transform:uppercase;
+    letter-spacing:.18em;font-size:clamp(12px,3vw,14px);color:var(--bg);background:var(--ink);
+    border:1.5px solid var(--ink);border-radius:999px;padding:14px 42px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:opacity .18s}
+  .kat-devam:active{opacity:.8}
+  #t-pick.pre #t-spreads,#t-pick.pre .t-deck{display:none}
+  #t-pick:not(.pre) #kat-devam{display:none}
   /* gap under the bilgi kutusu (beats the app's injected .zlist rule via id specificity) */
   #t-spreads{margin-top:1cm !important}
   .t-deck{display:inline-block;margin:1.4cm auto 0;font-family:var(--sans);text-transform:uppercase;
@@ -120,7 +128,7 @@
   <div class="backlink"><a href="scroll.html">&larr; Fortunes</a><span class="brandmini">OPHANARK</span></div>
 
   <!-- KATINA spread selection (love-focused) -->
-  <section id="t-pick">
+  <section id="t-pick" class="pre">
     <h1 class="big" id="t-title">Katina Falı</h1>
     <p id="t-sub">Kalbindeki sorulara kartlar yanıt versin</p>
 
@@ -130,6 +138,8 @@
       <p><span class="lbl">Ne için bakılır?</span> Katina, gönül işlerinin falıdır. Karşındakinin sana dair hisleri, ilişkinin gidişatı, bir barışma ya da yeni bir başlangıç ihtimali ve kalbindeki “acaba” sorularının yanıtı için bakılır.</p>
       <p><span class="lbl">Nasıl bakılır?</span> Niyetini kalbinden geçirir, kartları karıştırırsın; seçtiğin kartlar bir dizilime açılır. Her kartın bir düz bir de ters anlamı vardır — düz gelen kart doğrudan, ters gelen kart ise bir engeli ya da içe dönük hâli anlatır. Kartların aşk bağlamındaki anlamları birleşerek sorunun hikâyesini kurar. Aşağıdan niyetine en uygun dizilimi seç ve kalbini kartlara aç.</p>
     </div>
+
+    <button type="button" class="kat-devam" id="kat-devam">Devam Et</button>
 
     <div class="zlist" id="t-spreads">
       <a class="zrow" href="katina-read.html?s=tek-kart"><span class="zn">01</span><span class="zl">Tek Kart</span></a>
@@ -146,5 +156,17 @@
   </section>
 </div>
 <script src="oph_app.js"></script>
+<script>
+  (function(){
+    var pick=document.getElementById('t-pick');
+    var btn=document.getElementById('kat-devam');
+    var list=document.getElementById('t-spreads');
+    if(!pick||!btn) return;
+    btn.addEventListener('click', function(){
+      pick.classList.remove('pre');
+      try{ if(list) list.scrollIntoView({behavior:'smooth', block:'center'}); }catch(e){}
+    });
+  })();
+</script>
 </body>
 </html>
