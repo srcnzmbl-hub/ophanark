@@ -103,7 +103,10 @@
   .ntbl td.v{font-family:var(--disp);font-size:16px;color:var(--accent);width:34px;text-align:center}
   .ntbl td.pl{color:var(--gold);white-space:nowrap;font-size:12.5px}
   .ntbl td.lbl2{color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-size:10px}
-  .arrows{margin-top:4px}
+  .chart-legend{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--serif);font-size:clamp(13px,3.5vw,15px);color:var(--muted);line-height:1.5}
+  .chart-legend b{color:var(--ink)}
+  html[data-theme="dark"] .chart-legend b{color:var(--ink)}
+  .arrows{margin-top:14px}
   .arrows .ar{display:flex;gap:8px;align-items:baseline;padding:4px 0;font-size:12px}
   .arrows .ar b{font-family:var(--sans);color:var(--accent);text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;flex:none;min-width:96px}
   .arrows .ar span{color:#3f332f}
@@ -128,6 +131,13 @@
       <div class="fld"><label>Telefon Numarası</label><input id="n-phone" type="tel" placeholder="05xx xxx xx xx" autocomplete="tel"></div>
       <div class="err" id="n-err"></div>
       <button class="go" id="n-go" type="button">Sayılarımı Çöz ↓</button>
+      <div id="otpBox" style="display:none;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)">
+        <p style="font-family:var(--serif);font-style:italic;color:var(--muted);text-align:center;font-size:14px;margin:0 0 12px" id="otpInfo"></p>
+        <div class="fld"><label>Onay Kodu</label><input id="otp-code" type="text" inputmode="numeric" maxlength="6" placeholder="6 haneli kod" style="text-align:center;letter-spacing:.4em;font-size:22px"></div>
+        <div class="err" id="otp-err"></div>
+        <button class="go" id="otp-go" type="button">Doğrula ve Haritayı Oluştur</button>
+        <a id="otp-resend" style="display:block;text-align:center;margin-top:14px;font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);cursor:pointer">Kodu tekrar gönder</a>
+      </div>
     </div>
   </section>
 
@@ -479,10 +489,11 @@ function calc(){
       arrT+='<div class="arrows">'; arrows.forEach(function(a){arrT+='<div class="ar"><b>'+a.t+'</b><span>'+a.d+'</span></div>';}); arrT+='</div></div>';}
     else{arrT='<div class="arrows"><table class="ntbl"><caption>Güç Okları (Lo Shu)</caption></table><div class="ar"><span style="color:var(--muted);font-style:italic">Tamamlanan bir güç okun yok — bu, belirli bir tek yöne kilitlenmeyip çok yönlü olduğun anlamına gelir.</span></div></div>';}
 
+    var legend='<div class="chart-legend"><b>Nasıl okunur?</b> Bu kare, doğum tarihindeki rakamların haritasıdır. Bir sayı ne kadar çok tekrar ederse (örn. <b>99</b> = iki tane 9) o enerji sende o kadar güçlüdür; <b>boş kutular</b> geliştirmen gereken alanlardır. Dolu bir satır, sütun ya da çapraz bir <b>“güç oku”</b> oluşturur ve özel bir yeteneğe işaret eder.</div>';
     document.getElementById('n-chart').innerHTML=
       '<div class="chart-h">Numeroloji Haritası</div>'+
       '<div class="chart-grid"><div class="lo-wrap"><div class="lo">'+svg+'<div class="lo-cap">Lo Shu · Doğum Karesi</div></div></div>'+
-      '<div>'+coreT+eqT+luckT+'</div></div>'+arrT;
+      '<div>'+coreT+eqT+luckT+'</div></div>'+legend+arrT;
   })();
 
   document.getElementById('n-who').textContent=name;
@@ -491,7 +502,69 @@ function calc(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-document.getElementById('n-go').addEventListener('click', calc);
+// ---- SMS onay (Twilio) ----
+var SB_URL='https://lssyopqxthausyegeire.supabase.co';
+var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo';
+function normPhone(raw){var d=(raw||'').trim();if(d.charAt(0)==='+')return '+'+d.slice(1).replace(/\D/g,'');d=d.replace(/\D/g,'');if(d.indexOf('90')===0&&d.length>=12)return '+'+d;if(d.charAt(0)==='0')d=d.slice(1);if(d.length===10&&d.charAt(0)==='5')return '+90'+d;return '+'+d;}
+function sbFn(fn,body){return fetch(SB_URL+'/functions/v1/'+fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_ANON,'Authorization':'Bearer '+SB_ANON},body:JSON.stringify(body)}).then(function(r){return r.json().then(function(j){return {status:r.status,j:j};});});}
+function validFields(){
+  var name=document.getElementById('n-name').value.trim();
+  var date=document.getElementById('n-date').value;
+  var mail=document.getElementById('n-mail').value.trim();
+  var phone=document.getElementById('n-phone').value.trim();
+  var err=document.getElementById('n-err'); err.textContent='';
+  if(trNorm(name).length<2){err.textContent='Lütfen adını ve soyadını yaz.';return null;}
+  if(!date){err.textContent='Lütfen doğum tarihini seç.';return null;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){err.textContent='Lütfen geçerli bir e-posta yaz.';return null;}
+  if(phone.replace(/\D/g,'').length<7){err.textContent='Lütfen telefon numaranı yaz.';return null;}
+  return {phone:phone};
+}
+function onSubmit(){
+  var v=validFields(); if(!v)return;
+  var np=normPhone(v.phone);
+  var verified=null; try{verified=localStorage.getItem('oph_num_vphone');}catch(e){}
+  if(verified===np){ calc(); return; }
+  sendOtp(np);
+}
+function sendOtp(np){
+  var go=document.getElementById('n-go'); go.disabled=true; go.textContent='Kod gönderiliyor…';
+  var err=document.getElementById('n-err'); err.textContent='';
+  sbFn('otp-send',{phone:np}).then(function(r){
+    go.disabled=false; go.textContent='Sayılarımı Çöz ↓';
+    if(r.j&&r.j.ok){
+      document.getElementById('otpInfo').textContent=np+' numarasına 6 haneli bir onay kodu gönderdik. Kodu aşağıya gir.';
+      document.getElementById('otpBox').style.display='block';
+      document.getElementById('otp-code').focus();
+    } else if(r.j&&r.j.error==='sms_not_configured'){
+      err.textContent='SMS servisi henüz kurulmadı (Twilio bağlanınca aktif olacak).';
+    } else if(r.j&&r.j.error==='rate_limited'){
+      err.textContent='Çok sık denedin — lütfen 1 dakika sonra tekrar dene.';
+      document.getElementById('otpBox').style.display='block';
+    } else if(r.j&&r.j.error==='invalid_phone'){
+      err.textContent='Telefon numarası geçersiz görünüyor.';
+    } else {
+      err.textContent='Kod gönderilemedi. Lütfen tekrar dene.';
+    }
+  }).catch(function(){ go.disabled=false; go.textContent='Sayılarımı Çöz ↓'; err.textContent='Bağlantı hatası, tekrar dene.'; });
+}
+function verifyOtp(){
+  var np=normPhone(document.getElementById('n-phone').value.trim());
+  var code=document.getElementById('otp-code').value.trim();
+  var oe=document.getElementById('otp-err'); oe.textContent='';
+  if(code.length<6){oe.textContent='6 haneli kodu gir.';return;}
+  var b=document.getElementById('otp-go'); b.disabled=true; b.textContent='Doğrulanıyor…';
+  sbFn('otp-verify',{phone:np,code:code}).then(function(r){
+    b.disabled=false; b.textContent='Doğrula ve Haritayı Oluştur';
+    if(r.j&&r.j.ok){ try{localStorage.setItem('oph_num_vphone',np);}catch(e){} document.getElementById('otpBox').style.display='none'; calc(); }
+    else if(r.j&&r.j.error==='wrong'){ oe.textContent='Kod hatalı, tekrar dene.'; }
+    else if(r.j&&r.j.error==='expired'){ oe.textContent='Kodun süresi doldu. Yeni kod iste.'; }
+    else if(r.j&&r.j.error==='too_many'){ oe.textContent='Çok fazla deneme. Yeni kod iste.'; }
+    else { oe.textContent='Doğrulanamadı, tekrar dene.'; }
+  }).catch(function(){ b.disabled=false; b.textContent='Doğrula ve Haritayı Oluştur'; oe.textContent='Bağlantı hatası.'; });
+}
+document.getElementById('n-go').addEventListener('click', onSubmit);
+document.getElementById('otp-go').addEventListener('click', verifyOtp);
+document.getElementById('otp-resend').addEventListener('click', function(){ var v=validFields(); if(v) sendOtp(normPhone(v.phone)); });
 document.getElementById('n-name').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('n-date').focus(); });
 document.getElementById('n-again').addEventListener('click', function(){
   document.getElementById('out').style.display='none';
