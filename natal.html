@@ -592,8 +592,9 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
       var H3=(c.houses||[]).map(function(h){return h.lon;});
       localStorage.setItem('oph_natal3d', JSON.stringify({P:P3, HOUSES:H3}));
     }catch(e){}
+    var __dk=false; try{ __dk=((window.OphApp&&OphApp.getTheme)?OphApp.getTheme():document.documentElement.getAttribute('data-theme'))==='dark'; }catch(e){}
     var el=document.getElementById('ci-full');
-    if(el) el.innerHTML='<iframe src="natal3d_embed.html?t='+Date.now()+'" style="width:100%;height:100%;border:0;display:block;background:#fff;border-radius:12px" title="3D natal chart" scrolling="no" allowtransparency="true"></iframe>';
+    if(el) el.innerHTML='<iframe src="natal3d_embed.html?t='+Date.now()+(__dk?'&dark=1':'')+'" style="width:100%;height:100%;border:0;display:block;background:transparent;border-radius:12px" title="3D natal chart" scrolling="no" allowtransparency="true"></iframe>';
   }
   addEventListener('resize', layoutFold);
   // ---- half-circle reading path (left half + labels, then right half) ----
