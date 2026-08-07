@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<script>(function(){try{var t=localStorage.getItem('oph_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OPHANARK · Numeroloji</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F3E8; --ink:#25181C; --muted:#9c8666; --line:rgba(37,24,28,.16); --gold:#9a6c2e; --accent:#7a1018;
+    --disp:'Italiana',serif; --serif:'Cormorant Garamond',serif; --sans:'DM Sans',sans-serif;
+  }
+  :root[data-theme="dark"]{--bg:#080C17;--ink:#DAE7E3;--line:rgba(218,231,227,.16);--muted:#637999;--gold:#d9b25f;--accent:#e0576a}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);min-height:100dvh}
+  body{font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:640px;margin:0 auto;padding:0 22px 80px}
+  header.bar{display:flex;align-items:center;gap:12px;padding:18px 22px 8px;max-width:640px;margin:0 auto}
+  .backlink a{font-family:var(--sans);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);text-decoration:none;opacity:.7}
+  .brandmini{font-family:var(--disp);letter-spacing:.3em;font-size:14px;margin-left:auto}
+  h1.big{font-family:var(--disp);font-weight:400;line-height:1.05;font-size:clamp(30px,10vw,54px);text-transform:uppercase;letter-spacing:.04em;text-align:center;margin:26px 0 0}
+  .lead{font-family:var(--serif);font-style:italic;font-size:clamp(15px,3.9vw,19px);color:var(--muted);max-width:92%;margin:12px auto 0;line-height:1.5;text-align:center}
+  .form{margin:30px auto 0;max-width:420px}
+  .fld{margin:16px 0}
+  .fld label{display:block;font-family:var(--sans);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .fld input{width:100%;padding:11px 2px;border:0;border-bottom:1px solid var(--line);background:none;font-family:var(--serif);font-size:18px;color:var(--ink);outline:none}
+  .fld input:focus{border-color:var(--gold)}
+  .err{color:#b12a1e;font-family:var(--serif);font-style:italic;font-size:13px;margin-top:8px;min-height:1px;text-align:center}
+  .go{display:block;width:100%;margin-top:26px;font-family:var(--sans);font-weight:400;font-size:clamp(11px,2.7vw,12.5px);letter-spacing:.22em;text-transform:uppercase;padding:15px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer;border-radius:2px}
+  .go:active{transform:scale(.99)}
+  /* results */
+  #out{margin-top:16px;display:none}
+  .who{text-align:center;font-family:var(--serif);font-style:italic;font-size:clamp(16px,4.3vw,20px);color:var(--muted);margin:4px 0 20px}
+  .nrow{display:flex;gap:16px;align-items:flex-start;padding:22px 0;border-top:1px solid var(--line)}
+  .nrow .num{flex:none;width:66px;text-align:center}
+  .nrow .num .d{font-family:var(--disp);font-size:46px;line-height:1;color:var(--accent)}
+  .nrow .num .pl{font-size:22px;line-height:1;color:var(--gold);margin-top:4px}
+  .nrow .num .plname{font-family:var(--sans);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+  .nrow .rt{flex:1;min-width:0}
+  .nrow .rl{font-family:var(--disp);text-transform:uppercase;letter-spacing:.06em;color:var(--ink);font-size:clamp(15px,4.2vw,20px);line-height:1.1}
+  .nrow .rl .tag{font-family:var(--sans);font-size:9.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:3px}
+  .nrow .frame{font-family:var(--serif);font-style:italic;font-size:clamp(14px,3.7vw,16px);color:var(--muted);line-height:1.45;margin:7px 0 9px}
+  .nrow .body{font-family:var(--serif);font-size:clamp(17px,4.5vw,20px);color:#3f332f;line-height:1.55}
+  html[data-theme="dark"] .nrow .body{color:#EDEDF1}
+  .nrow .kw{font-family:var(--sans);font-size:10px;letter-spacing:.06em;color:var(--muted);margin-top:9px;text-transform:uppercase}
+  .synth{margin-top:26px;padding:24px 20px;border:1px solid var(--line);border-radius:12px;background:rgba(154,108,46,.05)}
+  .synth h3{font-family:var(--disp);text-transform:uppercase;letter-spacing:.08em;font-weight:400;font-size:clamp(16px,4.4vw,20px);margin:0 0 10px;text-align:center;color:var(--ink)}
+  .synth p{font-family:var(--serif);font-size:clamp(16px,4.3vw,19px);color:#3f332f;line-height:1.6;margin:0}
+  html[data-theme="dark"] .synth p{color:#EDEDF1}
+  .again{display:block;text-align:center;margin:30px auto 0;font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);cursor:pointer;text-decoration:none}
+  .note{font-family:var(--sans);font-size:10px;letter-spacing:.04em;color:var(--muted);text-align:center;margin-top:26px;opacity:.8;line-height:1.6}
+</style>
+</head>
+<body>
+<header class="bar">
+  <span class="backlink"><a href="scroll.html">← Ana Ekran</a></span>
+  <span class="brandmini">OPHANARK</span>
+</header>
+
+<div class="wrap">
+  <section id="formSec">
+    <h1 class="big">Numeroloji</h1>
+    <p class="lead">İsmin ve doğum tarihin, evrenin sana verdiği titreşimi taşır. Keldani numerolojisi — Babil'in kadim bilgeliği — bu sayıların ardındaki sırrı senin için okur.</p>
+    <div class="form">
+      <div class="fld"><label>Ad Soyad</label><input id="n-name" type="text" placeholder="Adın ve soyadın" autocomplete="name"></div>
+      <div class="fld"><label>Doğum Tarihi</label><input id="n-date" type="date"></div>
+      <div class="err" id="n-err"></div>
+      <button class="go" id="n-go" type="button">Sayılarımı Çöz ↓</button>
+    </div>
+  </section>
+
+  <section id="out">
+    <h1 class="big">Sayıların</h1>
+    <div class="who" id="n-who"></div>
+    <div id="n-rows"></div>
+    <div class="synth"><h3>Genel Sentez</h3><p id="n-synth"></p></div>
+    <a class="again" id="n-again">↺ Yeni hesaplama</a>
+    <p class="note">Keldani (Chaldean) sistemi · Sayılar gezegen titreşimleriyle eşlenir. Numeroloji bir eğlence ve içe bakış aracıdır.</p>
+  </section>
+</div>
+
+<script>
+/* ===================== KELDANİ (CHALDEAN) NUMEROLOJİ ===================== */
+// Keldani harf değerleri (9 kutsal sayıdır, harflere atanmaz)
+var CHAL={A:1,I:1,J:1,Q:1,Y:1, B:2,K:2,R:2, C:3,G:3,L:3,S:3, D:4,M:4,T:4, E:5,H:5,N:5,X:5, U:6,V:6,W:6, O:7,Z:7, F:8,P:8};
+// Türkçe harfleri Latin karşılığına indirger
+function trNorm(s){
+  var map={'Ç':'C','Ğ':'G','İ':'I','I':'I','I':'I','Ö':'O','Ş':'S','Ü':'U','Â':'A','Î':'I','Û':'U'};
+  s=(s||'').toLocaleUpperCase('tr-TR');
+  var out='';
+  for(var i=0;i<s.length;i++){var ch=s[i];out+=(map[ch]||ch);}
+  return out.replace(/[^A-Z]/g,'');
+}
+var VOWELS={A:1,E:1,I:1,O:1,U:1};
+// tek haneye indir (bileşik sayıyı da döndürür)
+function reduce(n){ while(n>9){ var s=0; String(n).split('').forEach(function(d){s+=+d;}); n=s; } return n; }
+function digitsSum(str){ var s=0; String(str).replace(/\D/g,'').split('').forEach(function(d){s+=+d;}); return s; }
+
+function nameNumber(name, mode){ // mode: 'all' | 'vowel' | 'cons'
+  var t=trNorm(name), sum=0;
+  for(var i=0;i<t.length;i++){var c=t[i], isV=!!VOWELS[c];
+    if(mode==='vowel'&&!isV)continue;
+    if(mode==='cons'&&isV)continue;
+    sum+=(CHAL[c]||0);
+  }
+  return {compound:sum, root:reduce(sum)};
+}
+
+// gezegen eşlemesi ve sembol
+var PLANET={1:['Güneş','☉'],2:['Ay','☾'],3:['Jüpiter','♃'],4:['Uranüs','♅'],5:['Merkür','☿'],6:['Venüs','♀'],7:['Neptün','♆'],8:['Satürn','♄'],9:['Mars','♂']};
+
+// 1-9 çekirdek anlamlar
+var NUM={
+ 1:{t:'Öncü',kw:'Liderlik · İrade · Bağımsızlık',
+    body:'Sende yaratıcı bir irade ve öncülük gücü var. Yeni başlangıçlar, kendi yolunu çizmek ve bağımsız durabilmek senin doğanda. Güneş gibi merkezde parlarsın; başkalarına yön verirsin. Gölgen ise inatçılık ve bencilliğe kayabilmek — gücünü paylaşmayı öğrendiğinde asıl liderliğe ulaşırsın.'},
+ 2:{t:'Uyum Getiren',kw:'Sezgi · Duygu · İşbirliği',
+    body:'Ay gibi hassas, sezgisel ve uyumlusun. İnsanların arasını yapar, incelikle bağ kurarsın; duyguları senden iyi okuyan azdır. Denge ve diplomasi senin armağanın. Gölgen kararsızlık ve aşırı alınganlık — kendi değerine güvendiğinde bu hassasiyet en büyük gücün olur.'},
+ 3:{t:'İfade Eden',kw:'Yaratıcılık · Neşe · Bereket',
+    body:'Jüpiter\'in bereketini taşırsın: yaratıcı, iletişimi güçlü, neşeli ve iyimser. Kelimeler, sanat ve ilham senin alanın; girdiğin ortamı canlandırırsın. Bolluk sana akar. Gölgen dağınıklık ve yüzeysellik olabilir — odaklandığında yeteneğin sınır tanımaz.'},
+ 4:{t:'İnşa Eden',kw:'Düzen · Emek · Özgünlük',
+    body:'Uranüs\'ün titreşimiyle hem sağlam bir düzen kurucusu hem de beklenmedik bir yenilikçisin. Emeğe, disipline ve gerçekliğe saygı duyarsın; ama içinde kuralları kıran özgün bir ruh da var. Gölgen katılık ve huzursuzluk — sabrı özgürlükle dengelediğinde kalıcı şeyler inşa edersin.'},
+ 5:{t:'Özgür Ruh',kw:'Değişim · Zeka · Hareket',
+    body:'Merkür gibi hızlı, zeki, meraklı ve çok yönlüsün. Özgürlük, seyahat, değişim ve iletişim seni besler; tek bir kalıba sığmazsın. İnsanları kolayca etkiler, çabuk öğrenirsin. Gölgen savrukluk ve huzursuzluk — enerjini bir yöne akıttığında olağanüstü işler çıkarırsın.'},
+ 6:{t:'Sevgiyle Bağlanan',kw:'Sevgi · Uyum · Sorumluluk',
+    body:'Venüs\'ün sıcaklığını taşırsın: sevgi dolu, estetik, sorumlu ve şefkatli. Aile, güzellik ve uyum senin için kutsaldır; sevdiklerin için bir sığınak olursun. Gölgen fazla fedakarlık ve kaygı — kendine de sevgiyle baktığında verdiğin sevgi tükenmez bir kaynağa dönüşür.'},
+ 7:{t:'Bilge Arayıcı',kw:'Maneviyat · Sezgi · Derinlik',
+    body:'Neptün\'ün gizemini taşırsın: içe dönük, sezgisel, derin ve ruhsal. Yüzeyle yetinmez, şeylerin ardındaki anlamı ararsın; yalnızlığın sana bilgelik getirir. Gölgen kaçış ve kopukluk olabilir — iç sesine güvendiğinde adeta görünmeyeni görürsün.'},
+ 8:{t:'Usta',kw:'Güç · Adalet · Dayanıklılık',
+    body:'Satürn\'ün otoritesini taşırsın: güçlü, disiplinli, maddeyi ve dünyayı yönetmeye yatkın. Hayat sana ağır sınavlar verir ama her sınav seni bilenir; adaleti ve emeği önemsersin. Gölgen sertlik ve takıntı — sabırla yürüdüğünde büyük başarılar ve kalıcı bir güç seni bekler.'},
+ 9:{t:'Tamamlayan',kw:'Cesaret · Tutku · İnsanlık',
+    body:'Mars\'ın ateşini taşırsın: cesur, tutkulu, mücadeleci ve büyük kalpli. Biten döngüleri kapatır, yeniye alan açarsın; insanlık ve idealler için savaşırsın. Gölgen öfke ve sabırsızlık — enerjini şefkatle yönlendirdiğinde gerçek bir kahramana dönüşürsün.'}
+};
+
+// Kategori çerçeveleri
+var FRAME={
+ life:'Doğum tarihinden doğar — bu hayattaki ana temanı ve ruhunun yürüdüğü yolu anlatır.',
+ name:'Adının Keldani titreşimi — dünyada nasıl tanındığını ve kaderinin dışa yansıyan yüzünü gösterir.',
+ soul:'Adındaki sesli harflerden doğar — kalbinin gerçekte ne istediğini, seni içten neyin beslediğini fısıldar.',
+ pers:'Adındaki sessiz harflerden gelir — insanların seni ilk gördüğünde algıladığı dış yüzündür.',
+ birth:'Doğduğun günün sayısı — doğuştan gelen yeteneğin ve kendini gördüğün penceredir.',
+ year:'İçinde bulunduğun yılın enerjisi — bu dönemde neye yönelmenin senin lehine olduğunu söyler.'
+};
+
+// Kişisel yıl kısa yorumları
+var YEAR={
+ 1:'Yeni bir döngünün başı: tohum atma, cesur kararlar ve yeniden doğuş yılı.',
+ 2:'Sabır, ilişkiler ve işbirliği yılı; acele etme, bağlar olgunlaşsın.',
+ 3:'Yaratıcılık, sosyallik ve kendini ifade etme yılı; neşe kapını çalıyor.',
+ 4:'Emek, düzen ve temel atma yılı; disiplinin karşılığını görürsün.',
+ 5:'Değişim, özgürlük ve hareket yılı; beklenmedik fırsatlara açık ol.',
+ 6:'Sevgi, aile, sorumluluk ve yuva yılı; kalbin ve evin öne çıkar.',
+ 7:'İçe dönüş, öğrenme ve ruhsal derinleşme yılı; sessizlikte cevap bulursun.',
+ 8:'Güç, bereket ve maddi hasat yılı; emeklerin somut karşılığa dönüşür.',
+ 9:'Tamamlanma ve bırakma yılı; eskiyi kapat, yeniye yer aç.'
+};
+
+// Bazı bileşik (compound) sayı notları — Keldani/Cheiro geleneği (kısa)
+var COMP={
+ 10:'Kader Çarkı — yükseliş ve onur; kendine güven getirir.',
+ 11:'Gizli sınavlar; zorluklarla güçlenen bir ruh.',
+ 12:'Fedakârlık; başkaları için verirken uyanık kal.',
+ 13:'Dönüşüm ve güç; değişime uyum sağlayana kudret verir.',
+ 14:'Hareket ve şans; dikkatli cesaret ödüllendirir.',
+ 15:'Çekim ve sanat; sıcaklık ve maddi bereket.',
+ 16:'Beklenmediğe karşı uyarı; alçakgönüllülük korur.',
+ 17:'Yıldız — zorluktan sonra gelen kalıcı huzur ve yükseliş.',
+ 18:'Madde ile mana arasında gerilim; sağduyu şart.',
+ 19:'Güneş — zafer, mutluluk ve başarı; en şanslı sayılardan.',
+ 20:'Uyanış ve çağrı; yeni bir amaca hazır ol.',
+ 21:'Taç — uzun çabanın ardından gelen onur ve zafer.',
+ 22:'Yanılsamaya dikkat; saf iyi niyetini koru.',
+ 23:'Kraliyet Yıldızı — koruma, destek ve başarı.',
+ 24:'Sevgi ve yüksek yardım; bereketli bir titreşim.',
+ 25:'Deneyimle gelen bilgelik ve güçlü gözlem.',
+ 26:'Ortaklıklarda iniş çıkış; sağlam temel kur.',
+ 27:'Asa — akıl ve yaratıcı otorite; ödüllenen çaba.',
+ 28:'Vaatler ve kayıplar; yeniden başlamaya hazır ol.',
+ 29:'Belirsizlik ve sınav; inancını yitirme.',
+ 30:'Düşünür — derin tefekkür; seçime bağlı güç.',
+ 31:'İçsel zenginlik; yalnızlıkta olgunlaşan ruh.',
+ 32:'Kitleleri etkileyen sihirli çekim; kendi yolunda kal.',
+ 33:'Güçlü sevgi ve şefkat titreşimi (usta sayı).',
+ 34:'Deneyimle bilenen güç; sabır getirir.',
+ 35:'Yaratıcı zeka; ortaklıklarda dikkat.',
+ 36:'Derin duygu ve sanatsal ilham.',
+ 37:'Uyum, çekim ve dostlukta şans.',
+ 38:'Duygusal sınavlar; sağduyu ile denge.',
+ 39:'Zihinsel güç; tamamlama enerjisi.',
+ 40:'Düzen ve tefekkür; sağlam ama içine dönük.',
+ 41:'Yaratıcı güç; ölçülü ilerleyiş.',
+ 42:'Sorumlulukla gelen bereket.',
+ 43:'Devrim ve huzursuzluk; dikkatli değişim.',
+ 44:'Büyük emekle kurulan sağlam yapı.',
+ 45:'Bilgelik ve liderlik; olgun akıl.',
+ 46:'Kararlılıkla gelen maddi başarı.',
+ 47:'Uyum ve sezgi; huzurlu yükseliş.',
+ 48:'Adalet ve dayanıklılık; ağır ama sağlam.',
+ 49:'Güç ve tamamlama; cesur bitirişler.',
+ 50:'Özgürlük ve deneyim; geniş ufuklar.',
+ 51:'Savaşçı ruh; ani zaferler.',
+ 52:'İçsel güç; sınavlardan doğan bilgelik.'
+};
+
+function planetLine(n){var p=PLANET[n];return '<span class="pl">'+p[1]+'</span><span class="plname">'+p[0]+'</span>';}
+
+function rowHTML(tag, num, frameTxt, extraBody){
+  var meta=NUM[num];
+  return '<div class="nrow"><div class="num"><div class="d">'+num+'</div>'+planetLine(num)+'</div>'+
+    '<div class="rt"><div class="rl"><span class="tag">'+tag+'</span>'+meta.t+'</div>'+
+    '<div class="frame">'+frameTxt+'</div>'+
+    '<div class="body">'+meta.body+(extraBody?(' '+extraBody):'')+'</div>'+
+    '<div class="kw">'+meta.kw+'</div></div></div>';
+}
+
+function calc(){
+  var name=document.getElementById('n-name').value.trim();
+  var date=document.getElementById('n-date').value; // yyyy-mm-dd
+  var err=document.getElementById('n-err'); err.textContent='';
+  if(trNorm(name).length<2){ err.textContent='Lütfen adını ve soyadını yaz.'; return; }
+  if(!date){ err.textContent='Lütfen doğum tarihini seç.'; return; }
+  var parts=date.split('-'); var yyyy=+parts[0], mm=+parts[1], dd=+parts[2];
+
+  // Yaşam Yolu / Kader (tüm tarih)
+  var life=reduce(digitsSum(parts[0]+parts[1]+parts[2]));
+  // Doğum / Psişik (gün)
+  var birth=reduce(dd);
+  // İsim sayıları
+  var nAll=nameNumber(name,'all'), nVow=nameNumber(name,'vowel'), nCon=nameNumber(name,'cons');
+  // Kişisel yıl (ay + gün + içinde bulunulan yıl)
+  var now=new Date(); var py=reduce(digitsSum(String(mm)+String(dd)+String(now.getFullYear())));
+
+  var rows=document.getElementById('n-rows'); rows.innerHTML='';
+  // Yaşam Yolu
+  rows.insertAdjacentHTML('beforeend', rowHTML('Yaşam Yolu · Kader', life, FRAME.life, ''));
+  // İsim sayısı (bileşik notu ekle)
+  var compNote=COMP[nAll.compound]?('<em style="color:var(--muted)"> Bileşik sayın '+nAll.compound+': '+COMP[nAll.compound]+'</em>'):'';
+  rows.insertAdjacentHTML('beforeend', rowHTML('İsim Sayısı', nAll.root, FRAME.name, compNote));
+  // Ruh Arzusu
+  rows.insertAdjacentHTML('beforeend', rowHTML('Ruh Arzusu', nVow.root, FRAME.soul, ''));
+  // Kişilik
+  rows.insertAdjacentHTML('beforeend', rowHTML('Kişilik', nCon.root, FRAME.pers, ''));
+  // Doğum / Psişik
+  rows.insertAdjacentHTML('beforeend', rowHTML('Doğum Sayısı · Psişik', birth, FRAME.birth, ''));
+  // Kişisel Yıl (bu sayı özel yorum)
+  rows.insertAdjacentHTML('beforeend',
+    '<div class="nrow"><div class="num"><div class="d">'+py+'</div>'+planetLine(py)+'</div>'+
+    '<div class="rt"><div class="rl"><span class="tag">Kişisel Yıl ('+now.getFullYear()+')</span>'+NUM[py].t+'</div>'+
+    '<div class="frame">'+FRAME.year+'</div>'+
+    '<div class="body">'+YEAR[py]+'</div></div></div>');
+
+  // Genel sentez
+  var pl=PLANET;
+  var synth='Ruhunun yolu '+life+' ('+pl[life][0]+') titreşiminde ilerliyor; dünyada '+nAll.root+' ('+pl[nAll.root][0]+
+    ') enerjisiyle tanınıyorsun. Kalbin derinlerde '+nVow.root+' ('+pl[nVow.root][0]+') sayısının arzusunu taşırken, insanlara '+
+    nCon.root+' ('+pl[nCon.root][0]+') yüzünü gösteriyorsun. Bu sayılar bir araya geldiğinde, senin hikâyen '+NUM[life].t.toLocaleLowerCase('tr-TR')+
+    ' bir ruhun, '+NUM[nAll.root].t.toLocaleLowerCase('tr-TR')+' bir kaderle buluştuğu benzersiz bir yolculuk. '+
+    now.getFullYear()+' yılı senin için '+py+' ('+pl[py][0]+') döngüsü: '+YEAR[py].toLocaleLowerCase('tr-TR');
+  document.getElementById('n-synth').innerHTML=synth;
+
+  document.getElementById('n-who').textContent=name;
+  document.getElementById('formSec').style.display='none';
+  document.getElementById('out').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.getElementById('n-go').addEventListener('click', calc);
+document.getElementById('n-name').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('n-date').focus(); });
+document.getElementById('n-again').addEventListener('click', function(){
+  document.getElementById('out').style.display='none';
+  document.getElementById('formSec').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+// service worker (varsa) — offline/güncelleme tutarlılığı
+if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
+</script>
+</body>
+</html>
