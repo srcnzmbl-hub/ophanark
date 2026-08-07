@@ -52,6 +52,32 @@
   html[data-theme="dark"] .synth p{color:#EDEDF1}
   .again{display:block;text-align:center;margin:30px auto 0;font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);cursor:pointer;text-decoration:none}
   .note{font-family:var(--sans);font-size:10px;letter-spacing:.04em;color:var(--muted);text-align:center;margin-top:26px;opacity:.8;line-height:1.6}
+  /* blok bölümler (zirve, karne) */
+  .block{padding:22px 0;border-top:1px solid var(--line)}
+  .bh{font-family:var(--disp);text-transform:uppercase;letter-spacing:.06em;font-size:clamp(15px,4.2vw,20px);color:var(--ink);margin-bottom:6px}
+  .bframe{font-family:var(--serif);font-style:italic;font-size:clamp(14px,3.7vw,16px);color:var(--muted);line-height:1.45;margin-bottom:12px}
+  .pin-row{display:flex;gap:14px;align-items:flex-start;padding:9px 0}
+  .pin-n{flex:none;width:52px;font-family:var(--disp);font-size:22px;color:var(--accent);line-height:1.1}
+  .pin-txt{flex:1;font-family:var(--serif);font-size:clamp(15px,4vw,18px);color:#3f332f;line-height:1.5}
+  html[data-theme="dark"] .pin-txt{color:#EDEDF1}
+  .pin-txt b{font-family:var(--sans);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  /* uğurlu blok */
+  .lucky{margin-top:6px;padding:24px 20px;border:1px solid var(--line);border-radius:12px;background:rgba(122,16,24,.05)}
+  .lucky .bframe{margin-top:12px;margin-bottom:0}
+  .lk{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line)}
+  .lk:last-of-type{border-bottom:0}
+  .lkl{font-family:var(--sans);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .lkv{font-family:var(--serif);font-size:clamp(16px,4.3vw,20px);color:var(--ink);text-align:right}
+  .lkv small{font-family:var(--sans);font-size:10px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-left:4px}
+  /* uyumluluk */
+  .compat{margin-top:30px;padding:26px 20px;border:1px solid var(--line);border-radius:12px}
+  .compat h3{font-family:var(--disp);text-transform:uppercase;letter-spacing:.08em;font-weight:400;font-size:clamp(17px,4.6vw,22px);margin:0 0 6px;text-align:center;color:var(--ink)}
+  .cintro{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--muted);text-align:center;margin:0 0 14px}
+  .cres{margin-top:18px;text-align:center}
+  .cscore{font-family:var(--disp);font-size:44px;color:var(--accent);line-height:1}
+  .clvl{font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+  .cres p{font-family:var(--serif);font-size:clamp(16px,4.3vw,19px);color:#3f332f;line-height:1.55;margin:12px 0 0}
+  html[data-theme="dark"] .cres p{color:#EDEDF1}
 </style>
 </head>
 <body>
@@ -67,6 +93,9 @@
     <div class="form">
       <div class="fld"><label>Ad Soyad</label><input id="n-name" type="text" placeholder="Adın ve soyadın" autocomplete="name"></div>
       <div class="fld"><label>Doğum Tarihi</label><input id="n-date" type="date"></div>
+      <div class="fld"><label>Doğum Saati</label><input id="n-time" type="time"></div>
+      <div class="fld"><label>E-posta</label><input id="n-mail" type="email" placeholder="you@email.com" autocomplete="email"></div>
+      <div class="fld"><label>Telefon Numarası</label><input id="n-phone" type="tel" placeholder="05xx xxx xx xx" autocomplete="tel"></div>
       <div class="err" id="n-err"></div>
       <button class="go" id="n-go" type="button">Sayılarımı Çöz ↓</button>
     </div>
@@ -77,6 +106,17 @@
     <div class="who" id="n-who"></div>
     <div id="n-rows"></div>
     <div class="synth"><h3>Genel Sentez</h3><p id="n-synth"></p></div>
+
+    <div class="compat" id="compatBox">
+      <h3>Uyumluluk</h3>
+      <p class="cintro">Sevdiğin biriyle numeroloji uyumunuza bakmak için onun bilgilerini gir.</p>
+      <div class="fld"><label>Adı</label><input id="c-name" type="text" placeholder="Kişinin adı"></div>
+      <div class="fld"><label>Doğum Tarihi</label><input id="c-date" type="date"></div>
+      <div class="err" id="c-err"></div>
+      <button class="go" id="c-go" type="button">Uyuma Bak</button>
+      <div id="c-out"></div>
+    </div>
+
     <a class="again" id="n-again">↺ Yeni hesaplama</a>
     <p class="note">Keldani (Chaldean) sistemi · Sayılar gezegen titreşimleriyle eşlenir. Numeroloji bir eğlence ve içe bakış aracıdır.</p>
   </section>
@@ -204,6 +244,13 @@ var COMP={
  52:'İçsel güç; sınavlardan doğan bilgelik.'
 };
 
+// uğurlu renk / taş / kısa özet / eksik sayı dersleri / uyum dostlukları
+var COLOR={1:'Altın sarısı, amber, turuncu',2:'Beyaz, krem, gümüş, su yeşili',3:'Mor, leylak, sarı',4:'Gri, elektrik mavisi, haki',5:'Yeşil, açık gri, parlak tonlar',6:'Mavi, pembe, pastel tonlar',7:'Deniz yeşili, turkuaz, beyaz',8:'Siyah, lacivert, koyu mor',9:'Kırmızı, kızıl, bordo'};
+var STONE={1:'Yakut ve amber',2:'İnci ve ay taşı',3:'Ametist, sarı safir ve topaz',4:'Hessonit (gomed) ve labradorit',5:'Zümrüt ve yeşil turmalin',6:'Elmas, pembe kuvars ve opal',7:'Kedigözü, akuamarin ve ay taşı',8:'Mavi safir, oniks ve ametist',9:'Kırmızı mercan, lâl (garnet) ve kırmızı jasper'};
+var SHORT={1:'bağımsızlık, liderlik ve kendi yolunu kurma',2:'uyum, ilişkiler ve sabırla ilerleme',3:'yaratıcılık, ifade ve neşe',4:'emek, düzen ve sağlam temeller',5:'özgürlük, değişim ve yeni deneyimler',6:'sevgi, sorumluluk ve yuva',7:'içe dönüş, bilgi ve maneviyat',8:'güç, bolluk ve dünyevi başarı',9:'tamamlama, şefkat ve idealler'};
+var MISSING={1:'Özgüven ve inisiyatif — kendi kararlarına güvenmeyi, öne çıkmayı öğrenmek.',2:'Sabır, incelik ve işbirliği — başkalarıyla uyum kurmayı geliştirmek.',3:'Kendini ifade — duygularını ve yaratıcılığını dışa vurabilmek.',4:'Disiplin ve düzen — sabırla temel atmayı, dağınıklığı aşmayı öğrenmek.',5:'Uyum ve özgürlük — değişime açık olmak, korkuları bırakmak.',6:'Sorumluluk ve sevgi — sevmeyi, adanmayı ve dengeli vermeyi öğrenmek.',7:'İç ses ve güven — maneviyata ve sezgine güvenmeyi öğrenmek.',8:'Öz-değer ve bolluk — maddeyle ve güçle sağlıklı ilişki kurmak.'};
+var FRIEND={1:[1,2,3,5,9],2:[1,2,4,6,7],3:[1,3,5,6,9],4:[2,4,6,7,8],5:[1,3,5,6,7],6:[2,3,5,6,9],7:[2,4,5,7,8],8:[4,6,7,8],9:[1,3,5,6,9]};
+
 function planetLine(n){var p=PLANET[n];return '<span class="pl">'+p[1]+'</span><span class="plname">'+p[0]+'</span>';}
 
 function rowHTML(tag, num, frameTxt, extraBody){
@@ -218,9 +265,16 @@ function rowHTML(tag, num, frameTxt, extraBody){
 function calc(){
   var name=document.getElementById('n-name').value.trim();
   var date=document.getElementById('n-date').value; // yyyy-mm-dd
+  var time=document.getElementById('n-time').value; // HH:MM
+  var mail=document.getElementById('n-mail').value.trim();
+  var phone=document.getElementById('n-phone').value.trim();
   var err=document.getElementById('n-err'); err.textContent='';
   if(trNorm(name).length<2){ err.textContent='Lütfen adını ve soyadını yaz.'; return; }
   if(!date){ err.textContent='Lütfen doğum tarihini seç.'; return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ err.textContent='Lütfen geçerli bir e-posta yaz.'; return; }
+  if(phone.replace(/\D/g,'').length<7){ err.textContent='Lütfen telefon numaranı yaz.'; return; }
+  // toplanan bilgileri sakla (kayıt/iletişim için)
+  try{ localStorage.setItem('oph_numeroloji_lead', JSON.stringify({name:name,date:date,time:time,mail:mail,phone:phone})); }catch(e){}
   var parts=date.split('-'); var yyyy=+parts[0], mm=+parts[1], dd=+parts[2];
 
   // Yaşam Yolu / Kader (tüm tarih)
@@ -251,6 +305,44 @@ function calc(){
     '<div class="frame">'+FRAME.year+'</div>'+
     '<div class="body">'+YEAR[py]+'</div></div></div>');
 
+  // Olgunluk Sayısı (Yaşam Yolu + İsim)
+  var mat=reduce(life+nAll.root);
+  rows.insertAdjacentHTML('beforeend', rowHTML('Olgunluk Sayısı', mat,
+    'Yaşam Yolu ile İsim sayının birleşimi — özellikle 35 yaşından sonra olgunlaşan asıl hedefin ve ruhunun vardığı liman.',
+    '<em style="color:var(--muted)"> Orta yaştan sonra hayat seni giderek '+SHORT[mat]+' yönünde çağırır.</em>'));
+
+  // Zirve / Kader Dönemleri
+  var rM=reduce(mm), rD=reduce(dd), rY=reduce(yyyy);
+  var p1=reduce(rM+rD), p2=reduce(rD+rY), p3=reduce(p1+p2), p4=reduce(rM+rY);
+  var e1=36-life; if(e1<27)e1=27;
+  var pins=[[p1,'Doğumdan '+e1+' yaşına kadar'],[p2,(e1+1)+'–'+(e1+9)+' yaş'],[p3,(e1+10)+'–'+(e1+18)+' yaş'],[p4,(e1+19)+' yaş ve sonrası']];
+  var pinHTML='<div class="block"><div class="bh">Zirve · Kader Dönemleri</div><div class="bframe">Hayatının dört evresi — her dönemde hangi enerjinin öne çıktığını gösterir.</div>';
+  pins.forEach(function(pp,i){ pinHTML+='<div class="pin-row"><span class="pin-n">'+pp[0]+' '+PLANET[pp[0]][1]+'</span><span class="pin-txt"><b>'+(i+1)+'. Zirve · '+PLANET[pp[0]][0]+'</b><br>'+pp[1]+' — '+SHORT[pp[0]]+'.</span></div>'; });
+  pinHTML+='</div>';
+  rows.insertAdjacentHTML('beforeend', pinHTML);
+
+  // Eksik Sayılar / Karne
+  var present={}, tnorm=trNorm(name);
+  for(var ci=0;ci<tnorm.length;ci++){ var vv=CHAL[tnorm[ci]]; if(vv)present[vv]=1; }
+  var miss=[]; for(var d1=1;d1<=8;d1++){ if(!present[d1])miss.push(d1); }
+  var missHTML='<div class="block"><div class="bh">Eksik Sayılar · Karne</div><div class="bframe">İsminde hiç geçmeyen sayılar — bu hayatta üzerinde çalışıp geliştirmen gereken alanlar.</div>';
+  if(miss.length){ miss.forEach(function(d){ missHTML+='<div class="pin-row"><span class="pin-n">'+d+' '+PLANET[d][1]+'</span><span class="pin-txt">'+MISSING[d]+'</span></div>'; }); }
+  else { missHTML+='<div class="bframe" style="font-style:normal;color:var(--ink)">İsminde 1–8 arası tüm sayılar mevcut — ender bir denge; belirgin bir eksik dersin yok, tüm titreşimler sende çalışıyor.</div>'; }
+  missHTML+='</div>';
+  rows.insertAdjacentHTML('beforeend', missHTML);
+
+  // Uğurlu Sayı / Renk / Taş (psişik / doğum sayısına göre)
+  var lucky=birth;
+  rows.insertAdjacentHTML('beforeend',
+    '<div class="lucky"><div class="bh">Uğurlu Sayın, Rengin & Taşın</div>'+
+    '<div class="lk"><span class="lkl">Uğurlu Sayı</span><span class="lkv">'+lucky+' <small>'+PLANET[lucky][0]+' '+PLANET[lucky][1]+'</small></span></div>'+
+    '<div class="lk"><span class="lkl">Uğurlu Renk</span><span class="lkv">'+COLOR[lucky]+'</span></div>'+
+    '<div class="lk"><span class="lkl">Uğurlu Taş</span><span class="lkv">'+STONE[lucky]+'</span></div>'+
+    '<div class="bframe">Bu taşı takmak ya da yanında taşımak '+PLANET[lucky][0]+' enerjisini güçlendirir; kendini daha dengede, korunmuş ve şanslı hissettirir.</div></div>');
+
+  // uyum için sakla
+  window.__userLife=life; window.__userName=name;
+
   // Genel sentez
   var pl=PLANET;
   var synth='Ruhunun yolu '+life+' ('+pl[life][0]+') titreşiminde ilerliyor; dünyada '+nAll.root+' ('+pl[nAll.root][0]+
@@ -273,6 +365,34 @@ document.getElementById('n-again').addEventListener('click', function(){
   document.getElementById('formSec').style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
 });
+
+// ---- Uyumluluk ----
+function compat(){
+  var cn=document.getElementById('c-name').value.trim();
+  var cd=document.getElementById('c-date').value;
+  var ce=document.getElementById('c-err'); ce.textContent='';
+  if(trNorm(cn).length<1){ ce.textContent='Kişinin adını yaz.'; return; }
+  if(!cd){ ce.textContent='Doğum tarihini seç.'; return; }
+  var cp=cd.split('-'); var b=reduce(digitsSum(cp[0]+cp[1]+cp[2]));
+  var a=window.__userLife||1;
+  var fa=FRIEND[a]||[], fb=FRIEND[b]||[];
+  var lvl, rate;
+  if(a===b){ lvl='Güçlü Rezonans'; rate=92; }
+  else if(fa.indexOf(b)>=0 && fb.indexOf(a)>=0){ lvl='Yüksek Uyum'; rate=85; }
+  else if(fa.indexOf(b)>=0 || fb.indexOf(a)>=0){ lvl='Dengeli Uyum'; rate=68; }
+  else { lvl='Zorlayıcı ama Öğretici'; rate=47; }
+  var youN=(window.__userName?window.__userName.split(' ')[0]:'Sen');
+  var they=cn.split(' ')[0];
+  var story=(a===b)?'aynı titreşimi paylaştığınız için birbirinizi kelimesiz anlarsınız; bu bağ derin bir aynadır.':
+    (rate>=85?'iki gezegenin dostane enerjisiyle akıcı ve destekleyici; birbirinizi büyütür, hafifletirsiniz.':
+     (rate>=68?'farklılıklarınızın birbirini tamamladığı, emekle güzelleşen dengeli bir bağ taşır.':
+      'başta sürtüşme yaşatabilir; ama en çok da bu bağ ikinize sabrı, olgunluğu ve büyümeyi öğretir.'));
+  document.getElementById('c-out').innerHTML=
+    '<div class="cres"><div class="cscore">'+rate+'%</div><div class="clvl">'+lvl+'</div>'+
+    '<p>'+youN+' ('+a+' · '+PLANET[a][0]+') ile '+they+' ('+b+' · '+PLANET[b][0]+') arasındaki bağ '+story+'</p></div>';
+}
+document.getElementById('c-go').addEventListener('click', compat);
+
 // service worker (varsa) — offline/güncelleme tutarlılığı
 if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
 </script>
