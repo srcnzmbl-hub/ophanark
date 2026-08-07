@@ -186,7 +186,7 @@ for(let i=0;i<keys.length;i++)for(let j=i+1;j<keys.length;j++){ let sep=Math.abs
 for(const[ang,orb]of ASP){ if(Math.abs(sep-ang)<=orb){ const hard=HARD.has(ang); aspects.push({a:keys[i],b:keys[j],hard}); if(hard){hot.add(keys[i]);hot.add(keys[j]);} break; } } }
 
 const canvas=document.getElementById('c');
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setClearColor(0x000000,0);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,premultipliedAlpha:false});renderer.setClearColor(0x000000,0);
 renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight);
 renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=0.78;
 const scene=new THREE.Scene(); scene.background=null; scene.fog=null;
@@ -959,7 +959,7 @@ window.__free=freeCam;
 const __rtSize=renderer.getDrawingBufferSize(new THREE.Vector2());
 const __msRT=new THREE.WebGLRenderTarget(__rtSize.width,__rtSize.height,{samples:4});
 const composer=new EffectComposer(renderer,__msRT);
-composer.addPass(new RenderPass(scene,camera));
+const __renderPass=new RenderPass(scene,camera);__renderPass.clearAlpha=0;composer.addPass(__renderPass);
 composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.16,0.6,0.9));
 composer.addPass(new OutputPass());
 
