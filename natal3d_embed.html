@@ -977,6 +977,19 @@ canvas.addEventListener('pointerdown',()=>{if(story.on)freeCam();});
 canvas.addEventListener('wheel',()=>{if(story.on)freeCam();},{passive:true});
 canvas.addEventListener('touchstart',()=>{if(story.on)freeCam();},{passive:true});
 window.__free=freeCam;
+// idle: gezegene tıkla → üst pencereye (natal.html) haber ver, ilgili ev yorumuna kaydırsın
+(function(){var __dX=0,__dY=0,__dT=0;
+canvas.addEventListener('pointerdown',function(e){__dX=e.clientX;__dY=e.clientY;__dT=e.timeStamp;});
+canvas.addEventListener('pointerup',function(e){
+  if(story.on)return;
+  if(Math.hypot(e.clientX-__dX,e.clientY-__dY)>9)return;
+  if(e.timeStamp-__dT>600)return;
+  var rect=renderer.domElement.getBoundingClientRect();
+  ptr.x=((e.clientX-rect.left)/rect.width)*2-1; ptr.y=-((e.clientY-rect.top)/rect.height)*2+1;
+  raycaster.setFromCamera(ptr,camera);
+  var hits=raycaster.intersectObjects(raycastTargets,false);
+  if(hits.length){var k=hits[0].object.userData.k; if(k){try{parent.postMessage({type:'ophPlanet',key:k},'*');}catch(_){}}}
+});})();
 // ==============================================================
 
 const __rtSize=renderer.getDrawingBufferSize(new THREE.Vector2());

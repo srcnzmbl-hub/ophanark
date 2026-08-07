@@ -130,6 +130,12 @@
   :root[data-theme="dark"]{--bg:#080C17;--ink:#DAE7E3;--line:rgba(218,231,227,.16);--muted:#637999}
   html[data-theme="dark"],html[data-theme="dark"] body{background:#080C17}
 </style>
+<style>
+  .rl .rtimg{height:1.25em;width:auto;vertical-align:-0.22em;margin-left:7px;opacity:.96;filter:drop-shadow(0 1px 1px rgba(0,0,0,.15))}
+  .rrow.rhi{animation:rhiPulse 1.6s ease}
+  @keyframes rhiPulse{0%{background:rgba(122,16,24,.16)}100%{background:transparent}}
+  .rrow{scroll-margin-top:70px;border-radius:12px}
+</style>
 </head>
 <body>
 <div id="app">
@@ -513,18 +519,25 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
     // readings
     var rd=document.getElementById('n-reads'); rd.innerHTML='';
     var ND=(NODE_I18N[NLANG()]||NODE_I18N.en);
-    function addRow(glyph, title, body){
+    var TRN=(typeof NATAL_I18N!=='undefined'&&NATAL_I18N.tr&&NATAL_I18N.tr.names)||NL.names;
+    function signImgHtml(si){ var src=(window.SIGNIMG&&window.SIGNIMG[TRN[si]])||''; return src?(' <img class="rtimg" src="'+src+'" alt="" loading="lazy">'):''; }
+    function addRow(glyph, title, body, opts){
+      opts=opts||{};
       var row=document.createElement('div'); row.className='rrow rv';
-      row.innerHTML='<span class="zg">'+glyph+'</span><div class="rt"><div class="rl">'+title+'</div><div class="rb">'+body+'</div></div>';
+      if(opts.id) row.id=opts.id;
+      row.innerHTML='<span class="zg">'+glyph+'</span><div class="rt"><div class="rl">'+title+(opts.img||'')+'</div><div class="rb">'+body+'</div></div>';
       rd.appendChild(row);
     }
-    addRow(ZCH[c.nnode.si], ND.nnL+' · '+NL.names[c.nnode.si], ND.nn[c.nnode.si]);
-    addRow(ZCH[c.snode.si], ND.snL+' · '+NL.names[c.snode.si], ND.sn[c.snode.si]);
+    addRow(ZCH[c.nnode.si], ND.nnL+' · '+NL.names[c.nnode.si], ND.nn[c.nnode.si], {img:signImgHtml(c.nnode.si)});
+    addRow(ZCH[c.snode.si], ND.snL+' · '+NL.names[c.snode.si], ND.sn[c.snode.si], {img:signImgHtml(c.snode.si)});
+    // gezegen -> ev eşlemesi (3B haritada gezegene tıklanınca ilgili ev yorumuna kaydırmak için)
+    window.__pHouse={};
     for(var j=0;j<12;j++){ var hs=c.houses[j];
       var hdeg=Math.round(hs.deg||0);
       var pin=(c.inH&&c.inH[j])?c.inH[j].map(function(p){return p[1];}).join(' '):'';
+      (c.inH&&c.inH[j]||[]).forEach(function(p){ window.__pHouse[p[0]]=j+1; });
       var body=NL.hd[j]+' '+NL.sd[hs.si]+' '+ND.hc[j%6];
-      addRow(ZCH[hs.si], (j+1)+'. '+NL.houseWord+' · '+hdeg+'° '+NL.names[hs.si]+(pin?' <span class="rp">'+pin+'</span>':''), body);
+      addRow(ZCH[hs.si], (j+1)+'. '+NL.houseWord+' · '+hdeg+'° '+NL.names[hs.si]+(pin?' <span class="rp">'+pin+'</span>':''), body, {id:'house-'+(j+1), img:signImgHtml(hs.si)});
     }
     window.__natalHalves={c:c, NL:NL}; buildHalfPanel(0);
     reveal(); setTimeout(buildSpiral,200); setTimeout(function(){buildSpiral();reveal();},900);
@@ -825,7 +838,17 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
   app.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(function(){ticking=false;updateSpiral();reveal();});} },{passive:true});
   addEventListener('resize',function(){ buildSpiral(); reveal(); });
   reveal(); setTimeout(reveal,400);
+  // 3B haritadaki gezegene tıklanınca ilgili ev yorumuna kaydır
+  window.addEventListener('message', function(e){
+    var d=e.data; if(!d||d.type!=='ophPlanet'||!d.key) return;
+    var hn=window.__pHouse&&window.__pHouse[d.key]; if(!hn) return;
+    var el=document.getElementById('house-'+hn); if(!el) return;
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+    el.classList.remove('rhi'); void el.offsetWidth; el.classList.add('rhi');
+    setTimeout(function(){el.classList.remove('rhi');},1700);
+  });
 </script>
+<script src="signimg.js"></script>
 <script src="oph_app.js"></script>
 </body>
 </html>
