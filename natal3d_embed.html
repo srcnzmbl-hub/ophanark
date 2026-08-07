@@ -318,20 +318,16 @@ const RING_T=0.016; // ince çember kalınlığı
 [[R,RING_T],[R*0.62,RING_T*0.85]].forEach(function(rc){
   wheel.add(new THREE.Mesh(new THREE.TorusGeometry(rc[0],rc[1],20,420),new THREE.MeshBasicMaterial({color:LC,transparent:true,opacity:1})));
 });
-// --- 3B derinlik: düzleme dik çemberler (küresel görünüm) ---
+// --- 3B derinlik: düzleme dik çemberler (küresel görünüm) — kendi eksenlerinde tek yönde döner ---
+var depthRings=[];
 [['x',R],['y',R],['x',R*0.62],['y',R*0.62]].forEach(function(pr){
   var __t=new THREE.Mesh(new THREE.TorusGeometry(pr[1],RING_T*0.8,18,360),new THREE.MeshBasicMaterial({color:LC,transparent:true,opacity:.7}));
   if(pr[0]==='x')__t.rotation.x=Math.PI/2; else __t.rotation.y=Math.PI/2;
-  wheel.add(__t);
+  __t.userData.spinAx=pr[0];
+  wheel.add(__t); depthRings.push(__t);
 });
-// 12 burç açı çizgisi — iç banttan dış çembere (ince)
-for(var __k=0;__k<12;__k++){var __a=THREE.MathUtils.degToRad(__k*30);
-  var __g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(Math.cos(__a)*R*0.62,Math.sin(__a)*R*0.62,0),new THREE.Vector3(Math.cos(__a)*R,Math.sin(__a)*R,0)]);
-  wheel.add(new THREE.Line(__g,new THREE.LineBasicMaterial({color:LC,transparent:true,opacity:.8})));}
-// ev açı çizgileri — merkezden iç çembere (ince)
-HOUSES.forEach(function(h){var __a=THREE.MathUtils.degToRad(h);
-  var __g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(Math.cos(__a)*R*0.54,Math.sin(__a)*R*0.54,0)]);
-  wheel.add(new THREE.Line(__g,new THREE.LineBasicMaterial({color:LC,transparent:true,opacity:.55})));});
+window.__depthRings=depthRings;
+// (radyal açı çizgileri kaldırıldı — sadece çemberler kalsın, çemberler döner)
 // ---- yüksek kaliteli animasyonlu GÜNEŞ ----
 const suns=[];
 function randUnit(){const u=Math.random()*2-1,th=Math.random()*Math.PI*2,sq=Math.sqrt(1-u*u);return new THREE.Vector3(sq*Math.cos(th),sq*Math.sin(th),u);}
@@ -1016,6 +1012,7 @@ nebulaG.rotation.y+=0.0004; for(const s of nebSprites)s.material.opacity=0.06+0.
 for(const s of dust){const v=(Math.sin(t*s.userData.sp+s.userData.ph)+1)/2;s.material.opacity=0.18+v*0.5;const sc=s.userData.base*(0.75+0.4*v);s.scale.set(sc,sc,1);}
 const pulse=(Math.sin(t*2.4)+1)/2;
 nodes.forEach(n=>{if(!n.isSun)n.planet.rotation.y+=0.0018;if(n.isHot&&n.halo){n.halo.material.opacity=.24+pulse*.35;}if(n.signSprite){n.signSprite.material.opacity=0.25+0.75*(0.5+0.5*Math.sin(t*2.6+(n.lon||0)*0.05));}});
+for(var __di=0;__di<depthRings.length;__di++){var __dr=depthRings[__di]; if(__dr.userData.spinAx==='y')__dr.rotateY(0.010); else __dr.rotateX(0.010);}
 for(const sg of suns)updateSun(sg);
 if(story.on)updateStory(t-story.t0);
 if(reveal.on && !reveal.done) updateReveal(t-reveal.t0);
