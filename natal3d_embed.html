@@ -188,7 +188,7 @@ for(const[ang,orb]of ASP){ if(Math.abs(sep-ang)<=orb){ const hard=HARD.has(ang);
 const canvas=document.getElementById('c');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,premultipliedAlpha:false});renderer.setClearColor(0x000000,0);
 renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight);
-renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=0.78;
+renderer.toneMapping=THREE.NoToneMapping; renderer.toneMappingExposure=1.0;
 const scene=new THREE.Scene();
 var __isDark=false; try{ __isDark=new URLSearchParams(location.search).get('dark')==='1'; }catch(e){}
 scene.background=new THREE.Color(__isDark?0x080C17:0xF7F3E8);
