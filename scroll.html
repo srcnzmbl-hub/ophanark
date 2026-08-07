@@ -194,20 +194,29 @@
   @keyframes orbit{to{transform:rotate(360deg)}}
   @keyframes selfspin{to{transform:rotate(360deg)}}
 
-  /* numerology falling numbers */
-  .numfall{position:relative;width:min(72vw,300px);height:min(30vh,220px);margin:0.6cm auto 4px;
-    overflow:hidden;display:flex;justify-content:space-between;gap:3%;
-    -webkit-mask-image:linear-gradient(180deg,transparent,#000 20%,#000 80%,transparent);
-    mask-image:linear-gradient(180deg,transparent,#000 20%,#000 80%,transparent)}
+  /* numerology falling-numbers light curtain */
+  .numfall{position:relative;width:min(92vw,560px);height:min(42vh,320px);margin:0.45cm auto 4px;
+    overflow:hidden;border-radius:3px;isolation:isolate;
+    background:linear-gradient(180deg,#010609 0%,#03141b 24%,#04222b 56%,#06303a 80%,#01080b 100%);
+    box-shadow:0 12px 42px rgba(0,0,0,.32),inset 0 0 70px rgba(0,0,0,.55)}
+  .numfall .beam{position:absolute;top:-8%;height:116%;
+    background:linear-gradient(180deg,transparent 0 6%,var(--c) 32%,#e8fff8 85%,transparent 100%);
+    filter:blur(17px);opacity:.7;mix-blend-mode:screen;
+    animation:beamPulse var(--dur,8s) ease-in-out infinite;animation-delay:var(--dl,0s);will-change:opacity,transform}
+  @keyframes beamPulse{0%,100%{opacity:.48;transform:translateY(0)}50%{opacity:.9;transform:translateY(-2.5%)}}
+  .numfall .ndigits{position:absolute;inset:0;display:flex;justify-content:space-around;gap:1%;padding:0 3%;
+    -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 78%,transparent);
+    mask-image:linear-gradient(180deg,transparent,#000 16%,#000 78%,transparent)}
   .numfall .ncol{flex:1;display:flex;flex-direction:column;align-items:center;
-    font-family:var(--disp);font-weight:400;font-size:clamp(20px,5.4vw,32px);line-height:1.5;
-    background:linear-gradient(180deg,#2fe6c4,#12b6d6 46%,#2f6fed);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 7px rgba(28,196,214,.28));
+    font-family:var(--disp);font-weight:400;font-size:clamp(19px,5.4vw,32px);line-height:1.5;
+    color:rgba(226,255,247,.30);text-shadow:0 0 10px rgba(60,232,210,.5);
     animation:nfall var(--dur,8s) linear infinite;animation-delay:var(--dl,0s);will-change:transform}
   .numfall .ncol i{display:block;font-style:normal}
   @keyframes nfall{from{transform:translateY(-50%)}to{transform:translateY(0)}}
-  html[data-theme="dark"] .numfall .ncol{filter:drop-shadow(0 0 9px rgba(40,220,230,.4))}
+  .numfall .nfloor{position:absolute;left:-10%;right:-10%;bottom:-4%;height:34%;pointer-events:none;
+    background:radial-gradient(60% 100% at 50% 100%,rgba(150,255,238,.6),rgba(34,150,220,.25) 42%,transparent 70%)}
+  .numfall::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;
+    background:linear-gradient(180deg,rgba(1,6,9,.72),transparent 20%,transparent 90%,rgba(1,6,9,.85))}
   #s-numeroloji .cta{margin-top:0.7cm}
 
   #cue{position:sticky;bottom:12px;margin-top:-40px;text-align:center;font-family:var(--sans);
@@ -216,7 +225,7 @@
   @media(prefers-reduced-motion:reduce){
     [data-anim]{opacity:1!important;transform:none!important}.load{animation:none;opacity:1}
     .cup{transform:none}.handimg{clip-path:none}.tt,.tb{opacity:1;transform:none}
-    .cardfall-track,.orb,.orb b,.numfall .ncol{animation:none}
+    .cardfall-track,.orb,.orb b,.numfall .ncol,.numfall .beam{animation:none}
   }
   /* end-of-page footer */
   .foot{background:var(--bg);color:var(--ink);display:flex;flex-direction:column;align-items:center;text-align:center;padding:8vh 20px 0}
@@ -346,11 +355,22 @@
     <h2 class="big" data-anim="fromL" data-from="0" data-to="0.14">Numerology</h2>
     <p class="lead" data-anim data-from="0.10" data-to="0.24">Numerology is a spiritual map that deciphers the cosmic frequencies in your birth date and name—the hidden language of the universe whispered through numbers. Ophanark illuminates the cipher of your life map for you through the mathematics of numbers.</p>
     <div class="numfall" aria-hidden="true" data-anim data-from="0.20" data-to="0.34">
-      <span class="ncol" style="--dur:8s;--dl:-1s"><i>3</i><i>7</i><i>1</i><i>9</i><i>4</i><i>2</i><i>3</i><i>7</i><i>1</i><i>9</i><i>4</i><i>2</i></span>
-      <span class="ncol" style="--dur:6.5s;--dl:-3s"><i>5</i><i>0</i><i>8</i><i>3</i><i>1</i><i>6</i><i>5</i><i>0</i><i>8</i><i>3</i><i>1</i><i>6</i></span>
-      <span class="ncol" style="--dur:9.5s;--dl:-2s"><i>9</i><i>2</i><i>4</i><i>7</i><i>5</i><i>1</i><i>9</i><i>2</i><i>4</i><i>7</i><i>5</i><i>1</i></span>
-      <span class="ncol" style="--dur:7s;--dl:-4s"><i>1</i><i>6</i><i>3</i><i>8</i><i>2</i><i>9</i><i>1</i><i>6</i><i>3</i><i>8</i><i>2</i><i>9</i></span>
-      <span class="ncol" style="--dur:10.5s;--dl:-1.5s"><i>7</i><i>4</i><i>5</i><i>0</i><i>1</i><i>8</i><i>7</i><i>4</i><i>5</i><i>0</i><i>1</i><i>8</i></span>
+      <span class="beam" style="--c:#10e0b0;left:1%;width:16%;--dur:7s;--dl:-1s"></span>
+      <span class="beam" style="--c:#2492e6;left:14%;width:12%;--dur:9s;--dl:-3s"></span>
+      <span class="beam" style="--c:#0fe0c4;left:26%;width:15%;--dur:6.5s;--dl:-2s"></span>
+      <span class="beam" style="--c:#2f78ea;left:40%;width:11%;--dur:8.5s;--dl:-4s"></span>
+      <span class="beam" style="--c:#12dcb2;left:53%;width:15%;--dur:7.5s;--dl:-1.5s"></span>
+      <span class="beam" style="--c:#1f9be6;left:68%;width:12%;--dur:10s;--dl:-2.5s"></span>
+      <span class="beam" style="--c:#0fe6c0;left:80%;width:18%;--dur:8s;--dl:-3.5s"></span>
+      <div class="ndigits">
+        <span class="ncol" style="--dur:8s;--dl:-1s"><i>3</i><i>7</i><i>1</i><i>9</i><i>4</i><i>2</i><i>3</i><i>7</i><i>1</i><i>9</i><i>4</i><i>2</i></span>
+        <span class="ncol" style="--dur:6.5s;--dl:-3s"><i>5</i><i>0</i><i>8</i><i>3</i><i>1</i><i>6</i><i>5</i><i>0</i><i>8</i><i>3</i><i>1</i><i>6</i></span>
+        <span class="ncol" style="--dur:9.5s;--dl:-2s"><i>9</i><i>2</i><i>4</i><i>7</i><i>5</i><i>1</i><i>9</i><i>2</i><i>4</i><i>7</i><i>5</i><i>1</i></span>
+        <span class="ncol" style="--dur:7s;--dl:-4s"><i>1</i><i>6</i><i>3</i><i>8</i><i>2</i><i>9</i><i>1</i><i>6</i><i>3</i><i>8</i><i>2</i><i>9</i></span>
+        <span class="ncol" style="--dur:10.5s;--dl:-1.5s"><i>7</i><i>4</i><i>5</i><i>0</i><i>1</i><i>8</i><i>7</i><i>4</i><i>5</i><i>0</i><i>1</i><i>8</i></span>
+        <span class="ncol" style="--dur:8.5s;--dl:-2.5s"><i>2</i><i>9</i><i>6</i><i>1</i><i>7</i><i>3</i><i>2</i><i>9</i><i>6</i><i>1</i><i>7</i><i>3</i></span>
+      </div>
+      <span class="nfloor"></span>
     </div>
     <p class="lead" data-anim data-from="0.40" data-to="0.54">Every turn in the universe is a frequency; the Divine Galgalim turn to calculate for you the geometric vibrations behind your name and birth date.</p>
     <a class="cta" href="numeroloji.html" data-anim data-from="0.70" data-to="0.86">Decode the cipher in your name <span class="arw">↗</span></a>
