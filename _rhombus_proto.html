@@ -1,0 +1,57 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rhombus Proto</title>
+<style>
+  :root{ --bg:#f3ecdd; --ink:#231613; --gold:#9a6c2e; --muted:#8a7a72;
+    --B:min(86vmin,660px); --L:calc(var(--B)*0.352); --off:calc(var(--B)*0.252);
+    --gap:0; }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:Georgia,serif;height:100vh;overflow:hidden}
+  .stage{position:relative;height:100vh;display:flex;align-items:center;justify-content:center}
+  .board{position:relative;width:var(--B);height:var(--B)}
+  .piece{position:absolute;width:var(--L);height:var(--L);text-decoration:none;color:inherit}
+  .piece .dia{position:absolute;inset:0;transform:rotate(45deg);border:2.5px solid var(--gold);
+    background:#fffdf7;border-radius:calc(var(--B)*0.055);box-shadow:0 10px 30px rgba(20,14,10,.10)}
+  .piece .lab{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:8%}
+  .piece .lab .t{font-size:calc(var(--B)*0.036);letter-spacing:.03em;line-height:1.15;color:var(--ink)}
+  .piece .lab .s{font-family:-apple-system,'Segoe UI',sans-serif;font-size:calc(var(--B)*0.020);letter-spacing:.16em;
+    text-transform:uppercase;color:var(--gold);margin-top:.5em}
+  /* konumlar */
+  .top   {left:calc(50% - var(--L)/2);         top:calc(50% - var(--off) - var(--L)/2);}
+  .bottom{left:calc(50% - var(--L)/2);         top:calc(50% + var(--off) - var(--L)/2);}
+  .left  {left:calc(50% - var(--off) - var(--L)/2); top:calc(50% - var(--L)/2);}
+  .right {left:calc(50% + var(--off) - var(--L)/2); top:calc(50% - var(--L)/2);}
+  /* animasyon: --t 0->1 (yerine otur) */
+  .left  {transform:translateX(calc(-185% * (1 - var(--t,1))));}
+  .right {transform:translateX(calc( 185% * (1 - var(--t,1))));}
+  .top   {transform:translateY(calc(-210% * (1 - var(--t,1))));}
+  .bottom{transform:translateY(calc( 210% * (1 - var(--t,1))));}
+  .hint{position:absolute;left:0;right:0;bottom:calc(var(--B)*0.02 + 14px);text-align:center;
+    font-family:-apple-system,'Segoe UI',sans-serif;font-size:13px;letter-spacing:.08em;color:var(--muted);opacity:var(--hintOp,1)}
+  .ctrl{position:fixed;top:8px;left:8px;z-index:9;font-family:sans-serif;font-size:12px;background:#fff8;padding:6px;border-radius:6px}
+</style></head>
+<body>
+  <div class="stage">
+    <div class="board" id="board">
+      <a class="piece left"  data-anim data-from="0"   data-to="0.45" href="tarot.html"><span class="dia"></span><span class="lab"><span class="t">Tarot</span><span class="s">Reading</span></span></a>
+      <a class="piece right" data-anim data-from="0"   data-to="0.45" href="katina.html"><span class="dia"></span><span class="lab"><span class="t">Katina</span><span class="s">Reading</span></span></a>
+      <a class="piece top"   data-anim data-from="0.5" data-to="0.95" href="kahve.html"><span class="dia"></span><span class="lab"><span class="t">Turkish Coffee</span><span class="s">Reading</span></span></a>
+      <a class="piece bottom" data-anim data-from="0.5" data-to="0.95" href="el.html"><span class="dia"></span><span class="lab"><span class="t">Palmistry</span><span class="s">Reading</span></span></a>
+      <div class="hint">Bütün falları görmek için aşağı doğru kaydırınız</div>
+    </div>
+  </div>
+  <div class="ctrl">sp: <input id="sp" type="range" min="0" max="1" step="0.01" value="1" oninput="setSP(+this.value)"> <span id="v">1.00</span></div>
+<script>
+  function clamp(v){return v<0?0:v>1?1:v}
+  function ease(t){t=clamp(t);return t*t*(3-2*t)}
+  var items=[].slice.call(document.querySelectorAll('[data-anim]')).map(function(e){return {el:e,from:+e.dataset.from,to:+e.dataset.to};});
+  function setSP(sp){
+    document.getElementById('v').textContent=sp.toFixed(2);
+    for(var i=0;i<items.length;i++){var it=items[i];it.el.style.setProperty('--t', ease((sp-it.from)/(it.to-it.from)).toFixed(3));}
+    // hint sadece tam bitince
+    document.querySelector('.hint').style.setProperty('--hintOp', sp>0.96?1:0);
+  }
+  setSP(1);
+</script>
+</body></html>
