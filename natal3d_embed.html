@@ -193,7 +193,7 @@ const scene=new THREE.Scene();
 var __isDark=false; try{ __isDark=new URLSearchParams(location.search).get('dark')==='1'; }catch(e){}
 scene.background=new THREE.Color(__isDark?0x080C17:0xF7F3E8);
 scene.fog=null;
-scene.add(new THREE.AmbientLight(0x9aa8d0,0.6)); const sunLight=new THREE.PointLight(0xfff0d0,2,0,0); scene.add(sunLight); const dl=new THREE.DirectionalLight(0xd0d6ff,0.55); dl.position.set(2,3,4); scene.add(dl);
+scene.add(new THREE.AmbientLight(0x9aa8d0,0.72)); const sunLight=new THREE.PointLight(0xfff0d0,2.4,0,0); scene.add(sunLight); const dl=new THREE.DirectionalLight(0xd0d6ff,0.85); dl.position.set(2,3,4); scene.add(dl);
 const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,400); camera.position.set(0,3.2,18.5);
 const controls=new OrbitControls(camera,canvas);
 controls.enableDamping=true; controls.dampingFactor=.06; controls.autoRotate=true; controls.autoRotateSpeed=.10;
@@ -430,7 +430,7 @@ let planet, halves=null;
 if(pl.type==='sun'){planet=makeSun(sz,26);pg.add(planet);planet.children.filter(o=>o.isMesh).forEach(mo=>{mo.userData.k=k;raycastTargets.push(mo);});}
 else {
 // iki yarim kure — sahne 11'de kabuk yarilir
-const mat=new THREE.MeshStandardMaterial({map:planetTex(pl),roughness:1,metalness:0});
+const __ptex=planetTex(pl); const mat=new THREE.MeshStandardMaterial({map:__ptex,emissive:0xffffff,emissiveMap:__ptex,emissiveIntensity:0.38,roughness:1,metalness:0});
 const hA=new THREE.Mesh(new THREE.SphereGeometry(sz,30,30,0,Math.PI),mat);
 const hB=new THREE.Mesh(new THREE.SphereGeometry(sz,30,30,Math.PI,Math.PI),mat);
 planet=new THREE.Group(); planet.add(hA); planet.add(hB); pg.add(planet); halves=[hA,hB];
