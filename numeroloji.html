@@ -78,6 +78,17 @@
   .clvl{font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:4px}
   .cres p{font-family:var(--serif);font-size:clamp(16px,4.3vw,19px);color:#3f332f;line-height:1.55;margin:12px 0 0}
   html[data-theme="dark"] .cres p{color:#EDEDF1}
+  /* harf analizi */
+  .hword{margin:10px 0}
+  .hlbl{display:block;font-family:var(--sans);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .hrow{display:flex;flex-wrap:wrap;gap:6px}
+  .hchip{display:inline-flex;flex-direction:column;align-items:center;min-width:26px;padding:5px 4px;border:1px solid var(--line);border-radius:7px;background:rgba(154,108,46,.04)}
+  .hchip b{font-family:var(--disp);font-size:16px;line-height:1;color:var(--ink)}
+  .hchip i{font-family:var(--sans);font-style:normal;font-size:12px;color:var(--accent);margin-top:3px}
+  .denklem{margin-top:14px;font-family:var(--serif);font-size:clamp(15px,4vw,18px);color:#3f332f;line-height:1.5}
+  html[data-theme="dark"] .denklem{color:#EDEDF1}
+  .denklem b{color:var(--accent);font-family:var(--disp);font-size:1.15em}
+  .denklem .lbl{font-family:var(--sans);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -248,8 +259,27 @@ var COMP={
 var COLOR={1:'Altın sarısı, amber, turuncu',2:'Beyaz, krem, gümüş, su yeşili',3:'Mor, leylak, sarı',4:'Gri, elektrik mavisi, haki',5:'Yeşil, açık gri, parlak tonlar',6:'Mavi, pembe, pastel tonlar',7:'Deniz yeşili, turkuaz, beyaz',8:'Siyah, lacivert, koyu mor',9:'Kırmızı, kızıl, bordo'};
 var STONE={1:'Yakut ve amber',2:'İnci ve ay taşı',3:'Ametist, sarı safir ve topaz',4:'Hessonit (gomed) ve labradorit',5:'Zümrüt ve yeşil turmalin',6:'Elmas, pembe kuvars ve opal',7:'Kedigözü, akuamarin ve ay taşı',8:'Mavi safir, oniks ve ametist',9:'Kırmızı mercan, lâl (garnet) ve kırmızı jasper'};
 var SHORT={1:'bağımsızlık, liderlik ve kendi yolunu kurma',2:'uyum, ilişkiler ve sabırla ilerleme',3:'yaratıcılık, ifade ve neşe',4:'emek, düzen ve sağlam temeller',5:'özgürlük, değişim ve yeni deneyimler',6:'sevgi, sorumluluk ve yuva',7:'içe dönüş, bilgi ve maneviyat',8:'güç, bolluk ve dünyevi başarı',9:'tamamlama, şefkat ve idealler'};
+// sade, jargonsuz tek satırlık anlamlar (sentez için)
+var MEAN={1:'güçlü, bağımsız ve öncü — kendi yolunu çizmek isteyen',2:'hassas, uyumlu ve sezgisel — insanların arasını yapan, ilişkilere önem veren',3:'yaratıcı, neşeli ve iletişimi güçlü — kendini ifade etmekten beslenen',4:'düzenli, çalışkan ve güvenilir — sağlam temeller kurmayı seven',5:'özgür, meraklı ve hareketli — değişime ve yeniliğe açık',6:'sevgi dolu, sorumlu ve şefkatli — aileye ve sevdiklerine bağlı',7:'derin, sezgisel ve anlam arayan — yüzeyle yetinmeyen, düşünen',8:'güçlü, hırslı ve kararlı — dünyevi başarıya ve otoriteye yatkın',9:'tutkulu, cesur ve büyük kalpli — idealleri için çabalayan'};
 var MISSING={1:'Özgüven ve inisiyatif — kendi kararlarına güvenmeyi, öne çıkmayı öğrenmek.',2:'Sabır, incelik ve işbirliği — başkalarıyla uyum kurmayı geliştirmek.',3:'Kendini ifade — duygularını ve yaratıcılığını dışa vurabilmek.',4:'Disiplin ve düzen — sabırla temel atmayı, dağınıklığı aşmayı öğrenmek.',5:'Uyum ve özgürlük — değişime açık olmak, korkuları bırakmak.',6:'Sorumluluk ve sevgi — sevmeyi, adanmayı ve dengeli vermeyi öğrenmek.',7:'İç ses ve güven — maneviyata ve sezgine güvenmeyi öğrenmek.',8:'Öz-değer ve bolluk — maddeyle ve güçle sağlıklı ilişki kurmak.'};
 var FRIEND={1:[1,2,3,5,9],2:[1,2,4,6,7],3:[1,3,5,6,9],4:[2,4,6,7,8],5:[1,3,5,6,7],6:[2,3,5,6,9],7:[2,4,5,7,8],8:[4,6,7,8],9:[1,3,5,6,9]};
+
+// soy / aile kaderi yorumları (soyadı sayısına göre)
+var FAM={
+ 1:'Ailende güçlü, öncü ve iradeli bir soy çizgisi var. Anne-babandan bağımsızlık, kendi ayakların üstünde durma ve liderlik mirası taşırsın; belki de bir "ilk olma" hikâyesi.',
+ 2:'Köklerinde duygusal derinlik, şefkat ve güçlü aile bağları var. Ailenin kaderi uyum, koruma ve fedakârlıkla örülü; bir arada tutan görünmez bir güç sende.',
+ 3:'Neşeli, ifade gücü yüksek ve bereketli bir soydan geliyorsun. Yaratıcılık, sosyallik ve şans ailenden sana geçen bir armağan.',
+ 4:'Emekçi, düzenli ve sağlam temelli bir aile. Disiplin, dayanıklılık ve alın teri mirası taşırsın; bazen katı gelenekler ve ağır sorumluluklar da bu çizgiden gelir.',
+ 5:'Hareketli, değişken ve özgür ruhlu bir soy. Ailenin hikâyesinde göç, seyahat, sık değişim ya da yerinde duramayan ruhlar olabilir; özgürlük arzusu kanında.',
+ 6:'Sevgi, sorumluluk ve aileye adanmışlık teması güçlü. Yuvaya bağlılık, sevdiklerini kollama ve fedakârlık anne-babandan sana geçen kader.',
+ 7:'Derin, içe dönük ve maneviyatı güçlü bir soy. Bilgelik, inanç ve sezgi mirası taşırsın; bazen ailede mesafe, sır ya da yalnızlık da bu titreşimin gölgesi.',
+ 8:'Güç, otorite ve maddi mücadele teması. Ailende yükseliş-düşüş hikâyeleri, kapatılması gereken karmik dersler ve dayanıklılıkla kazanılan bir güç olabilir.',
+ 9:'Fedakâr, tutkulu ve idealist bir soy. Ailende tamamlanması gereken döngüler, şefkatle taşınan bir yük ve insanlığa dönük büyük bir kalp mirası var.'
+};
+// bir kelimenin harf-değer hücreleri
+function normChar(ch){var m={"Ç":"C","Ğ":"G","İ":"I","I":"I","Ö":"O","Ş":"S","Ü":"U","Â":"A","Î":"I","Û":"U"};ch=ch.toLocaleUpperCase('tr-TR');ch=m[ch]||ch;return /[A-Z]/.test(ch)?ch:'';}
+function letterCells(word){var html='',sum=0;for(var i=0;i<word.length;i++){var oc=word[i].toLocaleUpperCase('tr-TR');var nc=normChar(word[i]);if(!nc)continue;var v=CHAL[nc]||0;sum+=v;html+='<span class="hchip"><b>'+oc+'</b><i>'+v+'</i></span>';}return {html:html,sum:sum};}
+function reduceChain(n){var chain=[n];while(n>9){var s=0;String(n).split('').forEach(function(d){s+=+d;});n=s;chain.push(n);}return chain;}
 
 function planetLine(n){var p=PLANET[n];return '<span class="pl">'+p[1]+'</span><span class="plname">'+p[0]+'</span>';}
 
@@ -292,6 +322,27 @@ function calc(){
   // İsim sayısı (bileşik notu ekle)
   var compNote=COMP[nAll.compound]?('<em style="color:var(--muted)"> Bileşik sayın '+nAll.compound+': '+COMP[nAll.compound]+'</em>'):'';
   rows.insertAdjacentHTML('beforeend', rowHTML('İsim Sayısı', nAll.root, FRAME.name, compNote));
+
+  // Harf Analizi · İsim Denklemi
+  var parts2=name.trim().split(/\s+/);
+  var soyad=(parts2.length>1)?parts2[parts2.length-1]:'';
+  var adlar=(parts2.length>1)?parts2.slice(0,-1):parts2;
+  var hHTML='<div class="block"><div class="bh">Harf Analizi · İsim Denklemi</div>'+
+    '<div class="bframe">Adının her harfi bir Keldani sayısına denk gelir; bunların toplamı senin isim denklemini oluşturur.</div>';
+  adlar.forEach(function(w){ hHTML+='<div class="hword"><span class="hlbl">'+w+'</span><div class="hrow">'+letterCells(w).html+'</div></div>'; });
+  if(soyad){ hHTML+='<div class="hword"><span class="hlbl">'+soyad+' (soyadı)</span><div class="hrow">'+letterCells(soyad).html+'</div></div>'; }
+  var chain=reduceChain(nAll.compound);
+  hHTML+='<div class="denklem"><span class="lbl">İsim Denklemin</span>Tüm harflerin toplamı = <b>'+nAll.compound+'</b>'+
+    (chain.length>1?(' → '+chain.slice(1).map(function(x){return '<b>'+x+'</b>';}).join(' → ')):'')+
+    ' &nbsp;→&nbsp; İsim Sayın: <b>'+nAll.root+'</b> ('+PLANET[nAll.root][0]+')</div></div>';
+  rows.insertAdjacentHTML('beforeend', hHTML);
+
+  // Soy · Aile Kaderi (soyadı sayısı)
+  var soyNum = soyad ? nameNumber(soyad,'all').root : nAll.root;
+  rows.insertAdjacentHTML('beforeend', rowHTML('Soy · Aile Kaderi', soyNum,
+    (soyad?('“'+soyad+'” soyadının Keldani titreşimi — anne-baban ve soyundan sana geçen miras, aile kaderi ve köklerinden taşıdığın tema.'):'Soyadını da eklersen aile kaderini de okuyabilirim.'),
+    '<em style="color:var(--muted)"> '+FAM[soyNum]+'</em>'));
+
   // Ruh Arzusu
   rows.insertAdjacentHTML('beforeend', rowHTML('Ruh Arzusu', nVow.root, FRAME.soul, ''));
   // Kişilik
@@ -343,13 +394,18 @@ function calc(){
   // uyum için sakla
   window.__userLife=life; window.__userName=name;
 
-  // Genel sentez
+  // Genel sentez — jargonsuz, açıklayıcı
   var pl=PLANET;
-  var synth='Ruhunun yolu '+life+' ('+pl[life][0]+') titreşiminde ilerliyor; dünyada '+nAll.root+' ('+pl[nAll.root][0]+
-    ') enerjisiyle tanınıyorsun. Kalbin derinlerde '+nVow.root+' ('+pl[nVow.root][0]+') sayısının arzusunu taşırken, insanlara '+
-    nCon.root+' ('+pl[nCon.root][0]+') yüzünü gösteriyorsun. Bu sayılar bir araya geldiğinde, senin hikâyen '+NUM[life].t.toLocaleLowerCase('tr-TR')+
-    ' bir ruhun, '+NUM[nAll.root].t.toLocaleLowerCase('tr-TR')+' bir kaderle buluştuğu benzersiz bir yolculuk. '+
-    now.getFullYear()+' yılı senin için '+py+' ('+pl[py][0]+') döngüsü: '+YEAR[py].toLocaleLowerCase('tr-TR');
+  function mean(n){return MEAN[n];}
+  var synth=
+    '<em style="color:var(--muted);font-style:italic">Önce şunu bil: numerolojide hiçbir sayı “iyi” ya da “kötü” değildir. Her sayı, güçlü yanları ve zorlandığı yanları olan bir enerjidir; önemli olan onu tanıyıp iyi kullanmaktır.</em><br><br>'+
+    '<b>Yaşam Yolun '+life+' — '+pl[life][0]+' enerjisi.</b> Bu, hayat boyu yürüdüğün ana yol demek: özünde '+mean(life)+' bir insansın. '+
+    'Kısaca hayatın seni '+SHORT[life]+' temaları etrafında büyütür.<br><br>'+
+    '<b>İsim sayın '+nAll.root+' — '+pl[nAll.root][0]+'.</b> Bu, insanların seni dışarıdan nasıl tanıdığı: çevren seni '+mean(nAll.root)+' biri olarak görür. Bu “iyi/kötü” bir şey değil; sadece dünyaya bıraktığın izlenim budur.<br><br>'+
+    '<b>Ruh arzun '+nVow.root+' — '+pl[nVow.root][0]+'.</b> Kalbinin derininde, kimsenin görmediği yerde asıl istediğin şey bu: içten içe '+mean(nVow.root)+' bir hayat seni mutlu eder.<br><br>'+
+    '<b>Kişiliğin '+nCon.root+' — '+pl[nCon.root][0]+'.</b> İlk tanıştığında insanlara gösterdiğin dış yüz: sana '+mean(nCon.root)+' biri gibi bakılır.<br><br>'+
+    'Yani özetle: '+mean(life)+' bir ruhsun; içinde '+SHORT[nVow.root]+' arzusu taşırken dışarıya '+SHORT[nCon.root]+' bir yüzle çıkıyorsun. '+
+    '<br><br><b>'+now.getFullYear()+' yılı senin için '+py+' ('+pl[py][0]+') dönemi:</b> '+YEAR[py]+' Bu yıl enerjini buraya yönlendirmek işini kolaylaştırır.';
   document.getElementById('n-synth').innerHTML=synth;
 
   document.getElementById('n-who').textContent=name;
