@@ -725,6 +725,7 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
     if(!elState) return;
     elState.disabled=true; elState.innerHTML='<option value="">…</option>'; if(elCitySug) elCitySug.innerHTML='';
     var fill=function(rows){
+      if(elCtry && elCtry.value!==cc) return; // ignore a late response for a country that is no longer selected (race guard)
       rows=rows||[];
       var h='<option value="">'+T('Eyalet / bölge (opsiyonel)','State / region (optional)')+'</option>';
       rows.forEach(function(r){ h+='<option value="'+esc(r.name)+'" data-lat="'+(r.lat==null?'':r.lat)+'" data-lon="'+(r.lon==null?'':r.lon)+'" data-tz="'+esc(r.tz||'')+'">'+esc(r.name)+'</option>'; });
