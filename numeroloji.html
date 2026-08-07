@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
     --bg:#F7F3E8; --ink:#25181C; --muted:#9c8666; --line:rgba(37,24,28,.16); --gold:#9a6c2e; --accent:#7a1018;
@@ -502,11 +503,11 @@ function calc(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ---- SMS onay (Twilio) ----
+// ---- E-posta onay kodu (Supabase Auth OTP, ücretsiz) ----
 var SB_URL='https://lssyopqxthausyegeire.supabase.co';
 var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo';
-function normPhone(raw){var d=(raw||'').trim();if(d.charAt(0)==='+')return '+'+d.slice(1).replace(/\D/g,'');d=d.replace(/\D/g,'');if(d.indexOf('90')===0&&d.length>=12)return '+'+d;if(d.charAt(0)==='0')d=d.slice(1);if(d.length===10&&d.charAt(0)==='5')return '+90'+d;return '+'+d;}
-function sbFn(fn,body){return fetch(SB_URL+'/functions/v1/'+fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_ANON,'Authorization':'Bearer '+SB_ANON},body:JSON.stringify(body)}).then(function(r){return r.json().then(function(j){return {status:r.status,j:j};});});}
+var _sb=null;
+function sb(){ if(!_sb && window.supabase){ _sb=window.supabase.createClient(SB_URL,SB_ANON,{auth:{persistSession:false,autoRefreshToken:false}}); } return _sb; }
 function validFields(){
   var name=document.getElementById('n-name').value.trim();
   var date=document.getElementById('n-date').value;
@@ -517,54 +518,58 @@ function validFields(){
   if(!date){err.textContent='Lütfen doğum tarihini seç.';return null;}
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){err.textContent='Lütfen geçerli bir e-posta yaz.';return null;}
   if(phone.replace(/\D/g,'').length<7){err.textContent='Lütfen telefon numaranı yaz.';return null;}
-  return {phone:phone};
+  return {mail:mail.toLowerCase()};
 }
 function onSubmit(){
   var v=validFields(); if(!v)return;
-  var np=normPhone(v.phone);
-  var verified=null; try{verified=localStorage.getItem('oph_num_vphone');}catch(e){}
-  if(verified===np){ calc(); return; }
-  sendOtp(np);
+  var verified=null; try{verified=localStorage.getItem('oph_num_vmail');}catch(e){}
+  if(verified===v.mail){ calc(); return; }
+  sendCode(v.mail);
 }
-function sendOtp(np){
+function sendCode(mail){
   var go=document.getElementById('n-go'); go.disabled=true; go.textContent='Kod gönderiliyor…';
   var err=document.getElementById('n-err'); err.textContent='';
-  sbFn('otp-send',{phone:np}).then(function(r){
+  var c=sb();
+  if(!c){ go.disabled=false; go.textContent='Sayılarımı Çöz ↓'; err.textContent='Bağlantı hazır değil, birkaç saniye sonra tekrar dene.'; return; }
+  c.auth.signInWithOtp({email:mail,options:{shouldCreateUser:true}}).then(function(res){
     go.disabled=false; go.textContent='Sayılarımı Çöz ↓';
-    if(r.j&&r.j.ok){
-      document.getElementById('otpInfo').textContent=np+' numarasına 6 haneli bir onay kodu gönderdik. Kodu aşağıya gir.';
+    if(res && !res.error){
+      document.getElementById('otpInfo').textContent=mail+' adresine 6 haneli bir onay kodu gönderdik. E-postanı (ve spam/gereksiz kutunu) kontrol et.';
+      document.getElementById('otp-err').textContent='';
       document.getElementById('otpBox').style.display='block';
       document.getElementById('otp-code').focus();
-    } else if(r.j&&r.j.error==='sms_not_configured'){
-      err.textContent='SMS servisi henüz kurulmadı (Twilio bağlanınca aktif olacak).';
-    } else if(r.j&&r.j.error==='rate_limited'){
-      err.textContent='Çok sık denedin — lütfen 1 dakika sonra tekrar dene.';
-      document.getElementById('otpBox').style.display='block';
-    } else if(r.j&&r.j.error==='invalid_phone'){
-      err.textContent='Telefon numarası geçersiz görünüyor.';
     } else {
-      err.textContent='Kod gönderilemedi. Lütfen tekrar dene.';
+      var m=(res&&res.error&&res.error.message)||'';
+      if(/rate|limit|seconds/i.test(m)){ err.textContent='Çok sık denedin — lütfen bir dakika sonra tekrar dene.'; }
+      else { err.textContent='Kod gönderilemedi. E-postanı kontrol edip tekrar dene.'; }
     }
   }).catch(function(){ go.disabled=false; go.textContent='Sayılarımı Çöz ↓'; err.textContent='Bağlantı hatası, tekrar dene.'; });
 }
-function verifyOtp(){
-  var np=normPhone(document.getElementById('n-phone').value.trim());
+function verifyCode(){
+  var mail=document.getElementById('n-mail').value.trim().toLowerCase();
   var code=document.getElementById('otp-code').value.trim();
   var oe=document.getElementById('otp-err'); oe.textContent='';
   if(code.length<6){oe.textContent='6 haneli kodu gir.';return;}
+  var c=sb();
+  if(!c){ oe.textContent='Bağlantı hazır değil, tekrar dene.'; return; }
   var b=document.getElementById('otp-go'); b.disabled=true; b.textContent='Doğrulanıyor…';
-  sbFn('otp-verify',{phone:np,code:code}).then(function(r){
+  c.auth.verifyOtp({email:mail,token:code,type:'email'}).then(function(res){
     b.disabled=false; b.textContent='Doğrula ve Haritayı Oluştur';
-    if(r.j&&r.j.ok){ try{localStorage.setItem('oph_num_vphone',np);}catch(e){} document.getElementById('otpBox').style.display='none'; calc(); }
-    else if(r.j&&r.j.error==='wrong'){ oe.textContent='Kod hatalı, tekrar dene.'; }
-    else if(r.j&&r.j.error==='expired'){ oe.textContent='Kodun süresi doldu. Yeni kod iste.'; }
-    else if(r.j&&r.j.error==='too_many'){ oe.textContent='Çok fazla deneme. Yeni kod iste.'; }
-    else { oe.textContent='Doğrulanamadı, tekrar dene.'; }
+    if(res && !res.error){
+      try{localStorage.setItem('oph_num_vmail',mail);}catch(e){}
+      try{ c.auth.signOut(); }catch(e){}
+      document.getElementById('otpBox').style.display='none';
+      calc();
+    } else {
+      var m=(res&&res.error&&res.error.message)||'';
+      if(/expired/i.test(m)){ oe.textContent='Kodun süresi doldu. Yeni kod iste.'; }
+      else { oe.textContent='Kod hatalı, tekrar dene.'; }
+    }
   }).catch(function(){ b.disabled=false; b.textContent='Doğrula ve Haritayı Oluştur'; oe.textContent='Bağlantı hatası.'; });
 }
 document.getElementById('n-go').addEventListener('click', onSubmit);
-document.getElementById('otp-go').addEventListener('click', verifyOtp);
-document.getElementById('otp-resend').addEventListener('click', function(){ var v=validFields(); if(v) sendOtp(normPhone(v.phone)); });
+document.getElementById('otp-go').addEventListener('click', verifyCode);
+document.getElementById('otp-resend').addEventListener('click', function(){ var v=validFields(); if(v) sendCode(v.mail); });
 document.getElementById('n-name').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('n-date').focus(); });
 document.getElementById('n-again').addEventListener('click', function(){
   document.getElementById('out').style.display='none';
