@@ -522,9 +522,8 @@ function validFields(){
 }
 function onSubmit(){
   var v=validFields(); if(!v)return;
-  var verified=null; try{verified=localStorage.getItem('oph_num_vmail');}catch(e){}
-  if(verified===v.mail){ calc(); return; }
-  sendCode(v.mail);
+  // Onay kodu şimdilik kapalı — doğrudan hesapla. (Para olunca SMS eklenecek.)
+  calc();
 }
 function sendCode(mail){
   var go=document.getElementById('n-go'); go.disabled=true; go.textContent='Kod gönderiliyor…';
