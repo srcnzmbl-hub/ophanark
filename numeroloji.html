@@ -89,6 +89,25 @@
   html[data-theme="dark"] .denklem{color:#EDEDF1}
   .denklem b{color:var(--accent);font-family:var(--disp);font-size:1.15em}
   .denklem .lbl{font-family:var(--sans);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+  /* numeroloji haritası (chart sheet) */
+  #n-chart{margin:6px 0 4px;padding:20px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(154,108,46,.04)}
+  .chart-h{font-family:var(--disp);text-transform:uppercase;letter-spacing:.14em;text-align:center;font-size:clamp(15px,4.2vw,20px);color:var(--ink);margin:0 0 16px}
+  .chart-grid{display:grid;grid-template-columns:1fr;gap:18px}
+  @media(min-width:560px){.chart-grid{grid-template-columns:236px 1fr}}
+  .lo-wrap{display:flex;justify-content:center;align-items:flex-start}
+  .lo svg{width:100%;max-width:236px;height:auto}
+  .lo-cap{font-family:var(--sans);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;margin-top:6px}
+  .ntbl{width:100%;border-collapse:collapse;margin:0 0 14px;font-family:var(--sans)}
+  .ntbl caption{font-family:var(--sans);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);text-align:start;padding:0 0 6px}
+  .ntbl th,.ntbl td{border-top:1px solid var(--line);padding:5px 6px;font-size:12px;color:var(--ink);text-align:start;vertical-align:middle}
+  .ntbl td.v{font-family:var(--disp);font-size:16px;color:var(--accent);width:34px;text-align:center}
+  .ntbl td.pl{color:var(--gold);white-space:nowrap;font-size:12.5px}
+  .ntbl td.lbl2{color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-size:10px}
+  .arrows{margin-top:4px}
+  .arrows .ar{display:flex;gap:8px;align-items:baseline;padding:4px 0;font-size:12px}
+  .arrows .ar b{font-family:var(--sans);color:var(--accent);text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;flex:none;min-width:96px}
+  .arrows .ar span{color:#3f332f}
+  html[data-theme="dark"] .arrows .ar span{color:#EDEDF1}
 </style>
 </head>
 <body>
@@ -115,6 +134,7 @@
   <section id="out">
     <h1 class="big">Sayıların</h1>
     <div class="who" id="n-who"></div>
+    <div id="n-chart"></div>
     <div id="n-rows"></div>
     <div class="synth"><h3>Genel Sentez</h3><p id="n-synth"></p></div>
 
@@ -407,6 +427,63 @@ function calc(){
     'Yani özetle: '+mean(life)+' bir ruhsun; içinde '+SHORT[nVow.root]+' arzusu taşırken dışarıya '+SHORT[nCon.root]+' bir yüzle çıkıyorsun. '+
     '<br><br><b>'+now.getFullYear()+' yılı senin için '+py+' ('+pl[py][0]+') dönemi:</b> '+YEAR[py]+' Bu yıl enerjini buraya yönlendirmek işini kolaylaştırır.';
   document.getElementById('n-synth').innerHTML=synth;
+
+  // ---- NUMEROLOJİ HARİTASI (Lo Shu karesi + veri tabloları) ----
+  (function(){
+    var counts={}; (parts[0]+parts[1]+parts[2]).replace(/\D/g,'').split('').forEach(function(d){ if(d!=='0') counts[d]=(counts[d]||0)+1; });
+    var pres=function(n){return counts[n]>0;};
+    var ARR=[
+      {c:['3','6','9'],t:'Zihin Oku',d:'güçlü analiz, hafıza ve düşünme gücü'},
+      {c:['2','5','8'],t:'Denge Oku',d:'duygusal denge, sezgi ve hassasiyet'},
+      {c:['1','4','7'],t:'Beceri Oku',d:'el becerisi, düzen ve pratik zekâ'},
+      {c:['3','2','1'],t:'Plan Oku',d:'planlama, akıl yürütme ve tasarım'},
+      {c:['6','5','4'],t:'İrade Oku',d:'güçlü irade, sebat ve kararlılık'},
+      {c:['9','8','7'],t:'Eylem Oku',d:'enerji, girişkenlik ve hareket'},
+      {c:['1','5','9'],t:'Azim Oku',d:'hedefe kilitlenme, pes etmeme'},
+      {c:['3','5','7'],t:'Ruhsallık Oku',d:'maneviyat, empati ve bilgelik'}
+    ];
+    var arrows=ARR.filter(function(a){return a.c.every(pres);});
+    // Lo Shu SVG
+    var layout=[['3','6','9'],['2','5','8'],['1','4','7']];
+    var cell=74,pad=8,S=pad*2+cell*3;
+    var pos={}; for(var r=0;r<3;r++)for(var c=0;c<3;c++){var d=layout[r][c];pos[d]={x:pad+c*cell+cell/2,y:pad+r*cell+cell/2};}
+    var svg='<svg viewBox="0 0 '+S+' '+S+'" xmlns="http://www.w3.org/2000/svg">';
+    // arrow lines (under cells)
+    arrows.forEach(function(a){var p0=pos[a.c[0]],p2=pos[a.c[2]];svg+='<line x1="'+p0.x+'" y1="'+p0.y+'" x2="'+p2.x+'" y2="'+p2.y+'" stroke="var(--accent)" stroke-width="2" stroke-opacity=".55"/>';});
+    // cells
+    for(var r2=0;r2<3;r2++)for(var c2=0;c2<3;c2++){var d2=layout[r2][c2],x=pad+c2*cell,y=pad+r2*cell,on=pres(d2);
+      svg+='<rect x="'+(x+3)+'" y="'+(y+3)+'" width="'+(cell-6)+'" height="'+(cell-6)+'" rx="8" fill="'+(on?'rgba(122,16,24,.10)':'none')+'" stroke="var(--line)" stroke-width="1"/>';
+      if(on){var txt=d2.repeat(counts[d2]); svg+='<text x="'+(x+cell/2)+'" y="'+(y+cell/2)+'" text-anchor="middle" dominant-baseline="central" font-family="Italiana,serif" font-size="'+(counts[d2]>2?18:24)+'" fill="var(--accent)">'+txt+'</text>';}
+      else{svg+='<text x="'+(x+cell/2)+'" y="'+(y+cell/2)+'" text-anchor="middle" dominant-baseline="central" font-family="DM Sans,sans-serif" font-size="12" fill="var(--muted)" opacity=".35">'+d2+'</text>';}
+    }
+    svg+='</svg>';
+    // Çekirdek sayılar tablosu
+    function pr(n){return '<td class="v">'+n+'</td><td class="pl">'+PLANET[n][1]+' '+PLANET[n][0]+'</td>';}
+    var core=[['Yaşam Yolu',life],['İsim (Kader)',nAll.root],['Ruh Arzusu',nVow.root],['Kişilik',nCon.root],['Doğum',birth],['Olgunluk',mat],['Aile / Soy',soyNum],['Kişisel Yıl',py]];
+    var coreT='<table class="ntbl"><caption>Çekirdek Sayılar</caption>';
+    core.forEach(function(row){coreT+='<tr><td class="lbl2">'+row[0]+'</td>'+pr(row[1])+'</tr>';});
+    coreT+='</table>';
+    // Uğurlu tablosu
+    var luckT='<table class="ntbl"><caption>Uğurlu</caption>'+
+      '<tr><td class="lbl2">Sayı</td>'+pr(lucky)+'</tr>'+
+      '<tr><td class="lbl2">Renk</td><td colspan="2" style="font-size:12px">'+COLOR[lucky]+'</td></tr>'+
+      '<tr><td class="lbl2">Taş</td><td colspan="2" style="font-size:12px">'+STONE[lucky]+'</td></tr></table>';
+    // Denklem tablosu
+    var chn=reduceChain(nAll.compound);
+    var eqT='<table class="ntbl"><caption>İsim Denklemi</caption>'+
+      '<tr><td class="lbl2">Harf Toplamı</td><td class="v">'+nAll.compound+'</td><td class="pl" style="color:var(--muted)">'+(chn.length>1?chn.join(' → '):'—')+'</td></tr>'+
+      '<tr><td class="lbl2">İsim Sayısı</td>'+pr(nAll.root)+'</tr></table>';
+    // Oklar
+    var arrT='';
+    if(arrows.length){arrT='<div class="arrows"><table class="ntbl"><caption>Güç Okları (Lo Shu)</caption></table>';
+      arrT+='<div class="arrows">'; arrows.forEach(function(a){arrT+='<div class="ar"><b>'+a.t+'</b><span>'+a.d+'</span></div>';}); arrT+='</div></div>';}
+    else{arrT='<div class="arrows"><table class="ntbl"><caption>Güç Okları (Lo Shu)</caption></table><div class="ar"><span style="color:var(--muted);font-style:italic">Tamamlanan bir güç okun yok — bu, belirli bir tek yöne kilitlenmeyip çok yönlü olduğun anlamına gelir.</span></div></div>';}
+
+    document.getElementById('n-chart').innerHTML=
+      '<div class="chart-h">Numeroloji Haritası</div>'+
+      '<div class="chart-grid"><div class="lo-wrap"><div class="lo">'+svg+'<div class="lo-cap">Lo Shu · Doğum Karesi</div></div></div>'+
+      '<div>'+coreT+eqT+luckT+'</div></div>'+arrT;
+  })();
 
   document.getElementById('n-who').textContent=name;
   document.getElementById('formSec').style.display='none';
