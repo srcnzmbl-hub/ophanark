@@ -66,6 +66,21 @@ a.hitem-btn .hmeta::after{content:'\203A';position:absolute;right:-22px;top:50%;
 .signout{margin-top:46px;text-align:center}
 .signout button{color:#b12a1e;border-color:rgba(177,42,30,.4)}
 .signout button:hover{border-color:#b12a1e}
+.danger{margin-top:40px;padding-top:26px;border-top:1px solid rgba(177,42,30,.22)}
+.danger h2{color:#b12a1e}
+.danger-note{font-family:var(--sans);font-size:12px;letter-spacing:.02em;line-height:1.5;color:var(--muted);margin:0 0 14px;max-width:52ch}
+.btn.danger-btn{color:#fff;background:#b12a1e;border-color:#b12a1e}
+.btn.danger-btn:hover{background:#8f1f16;border-color:#8f1f16}
+.btn.danger-btn:disabled{opacity:.55;cursor:default}
+.del-ov{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(10,6,10,.55);backdrop-filter:blur(3px)}
+.del-ov[hidden]{display:none}
+.del-card{width:min(420px,100%);background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:26px 24px;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+.del-card h3{font-family:var(--serif);font-weight:400;font-size:22px;margin:0 0 10px;color:#b12a1e}
+.del-card p{font-family:var(--sans);font-size:13px;line-height:1.55;color:var(--ink);opacity:.85;margin:0 0 16px}
+.del-card input{width:100%;padding:12px 4px;border:0;border-bottom:1px solid var(--line);background:none;font-family:var(--serif);font-size:17px;color:var(--ink);outline:none}
+.del-card input:focus{border-color:#b12a1e}
+.del-msg{min-height:16px;margin-top:10px;font-family:var(--sans);font-size:12px;letter-spacing:.02em;color:var(--muted)}
+.del-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
 </style>
 </head>
 <body>
@@ -112,6 +127,25 @@ a.hitem-btn .hmeta::after{content:'\203A';position:absolute;right:-22px;top:50%;
     </div>
 
     <div class="signout"><button class="btn" id="signout">Sign out</button></div>
+
+    <div class="danger">
+      <h2>Delete account</h2>
+      <p class="danger-note">This permanently deletes your account and all associated data (your readings and history). Paid order records are kept but detached from your account. This action cannot be undone.</p>
+      <button class="btn danger-btn" id="del-acct">Delete account</button>
+    </div>
+  </div>
+</div>
+
+<div class="del-ov" id="del-ov" hidden>
+  <div class="del-card">
+    <h3>Delete account?</h3>
+    <p>This will permanently delete your account and all your readings. This cannot be undone. Enter your password to confirm.</p>
+    <input type="password" id="del-pw" placeholder="Password" autocomplete="current-password">
+    <div class="del-msg" id="del-msg"></div>
+    <div class="del-actions">
+      <button class="btn" id="del-cancel">Cancel</button>
+      <button class="btn danger-btn" id="del-confirm">Delete permanently</button>
+    </div>
   </div>
 </div>
 
@@ -222,6 +256,48 @@ a.hitem-btn .hmeta::after{content:'\203A';position:absolute;right:-22px;top:50%;
     try{ for(var i=localStorage.length-1;i>=0;i--){ var k=localStorage.key(i); if(k&&/^sb-.*-auth-token$/.test(k)) localStorage.removeItem(k); } }catch(e){}
     location.replace('index.html');
   });
+
+  // ---- Delete account (password-confirmed, permanent) ----
+  (function(){
+    var ov=document.getElementById('del-ov'),
+        openBtn=document.getElementById('del-acct'),
+        cancelBtn=document.getElementById('del-cancel'),
+        confirmBtn=document.getElementById('del-confirm'),
+        pwInp=document.getElementById('del-pw'),
+        dmsg=document.getElementById('del-msg');
+    if(!openBtn || !ov) return;
+    function openModal(){ ov.hidden=false; pwInp.value=''; say(dmsg,''); confirmBtn.disabled=false; cancelBtn.disabled=false; setTimeout(function(){ try{ pwInp.focus(); }catch(e){} },30); }
+    function closeModal(){ ov.hidden=true; }
+    openBtn.addEventListener('click', openModal);
+    cancelBtn.addEventListener('click', closeModal);
+    ov.addEventListener('click', function(e){ if(e.target===ov) closeModal(); });
+    pwInp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); confirmBtn.click(); } });
+
+    confirmBtn.addEventListener('click', async function(){
+      if(!sb){ say(dmsg, T('Something went wrong.'), false); return; }
+      var pw=pwInp.value||'';
+      if(pw.length<1){ say(dmsg, T('Enter your password.'), false); return; }
+      var em=(email && email.value ? email.value.trim() : '');
+      try{ if(!em){ var ru=await sb.auth.getUser(); em=(ru&&ru.data&&ru.data.user&&ru.data.user.email)||''; } }catch(e){}
+      if(!em){ say(dmsg, T('Something went wrong.'), false); return; }
+      confirmBtn.disabled=true; cancelBtn.disabled=true;
+      say(dmsg, T('Verifying...'));
+      try{
+        // 1) Confirm identity with the account password.
+        var v=await sb.auth.signInWithPassword({ email:em, password:pw });
+        if(v.error){ say(dmsg, T('Incorrect password.'), false); confirmBtn.disabled=false; cancelBtn.disabled=false; return; }
+        say(dmsg, T('Deleting your account...'));
+        // 2) Secure server-side archive + physical deletion (uses fresh session token).
+        var res=await sb.functions.invoke('delete-account', { method:'POST' });
+        if(res.error){ say(dmsg, T('Could not delete account. Please try again.'), false); confirmBtn.disabled=false; cancelBtn.disabled=false; return; }
+        // 3) Clear the local session and leave.
+        try{ await sb.auth.signOut(); }catch(e){}
+        try{ for(var i=localStorage.length-1;i>=0;i--){ var k=localStorage.key(i); if(k&&/^sb-.*-auth-token$/.test(k)) localStorage.removeItem(k); } }catch(e){}
+        say(dmsg, T('Your account has been deleted.'), true);
+        setTimeout(function(){ location.replace('index.html'); }, 1300);
+      }catch(e){ say(dmsg, T('Could not delete account. Please try again.'), false); confirmBtn.disabled=false; cancelBtn.disabled=false; }
+    });
+  })();
 })();
 </script>
 <script src="spiral.js"></script>
