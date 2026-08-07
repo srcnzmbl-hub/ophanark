@@ -112,7 +112,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { AfterimagePass } from 'three/addons/postprocessing/AfterimagePass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-const LC=0x5f0b13; const LCS='rgba(95,11,19,0.98)';
+const LC=0xb51f2c; const LCS='rgba(181,31,44,0.98)';
 
 const GLYPH={Koç:'♈',Boğa:'♉',İkizler:'♊',Yengeç:'♋',Aslan:'♌',Başak:'♍',Terazi:'♎',Akrep:'♏',Yay:'♐',Oğlak:'♑',Kova:'♒',Balık:'♓'};
 /* zodyak fontu (ophzod / zodiac.ttf) sembol harfleri — iOS mor emoji yerine */
@@ -315,7 +315,7 @@ dustGroup.add(s);dust.push(s);}
 const wheel=new THREE.Group(); scene.add(wheel); wheel.rotation.x=-0.5;
 const R=6;
 // --- çark formu: 2 dış çember + 2 iç küçük çember + açı çizgileri (ince) ---
-const RING_T=0.016; // tüm çemberler aynı kalınlık
+const RING_T=0.021; // tüm çemberler aynı kalınlık (bir tık kalın)
 var depthRings=[];
 // her çember bağımsız, rastgele eksende, düzensiz döner — iz efekti composer'daki AfterimagePass ile (kuyruklu yıldız ışığı)
 function makeSpinRing(radius, base){
@@ -334,6 +334,17 @@ function makeSpinRing(radius, base){
 makeSpinRing(R,null); makeSpinRing(R*0.62,null);
 makeSpinRing(R,'x'); makeSpinRing(R,'y'); makeSpinRing(R*0.62,'x'); makeSpinRing(R*0.62,'y');
 window.__depthRings=depthRings;
+// yıldız tozu — küre içinde, kuyruklu yıldız izinin içinde kıvılcımlanır
+var starDustG=new THREE.Group(); wheel.add(starDustG); var starDust=[];
+for(var __sdi=0;__sdi<150;__sdi++){
+  var __sp=new THREE.Sprite(new THREE.SpriteMaterial({map:softTex,color:0xe0405a,transparent:true,depthWrite:false,opacity:.5}));
+  var __u2=Math.random()*2-1,__th=Math.random()*Math.PI*2,__sq=Math.sqrt(1-__u2*__u2),__rr=R*(0.15+Math.random()*0.9);
+  __sp.position.set(__rr*__sq*Math.cos(__th),__rr*__sq*Math.sin(__th),__rr*__u2);
+  var __b=0.04+Math.random()*0.10; __sp.scale.set(__b,__b,1);
+  __sp.userData={ph:Math.random()*6.28,sp:0.6+Math.random()*1.7,base:__b};
+  starDustG.add(__sp); starDust.push(__sp);
+}
+window.__starDust=starDust;
 // (radyal açı çizgileri kaldırıldı — sadece çemberler kalsın, çemberler döner)
 // ---- yüksek kaliteli animasyonlu GÜNEŞ ----
 const suns=[];
@@ -399,7 +410,7 @@ function updateFeathers(){ if(!logoGroup.visible){ if(featherG.visible)featherG.
     sp.position.set(u.start.x+u.vps.x*el+Math.sin(t*1.1+u.sway)*0.05, u.start.y+u.vps.y*el+Math.cos(t*0.9+u.sway)*0.05, u.start.z+u.vps.z*el);
     sp.material.rotation=u.rot0+u.rspd*el; sp.material.opacity=Math.sin(Math.PI*clamp01(life))*0.92; } }
 function numSprite(txt){const s=128,cv=document.createElement('canvas');cv.width=cv.height=s;const x=cv.getContext('2d');x.font='500 42px Helvetica,Arial,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillStyle=LCS;x.fillText(txt,s/2,s/2);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthWrite:false,depthTest:false}));sp.scale.set(0.86,0.86,1);sp.renderOrder=2;return sp;}
-for(let d=0;d<360;d+=30){const a=THREE.MathUtils.degToRad(d);const sp=numSprite(String(d)+'°');sp.position.set(Math.cos(a)*R*1.09,Math.sin(a)*R*1.09,0);wheel.add(sp);}
+// (derece etiketleri kaldırıldı — açılar silindi)
 
 function posOf(lon){const a=THREE.MathUtils.degToRad(lon);return new THREE.Vector3(Math.cos(a)*R*0.82,Math.sin(a)*R*0.82,0);}
 const POS={}, SZ={};
@@ -1000,7 +1011,7 @@ const __msRT=new THREE.WebGLRenderTarget(__rtSize.width,__rtSize.height,{samples
 const composer=new EffectComposer(renderer,__msRT);
 const __renderPass=new RenderPass(scene,camera);__renderPass.clearAlpha=0;composer.addPass(__renderPass);
 // kuyruklu yıldız ışık izi — dönen çemberler arkalarında yumuşak bir iz bırakır
-const __afterimage=new AfterimagePass(0.86); composer.addPass(__afterimage);
+const __afterimage=new AfterimagePass(0.92); composer.addPass(__afterimage);
 composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.16,0.6,0.9));
 composer.addPass(new OutputPass());
 
@@ -1022,6 +1033,8 @@ for(const s of dust){const v=(Math.sin(t*s.userData.sp+s.userData.ph)+1)/2;s.mat
 const pulse=(Math.sin(t*2.4)+1)/2;
 nodes.forEach(n=>{if(!n.isSun)n.planet.rotation.y+=0.0018;if(n.isHot&&n.halo){n.halo.material.opacity=.24+pulse*.35;}if(n.signSprite){n.signSprite.material.opacity=0.25+0.75*(0.5+0.5*Math.sin(t*2.6+(n.lon||0)*0.05));}});
 for(var __di=0;__di<depthRings.length;__di++){var __s=depthRings[__di],__u=__s.userData;__s.rotateOnAxis(__u.ax,__u.sp);__s.rotateOnAxis(__u.ax2,__u.sp2);}
+starDustG.rotation.y+=0.0009; starDustG.rotation.x+=0.0004;
+for(var __sk=0;__sk<starDust.length;__sk++){var __d=starDust[__sk],__v=(Math.sin(t*__d.userData.sp+__d.userData.ph)+1)/2;__d.material.opacity=0.12+__v*0.55;var __sc=__d.userData.base*(0.65+0.6*__v);__d.scale.set(__sc,__sc,1);}
 for(const sg of suns)updateSun(sg);
 if(story.on)updateStory(t-story.t0);
 if(reveal.on && !reveal.done) updateReveal(t-reveal.t0);
