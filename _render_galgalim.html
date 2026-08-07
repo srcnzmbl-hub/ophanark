@@ -1,0 +1,37 @@
+<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>galgalim render</title>
+<style>html,body{margin:0;background:#ff00ff}#wrap{width:840px;height:840px;margin:0 auto}canvas{display:block}</style>
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }</script>
+</head><body>
+<div id="wrap"></div>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+const kap=document.getElementById('wrap');
+const W=840,H=840;
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(W,H); renderer.toneMapping=THREE.ACESFilmicToneMapping;
+kap.appendChild(renderer.domElement);
+const sahne=new THREE.Scene();
+const pmrem=new THREE.PMREMGenerator(renderer);
+sahne.environment=pmrem.fromScene(new RoomEnvironment(),0.04).texture;
+const kamera=new THREE.PerspectiveCamera(38,W/H,0.01,100); kamera.position.set(0,0,3);
+sahne.add(new THREE.HemisphereLight(0xffe8cc,0x30060a,0.7));
+const d=new THREE.DirectionalLight(0xffffff,1.9); d.position.set(2,3,4); sahne.add(d);
+const kok=new THREE.Group(); sahne.add(kok);
+const draco=new DRACOLoader().setDecoderPath("./vendor/addons/libs/draco/");
+new GLTFLoader().setDRACOLoader(draco).load("model/carklar_m.glb",(gltf)=>{
+  const m=gltf.scene; const box=new THREE.Box3().setFromObject(m);
+  const c=box.getCenter(new THREE.Vector3()); const s=box.getSize(new THREE.Vector3());
+  m.position.sub(c); kok.add(m);
+  kok.scale.setScalar(1.9/Math.max(s.x,s.y,s.z));
+  kok.rotation.set(0.35,-0.5,0.1); // sabit hos aci
+  renderer.render(sahne,kamera);
+  requestAnimationFrame(()=>{ renderer.render(sahne,kamera); window.__ready=true; document.title='galgalim ready'; });
+});
+</script>
+</body></html>
