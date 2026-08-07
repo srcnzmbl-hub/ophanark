@@ -315,7 +315,7 @@ const wheel=new THREE.Group(); scene.add(wheel); wheel.rotation.x=-0.5;
 const R=6;
 // --- çark formu: 2 dış çember + 2 iç küçük çember + açı çizgileri (ince) ---
 const RING_T=0.016; // ince çember kalınlığı
-[[R,RING_T],[R*0.90,RING_T*0.9],[R*0.62,RING_T*0.85],[R*0.54,RING_T*0.8]].forEach(function(rc){
+[[R,RING_T],[R*0.62,RING_T*0.85]].forEach(function(rc){
   wheel.add(new THREE.Mesh(new THREE.TorusGeometry(rc[0],rc[1],20,420),new THREE.MeshBasicMaterial({color:LC,transparent:true,opacity:1})));
 });
 // --- 3B derinlik: düzleme dik çemberler (küresel görünüm) ---
