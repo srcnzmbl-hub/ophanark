@@ -318,6 +318,12 @@ const RING_T=0.016; // ince çember kalınlığı
 [[R,RING_T],[R*0.90,RING_T*0.9],[R*0.62,RING_T*0.85],[R*0.54,RING_T*0.8]].forEach(function(rc){
   wheel.add(new THREE.Mesh(new THREE.TorusGeometry(rc[0],rc[1],20,420),new THREE.MeshBasicMaterial({color:LC,transparent:true,opacity:1})));
 });
+// --- 3B derinlik: düzleme dik çemberler (küresel görünüm) ---
+[['x',R],['y',R],['x',R*0.62],['y',R*0.62]].forEach(function(pr){
+  var __t=new THREE.Mesh(new THREE.TorusGeometry(pr[1],RING_T*0.8,18,360),new THREE.MeshBasicMaterial({color:LC,transparent:true,opacity:.7}));
+  if(pr[0]==='x')__t.rotation.x=Math.PI/2; else __t.rotation.y=Math.PI/2;
+  wheel.add(__t);
+});
 // 12 burç açı çizgisi — iç banttan dış çembere (ince)
 for(var __k=0;__k<12;__k++){var __a=THREE.MathUtils.degToRad(__k*30);
   var __g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(Math.cos(__a)*R*0.62,Math.sin(__a)*R*0.62,0),new THREE.Vector3(Math.cos(__a)*R,Math.sin(__a)*R,0)]);
