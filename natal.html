@@ -584,8 +584,16 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
     applyFold(p);
   }
   function buildChart(c){
-    var html=chartInnerHTML(c);
-    var el=document.getElementById('ci-full'); if(el) el.innerHTML=html;
+    // 3D natal: feed real chart data to the embedded 3D view (oph_natal3d), then show it in place of the old 2D wheel.
+    try{
+      var TRN=(NATAL_I18N&&NATAL_I18N.tr&&NATAL_I18N.tr.names)||['Koç','Boğa','İkizler','Yengeç','Aslan','Başak','Terazi','Akrep','Yay','Oğlak','Kova','Balık'];
+      var P3={}, PK=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
+      PK.forEach(function(k){ var p=c.planets&&c.planets[k]; if(p) P3[k]={lon:p.lon, sign:TRN[p.si]}; });
+      var H3=(c.houses||[]).map(function(h){return h.lon;});
+      localStorage.setItem('oph_natal3d', JSON.stringify({P:P3, HOUSES:H3}));
+    }catch(e){}
+    var el=document.getElementById('ci-full');
+    if(el) el.innerHTML='<iframe src="natal3d_embed.html?t='+Date.now()+'" style="width:100%;height:100%;border:0;display:block;background:#fff;border-radius:12px" title="3D natal chart" scrolling="no" allowtransparency="true"></iframe>';
   }
   addEventListener('resize', layoutFold);
   // ---- half-circle reading path (left half + labels, then right half) ----
