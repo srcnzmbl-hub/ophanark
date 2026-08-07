@@ -438,7 +438,11 @@ hA.userData.k=k; hB.userData.k=k; raycastTargets.push(hA,hB);
 }
 let ringMesh=null,signSprite=null,halo=null;
 if(pl.ring){ringMesh=new THREE.Mesh(new THREE.RingGeometry(sz*1.35,sz*2.15,64),new THREE.MeshBasicMaterial({color:0xdcc79a,side:THREE.DoubleSide,transparent:true,opacity:.6}));ringMesh.rotation.set(1.1,0.35,0);pg.add(ringMesh);}
-if(window.SIGNIMG&&window.SIGNIMG[P[k].sign]){signSprite=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.TextureLoader().load(window.SIGNIMG[P[k].sign]),transparent:true,depthWrite:false,depthTest:false,opacity:.92}));signSprite.scale.set(sz*1.9,sz*1.9,1);signSprite.renderOrder=6;pg.add(signSprite);}
+if(window.SIGNIMG&&window.SIGNIMG[P[k].sign]){var __stex=new THREE.TextureLoader().load(window.SIGNIMG[P[k].sign]);
+// arka kontur — parlak gezegen/zemin üstünde okunurluk
+// açık hâle — koyu kırmızı sembolün koyu gezegenler üstünde okunması için
+var __soutline=new THREE.Sprite(new THREE.SpriteMaterial({map:__stex,color:0xf7f3e8,transparent:true,depthWrite:false,depthTest:false,opacity:.85}));__soutline.scale.set(sz*2.95,sz*2.95,1);__soutline.renderOrder=6;pg.add(__soutline);
+signSprite=new THREE.Sprite(new THREE.SpriteMaterial({map:__stex,color:0x7a1018,transparent:true,depthWrite:false,depthTest:false,opacity:1}));signSprite.scale.set(sz*2.6,sz*2.6,1);signSprite.renderOrder=7;pg.add(signSprite);}
 if(isHot){halo=new THREE.Sprite(new THREE.SpriteMaterial({map:radialTex('rgba(255,110,110,.45)','rgba(255,110,110,0)'),blending:THREE.AdditiveBlending,depthWrite:false,opacity:.4}));halo.scale.set(sz*3.6,sz*3.6,1);pg.add(halo);}
 // ic cekirdek (kabuk yarilinca beliren isik)
 const core=new THREE.Sprite(new THREE.SpriteMaterial({map:radialTex('rgba(255,244,210,1)','rgba(255,190,90,0)'),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0}));
@@ -728,7 +732,7 @@ if(n===transitioning)continue;
 _fl.set(n.cscatter.x+Math.sin(t*0.24+n.lon)*0.17, n.cscatter.y+Math.sin(t*0.19+n.lon*1.7)*0.20, n.cscatter.z+Math.cos(t*0.22+n.lon)*0.17);
 n.pg.position.lerp(_fl,0.05);
 n.pg.scale.setScalar(n.pg.scale.x+(PATH_SCALE-n.pg.scale.x)*0.1);
-if(n.signSprite){n.signSprite.material.color.setHex(0xffe08a);
+if(n.signSprite){n.signSprite.material.color.setHex(0x7a1018);
 const tgt=n.read?0.0:(0.5+0.4*Math.sin(t*4+n.lon));
 n.signSprite.material.opacity += (tgt-n.signSprite.material.opacity)*0.08;}
 }
@@ -799,7 +803,7 @@ jcamPos.lerp(_initCamPos,0.04); jcamTgt.lerp(_initCamTgt,0.04);
 camera.position.copy(jcamPos); controls.target.copy(jcamTgt); camera.lookAt(jcamTgt);
 if(fe>6.6&&!finaleDone){finaleDone=true; finishFinale();}}
 function finishFinale(){
-for(const n of nodes){planetsG.attach(n.pg); n.pg.position.copy(POS[n.key]); n.pg.scale.setScalar(n.s0); if(n.signSprite)n.signSprite.material.opacity=0.9; n.read=false;}
+for(const n of nodes){planetsG.attach(n.pg); n.pg.position.copy(POS[n.key]); n.pg.scale.setScalar(n.s0); if(n.signSprite){n.signSprite.material.opacity=0.9;n.signSprite.material.color.setHex(0x7a1018);} n.read=false;}
 for(const o of ringChildren)o.material.opacity=o.userData.__o0;
 centerSun.visible=true; centerSun.scale.setScalar(1);
 centerSun.traverse(o=>{if(o.material){if(o.userData.__c0)o.material.color.copy(o.userData.__c0); if(o.userData.__so!==undefined)o.material.opacity=o.userData.__so;}});
@@ -856,7 +860,7 @@ function updateStory2(st){
   const a=ez(clamp01(st/ARRANGE_DUR));
   for(const n of nodes){ if(!n.cscatter)continue;
    n.pg.position.lerpVectors(n.p0,n.cscatter,a); n.pg.scale.setScalar(n.s0+(PATH_SCALE-n.s0)*a);
-   if(n.signSprite){n.signSprite.material.color.setHex(0xffe08a); n.signSprite.material.opacity=0.5+0.4*Math.sin(t*4+n.lon);} }
+   if(n.signSprite){n.signSprite.material.color.setHex(0x7a1018); n.signSprite.material.opacity=0.5+0.4*Math.sin(t*4+n.lon);} }
   if(st>=ARRANGE_DUR){ story.phase='interactive'; enterInteractive(); }
   return;
  }
@@ -953,7 +957,7 @@ const s10=ez(clamp01((st-20.0)/3.2));
 for(const n of nodes){ if(!n.cscatter)continue;
 n.pg.position.lerpVectors(n.p0,n.cscatter,s10);
 n.pg.scale.setScalar(n.s0+(PATH_SCALE-n.s0)*s10);
-if(n.signSprite){n.signSprite.material.color.setHex(0xffe08a); n.signSprite.material.opacity=0.5+0.4*Math.sin(t*4+n.lon);}
+if(n.signSprite){n.signSprite.material.color.setHex(0x7a1018); n.signSprite.material.opacity=0.5+0.4*Math.sin(t*4+n.lon);}
 }
 }
 // ===== SAHNE 11: serbest 3B yorunge + zoom; gezegene dokun -> yorum acilir, kapat -> burc amblemi soner =====
