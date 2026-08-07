@@ -287,8 +287,10 @@ var COMP={
 };
 
 // uğurlu renk / taş / kısa özet / eksik sayı dersleri / uyum dostlukları
-var COLOR={1:'Altın sarısı, amber, turuncu',2:'Beyaz, krem, gümüş, su yeşili',3:'Mor, leylak, sarı',4:'Gri, elektrik mavisi, haki',5:'Yeşil, açık gri, parlak tonlar',6:'Mavi, pembe, pastel tonlar',7:'Deniz yeşili, turkuaz, beyaz',8:'Siyah, lacivert, koyu mor',9:'Kırmızı, kızıl, bordo'};
-var STONE={1:'Yakut ve amber',2:'İnci ve ay taşı',3:'Ametist, sarı safir ve topaz',4:'Hessonit (gomed) ve labradorit',5:'Zümrüt ve yeşil turmalin',6:'Elmas, pembe kuvars ve opal',7:'Kedigözü, akuamarin ve ay taşı',8:'Mavi safir, oniks ve ametist',9:'Kırmızı mercan, lâl (garnet) ve kırmızı jasper'};
+var COLOR={1:'Altın sarısı, turuncu, amber',2:'İnci beyazı, gümüş, gök mavisi',3:'Lacivert, mor, sarı',4:'Elektrik mavisi, gri, gümüş',5:'Turkuaz, açık mavi, yeşil',6:'Yeşil, pembe, pastel tonlar',7:'Deniz yeşili, turkuaz, lila',8:'Koyu gri, siyah, lacivert',9:'Kırmızı, kızıl, bordo'};
+var COLHEX={1:'#d9a441',2:'#cfd8e3',3:'#3f51b5',4:'#4a90d9',5:'#3aa6b9',6:'#4CAF7D',7:'#2aa198',8:'#4a4a55',9:'#c0392b'};
+var DAY={1:'Pazar',2:'Pazartesi',3:'Perşembe',4:'Cumartesi',5:'Çarşamba',6:'Cuma',7:'Pazartesi',8:'Cumartesi',9:'Salı'};
+var STONE={1:'Yakut ve kehribar',2:'İnci ve aytaşı',3:'Safir ve lapis lazuli',4:'Labradorit ve akuamarin',5:'Zümrüt ve akik',6:'Zümrüt ve pembe kuvars',7:'Aytaşı ve akuamarin',8:'Oniks ve hematit',9:'Yakut ve kızıl akik'};
 var SHORT={1:'bağımsızlık, liderlik ve kendi yolunu kurma',2:'uyum, ilişkiler ve sabırla ilerleme',3:'yaratıcılık, ifade ve neşe',4:'emek, düzen ve sağlam temeller',5:'özgürlük, değişim ve yeni deneyimler',6:'sevgi, sorumluluk ve yuva',7:'içe dönüş, bilgi ve maneviyat',8:'güç, bolluk ve dünyevi başarı',9:'tamamlama, şefkat ve idealler'};
 // sade, jargonsuz tek satırlık anlamlar (sentez için)
 var MEAN={1:'güçlü, bağımsız ve öncü — kendi yolunu çizmek isteyen',2:'hassas, uyumlu ve sezgisel — insanların arasını yapan, ilişkilere önem veren',3:'yaratıcı, neşeli ve iletişimi güçlü — kendini ifade etmekten beslenen',4:'düzenli, çalışkan ve güvenilir — sağlam temeller kurmayı seven',5:'özgür, meraklı ve hareketli — değişime ve yeniliğe açık',6:'sevgi dolu, sorumlu ve şefkatli — aileye ve sevdiklerine bağlı',7:'derin, sezgisel ve anlam arayan — yüzeyle yetinmeyen, düşünen',8:'güçlü, hırslı ve kararlı — dünyevi başarıya ve otoriteye yatkın',9:'tutkulu, cesur ve büyük kalpli — idealleri için çabalayan'};
@@ -416,9 +418,10 @@ function calc(){
   // Uğurlu Sayı / Renk / Taş (psişik / doğum sayısına göre)
   var lucky=birth;
   rows.insertAdjacentHTML('beforeend',
-    '<div class="lucky"><div class="bh">Uğurlu Sayın, Rengin & Taşın</div>'+
+    '<div class="lucky"><div class="bh">Uğurlu Sayın, Günün, Rengin & Taşın</div>'+
     '<div class="lk"><span class="lkl">Uğurlu Sayı</span><span class="lkv">'+lucky+' <small>'+PLANET[lucky][0]+' '+PLANET[lucky][1]+'</small></span></div>'+
-    '<div class="lk"><span class="lkl">Uğurlu Renk</span><span class="lkv">'+COLOR[lucky]+'</span></div>'+
+    '<div class="lk"><span class="lkl">Uğurlu Gün</span><span class="lkv">'+DAY[lucky]+'</span></div>'+
+    '<div class="lk"><span class="lkl">Uğurlu Renk</span><span class="lkv"><span class="swatch" style="width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.15);display:inline-block;margin-right:8px;vertical-align:-2px;background:'+COLHEX[lucky]+'"></span>'+COLOR[lucky]+'</span></div>'+
     '<div class="lk"><span class="lkl">Uğurlu Taş</span><span class="lkv">'+STONE[lucky]+'</span></div>'+
     '<div class="bframe">Bu taşı takmak ya da yanında taşımak '+PLANET[lucky][0]+' enerjisini güçlendirir; kendini daha dengede, korunmuş ve şanslı hissettirir.</div></div>');
 
@@ -477,6 +480,7 @@ function calc(){
     // Uğurlu tablosu
     var luckT='<table class="ntbl"><caption>Uğurlu</caption>'+
       '<tr><td class="lbl2">Sayı</td>'+pr(lucky)+'</tr>'+
+      '<tr><td class="lbl2">Gün</td><td colspan="2" style="font-size:12px">'+DAY[lucky]+'</td></tr>'+
       '<tr><td class="lbl2">Renk</td><td colspan="2" style="font-size:12px">'+COLOR[lucky]+'</td></tr>'+
       '<tr><td class="lbl2">Taş</td><td colspan="2" style="font-size:12px">'+STONE[lucky]+'</td></tr></table>';
     // Denklem tablosu
