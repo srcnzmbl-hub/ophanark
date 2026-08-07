@@ -310,7 +310,7 @@ const b=0.18+Math.random()*0.55;s.userData={ph:Math.random()*6.28,sp:0.8+Math.ra
 dustGroup.add(s);dust.push(s);}
 const wheel=new THREE.Group(); scene.add(wheel); wheel.rotation.x=-0.5;
 const R=6;
-[{},{x:Math.PI/2},{x:Math.PI/2.35,y:Math.PI/3}].forEach((rt)=>{const rg=new THREE.Mesh(new THREE.TorusGeometry(R,0.05,16,240),new THREE.MeshBasicMaterial({color:LC,transparent:true,opacity:1}));if(rt.x)rg.rotation.x=rt.x;if(rt.y)rg.rotation.y=rt.y;wheel.add(rg);});
+[{},{x:Math.PI/2},{x:Math.PI/2.35,y:Math.PI/3}].forEach((rt)=>{const rg=new THREE.Mesh(new THREE.TorusGeometry(R,0.05,24,420),new THREE.MeshBasicMaterial({color:LC,transparent:true,opacity:1}));if(rt.x)rg.rotation.x=rt.x;if(rt.y)rg.rotation.y=rt.y;wheel.add(rg);});
 // ---- yüksek kaliteli animasyonlu GÜNEŞ ----
 const suns=[];
 function randUnit(){const u=Math.random()*2-1,th=Math.random()*Math.PI*2,sq=Math.sqrt(1-u*u);return new THREE.Vector3(sq*Math.cos(th),sq*Math.sin(th),u);}
@@ -956,7 +956,9 @@ canvas.addEventListener('touchstart',()=>{if(story.on)freeCam();},{passive:true}
 window.__free=freeCam;
 // ==============================================================
 
-const composer=new EffectComposer(renderer);
+const __rtSize=renderer.getDrawingBufferSize(new THREE.Vector2());
+const __msRT=new THREE.WebGLRenderTarget(__rtSize.width,__rtSize.height,{samples:4});
+const composer=new EffectComposer(renderer,__msRT);
 composer.addPass(new RenderPass(scene,camera));
 composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.16,0.6,0.9));
 composer.addPass(new OutputPass());
