@@ -440,6 +440,8 @@ const nodes=[]; const planetsG=new THREE.Group(); wheel.add(planetsG);
 const raycastTargets=[];
 keys.forEach(k=>{const pos=POS[k];const isHot=hot.has(k);const pl=PL[k];const sz=pl.size*(SZ[k]||1)*1.3;
 const pg=new THREE.Group(); pg.position.copy(pos); planetsG.add(pg);
+// görünmez büyük tıklama alanı — küçük/dönen gezegene kolay dokunmak için
+var __hit=new THREE.Mesh(new THREE.SphereGeometry(Math.max(sz*2.6,0.55),12,12),new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));__hit.userData.k=k;pg.add(__hit);raycastTargets.push(__hit);
 let planet, halves=null;
 if(pl.type==='sun'){planet=makeSun(sz,26);pg.add(planet);planet.children.filter(o=>o.isMesh).forEach(mo=>{mo.userData.k=k;raycastTargets.push(mo);});}
 else {
@@ -996,8 +998,8 @@ window.__free=freeCam;
 canvas.addEventListener('pointerdown',function(e){__dX=e.clientX;__dY=e.clientY;__dT=e.timeStamp;});
 canvas.addEventListener('pointerup',function(e){
   if(story.on)return;
-  if(Math.hypot(e.clientX-__dX,e.clientY-__dY)>9)return;
-  if(e.timeStamp-__dT>600)return;
+  if(Math.hypot(e.clientX-__dX,e.clientY-__dY)>18)return;
+  if(e.timeStamp-__dT>1500)return;
   var rect=renderer.domElement.getBoundingClientRect();
   ptr.x=((e.clientX-rect.left)/rect.width)*2-1; ptr.y=-((e.clientY-rect.top)/rect.height)*2+1;
   raycaster.setFromCamera(ptr,camera);
