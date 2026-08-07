@@ -107,6 +107,14 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
 "tag_numerology":{en:"Every turn in the universe is a frequency; the Divine Galgalim turn to calculate for you the geometric vibrations behind your name and birth date.",tr:"Evrendeki her dönüş bir frekanstır; İlahi Çarklar, adının ve doğum tarihinin arkasındaki geometrik titreşimleri senin için hesaplamak üzere dönüyor."}
 };
   for(var _k5 in _ADD5){var _e5=_ADD5[_k5];EN[_k5]=_e5.en;for(var _lg5 in _e5){if(_lg5==='en')continue;(L[_lg5]=L[_lg5]||{})[_k5]=_e5[_lg5];}}
+  var _ADD6={
+"nav_starname":{en:"Star Name",tr:"Yıldızname",de:"Sternendeutung",fr:"Nom d'étoile",es:"Nombre estelar",it:"Nome stellare",pt:"Nome estelar",ru:"Звёздное имя",ar:"اسم النجم",zh:"星名",ja:"星名占い",ko:"별 이름",hi:"तारा नाम",nl:"Sterrennaam",pl:"Imię gwiazdy"},
+"big_starname":{en:"Star Name",tr:"Yıldızname",de:"Sternendeutung",fr:"Nom d'étoile",es:"Nombre estelar",it:"Nome stellare",pt:"Nome estelar",ru:"Звёздное имя",ar:"اسم النجم",zh:"星名",ja:"星名占い",ko:"별 이름",hi:"तारा नाम",nl:"Sterrennaam",pl:"Imię gwiazdy"},
+"cta_starname":{en:"Find my star",tr:"Yıldızımı bul"},
+"lead_starname":{en:"Yıldızname is an ancient art of the Ottoman-Islamic tradition: the letters of your name and your mother's name turn into numbers through ebced calculation, and that number reveals the star and planet that govern you. Ophanark reads the story of that star for you.",tr:"Yıldızname, Osmanlı-İslam geleneğinin kadim bir ilmidir: adının ve annenin adının harfleri ebced hesabıyla sayıya döner, bu sayı seni yöneten yıldızı ve gezegeni açığa çıkarır. Ophanark bu yıldızın hikâyesini senin için okur."},
+"tag_starname":{en:"Every letter is a number, every number a star; the Divine Galgalim turn to calculate for you the sky behind your name.",tr:"Her harf bir sayı, her sayı bir yıldızdır; İlahi Çarklar adının ardındaki göğü senin için hesaplamak üzere döner."}
+};
+  for(var _k6 in _ADD6){var _e6=_ADD6[_k6];EN[_k6]=_e6.en;for(var _lg6 in _e6){if(_lg6==='en')continue;(L[_lg6]=L[_lg6]||{})[_k6]=_e6[_lg6];}}
   var REV = {};
   for (var _id in EN) { if (EN.hasOwnProperty(_id)) REV[EN[_id].trim()] = _id; }
 

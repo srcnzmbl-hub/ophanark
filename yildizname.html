@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<script>(function(){try{var t=localStorage.getItem('oph_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OPHANARK · Yıldızname</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F3E8; --ink:#25181C; --muted:#9c8666; --line:rgba(37,24,28,.16); --gold:#9a6c2e; --accent:#7a1018;
+    --disp:'Italiana',serif; --serif:'Cormorant Garamond',serif; --sans:'DM Sans',sans-serif;
+  }
+  :root[data-theme="dark"]{--bg:#080C17;--ink:#DAE7E3;--line:rgba(218,231,227,.16);--muted:#637999;--gold:#d9b25f;--accent:#e0576a}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);min-height:100dvh}
+  body{font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:640px;margin:0 auto;padding:0 22px 80px}
+  header.bar{display:flex;align-items:center;gap:12px;padding:18px 22px 8px;max-width:640px;margin:0 auto}
+  .backlink a{font-family:var(--sans);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);text-decoration:none;opacity:.7}
+  .brandmini{font-family:var(--disp);letter-spacing:.3em;font-size:14px;margin-left:auto}
+  h1.big{font-family:var(--disp);font-weight:400;line-height:1.05;font-size:clamp(30px,10vw,54px);text-transform:uppercase;letter-spacing:.04em;text-align:center;margin:26px 0 0}
+  .lead{font-family:var(--serif);font-style:italic;font-size:clamp(15px,3.9vw,19px);color:var(--muted);max-width:92%;margin:12px auto 0;line-height:1.5;text-align:center}
+  .form{margin:30px auto 0;max-width:420px}
+  .fld{margin:16px 0}
+  .fld label{display:block;font-family:var(--sans);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .fld input{width:100%;padding:11px 2px;border:0;border-bottom:1px solid var(--line);background:none;font-family:var(--serif);font-size:18px;color:var(--ink);outline:none}
+  .fld input:focus{border-color:var(--gold)}
+  .hint{font-family:var(--serif);font-style:italic;font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.4}
+  .err{color:#b12a1e;font-family:var(--serif);font-style:italic;font-size:13px;margin-top:8px;min-height:1px;text-align:center}
+  .go{display:block;width:100%;margin-top:26px;font-family:var(--sans);font-weight:400;font-size:clamp(11px,2.7vw,12.5px);letter-spacing:.22em;text-transform:uppercase;padding:15px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer;border-radius:2px}
+  .go:active{transform:scale(.99)}
+  /* results */
+  #out{margin-top:16px;display:none}
+  .who{text-align:center;font-family:var(--serif);font-style:italic;font-size:clamp(16px,4.3vw,20px);color:var(--muted);margin:4px 0 8px}
+  /* yıldız başlık kartı */
+  .starhead{text-align:center;padding:22px 0 6px}
+  .starhead .glyph{font-size:clamp(58px,17vw,92px);line-height:1;color:var(--accent)}
+  .starhead .pname{font-family:var(--disp);text-transform:uppercase;letter-spacing:.1em;font-size:clamp(22px,6.5vw,34px);margin-top:8px;color:var(--ink)}
+  .starhead .psub{font-family:var(--sans);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  /* ebced denklemi */
+  .eqbox{padding:22px 0;border-top:1px solid var(--line)}
+  .eqh{font-family:var(--disp);text-transform:uppercase;letter-spacing:.06em;font-size:clamp(15px,4.2vw,20px);color:var(--ink);margin-bottom:4px}
+  .eqframe{font-family:var(--serif);font-style:italic;font-size:clamp(14px,3.7vw,16px);color:var(--muted);line-height:1.45;margin-bottom:12px}
+  .echips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 2px}
+  .echip{display:inline-flex;flex-direction:column;align-items:center;padding:5px 8px;border:1px solid var(--line);border-radius:8px;min-width:32px}
+  .echip b{font-family:var(--disp);font-size:18px;color:var(--ink);line-height:1;font-weight:400}
+  .echip span{font-family:var(--sans);font-size:9px;color:var(--gold);margin-top:3px;letter-spacing:.03em}
+  .eqsum{font-family:var(--sans);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:6px 0 2px}
+  .eqline{font-family:var(--serif);font-size:clamp(15px,4vw,18px);color:#3f332f;line-height:1.7;margin-top:12px}
+  html[data-theme="dark"] .eqline{color:#EDEDF1}
+  .eqline b{color:var(--accent);font-family:var(--disp);font-size:1.15em;letter-spacing:.02em}
+  /* satırlar (karakter, burç) */
+  .nrow{display:flex;gap:16px;align-items:flex-start;padding:22px 0;border-top:1px solid var(--line)}
+  .nrow .num{flex:none;width:66px;text-align:center}
+  .nrow .num .d{font-family:var(--disp);font-size:44px;line-height:1;color:var(--accent)}
+  .nrow .num .plname{font-family:var(--sans);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+  .nrow .rt{flex:1;min-width:0}
+  .nrow .rl{font-family:var(--disp);text-transform:uppercase;letter-spacing:.06em;color:var(--ink);font-size:clamp(15px,4.2vw,20px);line-height:1.1}
+  .nrow .rl .tag{font-family:var(--sans);font-size:9.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:3px}
+  .nrow .frame{font-family:var(--serif);font-style:italic;font-size:clamp(14px,3.7vw,16px);color:var(--muted);line-height:1.45;margin:7px 0 9px}
+  .nrow .body{font-family:var(--serif);font-size:clamp(17px,4.5vw,20px);color:#3f332f;line-height:1.55}
+  html[data-theme="dark"] .nrow .body{color:#EDEDF1}
+  .nrow .kw{font-family:var(--sans);font-size:10px;letter-spacing:.06em;color:var(--muted);margin-top:9px;text-transform:uppercase}
+  /* blok (kader) */
+  .block{padding:22px 0;border-top:1px solid var(--line)}
+  .bh{font-family:var(--disp);text-transform:uppercase;letter-spacing:.06em;font-size:clamp(15px,4.2vw,20px);color:var(--ink);margin-bottom:8px}
+  .btxt{font-family:var(--serif);font-size:clamp(17px,4.5vw,20px);color:#3f332f;line-height:1.6}
+  html[data-theme="dark"] .btxt{color:#EDEDF1}
+  /* uğurlu blok */
+  .lucky{margin-top:6px;padding:24px 20px;border:1px solid var(--line);border-radius:12px;background:rgba(122,16,24,.05)}
+  .lucky .bh{margin-bottom:4px}
+  .lucky .bframe{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--muted);margin:0 0 8px;line-height:1.45}
+  .lk{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-bottom:1px dashed var(--line)}
+  .lk:last-of-type{border-bottom:0}
+  .lkl{font-family:var(--sans);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .lkv{font-family:var(--serif);font-size:clamp(16px,4.3vw,20px);color:var(--ink);text-align:right;display:flex;align-items:center;gap:9px}
+  .swatch{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.15);display:inline-block}
+  .synth{margin-top:26px;padding:24px 20px;border:1px solid var(--line);border-radius:12px;background:rgba(154,108,46,.05)}
+  .synth h3{font-family:var(--disp);text-transform:uppercase;letter-spacing:.08em;font-weight:400;font-size:clamp(16px,4.4vw,20px);margin:0 0 10px;text-align:center;color:var(--ink)}
+  .synth p{font-family:var(--serif);font-size:clamp(16px,4.3vw,19px);color:#3f332f;line-height:1.6;margin:0}
+  html[data-theme="dark"] .synth p{color:#EDEDF1}
+  /* uyumluluk */
+  .compat{margin-top:30px;padding:26px 20px;border:1px solid var(--line);border-radius:12px}
+  .compat h3{font-family:var(--disp);text-transform:uppercase;letter-spacing:.08em;font-weight:400;font-size:clamp(17px,4.6vw,22px);margin:0 0 6px;text-align:center;color:var(--ink)}
+  .cintro{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--muted);text-align:center;margin:0 0 14px}
+  .cres{margin-top:18px;text-align:center}
+  .cscore{font-family:var(--disp);font-size:44px;color:var(--accent);line-height:1}
+  .clvl{font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+  .cres p{font-family:var(--serif);font-size:clamp(16px,4.3vw,19px);color:#3f332f;line-height:1.55;margin:12px 0 0}
+  html[data-theme="dark"] .cres p{color:#EDEDF1}
+  .again{display:block;text-align:center;margin:30px auto 0;font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);cursor:pointer;text-decoration:none}
+  .note{font-family:var(--sans);font-size:10px;letter-spacing:.04em;color:var(--muted);text-align:center;margin-top:26px;opacity:.85;line-height:1.6}
+</style>
+</head>
+<body>
+<header class="bar">
+  <span class="backlink"><a href="scroll.html">← Ana Ekran</a></span>
+  <span class="brandmini">OPHANARK</span>
+</header>
+
+<div class="wrap">
+  <section id="formSec">
+    <h1 class="big">Yıldızname</h1>
+    <p class="lead">Adının harfleri birer sayıdır. Ebced hesabı — kadim Osmanlı-İslam geleneği — adının ve annenin adının sayısal titreşimini toplar, oradan seni yöneten yıldızı bulur. Ophanark bu yıldızı senin için okur.</p>
+    <div class="form">
+      <div class="fld"><label>Adın Soyadın</label><input id="y-name" type="text" placeholder="Adın ve soyadın" autocomplete="name"></div>
+      <div class="fld"><label>Annenin Adı</label><input id="y-mother" type="text" placeholder="Annenin adı">
+        <div class="hint">Yıldızname geleneğinde yıldızın, adının ve annenin adının ebcediyle bulunur.</div></div>
+      <div class="err" id="y-err"></div>
+      <button class="go" id="y-go" type="button">Yıldızımı Bul ↓</button>
+    </div>
+  </section>
+
+  <section id="out">
+    <h1 class="big">Yıldızın</h1>
+    <div class="who" id="y-who"></div>
+    <div class="starhead" id="y-head"></div>
+    <div class="eqbox" id="y-eq"></div>
+    <div id="y-rows"></div>
+    <div class="synth"><h3>Genel Sentez</h3><p id="y-synth"></p></div>
+
+    <div class="compat" id="compatBox">
+      <h3>Yıldız Uyumu</h3>
+      <p class="cintro">Sevdiğin biriyle yıldız uyumunuza bakmak için onun ve annesinin adını gir.</p>
+      <div class="fld"><label>Kişinin Adı</label><input id="c-name" type="text" placeholder="Adı ve soyadı"></div>
+      <div class="fld"><label>Annesinin Adı</label><input id="c-mother" type="text" placeholder="Annesinin adı"></div>
+      <div class="err" id="c-err"></div>
+      <button class="go" id="c-go" type="button">Uyuma Bak</button>
+      <div id="c-out"></div>
+    </div>
+
+    <a class="again" id="y-again">↺ Yeni hesaplama</a>
+    <p class="note">Ebced-i kebir sistemi · Yıldızname bir eğlence ve içe bakış aracıdır, kesin bir hüküm değildir.<br>Not: Gerçek ebced Osmanlıca/Arapça yazılışa göre yapılır; burada Türkçe harflerin yaygın ebced karşılıkları kullanılır, sonuç yaklaşık bir değerdir.</p>
+  </section>
+</div>
+
+<script>
+/* ===================== EBCED + YILDIZNAME ===================== */
+/* Ebced-i kebir — Türkçe Latin harflerinin yaygın karşılıkları
+   (kaynak konvansiyonu: a=1,b=2,c=3,ç=3,j=7,ğ=1000,g=20,p=2; diğerleri fonetik Arapça karşılık) */
+var EBCED={A:1,B:2,C:3,'Ç':3,D:4,E:1,F:80,G:20,'Ğ':1000,H:5,'I':10,'İ':10,J:7,K:20,L:30,M:40,N:50,O:6,'Ö':6,P:2,R:200,S:60,'Ş':300,T:400,U:6,'Ü':6,V:6,Y:10,Z:7};
+
+function upTR(s){return (s||'').toLocaleUpperCase('tr-TR');}
+// harf harf ebced dökümü
+function ebcedCells(word){
+  var t=upTR(word), cells=[], sum=0;
+  for(var i=0;i<t.length;i++){
+    var ch=t[i];
+    if(EBCED.hasOwnProperty(ch)){ var v=EBCED[ch]; cells.push({c:ch,v:v}); sum+=v; }
+  }
+  return {cells:cells, sum:sum};
+}
+function reduce(n){ while(n>9){ var s=0; String(n).split('').forEach(function(d){s+=+d;}); n=s; } return n; }
+
+/* 12 yıldız (burç) — sembol, adı, yöneten gezegen (klasik), kısa mizaç */
+var BURC={
+ 1:{ad:'Koç',sym:'♈',p:'merih',kw:'ateşli · cesur · öncü'},
+ 2:{ad:'Boğa',sym:'♉',p:'zuhre',kw:'sağlam · sabırlı · keyfine düşkün'},
+ 3:{ad:'İkizler',sym:'♊',p:'utarit',kw:'meraklı · konuşkan · çok yönlü'},
+ 4:{ad:'Yengeç',sym:'♋',p:'kamer',kw:'duygusal · koruyucu · sezgili'},
+ 5:{ad:'Aslan',sym:'♌',p:'sems',kw:'gururlu · cömert · sahne senin'},
+ 6:{ad:'Başak',sym:'♍',p:'utarit',kw:'titiz · akılcı · hizmet eden'},
+ 7:{ad:'Terazi',sym:'♎',p:'zuhre',kw:'dengeli · zarif · uyum arayan'},
+ 8:{ad:'Akrep',sym:'♏',p:'merih',kw:'derin · tutkulu · dönüştürücü'},
+ 9:{ad:'Yay',sym:'♐',p:'musteri',kw:'özgür · iyimser · arayıcı'},
+ 10:{ad:'Oğlak',sym:'♑',p:'zuhal',kw:'hırslı · disiplinli · dayanıklı'},
+ 11:{ad:'Kova',sym:'♒',p:'zuhal',kw:'özgün · fikirli · geleceğe dönük'},
+ 12:{ad:'Balık',sym:'♓',p:'musteri',kw:'hayalperest · şefkatli · sezgisel'}
+};
+
+/* 7 seyyare — tam paket yorum */
+var PLANET={
+ sems:{ad:'Şems',mod:'Güneş',sym:'☉',gun:'Pazar',renk:'Altın Sarısı',renkHex:'#d9a441',tas:'Sarı Yakut / Kehribar',
+   kw:'Işık · Onur · Liderlik',
+   char:'Yıldızın Şems, yani Güneş. Bu, içinde doğuştan bir merkez ışığı taşıdığın anlamına gelir: bir ortama girdiğinde fark edilirsin, doğal bir sıcaklığın ve otoriten vardır, insanlar senin etrafında toplanmayı sever. Onurlu, cömert ve gururlusun; küçük hesapları sevmezsin, açık ve mert davranırsın. En güçlü yanın, başkalarına güven ve umut verebilmen.',
+   kader:'Kaderin görünür olmakla ilgilidir — adının duyulduğu, emeğinin takdir gördüğü, sorumluluk aldığın yollara çıkarsın. Hayatın seni tekrar tekrar öne, sahneye, yöneticiliğe çağırır. En parladığın an, ışığını yalnız kendin için değil, başkalarını ısıtmak için kullandığın andır; verdikçe büyürsün.',
+   ogut:'Gururunu bir zırh sanma; kırılganlığını göstermek seni küçültmez. Ama herkesin senin etrafında dönmesini beklersen yalnız kalırsın — ışığını paylaş, tek başına parlama.'},
+ kamer:{ad:'Kamer',mod:'Ay',sym:'☾',gun:'Pazartesi',renk:'İnci Beyazı / Gümüş',renkHex:'#cfd8e3',tas:'İnci / Aytaşı',
+   kw:'Sezgi · Duygu · Şefkat',
+   char:'Yıldızın Kamer, yani Ay. Duyguların derin ve gel-gitlidir; çevreni sezgiyle okur, söylenmeyeni hissedersin. Şefkatli, hayal gücü güçlü, koruyucu bir yanın var — insanlar yanında kendini güvende hisseder. İçinde bir çocuk saflığı ve bir anne sıcaklığı aynı anda yaşar.',
+   kader:'Kaderin dalgalar hâlinde ilerler: inişli çıkışlı ama akışkan. Bir dönem çekilir, bir dönem dolarsın; bu senin zayıflığın değil, ritmin. Suyun taşı zamanla yontması gibi, sabırla ve sezgiyle en sert kapıları yumuşatırsın. Yuva, aile ve şefkatle kurduğun bağlar kaderinin can damarıdır.',
+   ogut:'Duygularına kapılıp savrulma; ama onları bastırma da — sezgin senin pusulan. Her hissi büyütmeden önce bir gece bekle, sabah daha berrak görürsün.'},
+ utarit:{ad:'Utarit',mod:'Merkür',sym:'☿',gun:'Çarşamba',renk:'Turkuaz / Açık Mavi',renkHex:'#3aa6b9',tas:'Akik / Zümrüt',
+   kw:'Zekâ · Söz · Ticaret',
+   char:'Yıldızın Utarit, yani Merkür. Zekân hızlı, dilin akıcı, öğrenmen çabuktur. Kelimelerle, fikirlerle, alışverişle aran iyidir; bir konuyu kavrayıp başkasına anlatmak senin doğal yeteneğin. Meraklı ve çok yönlüsün, tek bir işe sığmazsın; elin de dilin de pratiktir.',
+   kader:'Kaderin bilgi ve iletişim yollarından geçer: yazı, sözleşme, ticaret, öğretmenlik, aracılık… Söz söyleyeceğin, bağ kuracağın, alıp satacağın yerlerde şansın açıktır. Doğru bilgiyi doğru zamanda söylemek sana kapılar açar; kalemin ve dilin kaderinin anahtarıdır.',
+   ogut:'Zihnin çok hızlı çalışıyor; bazen dur ve başladığın işi bitir. Her yöne koşarsan gücün de dağılır — bir kanala aktığında nehir olursun.'},
+ zuhre:{ad:'Zühre',mod:'Venüs',sym:'♀',gun:'Cuma',renk:'Zümrüt Yeşili / Pembe',renkHex:'#4CAF7D',tas:'Zümrüt / Pembe Kuvars',
+   kw:'Sevgi · Güzellik · Uyum',
+   char:'Yıldızın Zühre, yani Venüs. Sevgi, güzellik ve uyum senin doğanda. Estetik bir gözün, insanları yumuşatan bir çekimin var; sanat, zarafet ve ilişkiler senin alanın. Kavgadan değil, uzlaşmadan güç alırsın; girdiğin ortama incelik ve huzur taşırsın.',
+   kader:'Kaderin sevgi ve ortaklıklar üzerinden şekillenir. Güzel şeyler seni bulur, insanlar sana iyilik yapmak ister; çoğu kapı senin için sevgiyle açılır. Bir işi tek başına zorlamaktan çok, doğru kişiyle el ele vererek büyürsün. Aşk, dostluk ve ortaklık kaderinin taşıyıcı sütunudur.',
+   ogut:'Herkesi memnun etme derdi seni yorabilir; kendi değerini başkasının onayına bağlama. "Hayır" demeyi öğrendiğinde sevgin daha da kıymetlenir.'},
+ merih:{ad:'Merih',mod:'Mars',sym:'♂',gun:'Salı',renk:'Kırmızı',renkHex:'#c0392b',tas:'Yakut / Kızıl Akik',
+   kw:'Cesaret · Enerji · Mücadele',
+   char:'Yıldızın Merih, yani Mars. İçinde güçlü bir enerji, cesaret ve mücadele gücü var. Harekete geçmekten korkmazsın; engel gördüğünde geri çekilmez, üstüne gidersin. Açık sözlü, atılgan ve korunmacısın — haksızlığa tahammülün yoktur, sevdiğin için savaşırsın.',
+   kader:'Kaderin mücadeleyle ve cesaretle açılır. Rekabetin, sporun, girişimin, öncülüğün olduğu yerde parlarsın; kolay kazanılan değil, savaşarak kazanılan zaferler senindir. Hayat seni sık sık sınar ama her sınav seni güçlendirir — düştüğün yerden daha sert kalkarsın.',
+   ogut:'Öfken en büyük enerjin ama en büyük tuzağın; onu yıkmak için değil, kurmak için kullan. Sabretmeyi öğrenen bir Merih durdurulamaz.'},
+ musteri:{ad:'Müşteri',mod:'Jüpiter',sym:'♃',gun:'Perşembe',renk:'Lacivert / Mor',renkHex:'#3f51b5',tas:'Safir / Lapis',
+   kw:'Bereket · Adalet · Bilgelik',
+   char:'Yıldızın Müşteri, yani Jüpiter. Geniş bir gönlün, güçlü bir adalet duygun ve bereketli bir enerjin var. İnsanlar sana akıl danışır; öğretmek, yol göstermek, büyütmek senin doğanda. İyimser ve hoşgörülüsün, bardağın dolu tarafını görürsün; bulunduğun yere bolluk ve güven getirirsin.',
+   kader:'Kaderin genişleme ve bereket üzerine kuruludur. Doğru niyetle attığın adım büyür, bollukla geri döner; darlıkta bile bir kapı sana açılır. Bilgi, inanç, hukuk, eğitim ve yurt dışıyla bağlı yollarda şansın yüksektir. Cömertliğin sana daha çoğu olarak geri gelir.',
+   ogut:'Cömertliğin güzel ama sınırını bil; her yükü sen taşıyamazsın. "Her şeyi ben bilirim" demek büyümeni durdurur — öğrenmeye açık kaldıkça bilgeleşirsin.'},
+ zuhal:{ad:'Zühal',mod:'Satürn',sym:'♄',gun:'Cumartesi',renk:'Koyu Gri / Siyah',renkHex:'#4a4a55',tas:'Oniks / Hematit',
+   kw:'Sabır · Disiplin · Dayanıklılık',
+   char:'Yıldızın Zühal, yani Satürn. Sabırlı, disiplinli, ciddi ve dayanıklısın. Kolay yoldan değil, emekle ve zamanla kazanırsın; sözünün eri, güvenilir, ayakları yere basan bir yapın var. Belki gençken yaşından olgun görünürsün — hayat sana erken sorumluluk yükler ama bu seni sağlamlaştırır.',
+   kader:'Kaderin yavaş ama sağlam ilerler. Başlangıçlar zorlu olabilir; emeğinin karşılığını hemen değil, zamanla ve katlanarak alırsın. Zühal geç ama kalıcı ödüllendirir: yaşın ilerledikçe güçlenir, kök saldıkça devrilmezsin. Sabrınla kurduğun her şey senden sonra da ayakta kalır.',
+   ogut:'Kendine ve dünyaya fazla sert bakma; her şeyi tek başına taşımak zorunda değilsin. Sabrın kadar affetmeyi de öğren — o zaman yükün hafifler, yolun uzar.'}
+};
+
+/* 7 gezegen arası klasik dostluk (uyum için) */
+var REL={
+ sems:{sems:'ayna',kamer:'dost',merih:'dost',musteri:'dost',utarit:'notr',zuhre:'zorlu',zuhal:'zorlu'},
+ kamer:{kamer:'ayna',sems:'dost',utarit:'dost',merih:'notr',musteri:'notr',zuhre:'notr',zuhal:'zorlu'},
+ merih:{merih:'ayna',sems:'dost',kamer:'dost',musteri:'dost',zuhre:'notr',zuhal:'notr',utarit:'zorlu'},
+ utarit:{utarit:'ayna',sems:'dost',zuhre:'dost',merih:'notr',musteri:'notr',zuhal:'notr',kamer:'zorlu'},
+ musteri:{musteri:'ayna',sems:'dost',kamer:'dost',merih:'dost',zuhal:'notr',zuhre:'zorlu',utarit:'zorlu'},
+ zuhre:{zuhre:'ayna',utarit:'dost',zuhal:'dost',merih:'notr',musteri:'notr',sems:'zorlu',kamer:'zorlu'},
+ zuhal:{zuhal:'ayna',utarit:'dost',zuhre:'dost',musteri:'notr',sems:'zorlu',kamer:'zorlu',merih:'zorlu'}
+};
+var RELINFO={
+ ayna:{score:85,lvl:'Ayna Ruhlar',txt:'Aynı yıldızı paylaşıyorsunuz. Birbirinizi sözsüz anlarsınız çünkü aynı dilden konuşursunuz; ama aynı gölgeleri de paylaştığınız için zaman zaman aynı hatada buluşabilirsiniz. Birbirinize hem en büyük destek hem en büyük ayna olursunuz.'},
+ dost:{score:90,lvl:'Dost Yıldızlar',txt:'Yıldızlarınız birbirini besler. Biriniz diğerinin eksiğini doğal olarak tamamlar; çaba harcamadan bir akış, bir rahatlık hissedersiniz. Bu, üzerine güzel şeyler inşa edilecek sağlam bir zemindir.'},
+ notr:{score:70,lvl:'Öğrenen Yıldızlar',txt:'Yıldızlarınız ne çok yakın ne çok uzak. Uyum kendiliğinden gelmez ama emekle kolayca kurulur; birbirinizden öğrenecek çok şeyiniz var. Anlayışla yaklaştığınızda güzel bir denge yakalarsınız.'},
+ zorlu:{score:58,lvl:'Zıt Çeken Yıldızlar',txt:'Yıldızlarınız birbirine zıt kutuplardan bakıyor. Bu, güçlü bir çekim ama aynı zamanda sürtünme demek; sizi büyüten ama sabır isteyen bir bağ. Farklılığı tehdit değil de zenginlik olarak görebilirseniz, en çok bu ilişki geliştirir.'}
+};
+
+/* ---- hesap ---- */
+function calc(){
+  var name=document.getElementById('y-name').value.trim();
+  var mother=document.getElementById('y-mother').value.trim();
+  var err=document.getElementById('y-err'); err.textContent='';
+  var eN=ebcedCells(name), eM=ebcedCells(mother);
+  if(eN.cells.length<2){ err.textContent='Lütfen adını ve soyadını yaz.'; return; }
+  if(eM.cells.length<2){ err.textContent='Lütfen annenin adını yaz.'; return; }
+
+  var total=eN.sum+eM.sum;
+  var r=total%12; var burcNo=(r===0)?12:r;
+  var burc=BURC[burcNo];
+  var pk=burc.p, pl=PLANET[pk];
+  var root=reduce(total);
+
+  // başlık kartı
+  document.getElementById('y-who').textContent=name+' · Annen: '+mother;
+  document.getElementById('y-head').innerHTML=
+    '<div class="glyph">'+pl.sym+'</div>'+
+    '<div class="pname">'+pl.ad+' <span style="color:var(--muted);font-size:.62em">('+pl.mod+')</span></div>'+
+    '<div class="psub">'+burc.sym+' '+burc.ad+' yıldızı · '+pl.kw+'</div>';
+
+  // ebced denklemi
+  function chips(o){ return '<div class="echips">'+o.cells.map(function(c){return '<span class="echip"><b>'+c.c+'</b><span>'+c.v+'</span></span>';}).join('')+'</div>'; }
+  document.getElementById('y-eq').innerHTML=
+    '<div class="eqh">Ebced Denklemi</div>'+
+    '<div class="eqframe">Her harfin bir sayısı vardır. Adının ve annenin adının harfleri toplanır; çıkan sayı 12 yıldıza bölünür, kalan senin yıldızını verir.</div>'+
+    '<div class="eqsum">Adın · '+name+'</div>'+chips(eN)+'<div class="eqsum">toplam '+eN.sum+'</div>'+
+    '<div class="eqsum" style="margin-top:12px">Annenin adı · '+mother+'</div>'+chips(eM)+'<div class="eqsum">toplam '+eM.sum+'</div>'+
+    '<div class="eqline">'+eN.sum+' + '+eM.sum+' = <b>'+total+'</b> &nbsp;→&nbsp; '+total+' ÷ 12 ten kalan <b>'+burcNo+'</b> &nbsp;→&nbsp; '+burc.sym+' <b>'+burc.ad+'</b> &nbsp;→&nbsp; '+pl.sym+' <b>'+pl.ad+'</b> ('+pl.mod+')<br><span style="font-size:.82em;color:var(--muted)">Kader kökün: '+total+' → '+root+'</span></div>';
+
+  // satırlar
+  var rows='';
+  rows+='<div class="nrow"><div class="num"><div class="d">'+pl.sym+'</div><div class="plname">'+pl.ad+'</div></div>'+
+    '<div class="rt"><div class="rl"><span class="tag">Yıldızın · Karakterin</span>'+pl.ad+' ('+pl.mod+')</div>'+
+    '<div class="body">'+pl.char+'</div><div class="kw">'+pl.kw+'</div></div></div>';
+  rows+='<div class="nrow"><div class="num"><div class="d">'+burc.sym+'</div><div class="plname">'+burc.ad+'</div></div>'+
+    '<div class="rt"><div class="rl"><span class="tag">Burcun</span>'+burc.ad+'</div>'+
+    '<div class="body">Ebced yıldızın '+burc.ad+' burcuna düşüyor — yani mizacında '+burc.kw+' çizgileri baskın. '+burc.ad+', '+pl.ad+' ('+pl.mod+') tarafından yönetilir; bu yüzden yıldızın ve gezegenin aynı hikâyeyi anlatır.</div></div></div>';
+  document.getElementById('y-rows').innerHTML=rows+
+    '<div class="block"><div class="bh">Kaderin</div><div class="btxt">'+pl.kader+'</div></div>'+
+    '<div class="block"><div class="bh">Sana Öğüt</div><div class="btxt">'+pl.ogut+'</div></div>'+
+    '<div class="lucky"><div class="bh">Uğurlu Olanlar</div>'+
+      '<div class="bframe">'+pl.ad+' yıldızının enerjisini taşıyan gün, renk ve taş; bunlar sana iyi gelir, seni destekler.</div>'+
+      '<div class="lk"><span class="lkl">Uğurlu Gün</span><span class="lkv">'+pl.gun+'</span></div>'+
+      '<div class="lk"><span class="lkl">Uğurlu Renk</span><span class="lkv"><span class="swatch" style="background:'+pl.renkHex+'"></span>'+pl.renk+'</span></div>'+
+      '<div class="lk"><span class="lkl">Uğurlu Taş</span><span class="lkv">'+pl.tas+'</span></div>'+
+    '</div>';
+
+  // sentez
+  document.getElementById('y-synth').innerHTML=
+    '<em style="color:var(--muted);font-style:italic">Önce şunu bil: yıldızname bir kader hükmü değil, bir aynadır — seni tanıman ve güçlü yanlarını hatırlaman için.</em><br><br>'+
+    'Adının ve annenin adının ebcedi seni <b>'+burc.ad+'</b> yıldızına, oradan da <b>'+pl.ad+' ('+pl.mod+')</b> gezegenine götürüyor. Bu, özünde '+pl.kw.toLowerCase()+' temalarının hayatının ana rengi olduğunu söyler. '+
+    pl.char.split('. ').slice(1,2).join('. ')+' '+
+    'Kaderin bu gezegenin ritmiyle akıyor; en huzurlu ve güçlü hâline, '+pl.ad+' enerjisini korkuyla değil sevgiyle yaşadığında ulaşırsın. Kader kökün '+root+' de bu yolculuğa eşlik eden sessiz sayın.';
+
+  document.getElementById('formSec').style.display='none';
+  document.getElementById('out').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---- uyum ---- */
+function planetOf(name,mother){
+  var t=ebcedCells(name).sum+ebcedCells(mother).sum;
+  var r=t%12; var b=(r===0)?12:r; return {burcNo:b, pk:BURC[b].p};
+}
+function compat(){
+  var n=document.getElementById('c-name').value.trim();
+  var m=document.getElementById('c-mother').value.trim();
+  var ce=document.getElementById('c-err'); ce.textContent='';
+  if(ebcedCells(n).cells.length<2||ebcedCells(m).cells.length<2){ ce.textContent='Lütfen kişinin ve annesinin adını yaz.'; return; }
+  var me=planetOf(document.getElementById('y-name').value.trim(), document.getElementById('y-mother').value.trim());
+  var ot=planetOf(n,m);
+  var rel=REL[me.pk][ot.pk]||'notr';
+  var info=RELINFO[rel];
+  var p1=PLANET[me.pk], p2=PLANET[ot.pk];
+  document.getElementById('c-out').innerHTML=
+    '<div class="cres"><div class="cscore">'+info.score+'%</div><div class="clvl">'+info.lvl+'</div>'+
+    '<p><b>'+p1.ad+'</b> ('+p1.mod+') &nbsp;'+p1.sym+'&nbsp;—&nbsp;'+p2.sym+'&nbsp; <b>'+p2.ad+'</b> ('+p2.mod+')<br><br>'+info.txt+'</p></div>';
+}
+
+document.getElementById('y-go').addEventListener('click', calc);
+document.getElementById('c-go').addEventListener('click', compat);
+document.getElementById('y-name').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('y-mother').focus(); });
+document.getElementById('y-mother').addEventListener('keydown', function(e){ if(e.key==='Enter') calc(); });
+document.getElementById('y-again').addEventListener('click', function(){
+  document.getElementById('out').style.display='none';
+  document.getElementById('formSec').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+<script src="oph_app.js"></script>
+</body>
+</html>

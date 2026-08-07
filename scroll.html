@@ -114,6 +114,7 @@
   #s-burc{height:calc(var(--vh) * 1.6)}
   #s-natal{height:calc(var(--vh) * 2.0)}
   #s-numeroloji{height:calc(var(--vh) * 2.0)}
+  #s-yildiz{height:calc(var(--vh) * 2.0)}
   #s-ruya{height:calc(var(--vh) * 1.25)}
   .pin{position:sticky;top:0;height:var(--vh);display:flex;flex-direction:column;align-items:center;
     justify-content:flex-start;text-align:center;padding:calc(var(--hh) + 6vh) 20px 5vh;overflow:hidden}
@@ -206,6 +207,17 @@
     text-shadow:0 0 7px rgba(28,214,224,.35),0 0 2px rgba(0,0,0,.18)}
   @keyframes nfall{from{transform:translateX(var(--x,0)) translateY(-50%)}to{transform:translateX(var(--x,0)) translateY(0)}}
   #s-numeroloji .cta{margin-top:0.7cm}
+  /* yıldızname gezegen çarkı */
+  .yzwheel{position:relative;width:min(62vw,240px);aspect-ratio:1;margin:0.5cm auto 2px}
+  .yzwheel .core{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;
+    font-size:clamp(32px,9.5vw,48px);color:var(--accent);text-shadow:0 0 20px rgba(122,16,24,.45)}
+  .yzring{position:absolute;inset:0;animation:yzspin 46s linear infinite}
+  .yzring .yzp{position:absolute;inset:0;transform:rotate(var(--a))}
+  .yzring .yzp b{position:absolute;top:3%;left:50%;transform:translateX(-50%);
+    font-size:clamp(17px,5vw,25px);color:var(--gold);filter:drop-shadow(0 0 7px rgba(154,108,46,.5))}
+  @keyframes yzspin{to{transform:rotate(360deg)}}
+  html[data-theme="dark"] .yzwheel .core{text-shadow:0 0 22px rgba(224,87,106,.5)}
+  #s-yildiz .cta{margin-top:0.6cm}
 
   #cue{position:sticky;bottom:12px;margin-top:-40px;text-align:center;font-family:var(--sans);
     font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);opacity:.7;
@@ -213,7 +225,7 @@
   @media(prefers-reduced-motion:reduce){
     [data-anim]{opacity:1!important;transform:none!important}.load{animation:none;opacity:1}
     .cup{transform:none}.handimg{clip-path:none}.tt,.tb{opacity:1;transform:none}
-    .cardfall-track,.orb,.orb b,.numfall .ncol,.numfall .beam{animation:none}
+    .cardfall-track,.orb,.orb b,.numfall .ncol,.numfall .beam,.yzring{animation:none}
   }
   /* end-of-page footer */
   .foot{background:var(--bg);color:var(--ink);display:flex;flex-direction:column;align-items:center;text-align:center;padding:8vh 20px 0}
@@ -242,6 +254,7 @@
       <a data-go="s-burc">Zodiac Signs</a>
       <a data-go="s-natal">Natal Chart</a>
       <a data-go="s-numeroloji">Numerology</a>
+      <a data-go="s-yildiz">Star Name</a>
       <a data-go="s-ruya">Dream Interpretations</a>
       <a href="profil.html" class="navprofile">Profile</a>
       <a href="hazir.html" class="navready">My Readings</a>
@@ -354,6 +367,26 @@
     <a class="cta" href="numeroloji.html" data-anim data-from="0.70" data-to="0.86">Decode the cipher in your name <span class="arw">↗</span></a>
   </div></div>
 
+  <!-- 7c · STAR NAME (Yıldızname) -->
+  <div class="scene" id="s-yildiz"><div class="pin">
+    <h2 class="big" data-anim="fromL" data-from="0" data-to="0.14">Star Name</h2>
+    <p class="lead" data-anim data-from="0.10" data-to="0.24">Yıldızname is an ancient art of the Ottoman-Islamic tradition: the letters of your name and your mother's name turn into numbers through ebced calculation, and that number reveals the star and planet that govern you. Ophanark reads the story of that star for you.</p>
+    <div class="yzwheel" aria-hidden="true" data-anim data-from="0.20" data-to="0.34">
+      <div class="core">✶</div>
+      <div class="yzring">
+        <div class="yzp" style="--a:0deg"><b>☉</b></div>
+        <div class="yzp" style="--a:51.4deg"><b>☾</b></div>
+        <div class="yzp" style="--a:102.8deg"><b>☿</b></div>
+        <div class="yzp" style="--a:154.3deg"><b>♀</b></div>
+        <div class="yzp" style="--a:205.7deg"><b>♂</b></div>
+        <div class="yzp" style="--a:257.1deg"><b>♃</b></div>
+        <div class="yzp" style="--a:308.6deg"><b>♄</b></div>
+      </div>
+    </div>
+    <p class="lead" data-anim data-from="0.40" data-to="0.54">Every letter is a number, every number a star; the Divine Galgalim turn to calculate for you the sky behind your name.</p>
+    <a class="cta" href="yildizname.html" data-anim data-from="0.70" data-to="0.86">Find my star <span class="arw">↗</span></a>
+  </div></div>
+
   <!-- 8 · DREAM -->
   <div class="scene" id="s-ruya"><div class="pin">
     <h2 class="big" data-anim="fromL" data-from="0" data-to="0.187">Dream Interpretations</h2>
@@ -392,7 +425,7 @@
       it.el.style.setProperty('--t', ease((p-it.from)/(it.to-it.from)).toFixed(3)); }
     var mid=app.scrollTop + app.clientHeight*0.5;
     var map={'s-fal':'s-fal','s-coffee':'s-fal','s-palm':'s-fal','s-katina':'s-fal',
-      's-tarot':'s-tarot','s-burc':'s-burc','s-natal':'s-natal','s-numeroloji':'s-numeroloji','s-ruya':'s-ruya'};
+      's-tarot':'s-tarot','s-burc':'s-burc','s-natal':'s-natal','s-numeroloji':'s-numeroloji','s-yildiz':'s-yildiz','s-ruya':'s-ruya'};
     var all=[hero].concat(scenes), cur=null;
     for(var j=0;j<all.length;j++){var s=all[j]; if(!s)continue;
       if(mid>=s.offsetTop && mid<s.offsetTop+s.offsetHeight){cur=map[s.id]||s.id;break;}}
