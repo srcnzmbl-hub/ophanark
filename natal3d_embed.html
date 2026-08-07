@@ -110,6 +110,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { AfterimagePass } from 'three/addons/postprocessing/AfterimagePass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 const LC=0x5f0b13; const LCS='rgba(95,11,19,0.98)';
 
@@ -316,21 +317,20 @@ const R=6;
 // --- çark formu: 2 dış çember + 2 iç küçük çember + açı çizgileri (ince) ---
 const RING_T=0.016; // tüm çemberler aynı kalınlık
 var depthRings=[];
-// her çember: ana halka + arkasında solan yarı saydam iz (ışık hüzmesi → küre etkisi)
+// her çember bağımsız, rastgele eksende, düzensiz döner — iz efekti composer'daki AfterimagePass ile (kuyruklu yıldız ışığı)
 function makeSpinRing(radius, base){
-  var geo=new THREE.TorusGeometry(radius,RING_T,20,420);
+  var m=new THREE.Mesh(new THREE.TorusGeometry(radius,RING_T,20,420),new THREE.MeshBasicMaterial({color:LC,transparent:true,opacity:1}));
   var pivot=new THREE.Group();
   if(base==='x')pivot.rotation.x=Math.PI/2; else if(base==='y')pivot.rotation.y=Math.PI/2;
-  var spinner=new THREE.Group(); pivot.add(spinner);
-  // ana halka + 4 iz kopyası (dönüş ekseninde geride kalır)
-  [[1,0],[0.20,0.12],[0.13,0.24],[0.075,0.36],[0.04,0.48]].forEach(function(L){
-    var m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:LC,transparent:true,opacity:L[0],depthWrite:false}));
-    m.rotation.x=-L[1]; // iz, dönüşün gerisinde kalır
-    spinner.add(m);
-  });
+  var spinner=new THREE.Group(); spinner.add(m); pivot.add(spinner);
+  var ax=new THREE.Vector3(Math.random()*2-1,Math.random()*2-1,Math.random()*2-1).normalize();
+  var ax2=new THREE.Vector3(Math.random()*2-1,Math.random()*2-1,Math.random()*2-1).normalize();
+  var sp=(0.0045+Math.random()*0.008)*(Math.random()<0.5?1:-1);
+  var sp2=(0.0012+Math.random()*0.0032)*(Math.random()<0.5?1:-1);
+  spinner.userData={ax:ax,ax2:ax2,sp:sp,sp2:sp2};
   wheel.add(pivot); depthRings.push(spinner);
 }
-// düzlem içi 2 çember (dış + iç) + düzleme dik çemberler — hepsi aynı kalınlık/ton, hepsi döner
+// düzlem içi 2 çember (dış + iç) + düzleme dik çemberler — hepsi aynı kalınlık/ton, her biri bağımsız düzensiz döner
 makeSpinRing(R,null); makeSpinRing(R*0.62,null);
 makeSpinRing(R,'x'); makeSpinRing(R,'y'); makeSpinRing(R*0.62,'x'); makeSpinRing(R*0.62,'y');
 window.__depthRings=depthRings;
@@ -999,6 +999,8 @@ const __rtSize=renderer.getDrawingBufferSize(new THREE.Vector2());
 const __msRT=new THREE.WebGLRenderTarget(__rtSize.width,__rtSize.height,{samples:4});
 const composer=new EffectComposer(renderer,__msRT);
 const __renderPass=new RenderPass(scene,camera);__renderPass.clearAlpha=0;composer.addPass(__renderPass);
+// kuyruklu yıldız ışık izi — dönen çemberler arkalarında yumuşak bir iz bırakır
+const __afterimage=new AfterimagePass(0.86); composer.addPass(__afterimage);
 composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.16,0.6,0.9));
 composer.addPass(new OutputPass());
 
@@ -1019,7 +1021,7 @@ nebulaG.rotation.y+=0.0004; for(const s of nebSprites)s.material.opacity=0.06+0.
 for(const s of dust){const v=(Math.sin(t*s.userData.sp+s.userData.ph)+1)/2;s.material.opacity=0.18+v*0.5;const sc=s.userData.base*(0.75+0.4*v);s.scale.set(sc,sc,1);}
 const pulse=(Math.sin(t*2.4)+1)/2;
 nodes.forEach(n=>{if(!n.isSun)n.planet.rotation.y+=0.0018;if(n.isHot&&n.halo){n.halo.material.opacity=.24+pulse*.35;}if(n.signSprite){n.signSprite.material.opacity=0.25+0.75*(0.5+0.5*Math.sin(t*2.6+(n.lon||0)*0.05));}});
-for(var __di=0;__di<depthRings.length;__di++){depthRings[__di].rotateX(0.0035);}
+for(var __di=0;__di<depthRings.length;__di++){var __s=depthRings[__di],__u=__s.userData;__s.rotateOnAxis(__u.ax,__u.sp);__s.rotateOnAxis(__u.ax2,__u.sp2);}
 for(const sg of suns)updateSun(sg);
 if(story.on)updateStory(t-story.t0);
 if(reveal.on && !reveal.done) updateReveal(t-reveal.t0);
