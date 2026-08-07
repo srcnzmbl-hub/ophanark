@@ -146,6 +146,9 @@ function ebcedCells(word){
   return {cells:cells, sum:sum};
 }
 function reduce(n){ while(n>9){ var s=0; String(n).split('').forEach(function(d){s+=+d;}); n=s; } return n; }
+var ORTCOLOR={1:'Altın sarısı',2:'Gümüş',3:'Mor',4:'Elektrik mavisi',5:'Turkuaz',6:'Pembe',7:'Lila',8:'Lacivert',9:'Kırmızı'};
+var ORTSTONE={1:'Kehribar',2:'Aytaşı',3:'Ametist',4:'Labradorit',5:'Akik',6:'Pembe kuvars',7:'Akuamarin',8:'Oniks',9:'Kızıl akik'};
+function markCommon(listStr,common){var low=listStr.toLocaleLowerCase('tr'),c=common.toLocaleLowerCase('tr');var i=low.indexOf(c);if(i>=0){return listStr.slice(0,i)+'<b>'+listStr.substr(i,common.length)+'</b>'+listStr.slice(i+common.length);}return listStr+' · <b>'+common+'</b>';}
 
 /* 12 yıldız (burç) — zodiac font harfi (a-l), adı, yöneten gezegen, kısa mizaç */
 var BURC={
@@ -235,6 +238,7 @@ function calc(){
   var burc=BURC[burcNo];
   var pk=burc.p, pl=PLANET[pk];
   var root=reduce(total);
+  var nn=reduce(eN.sum); if(!nn)nn=1; var oc=ORTCOLOR[nn], os=ORTSTONE[nn];
 
   document.getElementById('y-who').textContent=name+' · Annen: '+mother;
   document.getElementById('y-head').innerHTML=
@@ -264,9 +268,10 @@ function calc(){
       '<div class="bframe">'+pl.ad+' yıldızının enerjisini taşıyan sayı, gün, renk ve taş; bunlar sana iyi gelir, seni destekler. (Numeroloji ile aynı gezegen dilinden okunur.)</div>'+
       '<div class="lk"><span class="lkl">Uğurlu Sayı</span><span class="lkv">'+pl.no+' <small>'+pl.mod+'</small></span></div>'+
       '<div class="lk"><span class="lkl">Uğurlu Gün</span><span class="lkv">'+pl.gun+'</span></div>'+
-      '<div class="lk"><span class="lkl">Uğurlu Renk</span><span class="lkv"><span class="swatch" style="background:'+pl.renkHex+'"></span>'+pl.renk+'</span></div>'+
-      '<div class="lk"><span class="lkl">Uğurlu Taş</span><span class="lkv">'+pl.tas+'</span></div>'+
-    '</div>';
+      '<div class="lk"><span class="lkl">Uğurlu Renk</span><span class="lkv"><span class="swatch" style="background:'+pl.renkHex+'"></span>'+markCommon(pl.renk,oc)+'</span></div>'+
+      '<div class="lk"><span class="lkl">Uğurlu Taş</span><span class="lkv">'+markCommon(pl.tas,os)+'</span></div>'+
+      '<div class="bframe" style="margin-top:10px">★ Senin taşın <b>'+os+'</b>, senin rengin <b>'+oc+'</b> — bunlar ismine özeldir; iki falda (Numeroloji ve Yıldızname) her zaman ortaktır.</div>'+
+      '</div>';
 
   document.getElementById('y-synth').innerHTML=
     '<em style="color:var(--muted);font-style:italic">Önce şunu bil: yıldızname bir kader hükmü değil, bir aynadır — seni tanıman ve güçlü yanlarını hatırlaman için.</em><br><br>'+

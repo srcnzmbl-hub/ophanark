@@ -290,6 +290,11 @@ var COMP={
 var COLOR={1:'Altın sarısı, turuncu, amber',2:'İnci beyazı, gümüş, gök mavisi',3:'Lacivert, mor, sarı',4:'Elektrik mavisi, gri, gümüş',5:'Turkuaz, açık mavi, yeşil',6:'Yeşil, pembe, pastel tonlar',7:'Deniz yeşili, turkuaz, lila',8:'Koyu gri, siyah, lacivert',9:'Kırmızı, kızıl, bordo'};
 var COLHEX={1:'#d9a441',2:'#cfd8e3',3:'#3f51b5',4:'#4a90d9',5:'#3aa6b9',6:'#4CAF7D',7:'#2aa198',8:'#4a4a55',9:'#c0392b'};
 var DAY={1:'Pazar',2:'Pazartesi',3:'Perşembe',4:'Cumartesi',5:'Çarşamba',6:'Cuma',7:'Pazartesi',8:'Cumartesi',9:'Salı'};
+var _EBCED={A:1,B:2,C:3,'Ç':3,D:4,E:1,F:80,G:20,'Ğ':1000,H:5,'I':10,'İ':10,J:7,K:20,L:30,M:40,N:50,O:6,'Ö':6,P:2,R:200,S:60,'Ş':300,T:400,U:6,'Ü':6,V:6,Y:10,Z:7};
+function ebcedSumTR(s){s=(s||'').toLocaleUpperCase('tr-TR');var t=0;for(var i=0;i<s.length;i++){if(_EBCED.hasOwnProperty(s[i]))t+=_EBCED[s[i]];}return t;}
+var ORTCOLOR={1:'Altın sarısı',2:'Gümüş',3:'Mor',4:'Elektrik mavisi',5:'Turkuaz',6:'Pembe',7:'Lila',8:'Lacivert',9:'Kırmızı'};
+var ORTSTONE={1:'Kehribar',2:'Aytaşı',3:'Ametist',4:'Labradorit',5:'Akik',6:'Pembe kuvars',7:'Akuamarin',8:'Oniks',9:'Kızıl akik'};
+function markCommon(listStr,common){var low=listStr.toLocaleLowerCase('tr'),c=common.toLocaleLowerCase('tr');var i=low.indexOf(c);if(i>=0){return listStr.slice(0,i)+'<b>'+listStr.substr(i,common.length)+'</b>'+listStr.slice(i+common.length);}return listStr+' · <b>'+common+'</b>';}
 var STONE={1:'Yakut ve kehribar',2:'İnci ve aytaşı',3:'Safir ve lapis lazuli',4:'Labradorit ve akuamarin',5:'Zümrüt ve akik',6:'Zümrüt ve pembe kuvars',7:'Aytaşı ve akuamarin',8:'Oniks ve hematit',9:'Yakut ve kızıl akik'};
 var SHORT={1:'bağımsızlık, liderlik ve kendi yolunu kurma',2:'uyum, ilişkiler ve sabırla ilerleme',3:'yaratıcılık, ifade ve neşe',4:'emek, düzen ve sağlam temeller',5:'özgürlük, değişim ve yeni deneyimler',6:'sevgi, sorumluluk ve yuva',7:'içe dönüş, bilgi ve maneviyat',8:'güç, bolluk ve dünyevi başarı',9:'tamamlama, şefkat ve idealler'};
 // sade, jargonsuz tek satırlık anlamlar (sentez için)
@@ -417,12 +422,14 @@ function calc(){
 
   // Uğurlu Sayı / Renk / Taş (psişik / doğum sayısına göre)
   var lucky=birth;
+  var onn=reduce(ebcedSumTR(name)); if(!onn)onn=1; var oc=ORTCOLOR[onn], os=ORTSTONE[onn];
   rows.insertAdjacentHTML('beforeend',
     '<div class="lucky"><div class="bh">Uğurlu Sayın, Günün, Rengin & Taşın</div>'+
     '<div class="lk"><span class="lkl">Uğurlu Sayı</span><span class="lkv">'+lucky+' <small>'+PLANET[lucky][0]+' '+PLANET[lucky][1]+'</small></span></div>'+
     '<div class="lk"><span class="lkl">Uğurlu Gün</span><span class="lkv">'+DAY[lucky]+'</span></div>'+
-    '<div class="lk"><span class="lkl">Uğurlu Renk</span><span class="lkv"><span class="swatch" style="width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.15);display:inline-block;margin-right:8px;vertical-align:-2px;background:'+COLHEX[lucky]+'"></span>'+COLOR[lucky]+'</span></div>'+
-    '<div class="lk"><span class="lkl">Uğurlu Taş</span><span class="lkv">'+STONE[lucky]+'</span></div>'+
+    '<div class="lk"><span class="lkl">Uğurlu Renk</span><span class="lkv"><span class="swatch" style="width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.15);display:inline-block;margin-right:8px;vertical-align:-2px;background:'+COLHEX[lucky]+'"></span>'+markCommon(COLOR[lucky],oc)+'</span></div>'+
+    '<div class="lk"><span class="lkl">Uğurlu Taş</span><span class="lkv">'+markCommon(STONE[lucky],os)+'</span></div>'+
+    '<div class="bframe" style="margin-top:6px">★ Senin taşın <b>'+os+'</b>, senin rengin <b>'+oc+'</b> — bunlar ismine özeldir; iki falda (Numeroloji ve Yıldızname) her zaman ortaktır.</div>'+
     '<div class="bframe">Bu taşı takmak ya da yanında taşımak '+PLANET[lucky][0]+' enerjisini güçlendirir; kendini daha dengede, korunmuş ve şanslı hissettirir.</div></div>');
 
   // uyum için sakla
