@@ -80,6 +80,7 @@
         <button class="btn primary" id="signinBtn">Sign in</button>
         <button class="btn" id="signupBtn">Sign up</button>
       </div>
+      <button class="reg-link" id="forgotBtn" type="button">Forgot password?</button>
     </div>
     <div class="divider rv d2"><span>or</span></div>
     <div class="oauth rv d3">
@@ -91,10 +92,39 @@
         Continue with Apple</button>
     </div>
     <div class="msg" id="msg"></div>
-    <div class="fine">New here? Enter your email and a password (min 6 characters), then tap Sign up — we'll email you a confirmation link.</div>
+    <div class="fine">New here? Tap Sign up to create your account with your name, email and phone.</div>
   </section>
 </div>
 
+<style>
+  .reg-ov{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(20,14,10,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:20px}
+  .reg-ov.on{display:flex}
+  .reg-card{width:min(400px,100%);max-height:92dvh;overflow:auto;background:#F7F3E8;color:#25181C;border-radius:16px;padding:32px 26px 26px;position:relative;box-shadow:0 30px 90px rgba(20,14,10,.45);border:1px solid rgba(154,108,46,.3)}
+  .reg-x{position:absolute;top:10px;right:14px;background:none;border:0;font-size:30px;line-height:1;color:#9c8666;cursor:pointer;padding:4px}
+  .reg-t{font-family:'Georgia',serif;font-weight:400;font-size:25px;margin:0 0 4px;text-transform:uppercase;letter-spacing:.03em}
+  .reg-s{font-family:'Georgia',serif;font-style:italic;font-size:14.5px;color:#5a4a44;margin:0 0 20px}
+  .reg-f input{width:100%!important;height:auto!important;margin-bottom:14px;padding:13px 4px;border:0;border-bottom:1px solid rgba(37,24,28,.16);background:none;font-family:'Georgia',serif;font-size:17px;color:#25181C;outline:none;accent-color:auto}
+  .reg-f input:focus{border-color:#9a6c2e}
+  .reg-btn{width:100%;margin-top:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:15px;border:0;border-radius:8px;background:#25181C;color:#F7F3E8;cursor:pointer}
+  .reg-msg{min-height:18px;margin-top:14px;font-family:'Georgia',serif;font-style:italic;font-size:14px;text-align:center;color:#5a4a44}
+  .reg-link{display:inline-block;margin-top:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:12px;letter-spacing:.05em;color:#9a6c2e;background:none;border:0;cursor:pointer;text-decoration:underline;padding:4px}
+</style>
+<div class="reg-ov" id="regOv" aria-hidden="true">
+  <div class="reg-card" role="dialog" aria-modal="true" aria-labelledby="regTitle">
+    <button class="reg-x" id="regClose" type="button" aria-label="Close">&times;</button>
+    <h3 class="reg-t" id="regTitle">Create account</h3>
+    <p class="reg-s">Join OPHANARK - the galgalim are turning for you.</p>
+    <div class="reg-f">
+      <input type="text" id="rgName" placeholder="Full name" autocomplete="name">
+      <input type="email" id="rgEmail" placeholder="Email" autocomplete="email">
+      <input type="password" id="rgPass" placeholder="Password (min 6 characters)" autocomplete="new-password">
+      <input type="password" id="rgPass2" placeholder="Confirm password" autocomplete="new-password">
+      <input type="tel" id="rgPhone" placeholder="Phone number" autocomplete="tel">
+      <button class="reg-btn" id="rgSubmit" type="button">Create account</button>
+      <div class="reg-msg" id="rgMsg"></div>
+    </div>
+  </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }</script>
 <script type="module">
@@ -133,16 +163,43 @@
     }).catch(function(){ say('Sign in failed.',false); });
   });
 
-  document.getElementById('signupBtn').addEventListener('click',function(){
-    if(!em()){ say('Please enter your email.',false); return; }
-    if(pw().length<6){ say('Password must be at least 6 characters.',false); return; }
-    if(!sb){ say('Sign-up service unavailable.',false); return; }
-    say('Creating account…');
-    sb.auth.signUp({email:em(),password:pw()}).then(function(res){
-      if(res.error){ say(res.error.message||'Sign-up failed.',false); return; }
-      if(res.data&&res.data.session){ saveRemember(); say('Welcome!',true); setTimeout(function(){ location.href=APP; },500); }
-      else{ saveRemember(); say('Account created! Confirm the link we emailed you, then sign in.',true); }
-    }).catch(function(){ say('Sign-up failed.',false); });
+  // ---- Sign up modal ----
+  var regOv=document.getElementById('regOv'), rgMsg=document.getElementById('rgMsg');
+  function rgSay(t,ok){ rgMsg.textContent=t; rgMsg.style.color=ok?'#3f7d4a':(ok===false?'#b12a1e':'#5a4a44'); }
+  function openReg(){ rgSay(''); var e=em(); if(e){ document.getElementById('rgEmail').value=e; } regOv.classList.add('on'); setTimeout(function(){ try{ document.getElementById('rgName').focus(); }catch(_){} },60); }
+  function closeReg(){ regOv.classList.remove('on'); }
+  document.getElementById('signupBtn').addEventListener('click',openReg);
+  document.getElementById('regClose').addEventListener('click',closeReg);
+  regOv.addEventListener('click',function(e){ if(e.target===regOv) closeReg(); });
+  document.getElementById('rgSubmit').addEventListener('click',function(){
+    var name=(document.getElementById('rgName').value||'').trim();
+    var email=(document.getElementById('rgEmail').value||'').trim();
+    var phone=(document.getElementById('rgPhone').value||'').trim();
+    var p1=document.getElementById('rgPass').value||'', p2=document.getElementById('rgPass2').value||'';
+    if(!name){ rgSay('Please enter your full name.',false); return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ rgSay('Please enter a valid email address.',false); return; }
+    if(p1.length<6){ rgSay('Password must be at least 6 characters.',false); return; }
+    if(p1!==p2){ rgSay('Passwords do not match.',false); return; }
+    if(!sb){ rgSay('Sign-up service unavailable.',false); return; }
+    rgSay('Creating your account…');
+    sb.auth.signUp({email:email,password:p1,options:{emailRedirectTo:location.origin+'/index.html',data:{full_name:name,phone:phone}}}).then(function(res){
+      if(res.error){ rgSay(res.error.message||'Sign-up failed.',false); return; }
+      try{ localStorage.setItem('oph_rem_email',email); localStorage.setItem('oph_rem','1'); }catch(_){}
+      if(res.data&&res.data.session){ rgSay('Welcome to OPHANARK!',true); setTimeout(function(){ location.href=APP; },700); }
+      else{ rgSay("Almost there! We've sent a verification link to "+email+". Please confirm it from your inbox, then sign in.",true); setTimeout(function(){ closeReg(); var ef=document.getElementById('email'); if(ef) ef.value=email; },2800); }
+    }).catch(function(){ rgSay('Sign-up failed. Please try again.',false); });
+  });
+
+  // ---- Forgot password ----
+  document.getElementById('forgotBtn').addEventListener('click',function(){
+    var e=em();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){ say('Enter your email above, then tap "Forgot password?"',false); return; }
+    if(!sb){ say('Service unavailable.',false); return; }
+    say('Sending reset link…');
+    sb.auth.resetPasswordForEmail(e,{redirectTo:location.origin+'/reset.html'}).then(function(res){
+      if(res.error){ say(res.error.message||'Could not send reset link.',false); }
+      else{ say('Password reset link sent to '+e+'. Please check your inbox.',true); }
+    }).catch(function(){ say('Could not send reset link.',false); });
   });
 
   function oauth(provider){
