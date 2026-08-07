@@ -24,14 +24,21 @@ sahne.add(new THREE.HemisphereLight(0xffe8cc,0x30060a,0.7));
 const d=new THREE.DirectionalLight(0xffffff,1.9); d.position.set(2,3,4); sahne.add(d);
 const kok=new THREE.Group(); sahne.add(kok);
 const draco=new DRACOLoader().setDecoderPath("./vendor/addons/libs/draco/");
+function draw(){ renderer.render(sahne,kamera); }
+// URL ile baslangic acisi: ?rx=..&ry=..&rz=.. (radyan)
+const qs=new URLSearchParams(location.search);
+const RX=parseFloat(qs.get('rx')); const RY=parseFloat(qs.get('ry')); const RZ=parseFloat(qs.get('rz'));
 new GLTFLoader().setDRACOLoader(draco).load("model/carklar_m.glb",(gltf)=>{
   const m=gltf.scene; const box=new THREE.Box3().setFromObject(m);
   const c=box.getCenter(new THREE.Vector3()); const s=box.getSize(new THREE.Vector3());
   m.position.sub(c); kok.add(m);
   kok.scale.setScalar(1.28/Math.max(s.x,s.y,s.z));
-  kok.rotation.set(0.42,-0.62,0.05); // sabit hos aci
-  renderer.render(sahne,kamera);
-  requestAnimationFrame(()=>{ renderer.render(sahne,kamera); window.__ready=true; document.title='galgalim ready'; });
+  const rx=isNaN(RX)?1.5708:RX, ry=isNaN(RY)?0:RY, rz=isNaN(RZ)?0:RZ;
+  kok.rotation.set(rx,ry,rz); // varsayilan: kutup ekrana baksin
+  // canli ayar icin hook
+  window.__oph={ kok, draw, setRot:(x,y,z)=>{ kok.rotation.set(x,y,z); draw(); window.__ready=true; } };
+  draw();
+  requestAnimationFrame(()=>{ draw(); window.__ready=true; document.title='galgalim ready'; });
 });
 </script>
 </body></html>
