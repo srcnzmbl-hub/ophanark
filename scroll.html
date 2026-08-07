@@ -113,6 +113,7 @@
   #s-tarot{height:calc(var(--vh) * 2.4)}
   #s-burc{height:calc(var(--vh) * 1.6)}
   #s-natal{height:calc(var(--vh) * 2.0)}
+  #s-numeroloji{height:calc(var(--vh) * 2.0)}
   #s-ruya{height:calc(var(--vh) * 1.25)}
   .pin{position:sticky;top:0;height:var(--vh);display:flex;flex-direction:column;align-items:center;
     justify-content:flex-start;text-align:center;padding:calc(var(--hh) + 6vh) 20px 5vh;overflow:hidden}
@@ -193,13 +194,29 @@
   @keyframes orbit{to{transform:rotate(360deg)}}
   @keyframes selfspin{to{transform:rotate(360deg)}}
 
+  /* numerology falling numbers */
+  .numfall{position:relative;width:min(72vw,300px);height:min(30vh,220px);margin:0.6cm auto 4px;
+    overflow:hidden;display:flex;justify-content:space-between;gap:3%;
+    -webkit-mask-image:linear-gradient(180deg,transparent,#000 20%,#000 80%,transparent);
+    mask-image:linear-gradient(180deg,transparent,#000 20%,#000 80%,transparent)}
+  .numfall .ncol{flex:1;display:flex;flex-direction:column;align-items:center;
+    font-family:var(--disp);font-weight:400;font-size:clamp(20px,5.4vw,32px);line-height:1.5;
+    background:linear-gradient(180deg,#2fe6c4,#12b6d6 46%,#2f6fed);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 7px rgba(28,196,214,.28));
+    animation:nfall var(--dur,8s) linear infinite;animation-delay:var(--dl,0s);will-change:transform}
+  .numfall .ncol i{display:block;font-style:normal}
+  @keyframes nfall{from{transform:translateY(-50%)}to{transform:translateY(0)}}
+  html[data-theme="dark"] .numfall .ncol{filter:drop-shadow(0 0 9px rgba(40,220,230,.4))}
+  #s-numeroloji .cta{margin-top:0.7cm}
+
   #cue{position:sticky;bottom:12px;margin-top:-40px;text-align:center;font-family:var(--sans);
     font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);opacity:.7;
     transition:opacity .4s;pointer-events:none;z-index:60}
   @media(prefers-reduced-motion:reduce){
     [data-anim]{opacity:1!important;transform:none!important}.load{animation:none;opacity:1}
     .cup{transform:none}.handimg{clip-path:none}.tt,.tb{opacity:1;transform:none}
-    .cardfall-track,.orb,.orb b{animation:none}
+    .cardfall-track,.orb,.orb b,.numfall .ncol{animation:none}
   }
   /* end-of-page footer */
   .foot{background:var(--bg);color:var(--ink);display:flex;flex-direction:column;align-items:center;text-align:center;padding:8vh 20px 0}
@@ -227,17 +244,16 @@
       <a data-go="s-fal" class="act">Fortunes</a>
       <a data-go="s-burc">Zodiac Signs</a>
       <a data-go="s-natal">Natal Chart</a>
+      <a data-go="s-numeroloji">Numerology</a>
       <a data-go="s-ruya">Dream Interpretations</a>
       <a href="profil.html" class="navprofile">Profile</a>
       <a href="hazir.html" class="navready">My Readings</a>
-      <a href="gecmis.html" class="navready navgecmis">My Past Readings</a>
     </nav>
     <div class="quicklinks">
       <a href="kahve.html">Kahve Falı</a>
       <a href="el.html">El Falı</a>
       <a href="katina.html">Katina Falı</a>
       <a href="tarot.html">Tarot</a>
-      <a href="numeroloji.html">Numeroloji</a>
     </div>
   </header>
 
@@ -325,6 +341,21 @@
     <a class="cta" href="natal.html" data-anim data-from="0.74" data-to="0.88">Interpret my birth chart. <span class="arw">↗</span></a>
   </div></div>
 
+  <!-- 7b · NUMEROLOGY -->
+  <div class="scene" id="s-numeroloji"><div class="pin">
+    <h2 class="big" data-anim="fromL" data-from="0" data-to="0.14">Numerology</h2>
+    <p class="lead" data-anim data-from="0.10" data-to="0.24">Numerology is a spiritual map that deciphers the cosmic frequencies in your birth date and name—the hidden language of the universe whispered through numbers. Ophanark illuminates the cipher of your life map for you through the mathematics of numbers.</p>
+    <div class="numfall" aria-hidden="true" data-anim data-from="0.20" data-to="0.34">
+      <span class="ncol" style="--dur:8s;--dl:-1s"><i>3</i><i>7</i><i>1</i><i>9</i><i>4</i><i>2</i><i>3</i><i>7</i><i>1</i><i>9</i><i>4</i><i>2</i></span>
+      <span class="ncol" style="--dur:6.5s;--dl:-3s"><i>5</i><i>0</i><i>8</i><i>3</i><i>1</i><i>6</i><i>5</i><i>0</i><i>8</i><i>3</i><i>1</i><i>6</i></span>
+      <span class="ncol" style="--dur:9.5s;--dl:-2s"><i>9</i><i>2</i><i>4</i><i>7</i><i>5</i><i>1</i><i>9</i><i>2</i><i>4</i><i>7</i><i>5</i><i>1</i></span>
+      <span class="ncol" style="--dur:7s;--dl:-4s"><i>1</i><i>6</i><i>3</i><i>8</i><i>2</i><i>9</i><i>1</i><i>6</i><i>3</i><i>8</i><i>2</i><i>9</i></span>
+      <span class="ncol" style="--dur:10.5s;--dl:-1.5s"><i>7</i><i>4</i><i>5</i><i>0</i><i>1</i><i>8</i><i>7</i><i>4</i><i>5</i><i>0</i><i>1</i><i>8</i></span>
+    </div>
+    <p class="lead" data-anim data-from="0.40" data-to="0.54">Every turn in the universe is a frequency; the Divine Galgalim turn to calculate for you the geometric vibrations behind your name and birth date.</p>
+    <a class="cta" href="numeroloji.html" data-anim data-from="0.70" data-to="0.86">Decode the cipher in your name <span class="arw">↗</span></a>
+  </div></div>
+
   <!-- 8 · DREAM -->
   <div class="scene" id="s-ruya"><div class="pin">
     <h2 class="big" data-anim="fromL" data-from="0" data-to="0.187">Dream Interpretations</h2>
@@ -363,7 +394,7 @@
       it.el.style.setProperty('--t', ease((p-it.from)/(it.to-it.from)).toFixed(3)); }
     var mid=app.scrollTop + app.clientHeight*0.5;
     var map={'s-fal':'s-fal','s-coffee':'s-fal','s-palm':'s-fal','s-katina':'s-fal',
-      's-tarot':'s-tarot','s-burc':'s-burc','s-natal':'s-natal','s-ruya':'s-ruya'};
+      's-tarot':'s-tarot','s-burc':'s-burc','s-natal':'s-natal','s-numeroloji':'s-numeroloji','s-ruya':'s-ruya'};
     var all=[hero].concat(scenes), cur=null;
     for(var j=0;j<all.length;j++){var s=all[j]; if(!s)continue;
       if(mid>=s.offsetTop && mid<s.offsetTop+s.offsetHeight){cur=map[s.id]||s.id;break;}}
