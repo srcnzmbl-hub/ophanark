@@ -111,7 +111,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-const LC=0xb02a3a; const LCS='rgba(176,42,58,0.98)';
+const LC=0x7a0f1a; const LCS='rgba(122,15,26,0.98)';
 
 const GLYPH={Koç:'♈',Boğa:'♉',İkizler:'♊',Yengeç:'♋',Aslan:'♌',Başak:'♍',Terazi:'♎',Akrep:'♏',Yay:'♐',Oğlak:'♑',Kova:'♒',Balık:'♓'};
 /* zodyak fontu (ophzod / zodiac.ttf) sembol harfleri — iOS mor emoji yerine */
@@ -310,7 +310,7 @@ const b=0.18+Math.random()*0.55;s.userData={ph:Math.random()*6.28,sp:0.8+Math.ra
 dustGroup.add(s);dust.push(s);}
 const wheel=new THREE.Group(); scene.add(wheel); wheel.rotation.x=-0.5;
 const R=6;
-[[R,0.05,LC]].forEach(([rr,tb,col])=>{wheel.add(new THREE.Mesh(new THREE.TorusGeometry(rr,tb,16,220),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:1})));});
+[0,1].forEach((iy)=>{const rg=new THREE.Mesh(new THREE.TorusGeometry(R,0.05,16,240),new THREE.MeshBasicMaterial({color:LC,transparent:true,opacity:1}));if(iy)rg.rotation.x=Math.PI/2;wheel.add(rg);});
 // ---- yüksek kaliteli animasyonlu GÜNEŞ ----
 const suns=[];
 function randUnit(){const u=Math.random()*2-1,th=Math.random()*Math.PI*2,sq=Math.sqrt(1-u*u);return new THREE.Vector3(sq*Math.cos(th),sq*Math.sin(th),u);}
@@ -374,7 +374,7 @@ function updateFeathers(){ if(!logoGroup.visible){ if(featherG.visible)featherG.
   for(const sp of feathers){ const u=sp.userData; if(!u.init){resetFeather(sp);} const el=t-u.t0; const life=el/u.dur; if(life>=1){resetFeather(sp); continue;}
     sp.position.set(u.start.x+u.vps.x*el+Math.sin(t*1.1+u.sway)*0.05, u.start.y+u.vps.y*el+Math.cos(t*0.9+u.sway)*0.05, u.start.z+u.vps.z*el);
     sp.material.rotation=u.rot0+u.rspd*el; sp.material.opacity=Math.sin(Math.PI*clamp01(life))*0.92; } }
-function numSprite(txt){const s=128,cv=document.createElement('canvas');cv.width=cv.height=s;const x=cv.getContext('2d');x.font='500 42px Helvetica,Arial,sans-serif';x.textAlign='center';x.textBaseline='middle';x.lineWidth=2.5;x.strokeStyle='rgba(255,255,255,0.5)';x.strokeText(txt,s/2,s/2);x.fillStyle=LCS;x.fillText(txt,s/2,s/2);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthWrite:false,depthTest:false}));sp.scale.set(0.86,0.86,1);sp.renderOrder=2;return sp;}
+function numSprite(txt){const s=128,cv=document.createElement('canvas');cv.width=cv.height=s;const x=cv.getContext('2d');x.font='500 42px Helvetica,Arial,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillStyle=LCS;x.fillText(txt,s/2,s/2);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthWrite:false,depthTest:false}));sp.scale.set(0.86,0.86,1);sp.renderOrder=2;return sp;}
 for(let d=0;d<360;d+=30){const a=THREE.MathUtils.degToRad(d);const sp=numSprite(String(d)+'°');sp.position.set(Math.cos(a)*R*1.09,Math.sin(a)*R*1.09,0);wheel.add(sp);}
 
 function posOf(lon){const a=THREE.MathUtils.degToRad(lon);return new THREE.Vector3(Math.cos(a)*R*0.82,Math.sin(a)*R*0.82,0);}
@@ -390,9 +390,9 @@ POS[k]=new THREE.Vector3(Math.cos(la)*Math.cos(a)*rr, Math.cos(la)*Math.sin(a)*r
 
 for(let x=0;x<keys.length;x++)for(let y=x+1;y<keys.length;y++){
 const g=new THREE.BufferGeometry().setFromPoints([POS[keys[x]],POS[keys[y]]]);
-wheel.add(new THREE.Line(g,new THREE.LineBasicMaterial({color:0xb02a3a,transparent:true,opacity:0})));}
+wheel.add(new THREE.Line(g,new THREE.LineBasicMaterial({color:LC,transparent:true,opacity:0})));}
 aspects.forEach(as=>{const g=new THREE.BufferGeometry().setFromPoints([POS[as.a],POS[as.b]]);
-wheel.add(new THREE.Line(g,new THREE.LineBasicMaterial({color:0xb02a3a,transparent:true,opacity:as.hard?.6:.38})));});
+wheel.add(new THREE.Line(g,new THREE.LineBasicMaterial({color:LC,transparent:true,opacity:as.hard?.55:.32})));});
 
 function planetTex(p){ const s=256,cv=document.createElement('canvas');cv.width=s;cv.height=s;const x=cv.getContext('2d');
 x.fillStyle=p.c;x.fillRect(0,0,s,s);
