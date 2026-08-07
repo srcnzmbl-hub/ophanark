@@ -115,6 +115,10 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
 "tag_starname":{en:"Every letter is a number, every number a star; the Divine Galgalim turn to calculate for you the sky behind your name.",tr:"Her harf bir sayı, her sayı bir yıldızdır; İlahi Çarklar adının ardındaki göğü senin için hesaplamak üzere döner."}
 };
   for(var _k6 in _ADD6){var _e6=_ADD6[_k6];EN[_k6]=_e6.en;for(var _lg6 in _e6){if(_lg6==='en')continue;(L[_lg6]=L[_lg6]||{})[_k6]=_e6[_lg6];}}
+  var _ADD7={
+"sub_starname":{en:"ebced calculation",tr:"ebced hesabı",de:"Ebced-Berechnung",fr:"calcul ebced",es:"cálculo ebced",it:"calcolo ebced",pt:"cálculo ebced",ru:"расчёт эбджед",ar:"حساب الأبجد",zh:"艾卜杰德计算",ja:"アブジャド計算",ko:"에브젣 계산",hi:"अब्जद गणना",nl:"ebced-berekening",pl:"obliczenie ebced"}
+};
+  for(var _k7 in _ADD7){var _e7=_ADD7[_k7];EN[_k7]=_e7.en;for(var _lg7 in _e7){if(_lg7==='en')continue;(L[_lg7]=L[_lg7]||{})[_k7]=_e7[_lg7];}}
   var REV = {};
   for (var _id in EN) { if (EN.hasOwnProperty(_id)) REV[EN[_id].trim()] = _id; }
 
