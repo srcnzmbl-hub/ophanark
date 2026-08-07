@@ -194,19 +194,17 @@
   @keyframes orbit{to{transform:rotate(360deg)}}
   @keyframes selfspin{to{transform:rotate(360deg)}}
 
-  /* numerology falling numbers (transparent, over app) */
-  .numfall{position:relative;width:min(94vw,600px);height:min(44vh,330px);margin:0.3cm auto 2px;
-    overflow:hidden;display:flex;justify-content:space-around;gap:1%;padding:0 2%;
-    -webkit-mask-image:linear-gradient(180deg,transparent,#000 14%,#000 82%,transparent);
-    mask-image:linear-gradient(180deg,transparent,#000 14%,#000 82%,transparent)}
-  .numfall .ncol{flex:1;display:flex;flex-direction:column;align-items:center;
-    font-family:var(--disp);font-weight:400;font-size:clamp(32px,9vw,52px);line-height:1.4;
-    background:linear-gradient(180deg,#22e8bf,#0fbcda 46%,#2f74ee);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 10px rgba(28,208,216,.45));
+  /* numerology falling numbers (transparent, mixed sizes, vivid) */
+  .numfall{position:relative;width:min(96vw,620px);height:min(46vh,350px);margin:0.3cm auto 2px;
+    overflow:hidden;display:flex;justify-content:center;align-items:flex-start;gap:0;
+    -webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 84%,transparent);
+    mask-image:linear-gradient(180deg,transparent,#000 12%,#000 84%,transparent)}
+  .numfall .ncol{flex:0 0 auto;width:15%;display:flex;flex-direction:column;align-items:center;
+    font-family:var(--disp);font-weight:400;font-size:clamp(30px,9vw,50px);line-height:1.24;
     animation:nfall var(--dur,5s) linear infinite;animation-delay:var(--dl,0s);will-change:transform}
-  .numfall .ncol i{display:block;font-style:normal}
-  @keyframes nfall{from{transform:translateY(-50%)}to{transform:translateY(0)}}
+  .numfall .ncol i{display:block;font-style:normal;color:var(--c);
+    text-shadow:0 0 7px rgba(28,214,224,.35),0 0 2px rgba(0,0,0,.18)}
+  @keyframes nfall{from{transform:translateX(var(--x,0)) translateY(-50%)}to{transform:translateX(var(--x,0)) translateY(0)}}
   #s-numeroloji .cta{margin-top:0.7cm}
 
   #cue{position:sticky;bottom:12px;margin-top:-40px;text-align:center;font-family:var(--sans);
@@ -345,11 +343,12 @@
     <h2 class="big" data-anim="fromL" data-from="0" data-to="0.14">Numerology</h2>
     <p class="lead" data-anim data-from="0.10" data-to="0.24">Numerology is a spiritual map that deciphers the cosmic frequencies in your birth date and name—the hidden language of the universe whispered through numbers. Ophanark illuminates the cipher of your life map for you through the mathematics of numbers.</p>
     <div class="numfall" aria-hidden="true" data-anim data-from="0.20" data-to="0.34">
-      <span class="ncol" style="--dur:4.6s;--dl:-1s"><i>3</i><i>7</i><i>1</i><i>9</i><i>4</i><i>2</i><i>3</i><i>7</i><i>1</i><i>9</i><i>4</i><i>2</i></span>
-      <span class="ncol" style="--dur:5.6s;--dl:-3s"><i>5</i><i>0</i><i>8</i><i>3</i><i>1</i><i>6</i><i>5</i><i>0</i><i>8</i><i>3</i><i>1</i><i>6</i></span>
-      <span class="ncol" style="--dur:4.1s;--dl:-2s"><i>9</i><i>2</i><i>4</i><i>7</i><i>5</i><i>1</i><i>9</i><i>2</i><i>4</i><i>7</i><i>5</i><i>1</i></span>
-      <span class="ncol" style="--dur:6s;--dl:-4s"><i>1</i><i>6</i><i>3</i><i>8</i><i>2</i><i>9</i><i>1</i><i>6</i><i>3</i><i>8</i><i>2</i><i>9</i></span>
-      <span class="ncol" style="--dur:5s;--dl:-1.5s"><i>7</i><i>4</i><i>5</i><i>0</i><i>1</i><i>8</i><i>7</i><i>4</i><i>5</i><i>0</i><i>1</i><i>8</i></span>
+      <span class="ncol" style="--dur:4.6s;--dl:-1s;--x:-2%"><i style="--c:#05efc0;font-size:1.8em">3</i><i style="--c:#1f6bff;font-size:0.6em">7</i><i style="--c:#00c6ee;font-size:1.2em">1</i><i style="--c:#1f6bff;font-size:0.5em">9</i><i style="--c:#05efc0;font-size:2.0em">4</i><i style="--c:#00c6ee;font-size:0.9em">2</i><i style="--c:#05efc0;font-size:1.8em">3</i><i style="--c:#1f6bff;font-size:0.6em">7</i><i style="--c:#00c6ee;font-size:1.2em">1</i><i style="--c:#1f6bff;font-size:0.5em">9</i><i style="--c:#05efc0;font-size:2.0em">4</i><i style="--c:#00c6ee;font-size:0.9em">2</i></span>
+      <span class="ncol" style="--dur:5.6s;--dl:-3s;--x:3%"><i style="--c:#00c6ee;font-size:0.7em">5</i><i style="--c:#1f6bff;font-size:1.6em">0</i><i style="--c:#05efc0;font-size:0.5em">8</i><i style="--c:#00c6ee;font-size:1.9em">3</i><i style="--c:#1f6bff;font-size:0.8em">1</i><i style="--c:#05efc0;font-size:1.3em">6</i><i style="--c:#00c6ee;font-size:0.7em">5</i><i style="--c:#1f6bff;font-size:1.6em">0</i><i style="--c:#05efc0;font-size:0.5em">8</i><i style="--c:#00c6ee;font-size:1.9em">3</i><i style="--c:#1f6bff;font-size:0.8em">1</i><i style="--c:#05efc0;font-size:1.3em">6</i></span>
+      <span class="ncol" style="--dur:4.1s;--dl:-2s;--x:-4%"><i style="--c:#1f6bff;font-size:1.5em">9</i><i style="--c:#05efc0;font-size:0.6em">2</i><i style="--c:#1f6bff;font-size:1.1em">4</i><i style="--c:#05efc0;font-size:1.8em">7</i><i style="--c:#00c6ee;font-size:0.7em">5</i><i style="--c:#1f6bff;font-size:2.1em">1</i><i style="--c:#1f6bff;font-size:1.5em">9</i><i style="--c:#05efc0;font-size:0.6em">2</i><i style="--c:#1f6bff;font-size:1.1em">4</i><i style="--c:#05efc0;font-size:1.8em">7</i><i style="--c:#00c6ee;font-size:0.7em">5</i><i style="--c:#1f6bff;font-size:2.1em">1</i></span>
+      <span class="ncol" style="--dur:6s;--dl:-4s;--x:2%"><i style="--c:#05efc0;font-size:0.6em">1</i><i style="--c:#00c6ee;font-size:1.7em">6</i><i style="--c:#1f6bff;font-size:0.9em">3</i><i style="--c:#05efc0;font-size:0.5em">8</i><i style="--c:#00c6ee;font-size:1.9em">2</i><i style="--c:#1f6bff;font-size:1.0em">9</i><i style="--c:#05efc0;font-size:0.6em">1</i><i style="--c:#00c6ee;font-size:1.7em">6</i><i style="--c:#1f6bff;font-size:0.9em">3</i><i style="--c:#05efc0;font-size:0.5em">8</i><i style="--c:#00c6ee;font-size:1.9em">2</i><i style="--c:#1f6bff;font-size:1.0em">9</i></span>
+      <span class="ncol" style="--dur:5s;--dl:-1.5s;--x:-3%"><i style="--c:#00c6ee;font-size:2.0em">7</i><i style="--c:#1f6bff;font-size:0.7em">4</i><i style="--c:#05efc0;font-size:1.4em">5</i><i style="--c:#00c6ee;font-size:0.6em">0</i><i style="--c:#1f6bff;font-size:1.7em">1</i><i style="--c:#05efc0;font-size:0.9em">8</i><i style="--c:#00c6ee;font-size:2.0em">7</i><i style="--c:#1f6bff;font-size:0.7em">4</i><i style="--c:#05efc0;font-size:1.4em">5</i><i style="--c:#00c6ee;font-size:0.6em">0</i><i style="--c:#1f6bff;font-size:1.7em">1</i><i style="--c:#05efc0;font-size:0.9em">8</i></span>
+      <span class="ncol" style="--dur:4.8s;--dl:-2.5s;--x:4%"><i style="--c:#1f6bff;font-size:1.1em">2</i><i style="--c:#05efc0;font-size:0.5em">9</i><i style="--c:#00c6ee;font-size:1.8em">6</i><i style="--c:#1f6bff;font-size:0.8em">1</i><i style="--c:#05efc0;font-size:1.5em">7</i><i style="--c:#00c6ee;font-size:0.6em">3</i><i style="--c:#1f6bff;font-size:1.1em">2</i><i style="--c:#05efc0;font-size:0.5em">9</i><i style="--c:#00c6ee;font-size:1.8em">6</i><i style="--c:#1f6bff;font-size:0.8em">1</i><i style="--c:#05efc0;font-size:1.5em">7</i><i style="--c:#00c6ee;font-size:0.6em">3</i></span>
     </div>
     <p class="lead" data-anim data-from="0.40" data-to="0.54">Every turn in the universe is a frequency; the Divine Galgalim turn to calculate for you the geometric vibrations behind your name and birth date.</p>
     <a class="cta" href="numeroloji.html" data-anim data-from="0.70" data-to="0.86">Decode the cipher in your name <span class="arw">↗</span></a>
