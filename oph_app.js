@@ -638,12 +638,142 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
              reset:function(){ st.checked=false; if(cb) cb.classList.remove('on'); if(onChange) onChange(false); } };
   }
 
+  /* ============================================================
+     PREMIUM PAKET / GÜNLÜK KOTA — v1 (istemci tarafı geçit)
+     Seviye: 'free' | 'plus' | 'pro'  (localStorage 'oph_seviye', ayrıca
+     giriş yapılınca Supabase kullanici_abonelik tablosundan yüklenir).
+     Kota istemci tarafında localStorage sayaçlarıyla tutulur; sunucu
+     tarafı zorlama (edge function) Faz 2'de eklenecek.
+     ============================================================ */
+  // tur: { free:[adet, periyotGun], plus:[...], pro:[...] }  (adet=Infinity -> sınırsız)
+  var PAKET_LIMIT = {
+    kahve:      { free:[1,1], plus:[3,1],        pro:[Infinity,1] },
+    el:         { free:[1,1], plus:[3,1],        pro:[Infinity,1] },
+    natal:      { free:[1,1], plus:[3,1],        pro:[Infinity,1] },
+    tarot:      { free:[1,1], plus:[Infinity,1], pro:[Infinity,1] },
+    katina:     { free:[1,1], plus:[Infinity,1], pro:[Infinity,1] },
+    ruya:       { free:[1,1], plus:[3,1],        pro:[Infinity,1] },
+    numeroloji: { free:[1,3], plus:[1,2],        pro:[1,1] },
+    yildizname: { free:[1,3], plus:[1,2],        pro:[1,1] }
+    // burc + melek: her seviyede sınırsız -> geçit uygulanmaz
+  };
+  var FAL_AD = {
+    kahve:{tr:'kahve falı',en:'coffee reading'}, el:{tr:'el falı',en:'palm reading'},
+    natal:{tr:'natal harita',en:'natal chart'}, tarot:{tr:'tarot falı',en:'tarot reading'},
+    katina:{tr:'katina falı',en:'coffee-card reading'}, ruya:{tr:'rüya tabiri',en:'dream reading'},
+    numeroloji:{tr:'numeroloji',en:'numerology'}, yildizname:{tr:'yıldızname',en:'star-name reading'}
+  };
+
+  function _gun(){ var x=new Date(); return x.getFullYear()+'-'+(x.getMonth()+1)+'-'+x.getDate(); }
+  function paketSeviye(){ var s=get('oph_seviye','free'); return (s==='plus'||s==='pro')?s:'free'; }
+  function paketAyarla(s){ if(s==='free'||s==='plus'||s==='pro') set('oph_seviye',s); return paketSeviye(); }
+  function _kotaKey(t){ return 'oph_kota_'+t; }
+  function _kotaOku(t){ try{ return JSON.parse(localStorage.getItem(_kotaKey(t))||'{}'); }catch(e){ return {}; } }
+
+  // {izin, sinirsiz?, kullanildi?, limit?, periyotGun?, kalanGun?}
+  function kotaDurum(tur){
+    var cfg=PAKET_LIMIT[tur]; if(!cfg) return {izin:true, sinirsiz:true};
+    var lim=cfg[paketSeviye()]||cfg.free, adet=lim[0], gun=lim[1];
+    if(adet===Infinity) return {izin:true, sinirsiz:true, limit:Infinity};
+    var st=_kotaOku(tur);
+    if(gun<=1){
+      var c=(st.tarih===_gun())?(st.sayi||0):0;
+      return {izin:c<adet, kullanildi:c, limit:adet, periyotGun:1};
+    }
+    var son=st.son||0, farkGun=son?((Date.now()-son)/86400000):9999;
+    return {izin:farkGun>=gun, periyotGun:gun, kalanGun:Math.max(1,Math.ceil(gun-farkGun)), limit:adet};
+  }
+  function kotaKullan(tur){
+    var cfg=PAKET_LIMIT[tur]; if(!cfg) return;
+    var lim=cfg[paketSeviye()]||cfg.free; if(lim[0]===Infinity) return;
+    var gun=lim[1], st=_kotaOku(tur);
+    if(gun<=1){ var g=_gun(); if(st.tarih!==g) st={tarih:g,sayi:0}; st.sayi=(st.sayi||0)+1; }
+    else { st.son=Date.now(); }
+    set(_kotaKey(tur), JSON.stringify(st));
+  }
+  // Ana geçit: fal başlamadan önce çağır. İzin varsa sayacı artırır + true döner.
+  // İzin yoksa paywall gösterir + false döner.
+  function falKontrol(tur){
+    var st=kotaDurum(tur);
+    if(st.izin){ kotaKullan(tur); return true; }
+    paywallGoster(tur, st);
+    return false;
+  }
+
+  function bolgeTR(){
+    try{ if((navigator.language||'').toLowerCase().indexOf('tr')===0) return true; }catch(e){}
+    try{ var tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; if(tz==='Europe/Istanbul') return true; }catch(e){}
+    return false;
+  }
+
+  function _sbToken(){
+    try{ for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i);
+      if(k&&/^sb-.*-auth-token$/.test(k)){ var o=JSON.parse(localStorage.getItem(k)||'null');
+        var t=o&&(o.access_token||(o.currentSession&&o.currentSession.access_token)); if(t) return t; } } }catch(e){}
+    return null;
+  }
+  // Supabase'den güncel seviyeyi çek + önbelleğe al. Promise<seviye>.
+  function paketYukle(){
+    var t=_sbToken(); if(!t) return Promise.resolve(paketSeviye());
+    return fetch(PUSH_SB+'/rest/v1/kullanici_abonelik?select=seviye,durum&limit=1',{
+      headers:{'apikey':PUSH_ANON,'Authorization':'Bearer '+t}
+    }).then(function(r){ return r.ok?r.json():[]; }).then(function(rows){
+      var row=rows&&rows[0], s=(row&&row.seviye)||'free';
+      if(row&&row.durum&&row.durum!=='active') s='free';
+      return paketAyarla(s);
+    }).catch(function(){ return paketSeviye(); });
+  }
+
+  var _pwStil=false;
+  function paywallGoster(tur, st){
+    var lang=(getLang()==='tr')?'tr':'en';
+    var ad=(FAL_AD[tur]&&FAL_AD[tur][lang])||tur;
+    var baslik = lang==='tr'?'Ücretsiz hakkın doldu':'Free limit reached';
+    var mesaj;
+    if(st&&st.periyotGun>1){
+      mesaj = lang==='tr'
+        ? (ad.charAt(0).toUpperCase()+ad.slice(1)+' için '+(st.kalanGun||1)+' gün sonra tekrar bakabilir, ya da paket alarak daha sık bakabilirsin.')
+        : ('You can view your '+ad+' again in '+(st.kalanGun||1)+' day(s), or upgrade to view it more often.');
+    } else {
+      mesaj = lang==='tr'
+        ? ('Bugünkü ücretsiz '+ad+' hakkını kullandın. Daha fazlası için paketlere göz at.')
+        : ("You've used today's free "+ad+'. Check the plans for more.');
+    }
+    var btnT = lang==='tr'?'Paketleri görmek için tıkla':'See plans';
+    var kapatT = lang==='tr'?'Kapat':'Close';
+    if(!_pwStil){
+      var s=d.createElement('style'); s.textContent=
+        '.oph-pw{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(8,12,23,.55);backdrop-filter:blur(3px);font-family:var(--sans,sans-serif)}'+
+        '.oph-pw-card{width:min(420px,100%);background:var(--bg,#F7F3E8);color:var(--ink,#25181C);border:1px solid var(--line,rgba(37,24,28,.16));border-radius:16px;padding:30px 26px;box-shadow:0 24px 70px rgba(0,0,0,.4);text-align:center}'+
+        '.oph-pw-card h3{font-family:var(--serif,Georgia,serif);font-weight:400;font-size:23px;margin:0 0 12px}'+
+        '.oph-pw-card p{font-size:14px;line-height:1.6;opacity:.85;margin:0 0 22px}'+
+        '.oph-pw-go{display:block;width:100%;background:var(--ink,#25181C);color:var(--bg,#F7F3E8);border:0;border-radius:10px;padding:15px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;font-family:inherit}'+
+        '.oph-pw-x{display:block;width:100%;margin-top:10px;background:transparent;color:var(--muted,#9c8666);border:0;padding:10px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;font-family:inherit}';
+      d.head.appendChild(s); _pwStil=true;
+    }
+    var ov=d.createElement('div'); ov.className='oph-pw';
+    var card=d.createElement('div'); card.className='oph-pw-card';
+    var h=d.createElement('h3'); h.textContent=baslik;
+    var p=d.createElement('p'); p.textContent=mesaj;
+    var b=d.createElement('button'); b.className='oph-pw-go'; b.textContent=btnT;
+    b.onclick=function(){ w.location.href='paketler.html'; };
+    var x=d.createElement('button'); x.className='oph-pw-x'; x.textContent=kapatT;
+    x.onclick=function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); };
+    card.appendChild(h); card.appendChild(p); card.appendChild(b); card.appendChild(x);
+    ov.appendChild(card); ov.addEventListener('click',function(e){ if(e.target===ov) x.onclick(); });
+    d.body.appendChild(ov);
+  }
+
   w.OphApp = {
     getTheme: getTheme, setTheme: setTheme,
     getLang: getLang, setLang: setLang,
     applyTheme: applyTheme, applyLang: applyLang,
     tByText: tByText, tById: tById, langName: langName, LABELS: LABELS,
     mountTTS: mountTTS, pushPlanla: pushPlanla,
-    kvkkConsent: kvkkConsent, kvkkAc: kvkkAc
+    kvkkConsent: kvkkConsent, kvkkAc: kvkkAc,
+    PAKET_LIMIT: PAKET_LIMIT, FAL_AD: FAL_AD,
+    paketSeviye: paketSeviye, paketAyarla: paketAyarla, paketYukle: paketYukle,
+    kotaDurum: kotaDurum, kotaKullan: kotaKullan, falKontrol: falKontrol,
+    paywallGoster: paywallGoster, bolgeTR: bolgeTR
   };
 })(window, document);

@@ -98,6 +98,17 @@ a.hitem-btn .hmeta::after{content:'\203A';position:absolute;right:-22px;top:50%;
       <div class="msg" id="acct-msg"></div>
     </div>
 
+    <div class="sec" id="sec-mem">
+      <h2 id="mem-h">Membership</h2>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+        <div>
+          <div class="set-label" id="mem-cur-l" style="margin-bottom:5px">Current plan</div>
+          <div id="mem-plan" style="font-family:var(--serif);font-size:27px;color:#b98a3e;line-height:1">Free</div>
+        </div>
+        <a class="btn primary" href="paketler.html" id="mem-go">See plans</a>
+      </div>
+    </div>
+
     <div class="sec">
       <h2>Change password</h2>
       <div class="field"><label>New password</label><input id="f-pw1" type="password" autocomplete="new-password"></div>
@@ -298,6 +309,26 @@ a.hitem-btn .hmeta::after{content:'\203A';position:absolute;right:-22px;top:50%;
       }catch(e){ say(dmsg, T('Could not delete account. Please try again.'), false); confirmBtn.disabled=false; cancelBtn.disabled=false; }
     });
   })();
+})();
+</script>
+<script>
+/* Üyelik bölümü — mevcut paket seviyesini göster + dil metinleri */
+(function(){
+  var lang=(window.OphApp&&OphApp.getLang)?OphApp.getLang():'tr';
+  var TR=(lang==='tr');
+  var t={
+    h:   TR?'Üyelik':'Membership',
+    cur: TR?'Mevcut paketin':'Current plan',
+    go:  TR?'Paketleri gör':'See plans',
+    free:TR?'Ücretsiz':'Free'
+  };
+  function put(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+  put('mem-h',t.h); put('mem-cur-l',t.cur); put('mem-go',t.go); put('mem-plan',t.free);
+  var names={free:t.free,plus:'Plus',pro:'Pro'};
+  try{
+    if(window.OphApp&&OphApp.paketSeviye) put('mem-plan', names[OphApp.paketSeviye()]||t.free);
+    if(window.OphApp&&OphApp.paketYukle) OphApp.paketYukle().then(function(s){ put('mem-plan', names[s]||t.free); });
+  }catch(e){}
 })();
 </script>
 <script src="spiral.js"></script>
