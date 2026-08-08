@@ -324,10 +324,10 @@ a.hitem-btn .hmeta::after{content:'\203A';position:absolute;right:-22px;top:50%;
   };
   function put(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
   put('mem-h',t.h); put('mem-cur-l',t.cur); put('mem-go',t.go); put('mem-plan',t.free);
-  var names={free:t.free,plus:'Plus',pro:'Pro'};
+  function ad(s){ return (window.OphApp&&OphApp.seviyeAd)?OphApp.seviyeAd(s,lang):(s||t.free); }
   try{
-    if(window.OphApp&&OphApp.paketSeviye) put('mem-plan', names[OphApp.paketSeviye()]||t.free);
-    if(window.OphApp&&OphApp.paketYukle) OphApp.paketYukle().then(function(s){ put('mem-plan', names[s]||t.free); });
+    if(window.OphApp&&OphApp.paketSeviye) put('mem-plan', ad(OphApp.paketSeviye()));
+    if(window.OphApp&&OphApp.paketYukle) OphApp.paketYukle().then(function(s){ put('mem-plan', ad(s)); });
   }catch(e){}
 })();
 </script>

@@ -645,17 +645,17 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
      Kota istemci tarafında localStorage sayaçlarıyla tutulur; sunucu
      tarafı zorlama (edge function) Faz 2'de eklenecek.
      ============================================================ */
-  // tur: { free:[adet, periyotGun], plus:[...], pro:[...] }  (adet=Infinity -> sınırsız)
+  // tur: { free[Safir], plus[Yakut], pro[Zümrüt], promax[Elmas], goksel[Göksel] } -> [adet, periyotGun]
   var PAKET_LIMIT = {
-    kahve:      { free:[1,1], plus:[3,1],        pro:[Infinity,1] },
-    el:         { free:[1,1], plus:[3,1],        pro:[Infinity,1] },
-    natal:      { free:[1,1], plus:[3,1],        pro:[Infinity,1] },
-    tarot:      { free:[1,1], plus:[Infinity,1], pro:[Infinity,1] },
-    katina:     { free:[1,1], plus:[Infinity,1], pro:[Infinity,1] },
-    ruya:       { free:[1,1], plus:[3,1],        pro:[Infinity,1] },
-    numeroloji: { free:[1,3], plus:[1,2],        pro:[1,1] },
-    yildizname: { free:[1,3], plus:[1,2],        pro:[1,1] }
-    // burc + melek: her seviyede sınırsız -> geçit uygulanmaz
+    kahve:      { free:[1,1],  plus:[2,1],        pro:[3,1],        promax:[Infinity,1], goksel:[Infinity,1] },
+    el:         { free:[1,1],  plus:[2,1],        pro:[3,1],        promax:[Infinity,1], goksel:[Infinity,1] },
+    natal:      { free:[1,7],  plus:[1,1],        pro:[Infinity,1], promax:[3,1],        goksel:[Infinity,1] },
+    tarot:      { free:[1,1],  plus:[Infinity,1], pro:[Infinity,1], promax:[Infinity,1], goksel:[Infinity,1] },
+    katina:     { free:[1,1],  plus:[Infinity,1], pro:[Infinity,1], promax:[Infinity,1], goksel:[Infinity,1] },
+    numeroloji: { free:[1,30], plus:[1,7],        pro:[1,1],        promax:[3,1],        goksel:[3,1] },
+    yildizname: { free:[1,30], plus:[1,7],        pro:[1,1],        promax:[3,1],        goksel:[3,1] }
+    // ruya: yeni tabloda yok -> gate uygulanmaz (∞). burc + melek: her seviyede ∞ -> gate yok.
+    // tarot/katina TEKLİ kart çekimi her seviyede sınırsız (falKontrol'a tekli=true geçilir).
   };
   var FAL_AD = {
     kahve:{tr:'kahve falı',en:'coffee reading'}, el:{tr:'el falı',en:'palm reading'},
@@ -664,9 +664,21 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     numeroloji:{tr:'numeroloji',en:'numerology'}, yildizname:{tr:'yıldızname',en:'star-name reading'}
   };
 
+  // Görünen taş isimleri (kod -> etiket + taş)
+  var SEVIYE_AD = {
+    free:  {tr:'Safir · Basic',   en:'Sapphire · Basic',  tas:'safir'},
+    plus:  {tr:'Yakut · Plus',    en:'Ruby · Plus',       tas:'yakut'},
+    pro:   {tr:'Zümrüt · Pro',    en:'Emerald · Pro',     tas:'zumrut'},
+    promax:{tr:'Elmas · Pro Max', en:'Diamond · Pro Max', tas:'elmas'},
+    goksel:{tr:'Göksel',          en:'Celestial',         tas:'goksel'}
+  };
+  var _GECERLI_SEV = {free:1,plus:1,pro:1,promax:1,goksel:1};
+  function seviyeAd(s,lang){ var o=SEVIYE_AD[s]||SEVIYE_AD.free; return o[(lang==='en')?'en':'tr']; }
+  function seviyeTas(s){ return (SEVIYE_AD[s]||SEVIYE_AD.free).tas; }
+
   function _gun(){ var x=new Date(); return x.getFullYear()+'-'+(x.getMonth()+1)+'-'+x.getDate(); }
-  function paketSeviye(){ var s=get('oph_seviye','free'); return (s==='plus'||s==='pro')?s:'free'; }
-  function paketAyarla(s){ if(s==='free'||s==='plus'||s==='pro') set('oph_seviye',s); return paketSeviye(); }
+  function paketSeviye(){ var s=get('oph_seviye','free'); return _GECERLI_SEV[s]?s:'free'; }
+  function paketAyarla(s){ if(_GECERLI_SEV[s]) set('oph_seviye',s); return paketSeviye(); }
   function _kotaKey(t){ return 'oph_kota_'+t; }
   function _kotaOku(t){ try{ return JSON.parse(localStorage.getItem(_kotaKey(t))||'{}'); }catch(e){ return {}; } }
 
@@ -693,7 +705,9 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
   }
   // Ana geçit: fal başlamadan önce çağır. İzin varsa sayacı artırır + true döner.
   // İzin yoksa paywall gösterir + false döner.
-  function falKontrol(tur){
+  // tekli=true: tarot/katina tek kart çekimi -> her seviyede sınırsız, sayaç işlemez.
+  function falKontrol(tur, tekli){
+    if(tekli && (tur==='tarot'||tur==='katina')) return true;
     var st=kotaDurum(tur);
     if(st.izin){ kotaKullan(tur); return true; }
     paywallGoster(tur, st);
@@ -772,7 +786,8 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     tByText: tByText, tById: tById, langName: langName, LABELS: LABELS,
     mountTTS: mountTTS, pushPlanla: pushPlanla,
     kvkkConsent: kvkkConsent, kvkkAc: kvkkAc,
-    PAKET_LIMIT: PAKET_LIMIT, FAL_AD: FAL_AD,
+    PAKET_LIMIT: PAKET_LIMIT, FAL_AD: FAL_AD, SEVIYE_AD: SEVIYE_AD,
+    seviyeAd: seviyeAd, seviyeTas: seviyeTas,
     paketSeviye: paketSeviye, paketAyarla: paketAyarla, paketYukle: paketYukle,
     kotaDurum: kotaDurum, kotaKullan: kotaKullan, falKontrol: falKontrol,
     paywallGoster: paywallGoster, bolgeTR: bolgeTR

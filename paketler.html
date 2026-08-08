@@ -87,7 +87,7 @@ body{background:var(--bg)}
     geri: TR?'Fallar':'Fortunes',
     baslik: TR?'Paketler':'Plans',
     alt: TR?'Falların, numeroloji ve yıldızname için daha fazlası':'More readings, numerology & star-name insights',
-    cur: function(s){ var ad={free:TR?'Ücretsiz':'Free',plus:'Plus',pro:'Pro'}[s]||'Ücretsiz'; return (TR?'Mevcut paketin: ':'Your plan: ')+'<b>'+ad+'</b>'; },
+    cur: function(s){ var ad=(window.OphApp&&OphApp.seviyeAd)?OphApp.seviyeAd(s,lang):(s||'Ücretsiz'); return (TR?'Mevcut paketin: ':'Your plan: ')+'<b>'+ad+'</b>'; },
     own: TR?'Mevcut':'Current',
     pop: TR?'Popüler':'Popular',
     trtag: TR?'Türkiye’ye özel':'Turkey price',
