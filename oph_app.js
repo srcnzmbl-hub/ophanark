@@ -719,7 +719,8 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
       headers:{'apikey':PUSH_ANON,'Authorization':'Bearer '+t}
     }).then(function(r){ return r.ok?r.json():[]; }).then(function(rows){
       var row=rows&&rows[0], s=(row&&row.seviye)||'free';
-      if(row&&row.durum&&row.durum!=='active') s='free';
+      // seviye'ye güven: webhook, abonelik süresi bitince (expired) seviye'yi 'free' yapar.
+      // İptal edilmiş ama dönem sonu gelmemiş abonelikte erişim sürer (durum!=='active' olsa da).
       return paketAyarla(s);
     }).catch(function(){ return paketSeviye(); });
   }

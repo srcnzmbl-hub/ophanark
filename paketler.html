@@ -75,9 +75,9 @@ body{background:var(--bg)}
      linkini buraya yapıştır. Boşken buton "yakında" gösterir. Format:
      https://ozarkcollective.lemonsqueezy.com/buy/XXXXXXXX-....           */
   var LEMON = {
-    plus:  '',   // OPHANARK Plus  $4.99/ay
-    pro:   '',   // OPHANARK Pro   $14.99/ay
-    proTR: ''    // OPHANARK Pro (Türkiye) $0.99/ay
+    plus:  'https://ozarkcollective.lemonsqueezy.com/checkout/buy/8de6fa49-4d57-4c7c-98d0-50cc616584cd', // OPHANARK Plus $4.99/ay
+    pro:   'https://ozarkcollective.lemonsqueezy.com/checkout/buy/87e8258d-3600-4e01-8b07-ba8abe3306ca', // OPHANARK Pro $9.99/ay
+    proTR: 'https://ozarkcollective.lemonsqueezy.com/checkout/buy/ec7f541d-c180-4198-ae7e-a7d950c1d667'  // OPHANARK Pro (Türkiye) $0.99/ay
   };
 
   var lang = (window.OphApp && OphApp.getLang && OphApp.getLang()==='tr') ? 'tr' : (window.OphApp && OphApp.getLang && OphApp.getLang()==='en' ? 'en' : (OphApp&&OphApp.getLang?( ['tr','en'].indexOf(OphApp.getLang())>=0?OphApp.getLang():'en'):'tr'));
@@ -161,7 +161,7 @@ body{background:var(--bg)}
       html += cardHTML('proTR', (TR?'Tam Paket':'Full Access'), '$0.99', STR.ay, FEAT.proTR);
     } else {
       html += cardHTML('plus', 'Plus', '$4.99', STR.ay, FEAT.plus);
-      html += cardHTML('pro',  'Pro',  '$14.99', STR.ay, FEAT.pro);
+      html += cardHTML('pro',  'Pro',  '$9.99', STR.ay, FEAT.pro);
     }
     document.getElementById('cards').innerHTML = html;
   }
