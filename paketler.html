@@ -172,6 +172,7 @@ body{background:var(--bg)}
   if(sb){
     sb.auth.getUser().then(function(r){
       try{ userEmail=(r&&r.data&&r.data.user&&r.data.user.email)||''; }catch(e){}
+      render(); // e-posta gelince checkout linklerini e-posta ile yeniden kur
     }).catch(function(){});
   }
   if(window.OphApp && OphApp.paketYukle){
