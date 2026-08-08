@@ -178,8 +178,11 @@ textarea:focus{border-color:var(--ink)}
     $('step1').classList.add('hidden'); $('step3').classList.add('hidden');
     var s2=$('step2'); s2.classList.remove('hidden'); s2.style.visibility='hidden';
     try{ window.scrollTo({top:0}); }catch(e){}
+    var _revealed=false;
+    var reveal=function(){ if(_revealed) return; _revealed=true; s2.style.visibility='visible'; _busy=false; };
+    setTimeout(reveal, 10400);   // güvenlik ağı: animasyon callback'i gelmese de grid görünür
     requestAnimationFrame(function(){requestAnimationFrame(function(){
-      runDeal(function(){ s2.style.visibility='visible'; _busy=false; });
+      runDeal(reveal);
     });});
   });
 
