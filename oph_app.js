@@ -132,7 +132,11 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
   }
   function setTheme(t) { set('oph_theme', t); applyTheme(t); }
 
-  function getLang() { return get('oph_lang', 'en'); }
+  function getLang() {
+    try { var m=/[?&]lang=([a-z]{2})/.exec(w.location.search); if(m){ var u=m[1];
+      if('en tr de fr es it pt ru ar zh ja ko hi nl pl'.indexOf(u)>=0){ set('oph_lang',u); return u; } } } catch(e){}
+    return get('oph_lang', 'tr');
+  }
   function setLang(lang) { set('oph_lang', lang); w.location.reload(); }
 
   function firstTextNode(el) {
@@ -179,10 +183,19 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
   }
 
   var _langObs = null;
+  var _LOCALE={tr:'tr_TR',en:'en_US',de:'de_DE',fr:'fr_FR',es:'es_ES',it:'it_IT',pt:'pt_PT',ru:'ru_RU',ar:'ar_AR',zh:'zh_CN',ja:'ja_JP',ko:'ko_KR',hi:'hi_IN',nl:'nl_NL',pl:'pl_PL'};
+  function updateSeoForLang(lang){ try{
+    var base=w.location.origin+w.location.pathname;
+    var url=(lang && lang!=='tr') ? base+'?lang='+lang : base;
+    var c=d.querySelector('link[rel="canonical"]'); if(c) c.setAttribute('href',url);
+    var ou=d.querySelector('meta[property="og:url"]'); if(ou) ou.setAttribute('content',url);
+    var ol=d.querySelector('meta[property="og:locale"]'); if(ol) ol.setAttribute('content', _LOCALE[lang]||'tr_TR');
+  }catch(e){} }
   function applyLang(lang, root) {
     root = root || d.body;
     d.documentElement.setAttribute('lang', lang);
     d.documentElement.setAttribute('dir', RTL[lang] ? 'rtl' : 'ltr');
+    updateSeoForLang(lang);
     if (lang !== 'en' && root) {
       translate(root, lang);
       // re-translate content added dynamically after boot (readings, results, etc.)

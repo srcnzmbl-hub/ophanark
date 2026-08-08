@@ -1,12 +1,245 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://www.ophanark.com/</loc>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.ophanark.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.ophanark.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.ophanark.com/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.ophanark.com/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.ophanark.com/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.ophanark.com/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.ophanark.com/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.ophanark.com/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.ophanark.com/?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.ophanark.com/?lang=ar"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.ophanark.com/?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.ophanark.com/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.ophanark.com/?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://www.ophanark.com/?lang=hi"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.ophanark.com/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://www.ophanark.com/?lang=pl"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.ophanark.com/"/>
+  </url>
+  <url>
+    <loc>https://www.ophanark.com/scroll.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.ophanark.com/scroll.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.ophanark.com/scroll.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.ophanark.com/scroll.html?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.ophanark.com/scroll.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.ophanark.com/scroll.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.ophanark.com/scroll.html?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.ophanark.com/scroll.html?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.ophanark.com/scroll.html?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.ophanark.com/scroll.html?lang=ar"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.ophanark.com/scroll.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.ophanark.com/scroll.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.ophanark.com/scroll.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://www.ophanark.com/scroll.html?lang=hi"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.ophanark.com/scroll.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://www.ophanark.com/scroll.html?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.ophanark.com/scroll.html"/>
+  </url>
+  <url>
+    <loc>https://www.ophanark.com/numeroloji.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.ophanark.com/numeroloji.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.ophanark.com/numeroloji.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.ophanark.com/numeroloji.html?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.ophanark.com/numeroloji.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.ophanark.com/numeroloji.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.ophanark.com/numeroloji.html?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.ophanark.com/numeroloji.html?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.ophanark.com/numeroloji.html?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.ophanark.com/numeroloji.html?lang=ar"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.ophanark.com/numeroloji.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.ophanark.com/numeroloji.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.ophanark.com/numeroloji.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://www.ophanark.com/numeroloji.html?lang=hi"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.ophanark.com/numeroloji.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://www.ophanark.com/numeroloji.html?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.ophanark.com/numeroloji.html"/>
+  </url>
+  <url>
+    <loc>https://www.ophanark.com/yildizname.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.ophanark.com/yildizname.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.ophanark.com/yildizname.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.ophanark.com/yildizname.html?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.ophanark.com/yildizname.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.ophanark.com/yildizname.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.ophanark.com/yildizname.html?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.ophanark.com/yildizname.html?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.ophanark.com/yildizname.html?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.ophanark.com/yildizname.html?lang=ar"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.ophanark.com/yildizname.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.ophanark.com/yildizname.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.ophanark.com/yildizname.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://www.ophanark.com/yildizname.html?lang=hi"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.ophanark.com/yildizname.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://www.ophanark.com/yildizname.html?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.ophanark.com/yildizname.html"/>
+  </url>
+  <url>
+    <loc>https://www.ophanark.com/tarot.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.ophanark.com/tarot.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.ophanark.com/tarot.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.ophanark.com/tarot.html?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.ophanark.com/tarot.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.ophanark.com/tarot.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.ophanark.com/tarot.html?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.ophanark.com/tarot.html?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.ophanark.com/tarot.html?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.ophanark.com/tarot.html?lang=ar"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.ophanark.com/tarot.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.ophanark.com/tarot.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.ophanark.com/tarot.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://www.ophanark.com/tarot.html?lang=hi"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.ophanark.com/tarot.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://www.ophanark.com/tarot.html?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.ophanark.com/tarot.html"/>
+  </url>
+  <url>
+    <loc>https://www.ophanark.com/natal.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.ophanark.com/natal.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.ophanark.com/natal.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.ophanark.com/natal.html?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.ophanark.com/natal.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.ophanark.com/natal.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.ophanark.com/natal.html?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.ophanark.com/natal.html?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.ophanark.com/natal.html?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.ophanark.com/natal.html?lang=ar"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.ophanark.com/natal.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.ophanark.com/natal.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.ophanark.com/natal.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://www.ophanark.com/natal.html?lang=hi"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.ophanark.com/natal.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://www.ophanark.com/natal.html?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.ophanark.com/natal.html"/>
+  </url>
+  <url>
+    <loc>https://www.ophanark.com/zodiac.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.ophanark.com/zodiac.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.ophanark.com/zodiac.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.ophanark.com/zodiac.html?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.ophanark.com/zodiac.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.ophanark.com/zodiac.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.ophanark.com/zodiac.html?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.ophanark.com/zodiac.html?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.ophanark.com/zodiac.html?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.ophanark.com/zodiac.html?lang=ar"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.ophanark.com/zodiac.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.ophanark.com/zodiac.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.ophanark.com/zodiac.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://www.ophanark.com/zodiac.html?lang=hi"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.ophanark.com/zodiac.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://www.ophanark.com/zodiac.html?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.ophanark.com/zodiac.html"/>
+  </url>
+  <url>
+    <loc>https://www.ophanark.com/kahve.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.ophanark.com/kahve.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.ophanark.com/kahve.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.ophanark.com/kahve.html?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.ophanark.com/kahve.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.ophanark.com/kahve.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.ophanark.com/kahve.html?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.ophanark.com/kahve.html?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.ophanark.com/kahve.html?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.ophanark.com/kahve.html?lang=ar"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.ophanark.com/kahve.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.ophanark.com/kahve.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.ophanark.com/kahve.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://www.ophanark.com/kahve.html?lang=hi"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.ophanark.com/kahve.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://www.ophanark.com/kahve.html?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.ophanark.com/kahve.html"/>
+  </url>
+  <url>
+    <loc>https://www.ophanark.com/el.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.ophanark.com/el.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.ophanark.com/el.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.ophanark.com/el.html?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.ophanark.com/el.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.ophanark.com/el.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.ophanark.com/el.html?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.ophanark.com/el.html?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.ophanark.com/el.html?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.ophanark.com/el.html?lang=ar"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.ophanark.com/el.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.ophanark.com/el.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.ophanark.com/el.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://www.ophanark.com/el.html?lang=hi"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.ophanark.com/el.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://www.ophanark.com/el.html?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.ophanark.com/el.html"/>
+  </url>
+  <url>
+    <loc>https://www.ophanark.com/katina.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.ophanark.com/katina.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.ophanark.com/katina.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.ophanark.com/katina.html?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.ophanark.com/katina.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.ophanark.com/katina.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.ophanark.com/katina.html?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.ophanark.com/katina.html?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.ophanark.com/katina.html?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.ophanark.com/katina.html?lang=ar"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.ophanark.com/katina.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.ophanark.com/katina.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.ophanark.com/katina.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://www.ophanark.com/katina.html?lang=hi"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.ophanark.com/katina.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://www.ophanark.com/katina.html?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.ophanark.com/katina.html"/>
+  </url>
+  <url>
+    <loc>https://www.ophanark.com/ruya.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.ophanark.com/ruya.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.ophanark.com/ruya.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.ophanark.com/ruya.html?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.ophanark.com/ruya.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.ophanark.com/ruya.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.ophanark.com/ruya.html?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.ophanark.com/ruya.html?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.ophanark.com/ruya.html?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.ophanark.com/ruya.html?lang=ar"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.ophanark.com/ruya.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.ophanark.com/ruya.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.ophanark.com/ruya.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://www.ophanark.com/ruya.html?lang=hi"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.ophanark.com/ruya.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://www.ophanark.com/ruya.html?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.ophanark.com/ruya.html"/>
   </url>
 </urlset>
