@@ -75,6 +75,23 @@
   .card:active .frame{transform:translateY(-3px)}
   .card .cap{font-family:var(--disp);font-size:clamp(15px,17cqi,32px);letter-spacing:.03em;line-height:1.1;
     text-transform:uppercase;color:var(--ink);text-align:center}
+  /* 5'li quincunx (elmas + merkez) */
+  .cards.quin{grid-template-columns:repeat(3,1fr);grid-template-rows:auto auto auto;
+    gap:clamp(6px,2vw,12px);width:min(100%,356px);align-items:center;justify-items:stretch}
+  .cards.quin .card{text-decoration:none;display:block}
+  .cards.quin .pos-n{grid-column:2;grid-row:1}
+  .cards.quin .pos-w{grid-column:1;grid-row:2}
+  .cards.quin .pos-c{grid-column:2;grid-row:2}
+  .cards.quin .pos-e{grid-column:3;grid-row:2}
+  .cards.quin .pos-s{grid-column:2;grid-row:3}
+  .cards.quin .cap{font-size:clamp(9px,13cqi,18px)}
+  .cards.quin .pos-c .frame{border:1px solid #c9a24a;
+    box-shadow:inset 0 0 0 1px rgba(201,162,74,.55),0 8px 22px rgba(150,110,30,.25)}
+  html[data-theme="dark"] .cards.quin .pos-c .frame{border-color:#c9a24a}
+  /* Profil butonu — kırmızı */
+  .navprofile{color:#c0392b}
+  .navprofile:hover{color:#e0503f}
+  html[data-theme="dark"] .navprofile{color:#ff6f61}
   .herotag{font-family:var(--serif);font-style:italic;font-size:clamp(15px,4.4vw,21px);color:#5a4a44;
     text-align:center;margin-top:26px;letter-spacing:.02em}
 
@@ -224,12 +241,12 @@
   <!-- 1 · HERO -->
   <section class="hero" id="s-fal">
     <h1 class="load" style="--d:.05s">Types of<span class="fancy">Fortune-Telling</span></h1>
-    <div class="cards">
-      <div class="card load" style="--d:.34s"><div class="frame"><span class="cap">Turkish Coffee Reading</span></div></div>
-      <div class="card load" style="--d:.46s"><div class="frame"><span class="cap">Palm Reading</span></div></div>
-      <div class="card load" style="--d:.58s"><div class="frame"><span class="cap">Katina Reading</span></div></div>
-      <div class="card load" style="--d:.70s"><div class="frame"><span class="cap">Tarot Reading</span></div></div>
-      <div class="card load" style="--d:.82s"><div class="frame"><span class="cap">Melek Kartları</span></div></div>
+    <div class="cards quin">
+      <a href="#" data-go="s-coffee" class="card pos-n load" style="--d:.34s"><div class="frame"><span class="cap">Turkish Coffee Reading</span></div></a>
+      <a href="#" data-go="s-tarot" class="card pos-w load" style="--d:.46s"><div class="frame"><span class="cap">Tarot Reading</span></div></a>
+      <a href="#" data-go="s-melek" class="card pos-c load" style="--d:.58s"><div class="frame"><span class="cap">Melek Kartları</span></div></a>
+      <a href="#" data-go="s-katina" class="card pos-e load" style="--d:.70s"><div class="frame"><span class="cap">Katina Reading</span></div></a>
+      <a href="#" data-go="s-palm" class="card pos-s load" style="--d:.82s"><div class="frame"><span class="cap">Palm Reading</span></div></a>
     </div>
     <p class="herotag load" style="--d:.72s">The Divine Galgalim are Turning For You</p>
   </section>
