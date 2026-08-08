@@ -119,6 +119,8 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
 "sub_starname":{en:"ebced calculation",tr:"ebced hesabı",de:"Ebced-Berechnung",fr:"calcul ebced",es:"cálculo ebced",it:"calcolo ebced",pt:"cálculo ebced",ru:"расчёт эбджед",ar:"حساب الأبجد",zh:"艾卜杰德计算",ja:"アブジャド計算",ko:"에브젣 계산",hi:"अब्जद गणना",nl:"ebced-berekening",pl:"obliczenie ebced"}
 };
   for(var _k7 in _ADD7){var _e7=_ADD7[_k7];EN[_k7]=_e7.en;for(var _lg7 in _e7){if(_lg7==='en')continue;(L[_lg7]=L[_lg7]||{})[_k7]=_e7[_lg7];}}
+  var _ADD8={"nav_numeroloji":{en:"Numerology",tr:"Numeroloji",de:"Numerologie",fr:"Numérologie",es:"Numerología",it:"Numerologia",pt:"Numerologia",ru:"Нумерология",ar:"علم الأعداد",zh:"数字命理",ja:"数秘術",ko:"수비학",hi:"अंकशास्त्र",nl:"Numerologie",pl:"Numerologia"},"nav_yildiz":{en:"Star Fortune (Abjad)",tr:"Yıldız Falı (Ebced Hesabı)",de:"Sternenorakel (Abdżad)",fr:"Oracle des Étoiles (Abjad)",es:"Oráculo Estelar (Abyad)",it:"Oracolo Stellare (Abjad)",pt:"Oráculo das Estrelas (Abjad)",ru:"Звёздный оракул (абджад)",ar:"عرافة النجوم (حساب الجُمّل)",zh:"星象占卜（艾卜贾德）",ja:"星の占い（アブジャド）",ko:"별점 (아브자드)",hi:"तारा ज्योतिष (अबजद)",nl:"Sterrenorakel (Abjad)",pl:"Wyrocznia Gwiazd (abdżad)"}};
+  for(var _k8 in _ADD8){var _e8=_ADD8[_k8];EN[_k8]=_e8.en;for(var _lg8 in _e8){if(_lg8==='en')continue;(L[_lg8]=L[_lg8]||{})[_k8]=_e8[_lg8];}}
   var REV = {};
   for (var _id in EN) { if (EN.hasOwnProperty(_id)) REV[EN[_id].trim()] = _id; }
 
