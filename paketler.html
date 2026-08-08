@@ -78,7 +78,9 @@ body{background:var(--bg)}
     plus:   'https://ozarkcollective.lemonsqueezy.com/checkout/buy/8de6fa49-4d57-4c7c-98d0-50cc616584cd', // Yakut · yurtdışı $4.99
     plusTR: 'https://ozarkcollective.lemonsqueezy.com/checkout/buy/ad25f2d0-5687-4219-9f0d-98f8c9a7208d',                                                                                            // Yakut · Türkiye $0.90 (EKLENECEK)
     pro:    'https://ozarkcollective.lemonsqueezy.com/checkout/buy/87e8258d-3600-4e01-8b07-ba8abe3306ca', // Zümrüt · yurtdışı $14.99
-    proTR:  'https://ozarkcollective.lemonsqueezy.com/checkout/buy/ec7f541d-c180-4198-ae7e-a7d950c1d667'  // Zümrüt · Türkiye $1.99
+    proTR:  'https://ozarkcollective.lemonsqueezy.com/checkout/buy/ec7f541d-c180-4198-ae7e-a7d950c1d667', // Zümrüt · Türkiye $1.99
+    max:    '', // Elmas · yurtdışı $24.99 (Lemon'da oluşturulunca eklenecek)
+    maxTR:  ''  // Elmas · Türkiye $4.99 (Lemon'da oluşturulunca eklenecek)
   };
 
   var lang = (window.OphApp && OphApp.getLang) ? (OphApp.getLang()==='en'?'en':'tr') : 'tr';
@@ -100,7 +102,12 @@ body{background:var(--bg)}
       ad:{tr:'Zümrüt · Pro',en:'Emerald · Pro'},
       priceTR:'$1.99', priceINTL:'$14.99', linkTR:LEMON.proTR, linkINTL:LEMON.pro,
       feat:{ tr:['Kahve ve el falı: günde 3','Tüm kart çekimleri: sınırsız','Natal harita: sınırsız','Burçlar ve melek: sınırsız','Numeroloji · Yıldızname: günde 1'],
-             en:['Coffee & palm: 3/day','All card readings: unlimited','Natal chart: unlimited','Horoscopes & angel: unlimited','Numerology · Star name: 1/day'] } }
+             en:['Coffee & palm: 3/day','All card readings: unlimited','Natal chart: unlimited','Horoscopes & angel: unlimited','Numerology · Star name: 1/day'] } },
+    { code:'promax', tas:'💠', gem:'💠', renk:'#5b8fb0',
+      ad:{tr:'Elmas · Pro Max',en:'Diamond · Pro Max'},
+      priceTR:'$4.99', priceINTL:'$24.99', linkTR:LEMON.maxTR, linkINTL:LEMON.max,
+      feat:{ tr:['Kahve · El · Tarot · Katina falı: sınırsız','Natal harita: günde 3','Burçlar ve melek: sınırsız','Numeroloji · Yıldızname: günde 3'],
+             en:['Coffee · Palm · Tarot · Katina: unlimited','Natal chart: 3/day','Horoscopes & angel: unlimited','Numerology · Star name: 3/day'] } }
   ];
 
   var STR = {
