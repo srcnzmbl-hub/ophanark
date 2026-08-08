@@ -357,7 +357,10 @@ button.tur-chip:hover{border-color:var(--ink)}
              en:['Coffee & palm: 3/day','All card readings: unlimited','Natal: unlimited','Horoscopes & angel: unlimited','Numerology · Star name: 1/day'] } },
     promax:{ ad:'Elmas · Pro Max', prTR:(TR?'Özel · VIP (satışta değil)':'VIP only (not for sale)'), prINTL:(TR?'Özel · VIP (satışta değil)':'VIP only (not for sale)'),
       list:{ tr:['Kahve · El · Tarot · Katina falı: sınırsız','Natal harita: günde 3','Burçlar ve melek: sınırsız','Numeroloji · Yıldızname: günde 3'],
-             en:['Coffee · Palm · Tarot · Katina: unlimited','Natal: 3/day','Horoscopes & angel: unlimited','Numerology · Star name: 3/day'] } }
+             en:['Coffee · Palm · Tarot · Katina: unlimited','Natal: 3/day','Horoscopes & angel: unlimited','Numerology · Star name: 3/day'] } },
+    goksel:{ ad:'Göksel', prTR:(TR?'Test dönemi hediyesi · 1 yıl':'Beta gift · 1 year'), prINTL:(TR?'Test dönemi hediyesi · 1 yıl':'Beta gift · 1 year'),
+      list:{ tr:['Tüm fallar (kahve, el, tarot, katina, natal): sınırsız','Burçlar ve melek kartları: sınırsız','Numeroloji · Yıldızname: günde 3'],
+             en:['All readings (coffee, palm, tarot, katina, natal): unlimited','Horoscopes & angel cards: unlimited','Numerology · Star name: 3/day'] } }
   };
   function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   var acikTier=null;
@@ -388,6 +391,13 @@ button.tur-chip:hover{border-color:var(--ink)}
     ['free','plus','pro','promax'].forEach(function(c){ var e=el('chip-'+c); if(e) e.classList.remove('aktif'); });
     var eşle={free:'free',plus:'plus',pro:'pro',promax:'promax'}[s];
     if(eşle){ el('chip-'+eşle).classList.add('aktif'); }
+    // Göksel/Elmas: butonu olmayan (ya da mevcut) seviyenin özelliklerini otomatik göster
+    if((s==='goksel'||s==='promax') && FEAT[s]){
+      var f=FEAT[s], pr=region?f.prTR:f.prINTL;
+      var lis=(f.list[lang]||f.list.tr).map(function(x){return '<li>'+esc(x)+'</li>';}).join('');
+      var k=el('tur-kart'); k.innerHTML='<h4>'+esc(f.ad)+'</h4><div class="pr">'+esc(pr)+'</div><ul>'+lis+'</ul>'; k.hidden=false; acikTier=s;
+      if(s==='promax'){ el('chip-promax').classList.add('acik'); }
+    }
   }
   try{
     if(window.OphApp&&OphApp.paketSeviye) uygula(OphApp.paketSeviye());
