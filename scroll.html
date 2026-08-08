@@ -105,11 +105,14 @@
   #s-katina{height:calc(var(--vh) * 2.4)}
   #s-tarot{height:calc(var(--vh) * 2.4)}
   #s-melek{height:calc(var(--vh) * 2.4)}
-  #s-melek .tarotstage{width:min(64%,250px);margin-top:1.3cm}
-  #s-melek .tt{transform:translateY(calc((var(--k) - 1) * 26px))}
-  #s-melek .tb{transform:translateY(calc((1 - var(--k)) * 26px))}
-  #s-melek .sub{margin-top:1cm}
-  #s-melek .cta{margin-top:0.7cm}
+  #s-melek .tarotstage{width:auto;margin-top:0.6cm}
+  #s-melek .tarotstage img{width:auto;max-width:min(52%,190px);max-height:17vh}
+  #s-melek .tt{transform:translateY(calc((var(--k) - 1) * 22px))}
+  #s-melek .tb{transform:translateY(calc((1 - var(--k)) * 22px))}
+  #s-melek .sub{margin-top:0.5cm}
+  #s-melek .cta{margin-top:0.5cm}
+  #s-tarot .tarotstage{width:auto}
+  #s-tarot .tarotstage img{width:auto;max-height:15vh;max-width:min(80%,320px)}
   #s-burc{height:calc(var(--vh) * 1.6)}
   #s-natal{height:calc(var(--vh) * 2.0)}
   #s-ruya{height:calc(var(--vh) * 1.25)}
@@ -223,10 +226,11 @@
       <a data-go="s-fal" class="act">Fortunes</a>
       <a data-go="s-burc">Zodiac Signs</a>
       <a data-go="s-natal">Natal Chart</a>
+      <a href="numeroloji.html">Numeroloji</a>
+      <a href="yildizname.html">Yıldız Falı (Ebced Hesabı)</a>
       <a data-go="s-ruya">Dream Interpretations</a>
       <a href="profil.html" class="navprofile">Profile</a>
       <a href="hazir.html" class="navready">My Readings</a>
-      <a href="gecmis.html" class="navready navgecmis">My Past Readings</a>
     </nav>
     <div class="quicklinks">
       <a href="#" data-go="s-coffee">Kahve Falı</a>
@@ -234,7 +238,6 @@
       <a href="#" data-go="s-katina">Katina Falı</a>
       <a href="#" data-go="s-tarot">Tarot</a>
       <a href="#" data-go="s-melek">Melek</a>
-      <a href="numeroloji.html">Numeroloji</a>
     </div>
   </header>
 
