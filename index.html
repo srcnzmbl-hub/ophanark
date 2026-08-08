@@ -236,7 +236,7 @@
     rgSay('Creating your account…');
     sb.auth.signUp({email:email,password:p1,options:{emailRedirectTo:location.origin+'/index.html',data:{full_name:name,phone:phone}}}).then(function(res){
       if(res.error){ rgSay(res.error.message||'Sign-up failed.',false); return; }
-      try{ localStorage.setItem('oph_rem_email',email); localStorage.setItem('oph_rem','1'); }catch(_){}
+      try{ localStorage.setItem('oph_rem_email',email); localStorage.setItem('oph_rem','1'); localStorage.setItem('oph_hosgeldin','1'); localStorage.removeItem('oph_hosgeldin_seen'); }catch(_){}
       if(res.data&&res.data.session){ rgSay('Welcome to OPHANARK!',true); setTimeout(function(){ location.href=APP; },700); }
       else{ rgSay("Almost there! We've sent a verification link to "+email+". Please confirm it from your inbox, then sign in.",true); setTimeout(function(){ closeReg(); var ef=document.getElementById('email'); if(ef) ef.value=email; },2800); }
     }).catch(function(){ rgSay('Sign-up failed. Please try again.',false); });

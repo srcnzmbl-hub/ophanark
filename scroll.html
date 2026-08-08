@@ -524,5 +524,49 @@
   document.addEventListener('visibilitychange',function(){ if(!document.hidden) paint(); });
 })();
 </script>
+<script>
+/* HOŞ GELDİN KARTI: yeni kayıt olan üyeye özel 1 aylık Plus bildirimi.
+   İki durumda gösterilir:
+   1) index.html kayıt anında 'oph_hosgeldin' bayrağını set eder (e-posta ile kayıt).
+   2) Google/Apple ile kayıt: abonelik plus+comp ise (yeni üye hediyesi) bir kez gösterilir. */
+(function(){
+  var SB='https://lssyopqxthausyegeire.supabase.co';
+  var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo';
+  function g(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function seen(){ return g('oph_hosgeldin_seen')==='1'; }
+  var shown=false;
+  function show(){
+    if(shown || document.getElementById('oph-welcome')) return; shown=true;
+    var ov=document.createElement('div');
+    ov.id='oph-welcome';
+    ov.setAttribute('style','position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(4,6,14,.74);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .4s ease');
+    ov.innerHTML='<div class="ophw-card" style="max-width:380px;width:100%;background:linear-gradient(180deg,#141a2e,#0b1020);border:1px solid rgba(192,57,43,.4);border-radius:20px;padding:36px 28px 28px;text-align:center;box-shadow:0 26px 74px rgba(0,0,0,.6);transform:translateY(16px) scale(.97);transition:transform .45s cubic-bezier(.2,.8,.2,1)">'
+      +'<img src="tas_yakut.png" alt="Yakut" style="width:66px;height:66px;object-fit:contain;filter:drop-shadow(0 6px 18px rgba(192,57,43,.55));margin:0 auto 16px;display:block">'
+      +'<div style="font-family:\'Italiana\',serif;font-size:24px;letter-spacing:.05em;color:#f4eee1;margin-bottom:8px">Hoş Geldin</div>'
+      +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:18px;line-height:1.5;color:#d9cebc;margin-bottom:26px">Yeni kayıt olan üyelerimize özel <b style="color:#e9a89b">1 aylık Plus üyelik</b> hesabınıza tanımlanmıştır.</div>'
+      +'<button id="oph-welcome-ok" style="display:block;width:100%;background:linear-gradient(90deg,#c0392b,#9f2b20);color:#fff;border:0;border-radius:12px;padding:15px;font-family:\'DM Sans\',sans-serif;font-size:13px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer">Tamam</button>'
+      +'</div>';
+    document.body.appendChild(ov);
+    requestAnimationFrame(function(){ ov.style.opacity='1'; var c=ov.querySelector('.ophw-card'); if(c) c.style.transform='translateY(0) scale(1)'; });
+    function close(){ try{ localStorage.removeItem('oph_hosgeldin'); localStorage.setItem('oph_hosgeldin_seen','1'); }catch(e){} ov.style.opacity='0'; setTimeout(function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); },400); }
+    document.getElementById('oph-welcome-ok').addEventListener('click',close);
+  }
+  function ready(fn){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fn); else fn(); }
+
+  if(seen()) return;
+  // 1) E-posta ile kayıt bayrağı
+  if(g('oph_hosgeldin')==='1'){ ready(show); return; }
+  // 2) OAuth yeni üye: plus+comp aboneliği bir kez göster
+  var sb=null; try{ sb=window.supabase.createClient(SB,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); }catch(e){}
+  if(!sb) return;
+  sb.auth.getUser().then(function(r){
+    var u=r&&r.data&&r.data.user; if(!u||!u.id) return;
+    sb.from('kullanici_abonelik').select('seviye,durum').eq('user_id',u.id).maybeSingle().then(function(res){
+      var d=res&&res.data;
+      if(d && d.seviye==='plus' && d.durum==='comp'){ ready(show); }
+    }).catch(function(){});
+  }).catch(function(){});
+})();
+</script>
 </body>
 </html>
