@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<script>(function(){var ok=false;try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&/^sb-.*-auth-token$/.test(k)){var o=JSON.parse(localStorage.getItem(k)||"null");if(o&&(o.access_token||(o.currentSession&&o.currentSession.access_token))){ok=true;break;}}}}catch(e){ok=true;}if(!ok)location.replace("index.html");})();</script>
+<script>(function(){try{var t=localStorage.getItem('oph_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OPHANARK · Melek Kartları</title>
+<meta name="description" content="OPHANARK Melek Kartları — dilek tut, kartını çek, meleğin mesajını al.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F3E8;--ink:#25181C;--line:rgba(37,24,28,.16);--muted:#9c8666;--soft:rgba(37,24,28,.04);
+ --disp:'Italiana',serif;--sans:'DM Sans',sans-serif;--serif:'Cormorant Garamond',serif}
+:root[data-theme="dark"]{--bg:#080C17;--ink:#DAE7E3;--line:rgba(218,231,227,.16);--muted:#637999;--soft:rgba(218,231,227,.05)}
+html[data-theme="dark"],html[data-theme="dark"] body{background:#080C17}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{background:var(--bg)}
+#app{width:100%;max-width:640px;margin:0 auto;min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--ink);font-family:var(--sans);overflow-x:hidden;padding-bottom:48px}
+.backlink{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)}
+.backlink a{font-family:var(--sans);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);opacity:.7;text-decoration:none}
+.backlink a:hover{opacity:1}.brandmini{font-family:var(--disp);font-size:15px;letter-spacing:.28em}
+.wrap{padding:0 20px}
+.page-title{font-family:var(--disp);font-size:clamp(28px,8vw,42px);letter-spacing:.02em;text-align:center;margin:22px 0 4px;font-weight:400}
+.subtitle{text-align:center;font-family:var(--serif);font-size:clamp(15px,4vw,18px);color:var(--muted);margin:0 0 20px}
+.panel{border:1px solid var(--line);border-radius:16px;background:var(--soft);padding:20px 18px;margin:0 0 18px}
+label.lbl{display:block;font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+textarea{width:100%;min-height:74px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font-family:var(--serif);font-size:17px;padding:12px 14px;outline:none}
+textarea:focus{border-color:var(--ink)}
+.spread{display:flex;gap:10px;margin:16px 0 4px}
+.spread button{flex:1;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:12px;padding:13px;font-family:var(--sans);font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.spread button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cta{display:block;width:100%;text-align:center;background:var(--ink);color:var(--bg);border:0;border-radius:12px;padding:15px;font-family:var(--sans);font-size:12px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;text-decoration:none;margin-top:16px}
+.cta:hover{opacity:.92}.cta.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.hint{text-align:center;font-family:var(--serif);font-size:16px;color:var(--muted);margin:6px 0 16px}
+/* shuffle fan */
+.fan{position:relative;height:230px;margin:6px 0 4px;display:flex;justify-content:center;align-items:center}
+.fan .bk{position:absolute;width:104px;aspect-ratio:2/3;border-radius:9px;overflow:hidden;box-shadow:0 8px 22px rgba(40,25,10,.28);cursor:pointer;transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .2s;border:1px solid rgba(0,0,0,.15)}
+.fan .bk img{width:100%;height:100%;object-fit:cover;display:block}
+.fan .bk:hover{box-shadow:0 14px 30px rgba(40,25,10,.4)}
+.fan.deal .bk{transform:translateX(var(--tx)) rotate(var(--rot))}
+.fan .bk.pick{outline:2px solid var(--gold,#c9a24a)}
+/* reveal */
+.reveal{display:flex;flex-direction:column;gap:22px;align-items:center;margin-top:8px}
+.rcard{width:100%;max-width:340px;display:flex;flex-direction:column;align-items:center;opacity:0;transform:translateY(14px);animation:rise .6s forwards}
+.rcard img{width:64%;max-width:230px;border-radius:12px;box-shadow:0 16px 40px rgba(40,25,10,.34);display:block}
+.rcard .rname{font-family:var(--disp);font-size:24px;letter-spacing:.03em;margin:16px 0 2px;text-align:center}
+.rcard .rel{font-family:var(--sans);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px}
+.rcard .rkw{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--muted);margin-bottom:12px;text-align:center}
+.rcard .rmsg{font-family:var(--serif);font-size:18px;line-height:1.5;color:var(--ink);text-align:center;border-top:1px solid var(--line);padding-top:14px}
+@keyframes rise{to{opacity:1;transform:none}}
+.hidden{display:none!important}
+.foot{font-family:var(--sans);font-size:11.5px;line-height:1.6;color:var(--muted);text-align:center;margin:26px auto 0;max-width:52ch}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="backlink"><a href="scroll.html">← <span>Ana Ekran</span></a><span class="brandmini">OPHANARK</span></div>
+  <div class="wrap">
+    <h1 class="page-title">Melek Kartları</h1>
+    <p class="subtitle">Dilek tut, kartını çek, meleğin mesajını al.</p>
+
+    <div id="step1" class="panel">
+      <label class="lbl" for="dilek">Dileğin / Sorun</label>
+      <textarea id="dilek" placeholder="İçinden geçen soruyu ya da dileğini yaz… (istersen boş bırak)"></textarea>
+      <div class="spread">
+        <button data-n="1" class="on">Tek Kart</button>
+        <button data-n="3">Üç Kart</button>
+      </div>
+      <button id="startBtn" class="cta">Kartları Karıştır</button>
+    </div>
+
+    <div id="step2" class="hidden">
+      <p class="hint" id="pickHint">Kalbinden geçeni tutarak bir kart seç.</p>
+      <div class="fan" id="fan"></div>
+    </div>
+
+    <div id="step3" class="hidden">
+      <div class="reveal" id="reveal"></div>
+      <button id="againBtn" class="cta ghost">Yeni Fal</button>
+    </div>
+
+    <p class="foot">Melek kartları ilham ve içe bakış içindir; kesin tıbbi, hukuki ya da finansal tavsiye değildir.</p>
+  </div>
+</div>
+<script src="oph_app.js"></script>
+<script>
+(function(){
+  var CARDS=[
+[1,'ates','Başmelek Mikail','koruma · cesaret','Koruma ve cesaretin başmeleği; Ateş serisinin yöneticisidir. Korkularını kesip atman ve zor bir kararda dimdik durman için yanındadır; sana kalkan ve alevden kılıç olur. Mesajı: “Korkma, ben arkandayım.”'],
+[2,'ates','Cesaret','cesaret · korkuyu aşmak','Melekler cesur olmanı istiyor: içindeki korkuya rağmen o adımı at. Güç zaten sende; bir nefeslik cesaret yeter.'],
+[3,'ates','Koruma','güven · kalkan','Korunuyorsun. Görünür-görünmez tehlikelere karşı melekler etrafında bir kalkan örüyor; güvende olduğunu bil, endişeyi bırak.'],
+[4,'ates','Eyleme Geç','eylem · başlangıç','Beklemenin vakti geçti; harekete geçme zamanı. Küçük de olsa bir adım at, kapı sen yürüdükçe açılır.'],
+[5,'ates','Sınır Koy','sınır · öz-saygı','Kendini korumak bencillik değil. Enerjini tüketen şeye ya da kişiye nazikçe ‘hayır’ demen için melekler yanında.'],
+[6,'ates','Öz-Güven','güven · değer','Kendine güven; değerin başkasının onayına bağlı değil. Bu kart, içindeki gücü hatırlaman için geldi.'],
+[7,'ates','Tutku','tutku · kalp','Kalbini yakan şeyin peşinden git. Tutku, ruhunun sana ‘bu yol senin’ deme biçimidir.'],
+[8,'ates','Liderlik','liderlik · ilham','Öne çıkma, yön verme vakti. Başkalarına ilham olacak ışığın var; sorumluluğu üstlenmekten çekinme.'],
+[9,'ates','Arınma','arınma · hafifleme','Ağırlaştıran eski enerjiyi bırak. Melekler seni temizliyor; kızgınlığı ve yorgunluğu ateşe ver, hafifle.'],
+[10,'ates','İrade Gücü','irade · azim','İçindeki irade sandığından güçlü. Kararında dur, vazgeçme; azminle imkânsızı eğeceksin.'],
+[11,'ates','Yeniden Doğuş','yenilenme · dönüşüm','Bir dönem kapanıyor, yenisi doğuyor. Küllerinden doğan bir ateşsin; geçmişi bırak, yeni ateşi yak.'],
+[12,'su','Başmelek Cebrail','müjde · sezgi','Müjde ve sezginin başmeleği; Su serisinin yöneticisidir. İçindeki sesi duyman ve yeni bir başlangıca güvenmen için yanında; yaratıcılığını açar. Mesajı: “Güzel bir haber yolda.”'],
+[13,'su','Sevgi','sevgi · kalp','Sevgi kapını çalıyor. Melekler kalbini açmanı istiyor; hem vermeye hem almaya izin ver.'],
+[14,'su','Sezgi','iç ses · his','İç sesin haklı. O ilk hissi görmezden gelme; cevap çoktan içine fısıldandı.'],
+[15,'su','Duygularını Onurlandır','duygu · kabul','Hissettiğin şey geçerli. Duygularını bastırma; onları nazikçe kabul et, akıp geçmelerine izin ver.'],
+[16,'su','Öz-Şefkat','şefkat · nezaket','Kendine, sevdiğin birine davranır gibi davran. Kendini yargılamayı bırak, yumuşa.'],
+[17,'su','Affet','affetme · bırakma','Bir yükü bırakma vakti. Affetmek onu değil seni özgürleştirir; kalbindeki taşı indir.'],
+[18,'su','Teslim Ol','akış · güven','Her şeyi kontrol etmek zorunda değilsin. Akışa güven; melekler senin için en hayırlısını dokuyor.'],
+[19,'su','Rüya & İşaretler','rüya · sembol','Etrafındaki işaretlere ve rüyalarına dikkat et. Melekler seninle sembollerle konuşuyor.'],
+[20,'su','İç Ses','sessizlik · rehberlik','Dışarının gürültüsünü kıs, içeriyi dinle. Aradığın rehberlik senin sessizliğinde.'],
+[21,'su','Duygusal Şifa','şifa · onarım','Eski bir yara kapanıyor. Melekler kalbindeki kırığı sarıyor; iyileşmene izin ver, acele etme.'],
+[22,'su','İlişki & Uyum','bağ · huzur','Bir bağ derinleşiyor ya da onarılıyor. Sevgiyle, sabırla yaklaş; aranıza huzur geliyor.'],
+[23,'hava','Başmelek Rafael','şifa · berraklık','Şifanın başmeleği; Hava serisinin yöneticisidir. Beden-zihin-ruh sağlığında ve bir yarayı iyileştirmede yanında; zihnini berraklaştırır. Mesajı: “İyileşeceksin.”'],
+[24,'hava','Şifa','iyileşme · özen','İyileşme başladı. Kendine iyi bak; melekler bedenine ve ruhuna şifa taşıyor, sabırlı ol.'],
+[25,'hava','Berraklık','netlik · sabır','Sis dağılıyor. Kafan karışıksa bekle; cevap yakında netleşecek, zorlama.'],
+[26,'hava','İletişim','ifade · söz','Konuş, ifade et, sustuğun şeyi söyle. Açık ve nazik bir söz düğümü çözecek.'],
+[27,'hava','Hakikat','gerçek · dürüstlük','Gerçeği gör ve söyle. Melekler perdenin ardını göstermene, dürüst olmana destek veriyor.'],
+[28,'hava','İlham','fikir · yaratıcılık','Bir fikir kapını çalıyor. Zihnini aç; ilham bir melek dokunuşudur, onu yakala.'],
+[29,'hava','Zihnini Sakinleştir','sükûnet · nefes','Aşırı düşünmeyi bırak. Bir nefes al; melekler zihnindeki fırtınayı dindiriyor.'],
+[30,'hava','Öğrenme & Bilgi','öğrenme · yol','Öğrenmeye açık ol. Bir bilgi, bir ders, bir kitap tam da şimdi sana yol gösterecek.'],
+[31,'hava','Bakış Açını Değiştir','perspektif · esneklik','Soruna başka bir pencereden bak. ‘Aynı manzara farklı yerden güzel’ diyor melekler.'],
+[32,'hava','Özgürlük','özgürlük · kanat','Seni sıkan kalıbı gevşet. Ruhun özgürlük istiyor; kanatlarını açmana izin ver.'],
+[33,'hava','Endişeyi Sal','teslimiyet · huzur','Endişeni meleklere bırak. Taşıdığın yükün çoğu daha olmadı bile; bugüne dön, nefes al.'],
+[34,'toprak','Başmelek Uriel','bilgelik · istikrar','Bilgelik ve istikrarın başmeleği; Toprak serisinin yöneticisidir. Çözülmeyen bir sorunu aydınlatman ve ayaklarını yere basmanda yanında. Mesajı: “İçindeki bilgelik yolu aydınlatacak.”'],
+[35,'toprak','Bolluk','bolluk · açıklık','Bolluk sana akıyor. Kıtlık korkusunu bırak; açık ellerle ver ve al, kucağın dolsun.'],
+[36,'toprak','Bereket & Şans','bereket · fırsat','Şans kapıları aralanıyor. Emeğin bereketle dönecek; fırsatı gördüğünde ‘evet’ de.'],
+[37,'toprak','Sabır','sabır · zamanlama','Acele etme; her şey doğru zamanında. Tohum toprakta olgunlaşıyor, güven ve bekle.'],
+[38,'toprak','Sağlam Temel','istikrar · inşa','Kalıcı bir şey inşa ediyorsun. Yavaş ama sağlam ilerle; melekler temelini tutuyor.'],
+[39,'toprak','Sağlık & Beden','sağlık · denge','Bedenine kulak ver. Dinlen, beslen, hareket et; melekler sağlığına özen göstermeni istiyor.'],
+[40,'toprak','Şükür','şükür · minnet','Sahip olduklarına şükret. Şükür bereketin anahtarıdır; bugün üç güzelliği say.'],
+[41,'toprak','Şimdiye Dön','topraklanma · an','Zihnin geleceğe kaçıyorsa geri dön. Ayaklarını yere bas, bu ana gel; huzur şimdide.'],
+[42,'toprak','Emek & Sadakat','emek · sebat','Emeğin boşa gitmiyor. Sabırla ve sadakatle çalışmaya devam et; karşılığı katlanarak gelecek.'],
+[43,'toprak','Yeterlilik','değer · güven','Yeterince iyisin, yeterince varsın. Melekler ‘eksik değilsin’ diyor; kendine güven.'],
+[44,'toprak','Nimet','kutsanma · lütuf','Görünmez bir bereketle kutsanıyorsun. Fark et, minnet duy; iyi şeyler yolda ve sen bunu hak ediyorsun.']
+];
+  var EL={ates:{ad:'Ateş · Mikail',renk:'#c0392b'},su:{ad:'Su · Cebrail',renk:'#2f6fed'},hava:{ad:'Hava · Rafael',renk:'#5a8fb0'},toprak:{ad:'Toprak · Uriel',renk:'#1e9e6a'}};
+  var BACK='melek/melek-arka.webp';
+  function img(no){return 'melek/melek-'+(no<10?'0'+no:no)+'.webp';}
+  var spreadN=1;
+  var el1=document.getElementById('step1'),el2=document.getElementById('step2'),el3=document.getElementById('step3');
+  var fan=document.getElementById('fan'),reveal=document.getElementById('reveal'),hint=document.getElementById('pickHint');
+  // spread toggle
+  Array.prototype.forEach.call(document.querySelectorAll('.spread button'),function(b){
+    b.addEventListener('click',function(){ document.querySelectorAll('.spread button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); spreadN=parseInt(b.getAttribute('data-n'),10); });
+  });
+  function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+  var picks=[], need=1, chosen=[];
+  document.getElementById('startBtn').addEventListener('click',function(){
+    // kota kontrolü: tek kart serbest, üç kart kotaya tabi
+    try{ if(window.OphApp && OphApp.falKontrol && !OphApp.falKontrol('melek', spreadN===1)) return; }catch(e){}
+    need=spreadN; chosen=[];
+    picks=shuffle(CARDS.slice());           // deck order
+    el1.classList.add('hidden'); el3.classList.add('hidden'); el2.classList.remove('hidden');
+    hint.textContent = need===1?'Kalbinden geçeni tutarak bir kart seç.':'Üç kart seç — sırasıyla açılacak.';
+    buildFan();
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+  function buildFan(){
+    fan.innerHTML=''; var N=13; // görünen kart arkası sayısı
+    for(var i=0;i<N;i++){
+      var d=document.createElement('div'); d.className='bk';
+      var im=document.createElement('img'); im.src=BACK; im.alt='Kart'; d.appendChild(im);
+      var spread=(i-(N-1)/2);
+      d.style.setProperty('--tx',(spread*30)+'px'); d.style.setProperty('--rot',(spread*4)+'deg');
+      d.setAttribute('data-idx', i);
+      d.addEventListener('click', onPick);
+      fan.appendChild(d);
+    }
+    requestAnimationFrame(function(){ fan.classList.add('deal'); });
+  }
+  function onPick(e){
+    var d=e.currentTarget; if(d.classList.contains('pick')) return;
+    d.classList.add('pick');
+    var card=picks[chosen.length % picks.length];
+    // benzersiz kart seç
+    var used={}; chosen.forEach(function(c){used[c.no]=1;});
+    var pick=null; for(var k=0;k<picks.length;k++){ if(!used[picks[k].no]){ pick=picks[k]; break; } }
+    chosen.push(pick);
+    d.style.pointerEvents='none'; d.style.opacity='.5';
+    if(chosen.length>=need){ setTimeout(showReveal, 420); }
+  }
+  function showReveal(){
+    el2.classList.add('hidden'); el3.classList.remove('hidden'); reveal.innerHTML='';
+    chosen.forEach(function(c,idx){
+      var meta=EL[c[1]]||{ad:c[1],renk:'#9a6c2e'};
+      var w=document.createElement('div'); w.className='rcard'; w.style.animationDelay=(idx*0.5)+'s';
+      w.innerHTML='<img src="'+img(c[0])+'" alt="'+c[2]+'">'+
+        '<div class="rname">'+c[2]+'</div>'+
+        '<div class="rel" style="color:'+meta.renk+'">'+meta.ad+'</div>'+
+        '<div class="rkw">'+c[3]+'</div>'+
+        '<div class="rmsg">'+c[4]+'</div>';
+      reveal.appendChild(w);
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.getElementById('againBtn').addEventListener('click',function(){
+    el3.classList.add('hidden'); el1.classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'});
+  });
+})();
+</script>
+</body>
+</html>
