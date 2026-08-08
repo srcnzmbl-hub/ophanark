@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<script>(function(){var ok=false;try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&/^sb-.*-auth-token$/.test(k)){var o=JSON.parse(localStorage.getItem(k)||"null");if(o&&(o.access_token||(o.currentSession&&o.currentSession.access_token))){ok=true;break;}}}}catch(e){ok=true;}if(!ok)location.replace("index.html");})();</script>
+<script>(function(){try{var t=localStorage.getItem('oph_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OPHANARK · Melek Destesi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F3E8;--ink:#25181C;--line:rgba(37,24,28,.16);--muted:#9c8666;--soft:rgba(37,24,28,.04);
+ --disp:'Italiana',serif;--sans:'DM Sans',sans-serif;--serif:'Cormorant Garamond',serif}
+:root[data-theme="dark"]{--bg:#080C17;--ink:#DAE7E3;--line:rgba(218,231,227,.16);--muted:#637999;--soft:rgba(218,231,227,.05)}
+html[data-theme="dark"],html[data-theme="dark"] body{background:#080C17}
+*{box-sizing:border-box}html,body{margin:0;padding:0}body{background:var(--bg)}
+#app{width:100%;max-width:760px;margin:0 auto;min-height:100vh;background:var(--bg);color:var(--ink);font-family:var(--sans);padding-bottom:48px}
+.backlink{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)}
+.backlink a{font-family:var(--sans);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);opacity:.7;text-decoration:none}
+.brandmini{font-family:var(--disp);font-size:15px;letter-spacing:.28em}
+.wrap{padding:0 18px}
+.page-title{font-family:var(--disp);font-size:clamp(26px,7vw,40px);text-align:center;margin:20px 0 4px;font-weight:400}
+.subtitle{text-align:center;font-family:var(--serif);font-size:clamp(15px,4vw,18px);color:var(--muted);margin:0 0 18px}
+.elhead{font-family:var(--disp);font-size:20px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);margin:26px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.elhead small{font-family:var(--serif);font-size:15px;letter-spacing:0;text-transform:none;color:var(--muted);margin-left:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:14px}
+.dcard{position:relative;margin:0;container-type:inline-size}
+.dcard>img{width:100%;display:block;border-radius:10px;box-shadow:0 8px 20px rgba(40,25,10,.22)}
+.ddesc{position:absolute;left:20%;right:20%;bottom:5.4%;text-align:center;
+  font-family:var(--serif);color:#3a2a16;line-height:1.16;font-weight:500;
+  font-size:clamp(9px,3.5cqw,14px);text-wrap:balance}
+.foot{font-family:var(--sans);font-size:11.5px;line-height:1.6;color:var(--muted);text-align:center;margin:26px auto 0;max-width:52ch}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="backlink"><a href="melek.html">&larr; <span id="back">Melek</span></a><span class="brandmini">OPHANARK</span></div>
+  <div class="wrap">
+    <h1 class="page-title" id="ptitle">Melek Destesi</h1>
+    <p class="subtitle" id="psub">44 kart · dört başmelek · her kartın rehberliği</p>
+    <div id="deck"></div>
+    <p class="foot" id="foot">Melek kartları ilham ve içe bakış içindir.</p>
+  </div>
+</div>
+<script src="oph_app.js"></script>
+<script>
+(function(){
+  var DESC={"1": {"tr": "Koruma ve cesaretin başmeleği — korkma.", "en": "Archangel of protection and courage — do not fear."}, "2": {"tr": "Korkuna rağmen o adımı at.", "en": "Take the step despite the fear."}, "3": {"tr": "Korunuyorsun; endişeyi bırak.", "en": "You are protected; release worry."}, "4": {"tr": "Bekleme bitti; harekete geç.", "en": "The waiting is over; move now."}, "5": {"tr": "Nazikçe 'hayır' demeyi öğren.", "en": "Learn to say a gentle 'no'."}, "6": {"tr": "Değerin onaya bağlı değil; kendine güven.", "en": "Your worth needs no approval; trust yourself."}, "7": {"tr": "Kalbini yakanın peşinden git.", "en": "Follow what sets your heart alight."}, "8": {"tr": "Öne çık, yön ver, ilham ol.", "en": "Step up, guide, inspire."}, "9": {"tr": "Eski, ağır enerjiyi bırak; hafifle.", "en": "Release the old, heavy energy; feel lighter."}, "10": {"tr": "Kararında dur, vazgeçme.", "en": "Hold your ground; do not give up."}, "11": {"tr": "Bir dönem kapanır, yenisi doğar.", "en": "One chapter closes, a new one is born."}, "12": {"tr": "Müjde ve sezginin başmeleği.", "en": "Archangel of good news and intuition."}, "13": {"tr": "Kalbini aç; vermeye ve almaya izin ver.", "en": "Open your heart; allow giving and receiving."}, "14": {"tr": "İç sesin haklı; onu dinle.", "en": "Your inner voice is right; listen."}, "15": {"tr": "Hislerini bastırma, nazikçe kabul et.", "en": "Don't suppress your feelings; accept them gently."}, "16": {"tr": "Kendine sevdiğin biri gibi davran.", "en": "Treat yourself as someone you love."}, "17": {"tr": "Affet ve yükü indir; bu seni özgürleştirir.", "en": "Forgive and set down the weight; it frees you."}, "18": {"tr": "Kontrolü bırak; akışa güven.", "en": "Let go of control; trust the flow."}, "19": {"tr": "İşaretlere ve rüyalarına dikkat et.", "en": "Watch the signs and your dreams."}, "20": {"tr": "Gürültüyü kıs, içeriyi dinle.", "en": "Lower the noise; listen within."}, "21": {"tr": "Eski bir yara kapanıyor; iyileş.", "en": "An old wound is closing; heal."}, "22": {"tr": "Bir bağ derinleşiyor; sevgiyle yaklaş.", "en": "A bond deepens; approach with love."}, "23": {"tr": "Şifanın başmeleği — iyileşeceksin.", "en": "Archangel of healing — you will heal."}, "24": {"tr": "İyileşme başladı; kendine iyi bak.", "en": "Healing has begun; take good care."}, "25": {"tr": "Sis dağılıyor; cevap netleşecek.", "en": "The fog lifts; the answer will become clear."}, "26": {"tr": "Konuş, ifade et, sustuğunu söyle.", "en": "Speak, express, say what you've held back."}, "27": {"tr": "Gerçeği gör ve dürüst ol.", "en": "See the truth and be honest."}, "28": {"tr": "Bir fikir kapını çalıyor; yakala.", "en": "An idea is knocking; catch it."}, "29": {"tr": "Aşırı düşünmeyi bırak; bir nefes al.", "en": "Stop overthinking; take a breath."}, "30": {"tr": "Öğrenmeye açık ol; yol gösterilecek.", "en": "Stay open to learning; you'll be guided."}, "31": {"tr": "Soruna başka pencereden bak.", "en": "Look at the problem from another window."}, "32": {"tr": "Seni sıkan kalıbı gevşet; kanatlan.", "en": "Loosen what confines you; take wing."}, "33": {"tr": "Endişeni bırak; bugüne dön, nefes al.", "en": "Let go of worry; return to today, breathe."}, "34": {"tr": "Bilgelik ve istikrarın başmeleği.", "en": "Archangel of wisdom and stability."}, "35": {"tr": "Bolluk akıyor; kıtlık korkusunu bırak.", "en": "Abundance flows; release the fear of lack."}, "36": {"tr": "Şans kapıları aralanıyor; 'evet' de.", "en": "Doors of luck are opening; say 'yes'."}, "37": {"tr": "Acele etme; her şey zamanında.", "en": "Don't rush; all in its right time."}, "38": {"tr": "Yavaş ama sağlam inşa et.", "en": "Build slowly but solidly."}, "39": {"tr": "Bedenine kulak ver; dinlen, beslen.", "en": "Listen to your body; rest and nourish."}, "40": {"tr": "Sahip olduklarına şükret.", "en": "Give thanks for what you have."}, "41": {"tr": "Ayaklarını yere bas; huzur şimdide.", "en": "Ground yourself; peace is in the present."}, "42": {"tr": "Emeğin boşa gitmiyor; sebat et.", "en": "Your effort isn't wasted; persevere."}, "43": {"tr": "Yeterince iyisin; kendine güven.", "en": "You are enough; trust yourself."}, "44": {"tr": "Görünmez bir bereketle kutsanıyorsun.", "en": "You are blessed with an unseen grace."}}, META={"1": {"el": "ates", "name": "Başmelek Mikail"}, "2": {"el": "ates", "name": "Cesaret"}, "3": {"el": "ates", "name": "Koruma"}, "4": {"el": "ates", "name": "Eyleme Geç"}, "5": {"el": "ates", "name": "Sınır Koy"}, "6": {"el": "ates", "name": "Öz-Güven"}, "7": {"el": "ates", "name": "Tutku"}, "8": {"el": "ates", "name": "Liderlik"}, "9": {"el": "ates", "name": "Arınma"}, "10": {"el": "ates", "name": "İrade Gücü"}, "11": {"el": "ates", "name": "Yeniden Doğuş"}, "12": {"el": "su", "name": "Başmelek Cebrail"}, "13": {"el": "su", "name": "Sevgi"}, "14": {"el": "su", "name": "Sezgi"}, "15": {"el": "su", "name": "Duygularını Onurlandır"}, "16": {"el": "su", "name": "Öz-Şefkat"}, "17": {"el": "su", "name": "Affet"}, "18": {"el": "su", "name": "Teslim Ol"}, "19": {"el": "su", "name": "Rüya & İşaretler"}, "20": {"el": "su", "name": "İç Ses"}, "21": {"el": "su", "name": "Duygusal Şifa"}, "22": {"el": "su", "name": "İlişki & Uyum"}, "23": {"el": "hava", "name": "Başmelek Rafael"}, "24": {"el": "hava", "name": "Şifa"}, "25": {"el": "hava", "name": "Berraklık"}, "26": {"el": "hava", "name": "İletişim"}, "27": {"el": "hava", "name": "Hakikat"}, "28": {"el": "hava", "name": "İlham"}, "29": {"el": "hava", "name": "Zihnini Sakinleştir"}, "30": {"el": "hava", "name": "Öğrenme & Bilgi"}, "31": {"el": "hava", "name": "Bakış Açını Değiştir"}, "32": {"el": "hava", "name": "Özgürlük"}, "33": {"el": "hava", "name": "Endişeyi Sal"}, "34": {"el": "toprak", "name": "Başmelek Uriel"}, "35": {"el": "toprak", "name": "Bolluk"}, "36": {"el": "toprak", "name": "Bereket & Şans"}, "37": {"el": "toprak", "name": "Sabır"}, "38": {"el": "toprak", "name": "Sağlam Temel"}, "39": {"el": "toprak", "name": "Sağlık & Beden"}, "40": {"el": "toprak", "name": "Şükür"}, "41": {"el": "toprak", "name": "Şimdiye Dön"}, "42": {"el": "toprak", "name": "Emek & Sadakat"}, "43": {"el": "toprak", "name": "Yeterlilik"}, "44": {"el": "toprak", "name": "Nimet"}};
+  var EL={ates:{tr:'Ateş · Başmelek Mikail',en:'Fire · Archangel Michael',renk:'#c0392b'},
+          su:{tr:'Su · Başmelek Cebrail',en:'Water · Archangel Gabriel',renk:'#2f6fed'},
+          hava:{tr:'Hava · Başmelek Rafael',en:'Air · Archangel Raphael',renk:'#5a8fb0'},
+          toprak:{tr:'Toprak · Başmelek Uriel',en:'Earth · Archangel Uriel',renk:'#1e9e6a'}};
+  var ORDER=['ates','su','hava','toprak'];
+  var lang='tr'; try{ lang=(window.OphApp&&OphApp.getLang)?OphApp.getLang():'tr'; }catch(e){}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function desc(no){var d=DESC[no]||{}; return d[lang]||d.en||d.tr||'';}
+  function elLabel(el){var e=EL[el]; return (e[lang]||e.en);}
+  function img(no){return 'melek/melek-'+(no<10?'0'+no:no)+'.webp';}
+  // strings
+  var T={tr:{title:'Melek Destesi',sub:'44 kart · dört başmelek · her kartın rehberliği',foot:'Melek kartları ilham ve içe bakış içindir.'},
+         en:{title:'Angel Deck',sub:'44 cards · four archangels · guidance in every card',foot:'Angel cards are for inspiration and reflection.'}};
+  var t=T[lang]||T.en;
+  document.getElementById('ptitle').textContent=t.title;
+  document.getElementById('psub').textContent=t.sub;
+  document.getElementById('foot').textContent=t.foot;
+
+  var host=document.getElementById('deck'); var html='';
+  ORDER.forEach(function(el){
+    html+='<div class="elhead" style="border-color:'+EL[el].renk+'55">'+esc(elLabel(el))+'</div><div class="grid">';
+    for(var no in META){ no=+no; if(META[no].el!==el) continue;
+      html+='<figure class="dcard"><img src="'+img(no)+'" alt="'+esc(META[no].name)+'"><figcaption class="ddesc">'+esc(desc(no))+'</figcaption></figure>';
+    }
+    html+='</div>';
+  });
+  host.innerHTML=html;
+})();
+</script>
+</body>
+</html>
