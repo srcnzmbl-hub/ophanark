@@ -105,6 +105,7 @@ a.hitem-btn .hmeta::after{content:'\203A';position:absolute;right:-22px;top:50%;
         <span class="tur-chip" id="chip-free">Basic</span>
         <button class="tur-chip tbtn" id="chip-plus" type="button">Plus</button>
         <button class="tur-chip tbtn" id="chip-pro" type="button">Pro</button>
+        <button class="tur-chip tbtn" id="chip-promax" type="button">Pro Max</button>
       </div>
       <div class="tur-kart" id="tur-kart" hidden></div>
       <a class="btn primary" id="mem-go" href="paketler.html" style="margin-top:16px">Paketleri gör</a>
@@ -353,14 +354,17 @@ button.tur-chip:hover{border-color:var(--ink)}
              en:['Coffee & palm: 2/day','All card readings: unlimited','Natal: 1/day','Horoscopes & angel: unlimited','Numerology · Star name: weekly'] } },
     pro:{ ad:'Zümrüt · Pro', prTR:'$1.99/ay (Türkiye)', prINTL:'$14.99/ay',
       list:{ tr:['Kahve ve el falı: günde 3','Tüm kart çekimleri: sınırsız','Natal harita: sınırsız','Burçlar ve melek: sınırsız','Numeroloji · Yıldızname: günde 1'],
-             en:['Coffee & palm: 3/day','All card readings: unlimited','Natal: unlimited','Horoscopes & angel: unlimited','Numerology · Star name: 1/day'] } }
+             en:['Coffee & palm: 3/day','All card readings: unlimited','Natal: unlimited','Horoscopes & angel: unlimited','Numerology · Star name: 1/day'] } },
+    promax:{ ad:'Elmas · Pro Max', prTR:(TR?'Özel · VIP (satışta değil)':'VIP only (not for sale)'), prINTL:(TR?'Özel · VIP (satışta değil)':'VIP only (not for sale)'),
+      list:{ tr:['Kahve · El · Tarot · Katina falı: sınırsız','Natal harita: günde 3','Burçlar ve melek: sınırsız','Numeroloji · Yıldızname: günde 3'],
+             en:['Coffee · Palm · Tarot · Katina: unlimited','Natal: 3/day','Horoscopes & angel: unlimited','Numerology · Star name: 3/day'] } }
   };
   function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   var acikTier=null;
   function kartGoster(tier){
     var k=el('tur-kart'); var f=FEAT[tier];
     if(acikTier===tier){ k.hidden=true; acikTier=null; el('chip-'+tier).classList.remove('acik'); return; }
-    el('chip-plus').classList.remove('acik'); el('chip-pro').classList.remove('acik');
+    ['plus','pro','promax'].forEach(function(c){ el('chip-'+c).classList.remove('acik'); });
     el('chip-'+tier).classList.add('acik');
     var pr=region?f.prTR:f.prINTL;
     var lis=(f.list[lang]||f.list.tr).map(function(x){return '<li>'+esc(x)+'</li>';}).join('');
@@ -369,6 +373,7 @@ button.tur-chip:hover{border-color:var(--ink)}
   }
   el('chip-plus').addEventListener('click',function(){ kartGoster('plus'); });
   el('chip-pro').addEventListener('click',function(){ kartGoster('pro'); });
+  el('chip-promax').addEventListener('click',function(){ kartGoster('promax'); });
 
   function uygula(s){
     // mevcut satır + logo
@@ -380,8 +385,8 @@ button.tur-chip:hover{border-color:var(--ink)}
     if(IMG[t]){ logo.src='tas_'+t+'.png'; logo.hidden=false; }
     else { logo.hidden=true; }
     // chip vurgusu
-    ['free','plus','pro'].forEach(function(c){ var e=el('chip-'+c); if(e) e.classList.remove('aktif'); });
-    var eşle={free:'free',plus:'plus',pro:'pro'}[s];
+    ['free','plus','pro','promax'].forEach(function(c){ var e=el('chip-'+c); if(e) e.classList.remove('aktif'); });
+    var eşle={free:'free',plus:'plus',pro:'pro',promax:'promax'}[s];
     if(eşle){ el('chip-'+eşle).classList.add('aktif'); }
   }
   try{
