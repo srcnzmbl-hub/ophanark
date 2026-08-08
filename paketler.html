@@ -6,19 +6,19 @@
 <script>(function(){try{var t=localStorage.getItem('oph_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>OPHANARK · Paketler</title>
-<meta name="description" content="OPHANARK premium paketleri: Ücretsiz, Plus ve Pro. Daha fazla fal, numeroloji ve yıldızname.">
+<meta name="description" content="OPHANARK üyelik paketleri: Safir, Yakut ve Zümrüt. Daha fazla fal, numeroloji ve yıldızname.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant+Garamond:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F7F3E8;--ink:#25181C;--line:rgba(37,24,28,.16);--muted:#9c8666;--soft:rgba(37,24,28,.04);--gold:#b98a3e;
+:root{--bg:#F7F3E8;--ink:#25181C;--line:rgba(37,24,28,.16);--muted:#9c8666;--soft:rgba(37,24,28,.04);
   --disp:'Italiana',serif;--sans:'DM Sans',sans-serif;--serif:'Cormorant Garamond',serif}
 :root[data-theme="dark"]{--bg:#080C17;--ink:#DAE7E3;--line:rgba(218,231,227,.16);--muted:#637999;--soft:rgba(218,231,227,.05)}
 html[data-theme="dark"],html[data-theme="dark"] body{background:#080C17}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{background:var(--bg)}
-#app{width:100%;max-width:640px;margin:0 auto;min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--ink);overflow-x:hidden;font-family:var(--sans);padding-bottom:40px}
+#app{width:100%;max-width:640px;margin:0 auto;min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--ink);overflow-x:hidden;font-family:var(--sans);padding-bottom:44px}
 .backlink{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)}
 .backlink a{font-family:var(--sans);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);opacity:.7;text-decoration:none}
 .backlink a:hover{opacity:1}
@@ -26,37 +26,38 @@ body{background:var(--bg)}
 .wrap{padding:0 20px}
 .page-title{font-family:var(--disp);font-size:clamp(28px,8vw,42px);letter-spacing:.02em;text-align:center;margin:24px 0 6px;font-weight:400}
 .subtitle{text-align:center;font-family:var(--serif);font-size:clamp(15px,4vw,18px);color:var(--muted);margin:0 0 8px}
-.current{text-align:center;font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 26px}
-.current b{color:var(--gold);font-weight:500}
+.current{text-align:center;font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 22px}
+.current b{color:var(--ink);font-weight:500}
+.vipbar{margin:0 0 22px;padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--soft);text-align:center;font-family:var(--serif);font-size:16px;color:var(--ink)}
 .cards{display:flex;flex-direction:column;gap:16px}
 .pk{border:1px solid var(--line);border-radius:16px;padding:24px 22px;background:var(--soft);position:relative;transition:.2s}
-.pk.hi{border-color:var(--gold);box-shadow:0 10px 40px rgba(185,138,62,.16)}
-.pk.active{border-color:var(--ink)}
-.pk .tag{position:absolute;top:-11px;left:22px;background:var(--gold);color:#fff;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;padding:5px 12px;border-radius:20px}
-.pk .tag.own{background:var(--ink);color:var(--bg)}
-.pk h2{font-family:var(--disp);font-size:26px;font-weight:400;letter-spacing:.04em;margin:0 0 2px}
+.pk.hi{box-shadow:0 10px 40px rgba(0,0,0,.08)}
+.pk .tag{position:absolute;top:-11px;left:22px;color:#fff;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;padding:5px 12px;border-radius:20px}
+.pk .gem{position:absolute;top:20px;right:20px;font-size:20px;line-height:1}
+.pk h2{font-family:var(--disp);font-size:25px;font-weight:400;letter-spacing:.03em;margin:0 0 2px}
 .pk .price{font-family:var(--serif);font-size:30px;color:var(--ink);margin:0 0 2px}
-.pk .price small{font-family:var(--sans);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.pk .price small{font-family:var(--sans);font-size:11px;letter-spacing:.08em;color:var(--muted)}
 .pk .per{font-family:var(--sans);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
 .pk ul{list-style:none;margin:0 0 20px;padding:0}
-.pk li{font-family:var(--serif);font-size:16.5px;line-height:1.35;color:var(--ink);padding:7px 0 7px 24px;position:relative;border-bottom:1px solid var(--line)}
+.pk li{font-family:var(--serif);font-size:16px;line-height:1.35;color:var(--ink);padding:7px 0 7px 24px;position:relative;border-bottom:1px solid var(--line)}
 .pk li:last-child{border-bottom:0}
-.pk li:before{content:"✦";position:absolute;left:0;top:7px;color:var(--gold);font-size:13px}
+.pk li:before{content:"✦";position:absolute;left:0;top:7px;font-size:12px}
 .pk .cta{display:block;width:100%;text-align:center;background:var(--ink);color:var(--bg);border:0;border-radius:10px;padding:15px;font-family:var(--sans);font-size:12px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;text-decoration:none}
-.pk .cta:hover{opacity:.9}
+.pk .cta:hover{opacity:.92}
 .pk .cta.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);cursor:default}
 .pk .cta[disabled]{opacity:.55;cursor:not-allowed}
 .pk .soon{font-family:var(--sans);font-size:11px;letter-spacing:.03em;color:var(--muted);text-align:center;margin-top:9px;line-height:1.5}
-.foot{font-family:var(--sans);font-size:11.5px;line-height:1.6;color:var(--muted);text-align:center;margin:28px 4px 0;max-width:52ch;margin-left:auto;margin-right:auto}
+.foot{font-family:var(--sans);font-size:11.5px;line-height:1.6;color:var(--muted);text-align:center;margin:28px auto 0;max-width:52ch}
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="backlink"><a href="scroll.html">← <span data-t="geri">Fallar</span></a><span class="brandmini">OPHANARK</span></div>
+  <div class="backlink"><a href="scroll.html">← <span>Ana Ekran</span></a><span class="brandmini">OPHANARK</span></div>
   <div class="wrap">
-    <h1 class="page-title" data-t="baslik">Paketler</h1>
-    <p class="subtitle" data-t="alt">Falların, numeroloji ve yıldıznamen için daha fazlası</p>
+    <h1 class="page-title">Paketler</h1>
+    <p class="subtitle" id="alt">Falların, numeroloji ve yıldızname için daha fazlası</p>
     <p class="current" id="cur"></p>
+    <div id="vip"></div>
     <div class="cards" id="cards"></div>
     <p class="foot" id="foot"></p>
   </div>
@@ -71,108 +72,100 @@ body{background:var(--bg)}
   var sb=null; try{ sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); }catch(e){}
 
   /* ====== LEMON SQUEEZY ÖDEME LİNKLERİ ======
-     Ürünler yayına alınınca (mağaza onayı + publish) her ürünün "Share"
-     linkini buraya yapıştır. Boşken buton "yakında" gösterir. Format:
-     https://ozarkcollective.lemonsqueezy.com/buy/XXXXXXXX-....           */
+     Ürünler yayınlandıkça "Share" linkini buraya yapıştır.
+     plusTR (Yakut Türkiye $0.90) henüz oluşturulmadı -> boş (buton "yakında"). */
   var LEMON = {
-    plus:  'https://ozarkcollective.lemonsqueezy.com/checkout/buy/8de6fa49-4d57-4c7c-98d0-50cc616584cd', // OPHANARK Plus $4.99/ay
-    pro:   'https://ozarkcollective.lemonsqueezy.com/checkout/buy/87e8258d-3600-4e01-8b07-ba8abe3306ca', // OPHANARK Pro $9.99/ay
-    proTR: 'https://ozarkcollective.lemonsqueezy.com/checkout/buy/ec7f541d-c180-4198-ae7e-a7d950c1d667'  // OPHANARK Pro (Türkiye) $0.99/ay
+    plus:   'https://ozarkcollective.lemonsqueezy.com/checkout/buy/8de6fa49-4d57-4c7c-98d0-50cc616584cd', // Yakut · yurtdışı $4.99
+    plusTR: '',                                                                                            // Yakut · Türkiye $0.90 (EKLENECEK)
+    pro:    'https://ozarkcollective.lemonsqueezy.com/checkout/buy/87e8258d-3600-4e01-8b07-ba8abe3306ca', // Zümrüt · yurtdışı $14.99
+    proTR:  'https://ozarkcollective.lemonsqueezy.com/checkout/buy/ec7f541d-c180-4198-ae7e-a7d950c1d667'  // Zümrüt · Türkiye $1.99
   };
 
-  var lang = (window.OphApp && OphApp.getLang && OphApp.getLang()==='tr') ? 'tr' : (window.OphApp && OphApp.getLang && OphApp.getLang()==='en' ? 'en' : (OphApp&&OphApp.getLang?( ['tr','en'].indexOf(OphApp.getLang())>=0?OphApp.getLang():'en'):'tr'));
-  var TR = lang==='tr';
+  var lang = (window.OphApp && OphApp.getLang) ? (OphApp.getLang()==='en'?'en':'tr') : 'tr';
+  var TR = (lang==='tr');
+  var region = (window.OphApp && OphApp.bolgeTR && OphApp.bolgeTR());
+
+  var TIERS = [
+    { code:'free', tas:'💎', gem:'🔷', renk:'#2f6fed',
+      ad:{tr:'Safir · Basic',en:'Sapphire · Basic'},
+      priceTR:'₺0', priceINTL:'$0',
+      feat:{ tr:['Kahve · El · Tarot · Katina: günde 1 (tekli kart çekimi ∞)','Melek kartları ve burçlar: sınırsız','Natal harita: haftada 1','Numeroloji · Yıldızname: ilk kez ücretsiz, sonra ayda 1'],
+             en:['Coffee · Palm · Tarot · Katina: 1/day (single-card draw ∞)','Angel cards & horoscopes: unlimited','Natal chart: once a week','Numerology · Star name: first free, then monthly'] } },
+    { code:'plus', tas:'♦', gem:'🔴', renk:'#c0392b',
+      ad:{tr:'Yakut · Plus',en:'Ruby · Plus'},
+      priceTR:'$0.90', priceINTL:'$4.99', linkTR:LEMON.plusTR, linkINTL:LEMON.plus,
+      feat:{ tr:['Kahve ve el falı: günde 2','Tüm kart çekimleri: sınırsız','Natal harita: günde 1','Burçlar ve melek: sınırsız','Numeroloji · Yıldızname: haftada 1'],
+             en:['Coffee & palm: 2/day','All card readings: unlimited','Natal chart: 1/day','Horoscopes & angel: unlimited','Numerology · Star name: weekly'] } },
+    { code:'pro', tas:'♢', gem:'🟢', renk:'#1e9e6a',
+      ad:{tr:'Zümrüt · Pro',en:'Emerald · Pro'},
+      priceTR:'$1.99', priceINTL:'$14.99', linkTR:LEMON.proTR, linkINTL:LEMON.pro,
+      feat:{ tr:['Kahve ve el falı: günde 3','Tüm kart çekimleri: sınırsız','Natal harita: sınırsız','Burçlar ve melek: sınırsız','Numeroloji · Yıldızname: günde 1'],
+             en:['Coffee & palm: 3/day','All card readings: unlimited','Natal chart: unlimited','Horoscopes & angel: unlimited','Numerology · Star name: 1/day'] } }
+  ];
 
   var STR = {
-    geri: TR?'Fallar':'Fortunes',
-    baslik: TR?'Paketler':'Plans',
     alt: TR?'Falların, numeroloji ve yıldızname için daha fazlası':'More readings, numerology & star-name insights',
-    cur: function(s){ var ad=(window.OphApp&&OphApp.seviyeAd)?OphApp.seviyeAd(s,lang):(s||'Ücretsiz'); return (TR?'Mevcut paketin: ':'Your plan: ')+'<b>'+ad+'</b>'; },
     own: TR?'Mevcut':'Current',
     pop: TR?'Popüler':'Popular',
-    trtag: TR?'Türkiye’ye özel':'Turkey price',
+    trtag: TR?'Türkiye fiyatı':'Turkey price',
     ay: TR?'/ay':'/mo',
-    ucretsiz: TR?'Zaten senin':'Included',
+    dahil: TR?'Zaten senin':'Included',
     al: TR?'Satın al':'Get it',
-    soon: TR?'Ödeme çok yakında aktif olacak (mağaza onayı bekleniyor).':'Checkout goes live soon (store verification pending).',
-    foot: TR
-      ? 'Ödeme Lemon Squeezy üzerinden güvenle alınır. İstediğin zaman iptal edebilirsin. Fiyatlara vergiler dahil olabilir.'
-      : 'Payments are handled securely by Lemon Squeezy. Cancel anytime. Taxes may apply.'
-  };
-
-  var FEAT = {
-    free: TR
-      ? ['Kahve · El · Natal · Tarot · Katina: günde 1','Burçlar ve Melek kartları: sınırsız','Numeroloji · Yıldızname: 3 günde 1']
-      : ['Coffee · Palm · Natal · Tarot · Katina: 1/day','Horoscopes & Angel cards: unlimited','Numerology · Star name: once / 3 days'],
-    plus: TR
-      ? ['Kahve · El · Natal: günde 3','Tarot ve Katina: sınırsız','Burçlar ve Melek: sınırsız','Numeroloji · Yıldızname: 2 günde 1']
-      : ['Coffee · Palm · Natal: 3/day','Tarot & Katina: unlimited','Horoscopes & Angel: unlimited','Numerology · Star name: once / 2 days'],
-    pro: TR
-      ? ['Tüm fallar: sınırsız','Numeroloji · Yıldızname: günde 1','Öncelikli işlem']
-      : ['All readings: unlimited','Numerology · Star name: 1/day','Priority processing'],
-    proTR: TR
-      ? ['Tüm fallar: sınırsız','Numeroloji · Yıldızname: günde 1','Türkiye’ye özel fiyat']
-      : ['All readings: unlimited','Numerology · Star name: 1/day','Special Turkey price']
+    soon: TR?'Ödeme çok yakında aktif olacak.':'Checkout goes live soon.',
+    foot: TR?'Ödeme Lemon Squeezy üzerinden güvenle alınır. İstediğin zaman iptal edebilirsin. Fiyatlara vergiler dahil olabilir.'
+            :'Payments are handled securely by Lemon Squeezy. Cancel anytime. Taxes may apply.',
+    vip: function(ad){ return (TR?'Şu an paketin: ':'Your plan: ')+ad+(TR?' — her şey açık, ekstra almana gerek yok. ✦':' — everything is unlocked. ✦'); }
   };
 
   var userEmail='';
   var seviye = (window.OphApp && OphApp.paketSeviye) ? OphApp.paketSeviye() : 'free';
 
-  // statik metinleri yerleştir
-  document.querySelectorAll('[data-t]').forEach(function(el){ var k=el.getAttribute('data-t'); if(STR[k]!=null && typeof STR[k]==='string') el.textContent=STR[k]; });
+  document.getElementById('alt').textContent = STR.alt;
   document.getElementById('foot').textContent = STR.foot;
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function seviyeAd(s){ return (window.OphApp&&OphApp.seviyeAd)?OphApp.seviyeAd(s,lang):s; }
+  function checkoutUrl(base){ if(!base) return ''; return base+(base.indexOf('?')>=0?'&':'?')+'checkout[email]='+encodeURIComponent(userEmail||''); }
 
-  function checkoutUrl(base){
-    if(!base) return '';
-    var u=base + (base.indexOf('?')>=0?'&':'?') + 'checkout[email]='+encodeURIComponent(userEmail||'');
-    return u;
-  }
-
-  function cardHTML(id, name, price, per, feats, ctaKey){
-    var own = (seviye===id) || (id==='proTR' && seviye==='pro');
-    var hi = (id==='pro' || id==='proTR');
-    var cls = 'pk'+(hi?' hi':'')+(own?' active':'');
-    var tag = own ? '<span class="tag own">'+STR.own+'</span>' : (id==='plus' ? '<span class="tag">'+STR.pop+'</span>' : (id==='proTR' ? '<span class="tag">'+STR.trtag+'</span>' : ''));
-    var lis = feats.map(function(f){ return '<li>'+esc(f)+'</li>'; }).join('');
+  function cardHTML(t){
+    var own = (seviye===t.code);
+    var price = region ? t.priceTR : t.priceINTL;
+    var link  = t.code==='free' ? '' : (region ? t.linkTR : t.linkINTL);
+    var tag = own ? '<span class="tag" style="background:'+t.renk+'">'+STR.own+'</span>'
+                  : (t.code==='pro' ? '<span class="tag" style="background:'+t.renk+'">'+STR.pop+'</span>'
+                  : (t.code==='plus' ? '<span class="tag" style="background:'+t.renk+'">'+t.ad[lang].split(' · ')[0]+'</span>' : ''));
+    var lis = (t.feat[lang]||t.feat.tr).map(function(f){ return '<li style="--gc:'+t.renk+'"><span style="color:'+t.renk+';position:absolute;left:0;top:7px;font-size:12px">✦</span>'+esc(f)+'</li>'; }).join('');
     var cta;
-    if(id==='free'){
-      cta = '<button class="cta ghost" disabled>'+STR.ucretsiz+'</button>';
-    } else if(own){
-      cta = '<button class="cta ghost" disabled>'+STR.own+'</button>';
-    } else {
-      var url = checkoutUrl(LEMON[id]);
-      if(url){ cta = '<a class="cta" href="'+esc(url)+'" target="_blank" rel="noopener">'+STR.al+'</a>'; }
-      else { cta = '<button class="cta" disabled>'+STR.al+'</button><div class="soon">'+STR.soon+'</div>'; }
+    if(t.code==='free'){ cta='<button class="cta ghost" disabled>'+STR.dahil+'</button>'; }
+    else if(own){ cta='<button class="cta ghost" disabled>'+STR.own+'</button>'; }
+    else {
+      var url=checkoutUrl(link);
+      if(url){ cta='<a class="cta" style="background:'+t.renk+'" href="'+esc(url)+'" target="_blank" rel="noopener">'+STR.al+'</a>'; }
+      else { cta='<button class="cta" disabled>'+STR.al+'</button><div class="soon">'+STR.soon+'</div>'; }
     }
-    return '<div class="'+cls+'">'+tag+
-      '<h2>'+esc(name)+'</h2>'+
-      '<div class="price">'+esc(price)+' <small>'+esc(per)+'</small></div>'+
+    var perLine = (t.code==='free') ? '' : '<div class="per">'+(region?(TR?'Türkiye fiyatı':'Turkey price'):(TR?'aylık':'monthly'))+'</div>';
+    return '<div class="pk'+(t.code==='pro'?' hi':'')+'" style="border-color:'+(own?t.renk:'var(--line)')+'">'+tag+
+      '<span class="gem">'+t.gem+'</span>'+
+      '<h2>'+esc(t.ad[lang])+'</h2>'+
+      '<div class="price">'+esc(price)+' <small>'+(t.code==='free'?'':STR.ay)+'</small></div>'+perLine+
       '<ul>'+lis+'</ul>'+cta+'</div>';
   }
 
   function render(){
-    document.getElementById('cur').innerHTML = STR.cur(seviye);
-    var tr = (window.OphApp && OphApp.bolgeTR) ? OphApp.bolgeTR() : false;
-    var html='';
-    html += cardHTML('free', (TR?'Ücretsiz':'Free'), (TR?'₺0':'$0'), '', FEAT.free);
-    if(tr){
-      html += cardHTML('proTR', (TR?'Tam Paket':'Full Access'), '$0.99', STR.ay, FEAT.proTR);
-    } else {
-      html += cardHTML('plus', 'Plus', '$4.99', STR.ay, FEAT.plus);
-      html += cardHTML('pro',  'Pro',  '$9.99', STR.ay, FEAT.pro);
-    }
-    document.getElementById('cards').innerHTML = html;
+    document.getElementById('cur').innerHTML = (TR?'Mevcut paketin: ':'Your plan: ')+'<b>'+seviyeAd(seviye)+'</b>';
+    // Göksel / Elmas kullanıcıları: her şey açık, paket almalarına gerek yok
+    var vipBox=document.getElementById('vip');
+    if(seviye==='goksel'||seviye==='promax'){ vipBox.innerHTML='<div class="vipbar">'+STR.vip(seviyeAd(seviye))+'</div>'; }
+    else { vipBox.innerHTML=''; }
+    document.getElementById('cards').innerHTML = TIERS.map(cardHTML).join('');
   }
 
   render();
 
-  // giriş bilgisi + güncel seviye
   if(sb){
     sb.auth.getUser().then(function(r){
       try{ userEmail=(r&&r.data&&r.data.user&&r.data.user.email)||''; }catch(e){}
-      render(); // e-posta gelince checkout linklerini e-posta ile yeniden kur
+      render();
     }).catch(function(){});
   }
   if(window.OphApp && OphApp.paketYukle){
