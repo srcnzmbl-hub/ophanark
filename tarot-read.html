@@ -388,6 +388,7 @@ var SPREADS={"tek-kart": {"name": "Tek Kart Dizilimi", "hint": "Aklındaki tek b
     'yillik-on-iki-ay':{ar:1.0,cw:14,pos:yillikPos}
   };
   function go(idx){
+    if(window.OphApp && OphApp.falKontrol && !OphApp.falKontrol('tarot', need===1)) return;
     var chosen = idx.map(function(i,k){ var c=order[i]; return { id:c.id, name:c.name, position:S.pos[k]||('Kart '+(k+1)), orientation:orient(i+k) }; });
     // reveal cards in the spread's geometric shape
     var L=LAYOUTS[sid] || {ar:0.5,cw:16,pos:chosen.map(function(_,i){ return [100*(i+0.5)/chosen.length,50]; })};

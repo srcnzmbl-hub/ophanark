@@ -266,6 +266,7 @@ function calc(){
   var eN=ebcedCells(name), eM=ebcedCells(mother);
   if(eN.cells.length<2){ err.textContent='Lütfen adını ve soyadını yaz.'; return; }
   if(eM.cells.length<2){ err.textContent='Lütfen annenin adını yaz.'; return; }
+  if(window.OphApp && OphApp.falKontrol && !OphApp.falKontrol('yildizname')) return;
 
   var total=eN.sum+eM.sum;
   var r=total%12; var burcNo=(r===0)?12:r;

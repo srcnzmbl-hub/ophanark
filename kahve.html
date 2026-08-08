@@ -229,6 +229,7 @@
 
   document.getElementById('interpretBtn').addEventListener('click',function(){
     if(this.disabled) return;
+    if(window.OphApp && OphApp.falKontrol && !OphApp.falKontrol('kahve')) return;
     document.getElementById('gears').style.display='none';
     var gl=document.getElementById('gearsLoad'); gl.style.display=''; if(!gearsLoad){ try{ gearsLoad=OphanCarklar.olustur(gl,GOPT); }catch(e){} }
     document.getElementById('k-lerr').classList.remove('on'); document.getElementById('k-retry').style.display='none';

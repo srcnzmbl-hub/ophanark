@@ -834,6 +834,7 @@ function NLANG(){ try{ var l=window.OphApp?OphApp.getLang():'en'; l=String(l||'e
     if(!name||!date||!time||!cc||!city||!mail){ err.textContent=T('Lütfen ad, doğum tarihi, saat, ülke, şehir ve e-postayı doldurun.','Please fill in name, birth date, time, country, city and email.'); return; }
     if(!natalConsent){ err.textContent=T('Devam etmek için KVKK metnini okuyup onay kutusunu işaretleyin.','Please read the KVKK notice and tick the consent box to continue.'); return; }
     err.textContent='';
+    if(window.OphApp && OphApp.falKontrol && !OphApp.falKontrol('natal')) return;
     var gl=document.getElementById('gearsLoad'); if(!gearsLoad){ try{ gearsLoad=OphanCarklar.olustur(gl,GOPT); }catch(e){} }
     goTo('n-loading');
     var dp=date.split('-'), tp=time.split(':');

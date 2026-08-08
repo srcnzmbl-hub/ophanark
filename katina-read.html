@@ -385,6 +385,7 @@ var SPREADS={"tek-kart": {"name": "Tek Kart", "hint": "Aşk hayatına dair aklı
     'ask-haci':{ar:1.0,cw:18,pos:[[33,50],[33,50,90],[33,80],[13,50],[33,20],[53,50],[80,83],[80,61],[80,39],[80,17]]}
   };
   function go(idx){
+    if(window.OphApp && OphApp.falKontrol && !OphApp.falKontrol('katina', need===1)) return;
     var chosen = idx.map(function(i,k){ var c=order[i]; return { id:c.id, name:c.name, position:S.pos[k]||('Kart '+(k+1)), orientation:orient(i+k) }; });
     // reveal cards in the spread's geometric shape
     var L=LAYOUTS[sid] || {ar:0.5,cw:16,pos:chosen.map(function(_,i){ return [100*(i+0.5)/chosen.length,50]; })};

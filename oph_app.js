@@ -779,6 +779,9 @@ for(var _k in _ADD){var _e=_ADD[_k];EN[_k]=_e.en;for(var _lg in _e){if(_lg==='en
     d.body.appendChild(ov);
   }
 
+  // Sayfa yüklenince güncel seviyeyi Supabase'den çek + önbelleğe al (fal geçidi doğru seviyeyi görsün)
+  try{ paketYukle(); }catch(e){}
+
   w.OphApp = {
     getTheme: getTheme, setTheme: setTheme,
     getLang: getLang, setLang: setLang,

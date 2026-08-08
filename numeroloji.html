@@ -198,6 +198,7 @@
   </section>
 </div>
 
+<script src="oph_app.js"></script>
 <script>
 /* ===================== KELDANİ (CHALDEAN) NUMEROLOJİ ===================== */
 // Keldani harf değerleri (9 kutsal sayıdır, harflere atanmaz)
@@ -567,6 +568,7 @@ function validFields(){
 }
 function onSubmit(){
   var v=validFields(); if(!v)return;
+  if(window.OphApp && OphApp.falKontrol && !OphApp.falKontrol('numeroloji')) return;
   // Onay kodu şimdilik kapalı — doğrudan hesapla. (Para olunca SMS eklenecek.)
   calc();
 }
