@@ -192,7 +192,7 @@ renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidt
 renderer.toneMapping=THREE.NoToneMapping; renderer.toneMappingExposure=1.0;
 const scene=new THREE.Scene();
 var __isDark=false; try{ __isDark=new URLSearchParams(location.search).get('dark')==='1'; }catch(e){}
-var __trans=false;try{__trans=new URLSearchParams(location.search).get('trans')==='1';}catch(e){} if(__trans){scene.background=null;try{var __nb=document.createElement('style');__nb.textContent="html,body{background:transparent!important}";document.head.appendChild(__nb);}catch(e){}}else{scene.background=new THREE.Color(__isDark?0x080C17:0xF7F3E8);}
+var __trans=false;try{__trans=new URLSearchParams(location.search).get('trans')==='1';}catch(e){} if(__trans){scene.background=null;try{var __nb=document.createElement('style');__nb.textContent="html,body{background-color:#000!important;background-image:radial-gradient(ellipse 92% 92% at 50% 46%,rgba(0,0,0,0) 30%,rgba(0,0,0,.35) 60%,rgba(0,0,0,.82) 78%,#000 93%),url('https://media.base44.com/images/public/6a7a3b1b022075e1da13f9cb/0fa7e7e17_generated_image.png')!important;background-size:cover,cover!important;background-position:center,center!important;background-repeat:no-repeat,no-repeat!important}";document.head.appendChild(__nb);}catch(e){}}else{scene.background=new THREE.Color(__isDark?0x080C17:0xF7F3E8);}
 scene.fog=null;
 scene.add(new THREE.AmbientLight(0x9aa8d0,0.72)); const sunLight=new THREE.PointLight(0xfff0d0,2.4,0,0); scene.add(sunLight); const dl=new THREE.DirectionalLight(0xd0d6ff,0.85); dl.position.set(2,3,4); scene.add(dl);
 const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,400); camera.position.set(0,3.2,18.5);
@@ -771,8 +771,8 @@ function enterInteractive(){story.free=true;transitioning=null;finale=false;fina
 handFX.visible=false; summonG.visible=false; beingAura.material.opacity=0; // cagirma efektlerini kapat
 dustGroup.visible=false; goldStars.visible=false; // sarı toz/yildizlar gizlensin — sadece beyaz yildiz + gezegen
 frontSunG.visible=false; centerSun.visible=false; wheel.visible=false; // sinematik gunes/cember kalintilarini gizle
-controls.enabled=true;controls.enableRotate=true;controls.enableZoom=true;controls.enablePan=false;controls.autoRotate=true;controls.autoRotateSpeed=0.08;
-controls.minDistance=5;controls.maxDistance=32;
+controls.enabled=true;controls.enableRotate=true;controls.enableZoom=true;controls.enablePan=false;controls.autoRotate=true;controls.autoRotateSpeed=0.08;controls.zoomSpeed=0.55;
+controls.minDistance=9.5;controls.maxDistance=26;
 controls.target.copy(TGT_D);camera.position.copy(CAM_D);camera.fov=FOV_D;camera.updateProjectionMatrix();controls.update();
 startReveal();} // gezegenler çembere girdi -> ortada karadelik belirip 3D logo doğsun
 // ---- REVEAL: gezegenler çembere girince OPHENİM ortada SADECE belirir (efekt/animasyon yok); etrafından tüyler saçılır ----
@@ -832,7 +832,7 @@ being.visible=false;bh.visible=false;frontSunG.visible=false;
 for(const sp of sdust)sp.material.opacity=0; for(const sp of bstars)sp.material.opacity=0;
 dustGroup.visible=false; goldStars.visible=false;
 if(fadeOver){fadeOver.style.transition='opacity .6s';fadeOver.style.opacity='0';}
-controls.enabled=true;controls.autoRotate=true;controls.enableRotate=true;controls.enableZoom=true;controls.enablePan=false;controls.minDistance=7;controls.maxDistance=30;
+controls.enabled=true;controls.autoRotate=true;controls.enableRotate=true;controls.enableZoom=true;controls.enablePan=false;controls.zoomSpeed=0.55;controls.minDistance=9.5;controls.maxDistance=26;
 camera.position.set(0,3.5,15.5);camera.fov=52;camera.updateProjectionMatrix();controls.target.set(0,0,0);controls.update();
 const bw=document.getElementById('btnWrap');if(bw){bw.style.display='';bw.style.transition='opacity .6s';bw.style.opacity='1';}}
 // dokunma: surukleme (dondur) ile tik (sec) ayirt et
@@ -991,7 +991,7 @@ window.__finale=()=>{for(const z of nodes)z.read=true; startFinale();};
 window.__jinfo=()=>({finale,finaleDone,phase:story.phase,storyOn:story.on,wheelVis:wheel.visible,dust:dustGroup.visible,gold:goldStars.visible,btn:document.getElementById('btnWrap').style.opacity});
 window.__pickDbg=(cx,cy)=>{const rect=renderer.domElement.getBoundingClientRect();ptr.x=((cx-rect.left)/rect.width)*2-1;ptr.y=-((cy-rect.top)/rect.height)*2+1;raycaster.setFromCamera(ptr,camera);const hits=raycaster.intersectObjects(raycastTargets,false);return {n:hits.length,k:hits[0]&&hits[0].object.userData.k,rw:rect.width,rh:rect.height,tgt:raycastTargets.length};};
 // Kullanici HER AN mouse/parmak ile mudahale edince kamera kontrolu aninda ona gecer (3B dondur + zoom)
-function freeCam(){if(story.phase!=='interactive')return;if(story.free)return;story.free=true;controls.enabled=true;controls.enableRotate=true;controls.enableZoom=true;controls.enablePan=false;controls.autoRotate=false;controls.minDistance=3.5;controls.maxDistance=60;controls.update();}
+function freeCam(){if(story.phase!=='interactive')return;if(story.free)return;story.free=true;controls.enabled=true;controls.enableRotate=true;controls.enableZoom=true;controls.enablePan=false;controls.autoRotate=false;controls.zoomSpeed=0.55;controls.minDistance=9.5;controls.maxDistance=26;controls.update();}
 canvas.addEventListener('pointerdown',()=>{if(story.on)freeCam();});
 canvas.addEventListener('wheel',()=>{if(story.on)freeCam();},{passive:true});
 canvas.addEventListener('touchstart',()=>{if(story.on)freeCam();},{passive:true});
