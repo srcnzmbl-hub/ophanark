@@ -192,7 +192,7 @@ renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidt
 renderer.toneMapping=THREE.NoToneMapping; renderer.toneMappingExposure=1.0;
 const scene=new THREE.Scene();
 var __isDark=false; try{ __isDark=new URLSearchParams(location.search).get('dark')==='1'; }catch(e){}
-var __trans=false;try{__trans=new URLSearchParams(location.search).get('trans')==='1';}catch(e){} if(__trans){scene.background=null;try{var __nb=document.createElement('style');__nb.textContent="html,body{background-color:#000!important;background-image:radial-gradient(ellipse 92% 92% at 50% 46%,rgba(0,0,0,0) 30%,rgba(0,0,0,.35) 60%,rgba(0,0,0,.82) 78%,#000 93%),url('https://media.base44.com/images/public/6a7a3b1b022075e1da13f9cb/0fa7e7e17_generated_image.png')!important;background-size:cover,cover!important;background-position:center,center!important;background-repeat:no-repeat,no-repeat!important}";document.head.appendChild(__nb);}catch(e){}}else{scene.background=new THREE.Color(__isDark?0x080C17:0xF7F3E8);}
+var __trans=false;try{__trans=new URLSearchParams(location.search).get('trans')==='1';}catch(e){} if(__trans){scene.background=null;try{var __nb=document.createElement('style');__nb.textContent="html,body{background:transparent!important}";document.head.appendChild(__nb);}catch(e){}}else{scene.background=new THREE.Color(__isDark?0x080C17:0xF7F3E8);}
 scene.fog=null;
 scene.add(new THREE.AmbientLight(0x9aa8d0,0.72)); const sunLight=new THREE.PointLight(0xfff0d0,2.4,0,0); scene.add(sunLight); const dl=new THREE.DirectionalLight(0xd0d6ff,0.85); dl.position.set(2,3,4); scene.add(dl);
 const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,400); camera.position.set(0,3.2,18.5);
