@@ -1,0 +1,152 @@
+<!doctype html><html lang="tr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Ophan AI · Rüya Tabiri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:#050505;color:#F5F0E6;font-family:Inter,ui-sans-serif,system-ui,sans-serif;overflow:hidden}
+  #bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+  #glow{position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(60% 42% at 50% 40%, rgba(212,175,55,.10), rgba(0,0,0,0) 60%),
+               radial-gradient(120% 90% at 50% 50%, rgba(0,0,0,0) 46%, rgba(0,0,0,.55) 80%, #000 100%)}
+  #app{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;max-width:560px;margin:0 auto}
+  header{padding:22px 22px 10px;text-align:center;flex:0 0 auto}
+  .brand{font-size:12px;letter-spacing:.5em;color:#D4AF37;text-transform:uppercase;font-weight:500}
+  .brand b{font-weight:600}
+  .sub{margin-top:8px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#cfc5b3;letter-spacing:.02em}
+  .back{position:fixed;left:16px;top:16px;z-index:3;color:#cfc5b3;text-decoration:none;font-size:11px;letter-spacing:.28em;text-transform:uppercase;display:inline-flex;gap:8px;align-items:center;opacity:.85}
+  .back:hover{color:#D4AF37}
+  #chat{flex:1 1 auto;overflow-y:auto;padding:14px 18px 8px;display:flex;flex-direction:column;gap:14px;scrollbar-width:thin}
+  #chat::-webkit-scrollbar{width:5px}#chat::-webkit-scrollbar-thumb{background:rgba(212,175,55,.25);border-radius:3px}
+  .row{display:flex;width:100%}
+  .row.ai{justify-content:flex-start}.row.me{justify-content:flex-end}
+  .bubble{max-width:86%;padding:14px 16px;border-radius:16px;font-size:15px;line-height:1.7;white-space:pre-wrap;word-wrap:break-word;animation:rise .5s ease both}
+  .ai .bubble{background:rgba(22,18,30,.72);border:1px solid rgba(212,175,55,.22);border-top-left-radius:4px;backdrop-filter:blur(3px);color:#efe8d8;font-family:'Cormorant Garamond',serif;font-size:17.5px;line-height:1.68}
+  .me .bubble{background:rgba(212,175,55,.14);border:1px solid rgba(212,175,55,.3);border-top-right-radius:4px;color:#f5f0e6}
+  .ainame{font-family:Inter;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#D4AF37;margin:0 0 7px 4px;opacity:.9}
+  .typing{display:inline-flex;gap:5px;padding:4px 2px}
+  .typing i{width:6px;height:6px;border-radius:50%;background:#D4AF37;opacity:.5;animation:blink 1.2s infinite}
+  .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  #composer{flex:0 0 auto;padding:10px 14px calc(16px + env(safe-area-inset-bottom));display:flex;gap:10px;align-items:flex-end;
+    background:linear-gradient(to top, #050505 40%, rgba(5,5,5,0));}
+  #inp{flex:1 1 auto;resize:none;max-height:132px;min-height:48px;padding:13px 15px;border-radius:14px;border:1px solid rgba(212,175,55,.28);
+    background:rgba(15,13,20,.8);color:#f5f0e6;font-family:'Cormorant Garamond',serif;font-size:17px;line-height:1.5;outline:none}
+  #inp::placeholder{color:#8a8477;font-style:italic}
+  #inp:focus{border-color:rgba(212,175,55,.55)}
+  #send{flex:0 0 auto;width:48px;height:48px;border-radius:50%;border:1px solid #D4AF37;background:rgba(212,175,55,.1);color:#D4AF37;
+    font-size:20px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center}
+  #send:hover:not(:disabled){background:#D4AF37;color:#0a0a0a}
+  #send:disabled{opacity:.35;cursor:not-allowed}
+  /* grey wind intro */
+  #veil{position:fixed;inset:0;z-index:20;background:
+     radial-gradient(120% 100% at 50% 45%, #2b2b30, #17171b 60%, #0a0a0c 100%);
+     transition:opacity 1.5s ease, filter 1.5s ease;filter:blur(0px)}
+  #veil.gone{opacity:0;filter:blur(14px);pointer-events:none}
+  #veil .w{position:absolute;inset:-20%;background:
+     repeating-linear-gradient(115deg, rgba(255,255,255,.05) 0 2px, rgba(255,255,255,0) 2px 26px);
+     animation:wind 3.4s linear infinite;opacity:.5}
+  @keyframes wind{from{transform:translateX(-8%)}to{transform:translateX(8%)}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div id="glow"></div>
+<a class="back" href="/">← Geri</a>
+<div id="app">
+  <header>
+    <div class="brand"><b>OPHAN</b> AI</div>
+    <div class="sub">Rüya Tabiri</div>
+  </header>
+  <div id="chat"></div>
+  <form id="composer" autocomplete="off">
+    <textarea id="inp" rows="1" placeholder="Rüyanı anlat…" maxlength="3000"></textarea>
+    <button id="send" type="submit" aria-label="Gönder">↑</button>
+  </form>
+</div>
+
+<script>
+  const SUPA="https://lssyopqxthausyegeire.supabase.co";
+  const ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo";
+  const chat=document.getElementById('chat'), inp=document.getElementById('inp'), send=document.getElementById('send'), form=document.getElementById('composer');
+  let busy=false;
+  function scrollDown(){chat.scrollTop=chat.scrollHeight;}
+  function addAI(text){const r=document.createElement('div');r.className='row ai';
+    r.innerHTML='<div><div class="ainame">Ophan AI</div><div class="bubble"></div></div>';
+    r.querySelector('.bubble').textContent=text;chat.appendChild(r);scrollDown();return r;}
+  function addMe(text){const r=document.createElement('div');r.className='row me';
+    const b=document.createElement('div');b.className='bubble';b.textContent=text;r.appendChild(b);chat.appendChild(r);scrollDown();return r;}
+  function addTyping(){const r=document.createElement('div');r.className='row ai';
+    r.innerHTML='<div><div class="ainame">Ophan AI</div><div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div></div>';
+    chat.appendChild(r);scrollDown();return r;}
+  function autoGrow(){inp.style.height='48px';inp.style.height=Math.min(inp.scrollHeight,132)+'px';}
+  inp.addEventListener('input',autoGrow);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
+
+  async function yorumla(text){
+    busy=true;send.disabled=true;
+    const t=addTyping();
+    try{
+      const res=await fetch(SUPA+"/functions/v1/ruya",{method:"POST",
+        headers:{"Content-Type":"application/json","apikey":ANON,"Authorization":"Bearer "+ANON},
+        body:JSON.stringify({text,lang:"tr",platform:"web-ophanai"})});
+      const j=await res.json().catch(()=>({}));
+      t.remove();
+      if(res.ok && j.text){ addAI(j.text); }
+      else { addAI("Bir an için galgalim duraksadı… Rüyanı bir kez daha, birkaç ayrıntı ekleyerek anlatır mısın?"); }
+    }catch(e){ t.remove(); addAI("Şu an sana ulaşamadım. Bağlantını kontrol edip tekrar dener misin?"); }
+    busy=false;send.disabled=false;inp.focus();
+  }
+  form.addEventListener('submit',e=>{e.preventDefault();if(busy)return;
+    const text=inp.value.trim();if(!text)return;
+    addMe(text);inp.value='';autoGrow();yorumla(text);});
+
+  // welcome (after veil lifts)
+  setTimeout(()=>{addAI("Hoş geldin. Seni dinliyorum — bana rüyanı anlatabilirsin.");},900);
+
+  // grey-wind intro lift
+  const veil=document.createElement('div');veil.id='veil';veil.innerHTML='<div class="w"></div>';document.body.appendChild(veil);
+  requestAnimationFrame(()=>{setTimeout(()=>veil.classList.add('gone'),650);setTimeout(()=>veil.remove(),2300);});
+</script>
+
+<script type="module">
+  import * as THREE from 'three';
+  import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+  import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+  try{
+    const canvas=document.getElementById('bg');
+    const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+    renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+    const scene=new THREE.Scene();
+    const cam=new THREE.PerspectiveCamera(42,1,0.1,100);cam.position.set(0,0,6);
+    scene.add(new THREE.AmbientLight(0xffffff,0.9));
+    const d1=new THREE.DirectionalLight(0xf0d89a,1.1);d1.position.set(3,4,5);scene.add(d1);
+    const d2=new THREE.DirectionalLight(0x8a7bd0,0.5);d2.position.set(-4,-2,-3);scene.add(d2);
+    const holder=new THREE.Group();scene.add(holder);
+    function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}
+    resize();addEventListener('resize',resize);
+    const draco=new DRACOLoader();draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/');
+    const loader=new GLTFLoader();loader.setDRACOLoader(draco);
+    loader.load('model/carklar_m.glb',(gltf)=>{
+      const obj=gltf.scene;
+      const box=new THREE.Box3().setFromObject(obj);const size=box.getSize(new THREE.Vector3());const center=box.getCenter(new THREE.Vector3());
+      obj.position.sub(center);
+      const scale=3.1/Math.max(size.x,size.y,size.z);obj.scale.setScalar(scale);
+      obj.traverse(m=>{if(m.isMesh){const mat=m.material;const arr=Array.isArray(mat)?mat:[mat];
+        arr.forEach(x=>{x.transparent=true;x.opacity=0.16;x.depthWrite=false;
+          if(x.color)x.color.multiplyScalar(1.15);
+          if('metalness'in x)x.metalness=0.6;if('roughness'in x)x.roughness=0.4;
+          if(x.emissive){x.emissive=new THREE.Color(0x6a5a2a);x.emissiveIntensity=0.25;}});}});
+      holder.add(obj);
+    },undefined,(err)=>{/* model fail: leave chat working */});
+    let last=0;
+    function tick(t){requestAnimationFrame(tick);const dt=(t-last)/1000||0;last=t;
+      holder.rotation.y+=dt*0.28;holder.rotation.x=Math.sin(t*0.0002)*0.12;renderer.render(scene,cam);}
+    requestAnimationFrame(tick);
+  }catch(e){/* WebGL unsupported: chat still works */}
+</script>
+</body></html>
