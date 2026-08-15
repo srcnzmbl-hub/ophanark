@@ -37,7 +37,10 @@ self.addEventListener('notificationclick', function (event) {
   })());
 });
 
-// Ağ-öncelikli: hiçbir şeyi önbellekten sunma (eski shell asla verilmez)
+// Ağ-öncelikli + sayfa yüklemelerinde önbelleksiz (F5 daima en güncel shell'i getirir)
 self.addEventListener('fetch', function (event) {
-  event.respondWith(fetch(event.request).catch(function () { return new Response('', { status: 504, statusText: 'offline' }); }));
+  var req = event.request;
+  var isDoc = req.mode === 'navigate' || req.destination === 'document';
+  var opts = isDoc ? { cache: 'no-store' } : undefined;
+  event.respondWith(fetch(req, opts).catch(function () { return new Response('', { status: 504, statusText: 'offline' }); }));
 });
