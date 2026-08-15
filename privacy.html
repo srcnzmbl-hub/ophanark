@@ -29,10 +29,13 @@
   /* Sabit nebula hero arka plan — içerik üzerinde kayar */
   .bg{
     position:fixed;
-    inset:0;
+    top:0; bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    width:100%;
+    max-width:430px;                /* nebula yalnızca 9:16 kolonun içinde */
     z-index:0;
-    background:#000 url("/assets/0fa7e7e17_generated_image.png") center center / cover no-repeat;
-    background-attachment:fixed;
+    background:#000 url("/assets/0fa7e7e17_generated_image.png") top center / cover no-repeat;
   }
   .bg::after{
     content:"";
