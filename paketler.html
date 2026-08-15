@@ -27,7 +27,7 @@
     background:linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.82) 42%, #000 78%); }
 
   .screen{ position:relative; z-index:1; width:100%; max-width:430px; margin:0 auto;
-    min-height:100vh; padding:3cm 22px 70px; }
+    min-height:100vh; padding:1.4cm 22px 70px; }
 
   header{ text-align:center; margin-bottom:28px; }
   .wordmark{ font-family:Geist,ui-sans-serif,system-ui,sans-serif; font-weight:700; font-size:clamp(54px,18vw,76px); letter-spacing:-0.01em; color:#fff; line-height:1; }
@@ -78,10 +78,16 @@
     background:rgba(20,16,28,.96); border:1px solid rgba(212,175,55,.4); color:var(--text);
     padding:12px 20px; border-radius:10px; font-size:13px; z-index:10; opacity:0; transition:.3s; pointer-events:none; max-width:380px; text-align:center; }
   #toast.show{ opacity:1; }
+  .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:18px 1cm;border-bottom:1px solid rgba(212,175,55,.15);background:rgba(0,0,0,.85);backdrop-filter:blur(8px)}
+  .topbar .brand{font-family:Geist,ui-sans-serif,system-ui,sans-serif;font-size:12px;font-weight:300;letter-spacing:.42em;color:#F5F0E6;text-decoration:none;border:none}
+  .topnav{display:flex;align-items:center;gap:0.5cm;font-size:9px;text-transform:uppercase;letter-spacing:.14em;white-space:nowrap}
+  .topnav a{color:#F5F0E6;text-decoration:none;border:none}
+  .topnav a:hover{color:var(--gold)}
 </style>
 </head>
 <body>
 <div class="bg"></div>
+<header class="topbar"><a class="brand" href="/">OPHANARK</a><nav class="topnav"><a href="/#fallar">Bölümler</a><a href="/profil">Profil</a><a href="/hazir">Hazır Fallarım</a></nav></header>
 
 <main class="screen">
   <header>

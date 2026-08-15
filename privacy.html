@@ -54,7 +54,7 @@
     max-width:430px;              /* 9:16 telefon eni */
     margin:0 auto;
     min-height:100vh;
-    padding:54px 26px 90px;
+    padding:30px 26px 90px;
   }
 
   header{ text-align:center; margin-bottom:30px; }
@@ -123,10 +123,16 @@
   .backbtn:hover{ background:var(--gold); color:#0a0a0a; }
   footer{ text-align:center; color:var(--muted); font-size:12px; margin-top:44px; }
   footer a{ border:none; }
+  .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:18px 1cm;border-bottom:1px solid rgba(212,175,55,.15);background:rgba(0,0,0,.85);backdrop-filter:blur(8px)}
+  .topbar .brand{font-family:Geist,ui-sans-serif,system-ui,sans-serif;font-size:12px;font-weight:300;letter-spacing:.42em;color:#F5F0E6;text-decoration:none;border:none}
+  .topnav{display:flex;align-items:center;gap:0.5cm;font-size:9px;text-transform:uppercase;letter-spacing:.14em;white-space:nowrap}
+  .topnav a{color:#F5F0E6;text-decoration:none;border:none}
+  .topnav a:hover{color:var(--gold)}
 </style>
 </head>
 <body>
 <div class="bg"></div>
+<header class="topbar"><a class="brand" href="/">OPHANARK</a><nav class="topnav"><a href="/#fallar">Bölümler</a><a href="/profil">Profil</a><a href="/hazir">Hazır Fallarım</a></nav></header>
 
 <main class="screen">
   <header>
