@@ -68,8 +68,11 @@
   .gift{ color:var(--gold-soft); }
   .note{ margin-top:8px; text-align:center; font-size:12px; font-style:italic; color:var(--muted); }
 
-  .back{ display:block; text-align:center; margin-top:26px; color:var(--muted);
-    font-size:11px; letter-spacing:.22em; text-transform:uppercase; text-decoration:none; }
+  .backwrap{ text-align:center; margin-top:36px; }
+  .backbtn{ display:inline-block; background:transparent; border:1px solid var(--gold); color:var(--gold);
+    font-family:"Inter",sans-serif; font-size:12px; letter-spacing:.2em; text-transform:uppercase;
+    padding:11px 30px; border-radius:10px; cursor:pointer; transition:.2s; }
+  .backbtn:hover{ background:var(--gold); color:#0a0a0a; }
 
   #toast{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%);
     background:rgba(20,16,28,.96); border:1px solid rgba(212,175,55,.4); color:var(--text);
@@ -88,7 +91,7 @@
 
   <div id="list"></div>
 
-  <a class="back" href="/">← Ana sayfa</a>
+  <div class="backwrap"><button class="backbtn" onclick="if(history.length>1){history.back()}else{location.href='/'}">← Geri</button></div>
 </main>
 
 <div id="toast"></div>

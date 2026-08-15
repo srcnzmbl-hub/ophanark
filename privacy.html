@@ -116,6 +116,11 @@
 
   .divider{ height:1px; margin:34px 0; background:linear-gradient(90deg,transparent,rgba(212,175,55,.28),transparent); }
 
+  .backwrap{ text-align:center; margin-top:40px; }
+  .backbtn{ display:inline-block; background:transparent; border:1px solid var(--gold); color:var(--gold);
+    font-family:"Inter",sans-serif; font-size:12px; letter-spacing:.2em; text-transform:uppercase;
+    padding:11px 30px; border-radius:10px; cursor:pointer; transition:.2s; }
+  .backbtn:hover{ background:var(--gold); color:#0a0a0a; }
   footer{ text-align:center; color:var(--muted); font-size:12px; margin-top:44px; }
   footer a{ border:none; }
 </style>
@@ -264,6 +269,7 @@
     © 2026 Ozark Collective · OPHANARK<br />
     <a href="https://www.ophanark.com">www.ophanark.com</a> · <a class="mail" href="mailto:hello@ozarkcollective.co">hello@ozarkcollective.co</a>
   </footer>
+  <div class="backwrap"><button class="backbtn" onclick="if(history.length>1){history.back()}else{location.href='/'}">← Geri</button></div>
 </main>
 </body>
 </html>
