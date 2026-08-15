@@ -16,14 +16,16 @@
   .scr-fade{position:absolute;inset:0;z-index:1;pointer-events:none;
     background:linear-gradient(to bottom,#050505 0%,rgba(5,5,5,.92) 5%,rgba(5,5,5,0) 26%,rgba(5,5,5,0) 72%,rgba(5,5,5,.92) 95%,#050505 100%)}
   .scr-dark{position:absolute;inset:0;z-index:1;pointer-events:none}
-  #hero .scr-dark{background:radial-gradient(ellipse 74% 46% at 50% 50%, rgba(5,5,5,.6) 0%, rgba(5,5,5,.28) 42%, rgba(5,5,5,0) 72%)}
+  #hero .scr-dark{background:radial-gradient(ellipse 90% 60% at 50% 32%, rgba(5,5,5,.62) 0%, rgba(5,5,5,.32) 44%, rgba(5,5,5,0) 74%)}
   #finder .scr-dark{background:linear-gradient(to bottom, rgba(5,5,5,.5), rgba(5,5,5,.66))}
   .scr-in{position:relative;z-index:2;margin:auto;width:100%;max-width:34ch;padding:56px 30px;text-align:center}
+  #hero .scr-in{margin:0;min-height:100%;max-width:none;display:flex;flex-direction:column;justify-content:flex-start;padding:64px 26px 40px}
+  #hero .btn-row{margin-top:auto}
 
   .tag{font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;color:#D4AF37;font-weight:500;text-shadow:0 1px 10px rgba(0,0,0,.9)}
-  .title{font-weight:700;font-size:clamp(44px,14vw,62px);line-height:1.0;letter-spacing:-0.02em;margin:14px 0 16px;color:#F5F0E6;text-shadow:0 2px 26px rgba(0,0,0,.95), 0 0 12px rgba(0,0,0,.7)}
-  .lead{font-size:18px;line-height:1.62;color:#e9e0cd;text-shadow:0 1px 14px rgba(0,0,0,.95)}
-  .lead b{color:#D4AF37;font-weight:600}
+  .title{font-weight:700;font-size:clamp(46px,15vw,72px);line-height:1.04;letter-spacing:-0.02em;margin:16px 0 0;color:#F5F0E6;text-align:center;text-shadow:0 2px 26px rgba(0,0,0,.95), 0 0 12px rgba(0,0,0,.7)}
+  .gold-line{display:block;width:80px;height:1px;background:rgba(212,175,55,.6);margin:22px auto 0}
+  .lead{font-style:italic;font-size:17px;line-height:1.72;color:rgba(232,225,210,.92);margin-top:22px;text-align:center;text-shadow:0 1px 14px rgba(0,0,0,.95)}
 
   .f-h{font-weight:700;font-size:26px;color:#D4AF37;letter-spacing:-0.01em;text-shadow:0 1px 12px rgba(0,0,0,.9)}
   .f-desc{font-style:italic;font-size:15.5px;color:#e0d8c6;margin:9px auto 20px;line-height:1.5;max-width:32ch;text-shadow:0 1px 12px rgba(0,0,0,.9)}
@@ -49,8 +51,11 @@
   .rd-wrap{position:relative;z-index:2;margin:auto;width:100%;max-width:34ch;padding:56px 28px}
   .rd-lead{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#D4AF37;text-align:center}
   .rd-name{font-weight:700;letter-spacing:-0.02em;font-size:clamp(40px,13vw,56px);line-height:1.0;color:#D4AF37;text-align:center;margin:10px 0 8px}
-  .rd-meta{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#b7ab8e;text-align:center}
-  .rd-meta .dom{display:block;font-style:italic;font-size:16px;color:#e8dcc0;letter-spacing:0;text-transform:none;margin-top:10px}
+  .rd-range{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#9c927a;text-align:center;margin-bottom:2px}
+  .rd-sigil{display:flex;justify-content:center;margin:16px 0 14px}
+  .rd-sigil svg{filter:drop-shadow(0 0 7px rgba(212,175,55,.4))}
+  .rd-sigil img{width:150px;height:150px;object-fit:contain}
+  .rd-values{font-style:italic;font-size:16px;color:#e8dcc0;text-align:center;line-height:1.5}
   .rd-block{margin-top:28px;border-top:1px solid rgba(212,175,55,.16);padding-top:18px}
   .rd-sec-h{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#D4AF37;margin-bottom:11px}
   .rd-p{font-size:16.5px;line-height:1.72;color:#efe8d8}
@@ -65,7 +70,8 @@
     <div class="scr-in">
       <div class="tag">Kadim Meleklerin Kayıp Dili</div>
       <h1 class="title">Melek Dili</h1>
-      <p class="lead">Kabala'nın kadim öğretisinde göğün <b>72 meleği</b> vardır; her biri Tanrı'nın gizli bir ismini taşır. Bu bölümde meleklerin dilini tanır, doğum tarihine göre bu 72 melekten hangisinin sana ait olduğunu — <b>koruyucu meleğini</b> — keşfeder; onun görev alanını ve sana fısıldadığı mesajı öğrenirsin.</p>
+      <span class="gold-line"></span>
+      <p class="lead">Kabala'nın kadim öğretisinde göğün 72 meleği vardır; her biri Tanrı'nın gizli bir ismini taşır. Bu bölümde meleklerin dilini tanır, doğum tarihine göre bu 72 melekten hangisinin sana ait olduğunu — koruyucu meleğini — keşfeder; onun görev alanını ve sana fısıldadığı mesajı öğrenirsin.</p>
       <div class="btn-row">
         <div class="btn" id="ctaBack">Geri Dön</div>
         <div class="btn" id="cta">Devam Et</div>
@@ -101,17 +107,23 @@
     <div class="rd-wrap">
       <div class="rd-lead" id="rdLead">Koruyucu Meleğin</div>
       <div class="rd-name" id="rdName"></div>
-      <div class="rd-meta" id="rdMeta"></div>
+      <div class="rd-range" id="rdRange"></div>
+      <div class="rd-sigil" id="rdSigil"></div>
+      <div class="rd-values" id="rdValues"></div>
       <div class="rd-block">
-        <div class="rd-sec-h">Bu melek kim?</div>
+        <div class="rd-sec-h" id="rdH1"></div>
         <p class="rd-p" id="rdKim"></p>
       </div>
       <div class="rd-block">
-        <div class="rd-sec-h">Sana ne sağlar?</div>
+        <div class="rd-sec-h" id="rdH2"></div>
+        <p class="rd-p" id="rdTemsil"></p>
+      </div>
+      <div class="rd-block">
+        <div class="rd-sec-h" id="rdH3"></div>
         <p class="rd-p" id="rdFayda"></p>
       </div>
       <div class="rd-block">
-        <div class="rd-sec-h">Seni nasıl korur?</div>
+        <div class="rd-sec-h" id="rdH4"></div>
         <p class="rd-p" id="rdKoruma"></p>
       </div>
       <div class="btn-row">
@@ -222,17 +234,52 @@
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function id(x){return document.getElementById(x);}
   function show(s){['hero','finder','reading'].forEach(function(x){id(x).classList.toggle('on',x===s);});var el=id(s);if(el)el.scrollTop=0;}
+  function poss(n){
+    var vow='aeıioöuü', lv='e';
+    for(var i=n.length-1;i>=0;i--){var c=n.charAt(i).toLocaleLowerCase('tr');if(vow.indexOf(c)>-1){lv=c;break;}}
+    var suf=(lv==='a'||lv==='ı')?'ın':(lv==='e'||lv==='i')?'in':(lv==='o'||lv==='u')?'un':'ün';
+    var last=n.charAt(n.length-1).toLocaleLowerCase('tr');
+    return n+"'"+(vow.indexOf(last)>-1?'n':'')+suf;
+  }
+  function sigil(name){
+    var s=(name||'').toLocaleUpperCase('en').replace(/[^A-Z]/g,'');
+    if(s.length<2)s=s+'EL';
+    var cx=52,cy=52,R=39;
+    function pt(ch){var idx=ch.charCodeAt(0)-65,a=(idx/26)*Math.PI*2-Math.PI/2;return [cx+R*Math.cos(a),cy+R*Math.sin(a)];}
+    var pts=[];for(var i=0;i<s.length;i++)pts.push(pt(s[i]));
+    var d='M'+pts[0][0].toFixed(1)+','+pts[0][1].toFixed(1);
+    for(var i=1;i<pts.length;i++)d+=' L'+pts[i][0].toFixed(1)+','+pts[i][1].toFixed(1);
+    var st=pts[0],en=pts[pts.length-1];
+    var g='<svg viewBox="0 0 104 104" width="98" height="98" fill="none" xmlns="http://www.w3.org/2000/svg">';
+    g+='<circle cx="52" cy="52" r="48" stroke="#D4AF37" stroke-opacity="0.4" stroke-width="1"/>';
+    g+='<circle cx="52" cy="52" r="44" stroke="#D4AF37" stroke-opacity="0.22" stroke-width="0.7"/>';
+    for(var k=0;k<12;k++){var aa=(k/12)*Math.PI*2;g+='<circle cx="'+(52+46*Math.cos(aa)).toFixed(1)+'" cy="'+(52+46*Math.sin(aa)).toFixed(1)+'" r="1.1" fill="#D4AF37" fill-opacity="0.6"/>';}
+    g+='<circle cx="52" cy="52" r="39" stroke="#D4AF37" stroke-opacity="0.12" stroke-width="0.6"/>';
+    g+='<path d="'+d+'" stroke="#D4AF37" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>';
+    g+='<circle cx="'+st[0].toFixed(1)+'" cy="'+st[1].toFixed(1)+'" r="3.1" fill="#D4AF37"/>';
+    g+='<circle cx="'+en[0].toFixed(1)+'" cy="'+en[1].toFixed(1)+'" r="2.2" stroke="#D4AF37" stroke-width="1.5"/>';
+    g+='</svg>';
+    return g;
+  }
   function fillReading(e,ad){
     id('rdLead').textContent = ad?(ad+' · Koruyucu Meleğin'):'Koruyucu Meleğin';
     id('rdName').textContent = e[1];
-    id('rdMeta').innerHTML = esc(rangeTR(e[2],e[3]))+'<span class="dom">'+esc(e[4])+'</span>';
-    id('rdKim').textContent = e[5];
+    id('rdRange').textContent = rangeTR(e[2],e[3]);
+    var cont=id('rdSigil'); cont.innerHTML=sigil(e[1]);
+    var im=new Image(); im.alt=''; im.onload=function(){cont.innerHTML='';cont.appendChild(im);}; im.src='assets/seal-'+e[0]+'.png';
+    id('rdValues').textContent = e[4];
     var i=(e[0]-1)%5, k1=e[4].split(' · ')[0].toLocaleLowerCase('tr');
+    id('rdH1').textContent = poss(e[1])+' sureti nedir?';
+    id('rdH2').textContent = e[1]+' neyin temsilcisidir?';
+    id('rdH3').textContent = e[1]+' sana nasıl dokunur?';
+    id('rdH4').textContent = e[1]+' seni nasıl kollar?';
+    id('rdKim').textContent = e[5];
+    id('rdTemsil').textContent = e[1]+', göklerin katında '+domList(e[4])+' değerlerinin taşıyıcısı ve dünyadaki temsilcisidir.';
     id('rdFayda').textContent = e[1]+', hayatına '+domList(e[4])+' taşır. '+FAYDA2[i];
     id('rdKoruma').textContent = KORUMA[i].replace(/\{ad\}/g,e[1]).replace(/\{k\}/g,k1);
   }
   id('cta').addEventListener('click',function(){show('finder');});
-  id('ctaBack').addEventListener('click',function(){location.href='/';});
+  id('ctaBack').addEventListener('click',function(){if(history.length>1){history.back();}else{location.href='/';}});
   id('melBack').addEventListener('click',function(){show('hero');});
   id('rdAgain').addEventListener('click',function(){show('finder');});
   id('melBul').addEventListener('click',function(){
