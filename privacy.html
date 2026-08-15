@@ -6,6 +6,9 @@
 <meta name="robots" content="index, follow" />
 <meta name="theme-color" content="#000000" />
 <title>Gizlilik Politikası & Hesap Silme — OPHANARK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet" />
 <style>
   :root{
     --gold:#D4AF37;
@@ -17,7 +20,7 @@
   html,body{ background:#000; }
   body{
     color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     line-height:1.75;
     font-size:16px;
     -webkit-font-smoothing:antialiased;
@@ -52,19 +55,22 @@
   }
 
   header{ text-align:center; margin-bottom:30px; }
-  .logo{
-    width:96px; height:96px;
-    object-fit:contain;
-    margin:0 auto 14px;
-    display:block;
-    filter:drop-shadow(0 0 22px rgba(212,175,55,.45));
+  .wordmark{
+    font-family:"Inter",system-ui,sans-serif;
+    font-weight:800;
+    font-size:44px;
+    letter-spacing:-.03em;
+    color:#fff;
+    line-height:1;
+    display:inline-block;
   }
-  .brand{
-    font-size:24px;
-    letter-spacing:.42em;
-    color:var(--gold);
-    font-weight:600;
-    padding-left:.42em;
+  .wordmark .dot{
+    display:inline-block;
+    width:.15em; height:.15em;
+    background:var(--gold);
+    border-radius:2px;
+    margin-left:.04em;
+    vertical-align:baseline;
   }
   .sub{
     color:var(--muted);
@@ -115,8 +121,7 @@
 
 <main class="screen">
   <header>
-    <img class="logo" src="/carklar.png" alt="OPHANARK" />
-    <div class="brand">OPHANARK</div>
+    <div class="wordmark">ophanark<span class="dot"></span></div>
     <div class="sub">Gizlilik &amp; Veri / Hesap Silme</div>
     <div class="rule"></div>
   </header>
