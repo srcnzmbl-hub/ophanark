@@ -10,7 +10,8 @@
   #page{position:fixed;top:0;bottom:0;left:0;right:0;width:min(100vw, calc(100vh * 9 / 16));margin:0 auto;background:#050505;overflow:hidden}
 
   /* Ekranlar (sayfa sayfa, kaydırma yok) */
-  .screen{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .screen{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
+  .screen::-webkit-scrollbar{width:0;height:0;display:none}
   .screen.on{display:flex}
   .scr-bg{position:absolute;inset:0;z-index:0;pointer-events:none;background:url('assets/melek_dili_hero.png') center center / cover no-repeat;filter:brightness(0.83) contrast(1.04)}
   .scr-fade{position:absolute;inset:0;z-index:1;pointer-events:none;
@@ -49,17 +50,16 @@
 
   /* Sonuç ekranı */
   #reading{background:#050505}
-  .rd-wrap{position:relative;z-index:2;margin:auto;width:100%;max-width:34ch;padding:56px 28px}
-  .rd-lead{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#D4AF37;text-align:center}
-  .rd-name{font-weight:700;letter-spacing:-0.02em;font-size:clamp(40px,13vw,56px);line-height:1.0;color:#D4AF37;text-align:center;margin:10px 0 8px}
-  .rd-range{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#9c927a;text-align:center;margin-bottom:2px}
-  .rd-sigil{display:flex;justify-content:center;margin:16px 0 14px}
-  .rd-sigil svg{filter:drop-shadow(0 0 7px rgba(212,175,55,.4))}
+  .rd-wrap{position:relative;z-index:2;margin:0 auto;width:100%;max-width:34ch;padding:56px 28px;text-align:center}
+  .rd-title{font-weight:700;letter-spacing:-0.01em;font-size:clamp(30px,10vw,42px);line-height:1.05;color:#F5F0E6;text-align:center;margin:0}
+  .rd-intro{font-size:16px;line-height:1.72;color:#e6ddcb;margin:16px auto 0;max-width:33ch;text-align:center}
+  .rd-name{font-weight:700;letter-spacing:-0.02em;font-size:clamp(38px,12vw,52px);line-height:1.0;color:#D4AF37;text-align:center;margin:30px 0 0}
+  .rd-sigil{display:flex;justify-content:center;margin:16px 0 12px}
   .rd-sigil img{width:150px;height:150px;object-fit:contain}
   .rd-values{font-style:italic;font-size:16px;color:#e8dcc0;text-align:center;line-height:1.5}
-  .rd-block{margin-top:28px;border-top:1px solid rgba(212,175,55,.16);padding-top:18px}
-  .rd-sec-h{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#D4AF37;margin-bottom:11px}
-  .rd-p{font-size:16.5px;line-height:1.72;color:#efe8d8}
+  .rd-block{margin-top:30px}
+  .rd-sec-h{font-weight:700;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#D4AF37;margin-bottom:10px;text-align:center}
+  .rd-p{font-size:16px;line-height:1.74;color:#efe8d8;text-align:center}
 </style>
 </head>
 <body>
@@ -107,27 +107,12 @@
   <!-- Ekran 3: Sonuç -->
   <section class="screen" id="reading">
     <div class="rd-wrap">
-      <div class="rd-lead" id="rdLead">Koruyucu Meleğin</div>
+      <div class="rd-title">Koruyucu Melek</div>
+      <p class="rd-intro" id="rdIntro"></p>
       <div class="rd-name" id="rdName"></div>
-      <div class="rd-range" id="rdRange"></div>
       <div class="rd-sigil" id="rdSigil"></div>
       <div class="rd-values" id="rdValues"></div>
-      <div class="rd-block">
-        <div class="rd-sec-h" id="rdH1"></div>
-        <p class="rd-p" id="rdKim"></p>
-      </div>
-      <div class="rd-block">
-        <div class="rd-sec-h" id="rdH2"></div>
-        <p class="rd-p" id="rdTemsil"></p>
-      </div>
-      <div class="rd-block">
-        <div class="rd-sec-h" id="rdH3"></div>
-        <p class="rd-p" id="rdFayda"></p>
-      </div>
-      <div class="rd-block">
-        <div class="rd-sec-h" id="rdH4"></div>
-        <p class="rd-p" id="rdKoruma"></p>
-      </div>
+      <div id="rdSections"></div>
       <div class="btn-row">
         <button class="btn" id="rdAgain" type="button">Geri Dön</button>
       </div>
@@ -263,22 +248,38 @@
     g+='</svg>';
     return g;
   }
+  function cap(s){return s.charAt(0).toLocaleUpperCase('tr')+s.slice(1);}
+  function lifeSections(e){
+    var name=e[1], dl=domList(e[4]), d0=e[4].split(' \u00b7 ')[0].toLocaleLowerCase('tr');
+    var S=[
+      ['Aşk & İlişkiler',
+       'Aşkta '+name+', kalbini doğru zamanda ve doğru kişiye açmanı sağlar. '+cap(dl)+' enerjisini taşıdığın için ilişkilerine sadakat, derinlik ve dürüstlük katarsın; yüzeysel bağlar seni doyurmaz, ruhuna dokunan bir birliktelik ararsın. '+name+' yanlış kapıları usulca kapatır, sana denk olan gönlü yoluna çıkarır. Bir kırgınlık yaşadığında öfkeni yatıştırır, karşındakini yargılamadan dinlemeni ve köprüleri onarmanı kolaylaştırır.'],
+      ['Şifa & Sağlık',
+       name+' bedeninle ruhun arasındaki dengeyi gözetir. Zihnin yorulduğunda sana durmayı, omuzlarındaki yükü bir an için bırakmayı hatırlatır. Bu meleğin ışığı gerginliğini çözer, uykunu derinleştirir ve toparlanman gereken dönemlerde iyileşmeni hızlandırır. Bedenine kulak verdiğinde, hangi alışkanlığın seni yıprattığını sana sezdirir.'],
+      ['Aile & Yuva',
+       name+' yuvanın huzurunu korur. '+cap(dl)+' değerlerini evine taşır; sevdiklerinle aranda güven, sabır ve karşılıklı anlayış kurarsın. Ailende bir gerginlik baş gösterdiğinde gönülleri yumuşatır, kırılan bağları onarır ve seni köklerinle barıştırır. Sen, sevdiklerinin etrafında sessiz bir denge unsuru olursun.'],
+      ['Kariyer & Emek',
+       'İş hayatında '+name+' en güçlü yanındır. '+cap(dl)+' enerjisiyle emeğine sadık kalır, dağılmadan hedefe yürür ve yaptığın işe anlam katarsın. Bu melek çalışmanı bereketli kılar, doğru fırsatları önüne çıkarır ve emeğinin karşılığını görmeni sağlar. Zorlandığın işlerde sana sabır ve netlik verir; küçük ama kararlı adımların büyük kapılar açar.'],
+      ['Bolluk & Bereket',
+       name+' bereket kapılarını aralar. Elindekinin kıymetini bilip şükrettiğinde, '+d0+' yolundan sana bolluk akar. Bu melek savurganlıktan korur, kazancını sağlam temellere oturtur ve darlık zamanlarında umudunu diri tutar. Verdikçe çoğaldığını, paylaştıkça yolunun açıldığını zamanla fark edersin.'],
+      ['Ruhsal Yön',
+       name+' ruhunun sessiz rehberidir. Hayatın gürültüsü içinde kendi merkezine dönmeni, içsel sesini duymanı sağlar. '+cap(dl)+' yolunda ilerledikçe sezgilerin keskinleşir, doğruyu ve yanlışı kalbinle ayırt edersin. Sessizliğe çekildiğinde bu meleğin varlığını bir iç ferahlık olarak hissedersin.'],
+      [name+' sana nasıl el uzatır?',
+       'Zorlandığın anlarda '+name+' sessizce yanında durur; '+d0+' gücüyle yükünü hafifletir ve yolunu aydınlatır. Tehlike yaklaştığında seni sezgilerinle uyarır, düştüğünde elinden tutar. Yalnız hissettiğin gecelerde varlığını bir sıcaklık gibi duyar, korkularının yavaşça yatıştığını fark edersin.']
+    ];
+    var html='';
+    for(var i=0;i<S.length;i++){ html+='<div class="rd-block"><div class="rd-sec-h">'+esc(S[i][0])+'</div><p class="rd-p">'+esc(S[i][1])+'</p></div>'; }
+    return html;
+  }
   function fillReading(e,ad){
-    id('rdLead').textContent = ad?(ad+' · Koruyucu Meleğin'):'Koruyucu Meleğin';
-    id('rdName').textContent = e[1];
-    id('rdRange').textContent = rangeTR(e[2],e[3]);
-    var cont=id('rdSigil'); cont.innerHTML=sigil(e[1]);
+    var name=e[1], dl=domList(e[4]);
+    var bas = ad ? (esc(ad)+', senin koruyucu meleğin '+esc(name)+'.') : ('Senin koruyucu meleğin '+esc(name)+'.');
+    id('rdIntro').innerHTML = bas+' Melek hiyerarşisinde '+esc(name)+' '+e[0]+'. sıradaki melektir; '+esc(cap(dl))+' değerlerini ruhuna kendinden üfler. Bu özellikleri yoğun kullandığında çakralarının açıldığını, daha sağlıklı ve berrak düşündüğünü, mental olarak rahatladığını hissedersin; konsantre çalıştığın anlarda detayları daha net gördüğünü, üstünde bir baskı değil bir hafiflik duyduğunu ve her adımını özgüvenle attığını sen de fark edersin.';
+    id('rdName').textContent = name;
+    var cont=id('rdSigil'); cont.innerHTML=sigil(name);
     var im=new Image(); im.alt=''; im.onload=function(){cont.innerHTML='';cont.appendChild(im);}; im.src='assets/seal-'+e[0]+'.png';
     id('rdValues').textContent = e[4];
-    var i=(e[0]-1)%5, k1=e[4].split(' · ')[0].toLocaleLowerCase('tr');
-    id('rdH1').textContent = poss(e[1])+' sureti nedir?';
-    id('rdH2').textContent = e[1]+' neyin temsilcisidir?';
-    id('rdH3').textContent = e[1]+' sana nasıl dokunur?';
-    id('rdH4').textContent = e[1]+' seni nasıl kollar?';
-    id('rdKim').textContent = e[5];
-    id('rdTemsil').textContent = e[1]+', göklerin katında '+domList(e[4])+' değerlerinin taşıyıcısı ve dünyadaki temsilcisidir.';
-    id('rdFayda').textContent = e[1]+', hayatına '+domList(e[4])+' taşır. '+FAYDA2[i];
-    id('rdKoruma').textContent = KORUMA[i].replace(/\{ad\}/g,e[1]).replace(/\{k\}/g,k1);
+    id('rdSections').innerHTML = lifeSections(e);
   }
   id('cta').addEventListener('click',function(){show('finder');});
   id('ctaBack').addEventListener('click',function(){if(history.length>1){history.back();}else{location.href='/';}});
