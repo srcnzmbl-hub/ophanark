@@ -51,12 +51,15 @@
   /* Sonuç ekranı */
   #reading{background:#050505}
   .rd-wrap{position:relative;z-index:2;margin:0 auto;width:100%;max-width:34ch;padding:56px 28px;text-align:center}
-  .rd-title{font-weight:700;letter-spacing:-0.01em;font-size:clamp(30px,10vw,42px);line-height:1.05;color:#F5F0E6;text-align:center;margin:0}
-  .rd-intro{font-size:16px;line-height:1.72;color:#e6ddcb;margin:16px auto 0;max-width:33ch;text-align:center}
-  .rd-name{font-weight:700;letter-spacing:-0.02em;font-size:clamp(38px,12vw,52px);line-height:1.0;color:#D4AF37;text-align:center;margin:30px 0 0}
-  .rd-sigil{display:flex;justify-content:center;margin:16px 0 12px}
-  .rd-sigil img{width:150px;height:150px;object-fit:contain}
-  .rd-values{font-style:italic;font-size:16px;color:#e8dcc0;text-align:center;line-height:1.5}
+  .rd-title{font-weight:700;letter-spacing:-0.01em;font-size:clamp(30px,10vw,42px);line-height:1.05;color:#D4AF37;text-align:center;margin:0}
+  .rd-head{display:flex;gap:14px;align-items:flex-start;margin-top:24px;text-align:left}
+  .rd-head-l{flex:0 0 116px;width:116px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .rd-head-r{flex:1 1 0;min-width:0}
+  .rd-name{font-weight:700;letter-spacing:-0.01em;font-size:clamp(19px,6.4vw,24px);line-height:1.06;color:#F5F0E6;text-align:center;margin:0 0 8px}
+  .rd-sigil{display:flex;justify-content:center;margin:0 0 8px}
+  .rd-sigil img{width:112px;height:112px;object-fit:contain}
+  .rd-values{font-style:italic;font-size:12px;color:#e8dcc0;text-align:center;line-height:1.42;margin:0}
+  .rd-intro{font-size:13.5px;line-height:1.62;color:#e6ddcb;margin:0;text-align:left}
   .rd-block{margin-top:30px}
   .rd-sec-h{font-weight:700;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#D4AF37;margin-bottom:10px;text-align:center}
   .rd-p{font-size:16px;line-height:1.74;color:#efe8d8;text-align:center}
@@ -108,10 +111,16 @@
   <section class="screen" id="reading">
     <div class="rd-wrap">
       <div class="rd-title">Koruyucu Melek</div>
-      <p class="rd-intro" id="rdIntro"></p>
-      <div class="rd-name" id="rdName"></div>
-      <div class="rd-sigil" id="rdSigil"></div>
-      <div class="rd-values" id="rdValues"></div>
+      <div class="rd-head">
+        <div class="rd-head-l">
+          <div class="rd-name" id="rdName"></div>
+          <div class="rd-sigil" id="rdSigil"></div>
+          <div class="rd-values" id="rdValues"></div>
+        </div>
+        <div class="rd-head-r">
+          <p class="rd-intro" id="rdIntro"></p>
+        </div>
+      </div>
       <div id="rdSections"></div>
       <div class="btn-row">
         <button class="btn" id="rdAgain" type="button">Geri Dön</button>
