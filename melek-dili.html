@@ -23,11 +23,12 @@
   .title{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:clamp(44px,14vw,62px);line-height:1.0;letter-spacing:-0.02em;margin:14px 0 16px;color:#F5F0E6;text-shadow:0 2px 26px rgba(0,0,0,.95), 0 0 12px rgba(0,0,0,.7)}
   .lead{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:18px;line-height:1.62;color:#e9e0cd;text-shadow:0 1px 14px rgba(0,0,0,.95)}
   .lead b{color:#D4AF37;font-weight:600}
-  .cta{margin-top:26px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
-    padding:14px 34px;border:1px solid #D4AF37;border-radius:0;background:rgba(212,175,55,.08);
-    color:#D4AF37;font-family:Inter;font-size:11px;letter-spacing:.24em;text-transform:uppercase;font-weight:500;
-    text-shadow:0 1px 8px rgba(0,0,0,.7);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);transition:.2s}
-  .cta:hover{background:#D4AF37;color:#0a0a0a}
+  .btn-row{display:flex;gap:10px;justify-content:center;align-items:stretch}
+  .hero .btn-row{margin-top:26px}
+  .btn{flex:1 1 0;min-width:0;padding:14px 8px;border:1px solid #D4AF37;border-radius:0;background:rgba(212,175,55,.08);
+    color:#D4AF37;font-family:Inter;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:.2s;text-align:center;white-space:nowrap}
+  .btn:hover{background:#D4AF37;color:#0a0a0a}
+  .hero .btn{text-shadow:0 1px 8px rgba(0,0,0,.7);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
   .scroll-hint{position:absolute;left:0;right:0;bottom:22px;z-index:2;text-align:center;color:#cfc5b3;font-size:20px;opacity:.7;animation:bob 1.8s ease-in-out infinite}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
   @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -42,9 +43,7 @@
     background:rgba(15,13,20,.7);color:#f5f0e6;font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:15px;outline:none}
   .f-form input::placeholder{color:#8a8477}
   .f-form input:focus{border-color:rgba(212,175,55,.8)}
-  #melBul{margin-top:6px;width:100%;padding:14px 24px;border:1px solid #D4AF37;border-radius:0;background:rgba(212,175,55,.08);color:#D4AF37;
-    font-family:Inter;font-size:11px;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;transition:.2s}
-  #melBul:hover{background:#D4AF37;color:#0a0a0a}
+  .f-form .btn-row{margin-top:6px}
   #melekResult{margin:18px auto 0;max-width:34ch}
   #melekResult.empty{display:none}
   .mr-hint{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-style:italic;color:#a39d8e;font-size:15px}
@@ -76,7 +75,10 @@
       <div class="tag">Kadim Meleklerin Kayıp Dili</div>
       <h1 class="title">Melek Dili</h1>
       <p class="lead">Kabala'nın kadim öğretisinde göğün <b>72 meleği</b> vardır; her biri Tanrı'nın gizli bir ismini taşır. Bu bölümde meleklerin dilini tanır, doğum tarihine göre bu 72 melekten hangisinin sana ait olduğunu — <b>koruyucu meleğini</b> — keşfeder; onun görev alanını ve sana fısıldadığı mesajı öğrenirsin.</p>
-      <div class="cta" id="cta">Devam Et</div>
+      <div class="btn-row">
+        <div class="btn" id="ctaBack">Geri Dön</div>
+        <div class="btn" id="cta">Devam Et</div>
+      </div>
     </div>
     <div class="scroll-hint">⌄</div>
   </section>
@@ -90,7 +92,10 @@
       <input id="mBaba" type="text" placeholder="Baba adı" autocomplete="off">
       <input id="mTarih" type="date" aria-label="Doğum tarihi">
       <input id="mSaat" type="time" aria-label="Doğum saati">
-      <button id="melBul" type="button">Devam Et</button>
+      <div class="btn-row">
+        <button class="btn" id="melBack" type="button">Geri Dön</button>
+        <button class="btn" id="melBul" type="button">Devam Et</button>
+      </div>
     </div>
     <div id="melekResult" class="empty"></div>
   </section>
@@ -240,6 +245,8 @@
   document.getElementById('rdBack').addEventListener('click',function(){reading.classList.remove('on');});
   document.getElementById('rdAgain').addEventListener('click',function(){reading.classList.remove('on');document.getElementById('finder').scrollIntoView({behavior:'smooth',block:'start'});});
   document.getElementById('cta').addEventListener('click',function(){document.getElementById('finder').scrollIntoView({behavior:'smooth',block:'start'});});
+  document.getElementById('ctaBack').addEventListener('click',function(){location.href='/';});
+  document.getElementById('melBack').addEventListener('click',function(){document.getElementById('hero').scrollIntoView({behavior:'smooth',block:'start'});});
 })();
 </script>
 </body></html>
