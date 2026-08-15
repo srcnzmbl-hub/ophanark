@@ -4,61 +4,133 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="index, follow" />
+<meta name="theme-color" content="#000000" />
 <title>Gizlilik Politikası & Hesap Silme — OPHANARK</title>
 <style>
-  :root{ --gold:#D4AF37; --bg:#06040f; --bg2:#0d0a1c; --text:#EDE9F5; --muted:#B7B0CC; }
-  *{ box-sizing:border-box; }
-  html,body{ margin:0; padding:0; }
+  :root{
+    --gold:#D4AF37;
+    --gold-soft:#e6c766;
+    --text:#F1ECFB;
+    --muted:#B9B2CE;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ background:#000; }
   body{
-    background:var(--bg);
     color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    line-height:1.7;
+    line-height:1.75;
     font-size:16px;
+    -webkit-font-smoothing:antialiased;
   }
-  .wrap{ max-width:820px; margin:0 auto; padding:40px 22px 80px; }
-  header{ text-align:center; padding:28px 0 10px; border-bottom:1px solid rgba(212,175,55,.28); margin-bottom:34px; }
-  .brand{ font-size:26px; letter-spacing:.32em; color:var(--gold); font-weight:700; }
-  .sub{ color:var(--muted); font-size:13px; letter-spacing:.14em; margin-top:8px; text-transform:uppercase; }
-  h1{ font-size:22px; color:var(--gold); margin:0 0 6px; }
-  h2{ font-size:18px; color:var(--gold); margin:38px 0 10px; }
-  h3{ font-size:15px; color:var(--text); margin:22px 0 6px; }
-  p,li{ color:var(--text); }
-  a{ color:var(--gold); }
-  .meta{ color:var(--muted); font-size:13px; margin-bottom:6px; }
-  ul{ padding-left:20px; }
-  li{ margin:6px 0; }
-  .card{
-    background:linear-gradient(180deg,var(--bg2),#0a0716);
-    border:1px solid rgba(212,175,55,.28);
-    border-radius:14px;
-    padding:20px 22px;
-    margin:22px 0;
+
+  /* Sabit nebula hero arka plan — içerik üzerinde kayar */
+  .bg{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    background:#000 url("/assets/0fa7e7e17_generated_image.png") center center / cover no-repeat;
+    background-attachment:fixed;
   }
-  .card h2{ margin-top:6px; }
-  .mail{ font-weight:700; color:var(--gold); }
-  footer{ text-align:center; color:var(--muted); font-size:12.5px; margin-top:46px; padding-top:20px; border-top:1px solid rgba(212,175,55,.2); }
-  .toc{ font-size:14px; }
-  .toc a{ text-decoration:none; }
+  .bg::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(3,2,12,.45) 0%, rgba(3,2,12,.82) 60%, rgba(0,0,0,.94) 100%),
+      linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.78));
+  }
+
+  /* 9:16 dikey kolon */
+  .screen{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:430px;              /* 9:16 telefon eni */
+    margin:0 auto;
+    min-height:100vh;
+    padding:54px 26px 90px;
+  }
+
+  header{ text-align:center; margin-bottom:30px; }
+  .logo{
+    width:96px; height:96px;
+    object-fit:contain;
+    margin:0 auto 14px;
+    display:block;
+    filter:drop-shadow(0 0 22px rgba(212,175,55,.45));
+  }
+  .brand{
+    font-size:24px;
+    letter-spacing:.42em;
+    color:var(--gold);
+    font-weight:600;
+    padding-left:.42em;
+  }
+  .sub{
+    color:var(--muted);
+    font-size:11.5px;
+    letter-spacing:.24em;
+    margin-top:10px;
+    text-transform:uppercase;
+  }
+  .rule{
+    width:64px; height:1px;
+    margin:22px auto 0;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  }
+
+  h2{ font-size:17px; color:var(--gold); margin:36px 0 10px; font-weight:600; letter-spacing:.01em; }
+  h3{ font-size:14.5px; color:var(--gold-soft); margin:20px 0 6px; font-weight:600; }
+  p,li{ color:var(--text); font-size:15px; }
+  a{ color:var(--gold); text-decoration:none; border-bottom:1px solid rgba(212,175,55,.35); }
+  .meta{ color:var(--muted); font-size:12.5px; margin-bottom:4px; }
+  ul{ list-style:none; }
+  ul li{ position:relative; padding-left:16px; margin:7px 0; }
+  ul li::before{ content:"·"; color:var(--gold); position:absolute; left:2px; top:-1px; font-size:18px; line-height:1; }
+  .mail{ color:var(--gold); font-weight:600; }
+
+  .intro{ margin-top:24px; }
+
+  /* İçindekiler — çerçevesiz */
+  .toc{ margin:26px 0 8px; }
+  .toc-title{ color:var(--gold); font-size:13px; letter-spacing:.16em; text-transform:uppercase; margin-bottom:8px; }
+  .toc a{ border:none; }
+
+  /* Vurgulu bölümler — kutu değil, ince altın sol çizgi */
+  .block{
+    margin:26px 0;
+    padding:2px 0 2px 16px;
+    border-left:2px solid rgba(212,175,55,.55);
+  }
+  .block h2{ margin-top:6px; }
+
+  .divider{ height:1px; margin:34px 0; background:linear-gradient(90deg,transparent,rgba(212,175,55,.28),transparent); }
+
+  footer{ text-align:center; color:var(--muted); font-size:12px; margin-top:44px; }
+  footer a{ border:none; }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="bg"></div>
+
+<main class="screen">
   <header>
+    <img class="logo" src="/carklar.png" alt="OPHANARK" />
     <div class="brand">OPHANARK</div>
-    <div class="sub">Gizlilik Politikası &amp; Veri / Hesap Silme</div>
+    <div class="sub">Gizlilik &amp; Veri / Hesap Silme</div>
+    <div class="rule"></div>
   </header>
 
   <p class="meta">Yürürlük tarihi: 15 Ağustos 2026</p>
-  <p class="meta">Geliştirici: Ozark Collective &nbsp;·&nbsp; Uygulama: OPHANARK — Astrology &amp; Tarot</p>
+  <p class="meta">Geliştirici: Ozark Collective &nbsp;·&nbsp; OPHANARK — Astrology &amp; Tarot</p>
 
-  <p>Bu politika, OPHANARK mobil uygulamasını ve <a href="https://www.ophanark.com">www.ophanark.com</a> web sitesini
+  <p class="intro">Bu politika, OPHANARK mobil uygulamasını ve <a href="https://www.ophanark.com">www.ophanark.com</a> web sitesini
   (birlikte "Uygulama") kullandığınızda hangi kişisel verileri topladığımızı, bu verileri nasıl kullandığımızı ve
   koruduğumuzu; ayrıca hesabınızı ve verilerinizi nasıl silebileceğinizi açıklar. Uygulamayı kullanarak bu politikayı
   kabul etmiş olursunuz.</p>
 
-  <div class="card toc">
-    <strong>İçindekiler</strong>
+  <nav class="toc">
+    <div class="toc-title">İçindekiler</div>
     <ul>
       <li><a href="#topladigimiz">Topladığımız Veriler</a></li>
       <li><a href="#kullanim">Verileri Nasıl Kullanırız</a></li>
@@ -69,7 +141,9 @@
       <li><a href="#veri-sil">Verilerin Silinmesi Talebi</a></li>
       <li><a href="#haklar">Haklarınız &amp; İletişim</a></li>
     </ul>
-  </div>
+  </nav>
+
+  <div class="divider"></div>
 
   <h2 id="topladigimiz">1. Topladığımız Veriler</h2>
   <p>OPHANARK, kişiselleştirilmiş astroloji ve tarot deneyimi sunabilmek için aşağıdaki verileri toplayabilir:</p>
@@ -97,6 +171,8 @@
     <li>Bildirimlere izin verdiyseniz, anlık bildirim (push) jetonu.</li>
   </ul>
 
+  <div class="divider"></div>
+
   <h2 id="kullanim">2. Verileri Nasıl Kullanırız</h2>
   <ul>
     <li>Kişiselleştirilmiş astroloji ve tarot yorumlarını oluşturmak ve göstermek.</li>
@@ -108,6 +184,8 @@
   </ul>
   <p>Kişisel verilerinizi reklam amacıyla satmayız.</p>
 
+  <div class="divider"></div>
+
   <h2 id="uculuncu">3. Üçüncü Taraf Hizmetler</h2>
   <p>Uygulamanın çalışması için aşağıdaki hizmet sağlayıcıları kullanırız; verileriniz yalnızca hizmetin gerektirdiği ölçüde paylaşılır:</p>
   <ul>
@@ -117,28 +195,32 @@
     <li><strong>Anlık bildirim servisleri</strong> — bildirim göndermek için (izin verdiyseniz).</li>
   </ul>
 
+  <div class="divider"></div>
+
   <h2 id="saklama">4. Veri Saklama ve Güvenlik</h2>
   <p>Verilerinizi yalnızca hizmeti sunmak için gerekli olduğu sürece ve yasal saklama süreleri boyunca saklarız. Hesabınızı
   sildiğinizde, ilişkili kişisel verileriniz aşağıda açıklandığı şekilde kalıcı olarak silinir. Verilerinizi yetkisiz
   erişime karşı korumak için makul teknik ve idari önlemler (şifreli bağlantılar, erişim kontrolü) uygularız. Hiçbir
   sistem %100 güvenli değildir; ancak verilerinizi korumak için ticari olarak makul çabayı gösteririz.</p>
 
+  <div class="divider"></div>
+
   <h2 id="cocuk">5. Çocukların Gizliliği</h2>
   <p>OPHANARK 13 yaşın altındaki (veya bulunduğunuz ülkede geçerli asgari yaşın altındaki) kişilere yönelik değildir ve
   bilerek bu kişilerden veri toplamayız. Bir çocuğa ait veri topladığımızı fark edersek sileriz.</p>
 
-  <div class="card">
+  <div class="block">
     <h2 id="hesap-sil">6. Hesabınızı Nasıl Silersiniz</h2>
     <p>Hesabınızı ve ilişkili tüm kişisel verilerinizi dilediğiniz zaman silebilirsiniz. İki yolla talep edebilirsiniz:</p>
     <h3>a) Uygulama içinden (önerilen)</h3>
     <ul>
       <li>Uygulamayı açın ve <strong>Profil</strong> sayfasına gidin.</li>
-      <li>Sayfanın <strong>en altındaki “Hesabı Sil”</strong> seçeneğine dokunun ve onaylayın.</li>
+      <li>Sayfanın <strong>en altındaki "Hesabı Sil"</strong> seçeneğine dokunun ve onaylayın.</li>
       <li>Hesabınız ve verileriniz kalıcı olarak silinir.</li>
     </ul>
     <h3>b) E-posta ile</h3>
     <p>Silme talebinizi, hesabınıza ait e-posta adresinden <a class="mail" href="mailto:hello@ozarkcollective.co">hello@ozarkcollective.co</a>
-    adresine gönderin; konu satırına “Hesap Silme” yazmanız yeterlidir. Talebinizi en geç 30 gün içinde işleme alırız.</p>
+    adresine gönderin; konu satırına "Hesap Silme" yazmanız yeterlidir. Talebinizi en geç 30 gün içinde işleme alırız.</p>
     <h3>Silindiğinde ne olur?</h3>
     <p>Hesap silme sonrasında şu veriler kalıcı olarak silinir: hesap ve giriş bilgileri, görünen adınız, doğum bilgileriniz
     (tarih, saat, yer), fal/yorum geçmişiniz ve uygulama içi tercihleriniz. Yalnızca yasal olarak saklamamız gereken kayıtlar
@@ -146,7 +228,7 @@
     bu süre dolduğunda silinir.</p>
   </div>
 
-  <div class="card">
+  <div class="block">
     <h2 id="veri-sil">7. Verilerin Silinmesi Talebi</h2>
     <p>Hesabınızı tamamen silmeden yalnızca belirli kişisel verilerinizin silinmesini de talep edebilirsiniz (örneğin doğum
     bilgileri veya fal geçmişi). Bunun için <a class="mail" href="mailto:hello@ozarkcollective.co">hello@ozarkcollective.co</a>
@@ -155,20 +237,24 @@
     neden olabilir.</p>
   </div>
 
+  <div class="divider"></div>
+
   <h2 id="haklar">8. Haklarınız &amp; İletişim</h2>
   <p>Bulunduğunuz yargı bölgesine göre; verilerinize erişme, düzeltme, silme, işlemeyi kısıtlama ve verilerinizin bir
   kopyasını alma haklarına sahip olabilirsiniz. Bu haklarınızı kullanmak veya gizlilikle ilgili her türlü sorunuz için
   bize ulaşın:</p>
   <p><strong>E-posta:</strong> <a class="mail" href="mailto:hello@ozarkcollective.co">hello@ozarkcollective.co</a></p>
 
+  <div class="divider"></div>
+
   <h2>9. Bu Politikadaki Değişiklikler</h2>
   <p>Bu politikayı zaman zaman güncelleyebiliriz. Önemli değişikliklerde uygulama içinde veya bu sayfada bilgilendirme yaparız.
-  Güncel sürüm her zaman bu adreste yayınlanır. Sayfanın üst kısmındaki “Yürürlük tarihi” son güncellemeyi gösterir.</p>
+  Güncel sürüm her zaman bu adreste yayınlanır. Sayfanın üst kısmındaki "Yürürlük tarihi" son güncellemeyi gösterir.</p>
 
   <footer>
-    © 2026 Ozark Collective · OPHANARK — Astrology &amp; Tarot<br />
+    © 2026 Ozark Collective · OPHANARK<br />
     <a href="https://www.ophanark.com">www.ophanark.com</a> · <a class="mail" href="mailto:hello@ozarkcollective.co">hello@ozarkcollective.co</a>
   </footer>
-</div>
+</main>
 </body>
 </html>
