@@ -42,11 +42,11 @@
   .mr-hint{font-style:italic;color:#e6b8b0;font-size:14.5px;text-shadow:0 1px 10px rgba(0,0,0,.9)}
 
   /* Butonlar (altta, kare altın çerçeve) */
-  .btn-row{display:flex;gap:10px;justify-content:center;align-items:stretch;margin-top:26px}
-  .btn{flex:1 1 0;min-width:0;padding:14px 8px;border:1px solid #D4AF37;border-radius:0;background:rgba(212,175,55,.1);
+  .btn-row{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:30px}
+  .btn{padding:1cm;border:1px solid #D4AF37;border-radius:0;background:transparent;
     color:#D4AF37;font-family:Inter;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:.2s;text-align:center;white-space:nowrap;
-    text-shadow:0 1px 8px rgba(0,0,0,.7);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
-  .btn:hover{background:#D4AF37;color:#0a0a0a}
+    text-shadow:0 1px 8px rgba(0,0,0,.7)}
+  .btn:hover{background:transparent;color:#D4AF37}
 
   /* Sonuç ekranı */
   #reading{background:#050505}
@@ -96,8 +96,6 @@
         <input id="mBaba" type="text" placeholder="Baba adı" autocomplete="off">
         <div class="f-lbl">Doğum tarihi</div>
         <input id="mTarih" type="date" aria-label="Doğum tarihi">
-        <div class="f-lbl">Doğum saati</div>
-        <input id="mSaat" type="time" aria-label="Doğum saati">
       </div>
       <div id="melekResult" class="empty"></div>
       <div class="btn-row">
