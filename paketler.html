@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#000000" />
+<title>Paketler — OPHANARK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{ --gold:#D4AF37; --gold-soft:#e6c766; --text:#F1ECFB; --muted:#B9B2CE; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ background:#000; }
+  body{
+    color:var(--text);
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    line-height:1.6; font-size:15px; -webkit-font-smoothing:antialiased;
+  }
+  /* Nebula yalnızca 9:16 kolonun içinde; dışı siyah */
+  .bg{
+    position:fixed; top:0; bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:430px; z-index:0;
+    background:#000 url("/assets/0fa7e7e17_generated_image.png") top center / cover no-repeat;
+  }
+  .bg::after{ content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.82) 42%, #000 78%); }
+
+  .screen{ position:relative; z-index:1; width:100%; max-width:430px; margin:0 auto;
+    min-height:100vh; padding:3cm 22px 70px; }
+
+  header{ text-align:center; margin-bottom:28px; }
+  .wordmark{ font-weight:800; font-size:40px; letter-spacing:-.03em; color:#fff; line-height:1; }
+  .wordmark .dot{ display:inline-block; width:.15em; height:.15em; background:var(--gold);
+    border-radius:2px; margin-left:.04em; vertical-align:baseline; }
+  .sub{ color:var(--muted); font-size:11px; letter-spacing:.28em; text-transform:uppercase; margin-top:12px; }
+
+  #list{ display:flex; flex-direction:column; gap:20px; }
+
+  .card{
+    background:rgba(10,8,16,.72);
+    border:1px solid rgba(212,175,55,.28);
+    border-radius:16px;
+    padding:20px 18px 18px;
+    backdrop-filter:blur(2px);
+    text-align:center;
+  }
+  .card.pop{ border-color:rgba(212,175,55,.6); box-shadow:0 0 30px rgba(212,175,55,.12); }
+
+  .chead{ display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:4px; }
+  .badge{ width:54px; height:54px; flex:0 0 54px; object-fit:contain; filter:drop-shadow(0 0 10px rgba(212,175,55,.35)); }
+  .pname{ font-size:19px; font-weight:700; color:var(--gold); letter-spacing:.02em; }
+  .ptag{ display:block; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); margin-top:3px; }
+
+  .feats{ list-style:none; margin:14px 0 2px; display:inline-block; text-align:left; }
+  .feats li{ position:relative; padding-left:16px; margin:6px 0; font-size:13.5px; color:var(--text); }
+  .feats li::before{ content:"·"; color:var(--gold); position:absolute; left:2px; top:-2px; font-size:18px; }
+
+  .price{ margin-top:16px; font-size:22px; font-weight:800; color:#fff; }
+  .price .cur{ color:var(--gold); }
+  .price small{ display:block; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-top:2px; }
+
+  .buy{
+    display:inline-block; margin-top:14px; width:100%;
+    background:var(--gold); color:#0a0a0a; border:1px solid var(--gold);
+    font-weight:700; font-size:13px; letter-spacing:.18em; text-transform:uppercase;
+    padding:13px 20px; border-radius:10px; cursor:pointer; transition:.2s;
+  }
+  .buy:hover{ background:var(--gold-soft); border-color:var(--gold-soft); }
+  .state{ margin-top:14px; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+  .gift{ color:var(--gold-soft); }
+  .note{ margin-top:8px; font-size:12px; font-style:italic; color:var(--muted); }
+
+  .back{ display:block; text-align:center; margin-top:26px; color:var(--muted);
+    font-size:11px; letter-spacing:.22em; text-transform:uppercase; text-decoration:none; }
+
+  #toast{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%);
+    background:rgba(20,16,28,.96); border:1px solid rgba(212,175,55,.4); color:var(--text);
+    padding:12px 20px; border-radius:10px; font-size:13px; z-index:10; opacity:0; transition:.3s; pointer-events:none; max-width:380px; text-align:center; }
+  #toast.show{ opacity:1; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<main class="screen">
+  <header>
+    <div class="wordmark">ophanark<span class="dot"></span></div>
+    <div class="sub">Paketler</div>
+  </header>
+
+  <div id="list"></div>
+
+  <a class="back" href="/">← Ana sayfa</a>
+</main>
+
+<div id="toast"></div>
+
+<script>
+(function(){
+  // Bölge: Türkiye kullanıcısı otomatik TR fiyatı, diğerleri global fiyatı görür
+  var tz=""; try{ tz=Intl.DateTimeFormat().resolvedOptions().timeZone||""; }catch(e){}
+  var lang=(navigator.language||navigator.userLanguage||"").toLowerCase();
+  var isTR = /istanbul|turkey/i.test(tz) || lang.indexOf("tr")===0;
+
+  var PACKAGES=[
+    { sku:null, badge:"safir",  name:"Safir", tier:"Basic",
+      feats:["Kahve & El — günde 1","Tarot & Katina — günde 1 (tekli çekim sınırsız)","Natal — haftada 1","Burç & Melek — sınırsız"],
+      free:true },
+    { sku:"plus", badge:"yakut", name:"Yakut", tier:"Plus", pop:true,
+      feats:["Kahve & El — günde 2","Tarot & Katina — sınırsız","Natal — günde 1","Numeroloji & Yıldızname — haftada 1"],
+      tr:"1.49", global:"4.99" },
+    { sku:"pro", badge:"zumrut", name:"Zümrüt", tier:"Pro",
+      feats:["Kahve & El — günde 3","Tarot, Katina & Natal — sınırsız","Numeroloji & Yıldızname — günde 1"],
+      tr:"2.49", global:"14.99" },
+    { sku:"promax", badge:"elmas", name:"Elmas", tier:"Pro Max",
+      feats:["Kahve & El — sınırsız","Tarot & Katina — sınırsız","Natal — günde 3","Numeroloji & Yıldızname — günde 3"],
+      tr:"9.99", global:"24.99" },
+    { sku:null, badge:"unique", name:"Unique", tier:"Hediye",
+      feats:["Tüm fallar — sınırsız","Sistem tarafından özel kullanıcılara verilir"],
+      gift:true, note:"Hayatta para ile alınamayan şeyler vardır." }
+  ];
+
+  function toast(msg){
+    var t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");
+    clearTimeout(window.__tt); window.__tt=setTimeout(function(){ t.classList.remove("show"); },3200);
+  }
+
+  function buy(sku,name){
+    // Play Billing (Digital Goods API) ileride bağlanacak; şimdilik güvenli geri bildirim
+    if(window.getDigitalGoodsService){
+      toast(name+" — satın alma başlatılıyor…");
+      // TODO: Digital Goods + Payment Request akışı (SKU: "+sku+")
+    } else {
+      toast("Satın alma çok yakında Google Play üzerinden aktif olacak.");
+    }
+  }
+
+  var list=document.getElementById("list");
+  PACKAGES.forEach(function(p){
+    var card=document.createElement("div");
+    card.className="card"+(p.pop?" pop":"");
+    var html="";
+    html+='<div class="chead"><img class="badge" src="/assets/badge-'+p.badge+'.png" alt="'+p.name+'" />';
+    html+='<div><span class="pname">'+p.name+'</span><span class="ptag">'+p.tier+'</span></div></div>';
+    html+='<ul class="feats">';
+    p.feats.forEach(function(f){ html+='<li>'+f+'</li>'; });
+    html+='</ul>';
+    if(p.free){
+      html+='<div class="state">Ücretsiz</div>';
+    } else if(p.gift){
+      html+='<div class="state gift">Hediye — satın alınamaz</div>';
+      if(p.note) html+='<div class="note">'+p.note+'</div>';
+    } else {
+      var val=isTR?p.tr:p.global;
+      html+='<div class="price"><span class="cur">$</span>'+val+'<small>'+(isTR?"Türkiye fiyatı":"Global fiyat")+'</small></div>';
+      html+='<button class="buy" data-sku="'+p.sku+'" data-name="'+p.name+'">Satın Al</button>';
+    }
+    card.innerHTML=html;
+    var b=card.querySelector(".buy");
+    if(b) b.addEventListener("click",function(){ buy(this.getAttribute("data-sku"), this.getAttribute("data-name")); });
+    list.appendChild(card);
+  });
+})();
+</script>
+</body>
+</html>
