@@ -59,21 +59,22 @@
 
   header{ text-align:center; margin-bottom:30px; }
   .wordmark{
-    font-family:"Inter",system-ui,sans-serif;
-    font-weight:800;
+    font-family:Geist,ui-sans-serif,system-ui,sans-serif;
+    font-weight:700;
     font-size:44px;
-    letter-spacing:-.03em;
+    letter-spacing:-0.01em;
     color:#fff;
     line-height:1;
     display:inline-block;
   }
   .wordmark .dot{
     display:inline-block;
-    width:.15em; height:.15em;
-    background:var(--gold);
-    border-radius:2px;
-    margin-left:.04em;
+    width:0.22em; height:0.22em;
+    margin-left:0.06em;
+    transform:translateY(0.04em);
     vertical-align:baseline;
+    background:radial-gradient(circle at 35% 30%, #F5E6A8 0%, #D4AF37 40%, #8a6a1f 72%, #4a3a12 100%);
+    box-shadow:0 0 0.4em rgba(212,175,55,0.9), 0 0 1.2em rgba(212,175,55,0.5), inset 0 0 0.25em rgba(255,240,200,0.5);
   }
   .sub{
     color:var(--muted);
