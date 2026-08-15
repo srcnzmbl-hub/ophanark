@@ -1,0 +1,245 @@
+<!doctype html><html lang="tr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Ophan AI · Melek Dili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:#050505;color:#F5F0E6;font-family:Inter,ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  #page{position:relative;width:min(100vw, calc(100vh * 9 / 16));min-height:100vh;margin:0 auto;overflow:hidden;background:#050505}
+  .back{position:fixed;left:max(16px, calc(50vw - min(50vw, calc(50vh * 9 / 16)) + 16px));top:16px;z-index:6;color:#cfc5b3;text-decoration:none;font-size:11px;letter-spacing:.28em;text-transform:uppercase;display:inline-flex;gap:8px;align-items:center;opacity:.85;text-shadow:0 1px 8px rgba(0,0,0,.8)}
+  .back:hover{color:#D4AF37}
+
+  /* ── Karşılama ── */
+  .hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 30px;overflow:hidden}
+  .hero-bg{position:absolute;inset:0;background:url('assets/melek_dili_hero.png') center center / cover no-repeat;filter:brightness(0.83) contrast(1.04);z-index:0}
+  .hero-fade{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(to bottom,#050505 0%,rgba(5,5,5,.92) 5%,rgba(5,5,5,0) 26%,rgba(5,5,5,0) 72%,rgba(5,5,5,.92) 95%,#050505 100%)}
+  .hero-center{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse 74% 46% at 50% 50%, rgba(5,5,5,.6) 0%, rgba(5,5,5,.28) 42%, rgba(5,5,5,0) 72%)}
+  .hero-in{position:relative;z-index:2;max-width:34ch;animation:rise .9s ease both}
+  .tag{font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;color:#D4AF37;font-weight:500;text-shadow:0 1px 10px rgba(0,0,0,.9)}
+  .title{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:clamp(44px,14vw,62px);line-height:1.0;letter-spacing:-0.02em;margin:14px 0 16px;color:#F5F0E6;text-shadow:0 2px 26px rgba(0,0,0,.95), 0 0 12px rgba(0,0,0,.7)}
+  .lead{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:18px;line-height:1.62;color:#e9e0cd;text-shadow:0 1px 14px rgba(0,0,0,.95)}
+  .lead b{color:#D4AF37;font-weight:600}
+  .cta{margin-top:26px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+    padding:14px 34px;border:1px solid #D4AF37;border-radius:0;background:rgba(212,175,55,.08);
+    color:#D4AF37;font-family:Inter;font-size:11px;letter-spacing:.24em;text-transform:uppercase;font-weight:500;
+    text-shadow:0 1px 8px rgba(0,0,0,.7);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);transition:.2s}
+  .cta:hover{background:#D4AF37;color:#0a0a0a}
+  .scroll-hint{position:absolute;left:0;right:0;bottom:22px;z-index:2;text-align:center;color:#cfc5b3;font-size:20px;opacity:.7;animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  @keyframes fadein{from{opacity:0}to{opacity:1}}
+
+  /* ── Form ── */
+  .finder{position:relative;z-index:2;padding:40px 24px 60px;background:#050505;text-align:center}
+  .f-h{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:26px;color:#D4AF37;letter-spacing:-0.01em}
+  .f-desc{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-style:italic;font-size:15.5px;color:#cfc5b3;margin:9px auto 20px;line-height:1.5;max-width:32ch}
+  .f-form{display:flex;flex-direction:column;gap:11px;max-width:300px;margin:0 auto;align-items:stretch}
+  .f-form input{width:100%;padding:13px 16px;border:1px solid rgba(212,175,55,.4);border-radius:0;color-scheme:dark;
+    background:rgba(15,13,20,.7);color:#f5f0e6;font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:15px;outline:none}
+  .f-form input::placeholder{color:#8a8477}
+  .f-form input:focus{border-color:rgba(212,175,55,.8)}
+  #melBul{margin-top:6px;width:100%;padding:14px 24px;border:1px solid #D4AF37;border-radius:0;background:rgba(212,175,55,.08);color:#D4AF37;
+    font-family:Inter;font-size:11px;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;transition:.2s}
+  #melBul:hover{background:#D4AF37;color:#0a0a0a}
+  #melekResult{margin:18px auto 0;max-width:34ch}
+  #melekResult.empty{display:none}
+  .mr-hint{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-style:italic;color:#a39d8e;font-size:15px}
+
+  /* ── Sonuç sayfası ── */
+  #reading{position:fixed;inset:0;z-index:30;display:none;overflow-y:auto;background:#050505;color:#F5F0E6}
+  #reading.on{display:block;animation:fadein .3s ease both}
+  .rd-wrap{width:min(100vw, calc(100vh*9/16));margin:0 auto;padding:70px 28px 64px;min-height:100vh;box-sizing:border-box}
+  .rd-lead{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#D4AF37;text-align:center}
+  .rd-name{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-weight:700;letter-spacing:-0.02em;font-size:clamp(40px,13vw,56px);line-height:1.0;color:#D4AF37;text-align:center;margin:10px 0 8px}
+  .rd-meta{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#b7ab8e;text-align:center}
+  .rd-meta .dom{display:block;font-style:italic;font-size:16px;color:#e8dcc0;letter-spacing:0;text-transform:none;margin-top:10px}
+  .rd-block{margin-top:30px;border-top:1px solid rgba(212,175,55,.16);padding-top:20px}
+  .rd-sec-h{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#D4AF37;margin-bottom:11px}
+  .rd-p{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:16.5px;line-height:1.72;color:#efe8d8}
+  .rd-again{margin-top:38px;width:100%;padding:14px 24px;border:1px solid #D4AF37;border-radius:0;background:rgba(212,175,55,.08);color:#D4AF37;font-family:Inter;font-size:11px;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;transition:.2s}
+  .rd-again:hover{background:#D4AF37;color:#0a0a0a}
+</style>
+</head>
+<body>
+<div id="page">
+  <a class="back" href="/">← Geri</a>
+
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-fade"></div>
+    <div class="hero-center"></div>
+    <div class="hero-in">
+      <div class="tag">Kadim Meleklerin Kayıp Dili</div>
+      <h1 class="title">Melek Dili</h1>
+      <p class="lead">Kabala'nın kadim öğretisinde göğün <b>72 meleği</b> vardır; her biri Tanrı'nın gizli bir ismini taşır. Bu bölümde meleklerin dilini tanır, doğum tarihine göre bu 72 melekten hangisinin sana ait olduğunu — <b>koruyucu meleğini</b> — keşfeder; onun görev alanını ve sana fısıldadığı mesajı öğrenirsin.</p>
+      <div class="cta" id="cta">Devam Et</div>
+    </div>
+    <div class="scroll-hint">⌄</div>
+  </section>
+
+  <section class="finder" id="finder">
+    <div class="f-h">Koruyucu Meleğin</div>
+    <div class="f-desc">Bilgilerini gir; doğduğun an gökyüzünde sana eşlik eden meleği bulalım.</div>
+    <div class="f-form">
+      <input id="mIsim" type="text" placeholder="İsim" autocomplete="off">
+      <input id="mAnne" type="text" placeholder="Anne adı" autocomplete="off">
+      <input id="mBaba" type="text" placeholder="Baba adı" autocomplete="off">
+      <input id="mTarih" type="date" aria-label="Doğum tarihi">
+      <input id="mSaat" type="time" aria-label="Doğum saati">
+      <button id="melBul" type="button">Devam Et</button>
+    </div>
+    <div id="melekResult" class="empty"></div>
+  </section>
+
+  <div id="reading" aria-hidden="true">
+    <a class="back" id="rdBack" href="javascript:void(0)">← Geri</a>
+    <div class="rd-wrap">
+      <div class="rd-lead" id="rdLead">Koruyucu Meleğin</div>
+      <div class="rd-name" id="rdName"></div>
+      <div class="rd-meta" id="rdMeta"></div>
+      <div class="rd-block">
+        <div class="rd-sec-h">Bu melek kim?</div>
+        <p class="rd-p" id="rdKim"></p>
+      </div>
+      <div class="rd-block">
+        <div class="rd-sec-h">Sana ne sağlar?</div>
+        <p class="rd-p" id="rdFayda"></p>
+      </div>
+      <div class="rd-block">
+        <div class="rd-sec-h">Seni nasıl korur?</div>
+        <p class="rd-p" id="rdKoruma"></p>
+      </div>
+      <button class="rd-again" id="rdAgain" type="button">Geri Dön</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Melek Dili — 72 Shem HaMephorash meleği (doğum tarihinden) ── */
+(function(){
+  var AYLAR=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+  var M=[
+   [1,"Vehuiah","03-21","03-25","Yeni başlangıçlar · İrade · Yaratıcı kıvılcım","Sen bir başlangıç ruhusun. Vehuiah sana yeni kapılar açar; içindeki iradeyi ateşleyip cesaretle ilk adımı atmanı sağlar."],
+   [2,"Jeliel","03-26","03-30","Sevgi · İlişkiler · Barışma","Jeliel sevgi ve uyumun meleğidir. Kalbini yumuşatır, ilişkilerinde barışı ve karşılıklı sadakati güçlendirir."],
+   [3,"Sitael","03-31","04-04","Koruma · Engelleri aşma · Sağlamlık","Sitael zorluklar karşısında kalkanındır. Engelleri aşma gücü verir, verdiğin sözde ve yolunda sağlam durmanı sağlar."],
+   [4,"Elemiah","04-05","04-09","İç güç · Yolculuk · İşte başarı","Elemiah iç gücün ve emeğin meleğidir. Yorgunluğunda seni ayakta tutar, çalışmanı bereketli kılar ve yolculuklarında korur."],
+   [5,"Mahasiah","04-10","04-14","Uyum · Denge · Öğrenme","Mahasiah barış ve öğrenmenin meleğidir. Hatalarını onarmanı, huzur bulmanı ve kolay öğrenmeni sağlar."],
+   [6,"Lelahel","04-15","04-20","Şifa · Canlılık · Işık ve ün","Lelahel ışık ve şifanın meleğidir. Bedenine ve ruhuna canlılık taşır, emeğinin görünür olmasına yardım eder."],
+   [7,"Achaiah","04-21","04-25","Sabır · Sebat · Doğanın sırları","Achaiah sabrın meleğidir. Acele etmeden ilerlemeni, hayatın sırlarını sükûnetle çözmeni öğretir."],
+   [8,"Cahetel","04-26","04-30","Bolluk · Bereket · Şükür","Cahetel bolluk ve bereketin meleğidir. Şükreden kalbe kapıları açar, emeğini bereketli bir hasada dönüştürür."],
+   [9,"Haziel","05-01","05-05","Bağışlama · Merhamet · Dostluk","Haziel merhamet ve bağışlamanın meleğidir. Affetmeyi, gerçek dostluğu ve iyi niyetin karşılık bulmasını getirir."],
+   [10,"Aladiah","05-06","05-10","Arınma · İlahi lütuf · İyileşme","Aladiah ilahi lütuf ve arınmanın meleğidir. Geçmişin yükünden temizlenmeni ve yeniden başlamanı sağlar."],
+   [11,"Lauviah","05-11","05-15","İlham · Zafer · Çözüm","Lauviah ilham ve zaferin meleğidir. Zor anda çözüm fısıldar, çabanı başarıyla taçlandırır."],
+   [12,"Hahaiah","05-16","05-20","Sığınak · Koruma · Rüyalar","Hahaiah sığınak ve rüyaların meleğidir. Seni korur, gizli düşüncelerini ve rüyalarını anlamlandırır."],
+   [13,"Iezalel","05-21","05-25","Sadakat · Dostluk · Barışma","Iezalel sadakat ve barışmanın meleğidir. Bağları onarır, dostlukta ve öğrenmede seni pekiştirir."],
+   [14,"Mebahel","05-26","05-31","Hakikat · Adalet · Özgürlük","Mebahel hakikat ve adaletin meleğidir. Haksızlığa karşı seni korur, özgürlüğünü ve doğruluğunu savunur."],
+   [15,"Hariel","06-01","06-05","Arınma · Bilim ve sanat · Aydınlanma","Hariel arınma ve bilginin meleğidir. Zihnini berraklaştırır, sanata ve bilime olan ilgini aydınlatır."],
+   [16,"Hekamiah","06-06","06-10","Sadakat · Koruma · Huzur","Hekamiah sadakat ve korumanın meleğidir. Güvendiğin bağları korur, sana huzur ve vefa getirir."],
+   [17,"Lauviah","06-11","06-15","Sezgi · Yüksek bilgi · Başarı","Lauviah sezgi ve yüksek bilginin meleğidir. İçsel rehberliğini açar, gece gelen ilhamlara kulak vermeni sağlar."],
+   [18,"Caliel","06-16","06-21","Adalet · Gerçek · Dürüstlük","Caliel adalet ve dürüstlüğün meleğidir. Gerçeğin ortaya çıkmasını sağlar, haklı davanda seni destekler."],
+   [19,"Leuviah","06-22","06-26","Hafıza · Öğrenme · Zihin gücü","Leuviah hafıza ve öğrenmenin meleğidir. Zihnini güçlendirir, sıkıntıyı sabırla taşımanı öğretir."],
+   [20,"Pahaliah","06-27","07-01","Manevi gelişim · Ahlak · Bilgelik","Pahaliah manevi gelişimin meleğidir. Ahlaki gücünü, inancını ve içsel bilgeliğini derinleştirir."],
+   [21,"Nelchael","07-02","07-06","Bilgi · Öğrenme · İftiraya karşı koruma","Nelchael bilgi ve öğrenmenin meleğidir. İftira ve olumsuzluğa karşı korur, öğrenme aşkını besler."],
+   [22,"Yeiayel","07-07","07-11","Ün · Kısmet · Seyahat ve ticaret","Yeiayel ün ve kısmetin meleğidir. Seyahatte ve ticarette şansını açar, adını duyurur."],
+   [23,"Melahel","07-12","07-16","Şifa · Yolculukta güvenlik","Melahel şifa ve güvenli yolculuğun meleğidir. Sağlığını korur, gittiğin her yolda sana eşlik eder."],
+   [24,"Hahuiah","07-17","07-22","Koruma · Sığınak · Adalet","Hahuiah koruma ve sığınağın meleğidir. Seni tehlikeden esirger, adalet ve sağduyu getirir."],
+   [25,"Nith-Haiah","07-23","07-27","Bilgelik · Gizli bilgi · Sezgi","Nith-Haiah bilgelik ve gizli bilginin meleğidir. Sezgini keskinleştirir, örtük hakikatleri görmeni sağlar."],
+   [26,"Haaiah","07-28","08-01","Diplomasi · Düzen · Uzlaşma","Haaiah diplomasi ve düzenin meleğidir. Çatışmayı uzlaştırır, hayatına huzuru ve dengeyi getirir."],
+   [27,"Yerathel","08-02","08-06","Işığın yayılması · Olumlu dönüşüm","Yerathel ışığın ve olumlu dönüşümün meleğidir. Karanlığı dağıtır, seni ileriye taşıyan değişimi getirir."],
+   [28,"Seheiah","08-07","08-12","Uzun ömür · Sağlık · Kazalardan korunma","Seheiah uzun ömür ve sağlığın meleğidir. Kazalardan korur, sana dayanıklılık ve şifa verir."],
+   [29,"Reiyel","08-13","08-17","İlahi ilham · Manevi rehberlik · Özgürleşme","Reiyel ilahi ilham ve özgürleşmenin meleğidir. Sana manevi rehberlik sunar, seni sıkan bağlardan kurtarır."],
+   [30,"Omael","08-18","08-22","Sabır · Bereket · Çoğalma","Omael sabır ve bereketin meleğidir. Emeğinin çoğalmasını, sabrının meyve vermesini sağlar."],
+   [31,"Lecabel","08-23","08-28","Yetenek · Zekâ · Çözüm üretme","Lecabel yetenek ve zekânın meleğidir. Çözüm üretmeni, yeteneğini işe dönüştürmeni sağlar."],
+   [32,"Vasariah","08-29","09-02","Adalet · Bağışlama · Uyum","Vasariah adalet ve bağışlamanın meleğidir. Merhametle davranmanı, uyumu korumanı öğretir."],
+   [33,"Yehuiah","09-03","09-07","Sadakat · Düzen · İhanete karşı koruma","Yehuiah sadakat ve düzenin meleğidir. İhanete karşı korur, doğru yolda kalmanı sağlar."],
+   [34,"Lehahiah","09-08","09-12","Disiplin · Sükûnet · Öfkeyi dizginleme","Lehahiah disiplin ve sükûnetin meleğidir. Öfkeni dizginler, sana sabır ve düzen getirir."],
+   [35,"Chavakiah","09-13","09-17","Barışma · Aile uyumu · İlişkileri onarma","Chavakiah barışma ve aile uyumunun meleğidir. Kırgınlıkları onarır, gönülleri yeniden birleştirir."],
+   [36,"Menadel","09-18","09-23","İş · Üretkenlik · Amaç","Menadel iş ve amacın meleğidir. Emeğine sadık kalmanı, verimli ve kararlı olmanı sağlar."],
+   [37,"Aniel","09-24","09-28","Manevi atılım · İç güç · Bilim","Aniel manevi atılımın meleğidir. İç gücünü açığa çıkarır, seni kuşatan engelleri kırmanı sağlar."],
+   [38,"Haamiah","09-29","10-03","Hakikat · Ahlak · Koruma","Haamiah hakikat ve ahlakın meleğidir. Dürüstlüğünü korur, seni manevi olarak sağlamlaştırır."],
+   [39,"Rehael","10-04","10-08","Şifa · Duygusal iyilik · Şefkat","Rehael şifa ve şefkatin meleğidir. Duygusal yaralarını iyileştirir, sevgi bağlarını güçlendirir."],
+   [40,"Yeiazel","10-09","10-13","Teselli · Avunma · Sanat","Yeiazel teselli ve avunmanın meleğidir. Kederini hafifletir, sana huzur ve yaratıcı ilham verir."],
+   [41,"Hahahel","10-14","10-18","Manevi görev · İlham · Adanmışlık","Hahahel manevi görevin meleğidir. İçindeki adanmışlığı ateşler, ilhamla yolunu aydınlatır."],
+   [42,"Mikael","10-19","10-23","Denge · Düzen · Seyahatte güvenlik","Mikael denge ve düzenin meleğidir. İç huzurunu korur, yolculuklarında güvenliğini sağlar."],
+   [43,"Veuliah","10-24","10-28","Bolluk · Refah · Barış","Veuliah bolluk ve refahın meleğidir. Barış içinde kazanmanı, huzurlu bir refaha ulaşmanı sağlar."],
+   [44,"Yelahiah","10-29","11-02","Cesaret · Güç · Engelleri aşma","Yelahiah cesaret ve gücün meleğidir. Engelleri aşma yürekliliği verir, seni zafere taşır."],
+   [45,"Sealiah","11-03","11-07","İç uyanış · Canlanma · Amaç","Sealiah iç uyanışın meleğidir. Sönük anlarında seni canlandırır, amacını yeniden hatırlatır."],
+   [46,"Ariel","11-08","11-12","Sezgi · Doğa · Keşif ve şükran","Ariel sezgi ve doğanın meleğidir. Görünmeyeni algılamanı, hayata şükranla bakmanı sağlar."],
+   [47,"Asaliah","11-13","11-17","Hakikat · Berraklık · Tefekkür","Asaliah hakikat ve berraklığın meleğidir. Zihnini durultur, gerçeği net görmeni sağlar."],
+   [48,"Mihael","11-18","11-22","Sevgi · Dostluk · Sadık ilişki","Mihael sevgi ve sadık ilişkinin meleğidir. Gönül bağlarını korur, sana dostluk ve uyum getirir."],
+   [49,"Vehuel","11-23","11-27","Yücelme · Cömertlik · Alçakgönüllülük","Vehuel yücelme ve cömertliğin meleğidir. Kalbini büyütür, alçakgönüllülükle yükselmeni sağlar."],
+   [50,"Daniel","11-28","12-02","Belagat · Diplomasi · Etkili iletişim","Daniel belagat ve diplomasinin meleğidir. Sözünü etkili kılar, merhametle ikna etmeni sağlar."],
+   [51,"Hahasiah","12-03","12-07","Şifa · Evrensel bilgi · Simya","Hahasiah şifa ve evrensel bilginin meleğidir. Bedeni ve ruhu iyileştirir, seni derin bilgiye açar."],
+   [52,"Imamiah","12-08","12-12","Dayanıklılık · Telafi · Özgürlük","Imamiah dayanıklılık ve telafinin meleğidir. Hatalarını onarmanı, zorluktan güçlenerek çıkmanı sağlar."],
+   [53,"Nanael","12-13","12-16","Bilgi · Öğrenme · Manevi iletişim","Nanael bilgi ve manevi iletişimin meleğidir. Öğrenmeni derinleştirir, içsel sese kulak vermeni sağlar."],
+   [54,"Nithael","12-17","12-21","Zarafet · Süreklilik · İlahi lütuf","Nithael zarafet ve sürekliliğin meleğidir. Sana ilahi bir lütuf, kalıcılık ve saygınlık getirir."],
+   [55,"Mebahiah","12-22","12-26","Berraklık · Ahlak · Bilgece kararlar","Mebahiah berraklık ve ahlakın meleğidir. Bilgece kararlar almanı, doğru yolda yürümeni sağlar."],
+   [56,"Poyel","12-27","12-31","Kısmet · Ün · Dileklerin gerçekleşmesi","Poyel kısmet ve dileklerin meleğidir. Şansını açar, tevazuyla istediklerini gerçekleştirir."],
+   [57,"Nemamiah","01-01","01-05","Liderlik · Strateji · Başarı","Nemamiah liderlik ve stratejinin meleğidir. İleriyi görmeni, doğru kararlarla başarıya ulaşmanı sağlar."],
+   [58,"Yeialel","01-06","01-10","Cesaret · Kararlılık · Korkuyla yüzleşme","Yeialel cesaret ve kararlılığın meleğidir. Korkularınla yüzleşmeni, azimle direnmeni sağlar."],
+   [59,"Harahel","01-11","01-15","Bilgi · Zihinsel zenginlik · Öğrenme","Harahel bilgi ve zihinsel zenginliğin meleğidir. Öğrenme merakını besler, aklını bir hazineye çevirir."],
+   [60,"Mitzrael","01-16","01-20","Onarım · Ruh sağlığı · Gelişim","Mitzrael onarım ve gelişimin meleğidir. İç huzurunu iyileştirir, kendini yenilemeni sağlar."],
+   [61,"Umabel","01-21","01-25","Dostluk · Yakınlık · Gönül bağı","Umabel dostluk ve yakınlığın meleğidir. Gönül bağları kurmanı, ruhuna denk kişileri bulmanı sağlar."],
+   [62,"Iah-Hel","01-26","01-30","Tefekkür · İç huzur · Bilgelik","Iah-Hel tefekkür ve iç huzurun meleğidir. Sükûnete çekilmeni, bilgeliği sessizlikte bulmanı sağlar."],
+   [63,"Anauel","01-31","02-04","Refah · Bolluk · Sağlık ve ticaret","Anauel refah ve sağlığın meleğidir. Sana bolluğu, bütünlüğü ve işlerinde bereketi getirir."],
+   [64,"Mehiel","02-05","02-09","İlham · Yaratıcılık · Koruma","Mehiel ilham ve yaratıcılığın meleğidir. Zihnini korur, kelimelerini ve fikirlerini güçlendirir."],
+   [65,"Damabiah","02-10","02-14","Bilgelik · Sezgi · Girişimlerde başarı","Damabiah bilgelik ve sezginin meleğidir. Girişimlerinde başarı ve derin bir anlayış getirir."],
+   [66,"Manakel","02-15","02-19","Barış · Uyum · Sakinleştirme","Manakel barış ve uyumun meleğidir. İçindeki fırtınayı dindirir, seni sakinleştirir."],
+   [67,"Eyael","02-20","02-24","Yüce teselli · Uzun ömür · Gizli bilgelik","Eyael yüce teselli ve gizli bilgeliğin meleğidir. Değişimde seni avutur, uzun ömür ve derin bilgi verir."],
+   [68,"Habuhiah","02-25","02-29","Şifa · Bereket · Sağlık","Habuhiah şifa ve bereketin meleğidir. Sağlığını onarır, hayatına yeşeren bir bolluk taşır."],
+   [69,"Rochel","03-01","03-05","Kayıp şeyleri bulma · Adalet · Sezgi","Rochel kayıpları bulmanın meleğidir. Yitirdiğini geri getirir, sezginle doğruyu bulmanı sağlar."],
+   [70,"Jabamiah","03-06","03-10","Yeniden doğuş · Dönüşüm · Simya","Jabamiah yeniden doğuşun meleğidir. Seni kökten dönüştürür, küllerinden yeniden doğmanı sağlar."],
+   [71,"Haiaiel","03-11","03-15","Güç · Cesaret · Koruma ve zafer","Haiaiel güç ve cesaretin meleğidir. Zorluklar karşısında seni silahlandırır, zafere taşır."],
+   [72,"Mumiah","03-16","03-20","Sonlar · Yeni başlangıçlar · Tamamlanma","Mumiah sonların ve yeni başlangıçların meleğidir. Bir döngüyü kapatıp yeni bir sayfa açmanı sağlar."]
+  ];
+  function num(s){return (+s.slice(0,2))*100 + (+s.slice(3));}
+  function bul(m,d){var x=m*100+d;for(var i=0;i<M.length;i++){if(x>=num(M[i][2])&&x<=num(M[i][3]))return M[i];}return null;}
+  function rangeTR(t0,t1){var m0=+t0.slice(0,2),d0=+t0.slice(3),m1=+t1.slice(0,2),d1=+t1.slice(3);
+    return m0===m1?(d0+"–"+d1+" "+AYLAR[m0-1]):(d0+" "+AYLAR[m0-1]+" – "+d1+" "+AYLAR[m1-1]);}
+  var KORUMA=[
+    "Zorlandığın anlarda {ad} sessizce yanında durur; {k} gücüyle yükünü hafifletir ve yolunu aydınlatır.",
+    "{ad} seni kötü niyetten ve tökezlemekten korur; içine {k} tohumu eker, düştüğünde elinden tutar.",
+    "Karanlık bir andan geçerken {ad} kalkanın olur; {k} ile kalbini güçlendirir, umudunu diri tutar.",
+    "{ad} adımlarını gözetir; tehlike yaklaştığında {k} ile seni uyarır ve doğru yöne çevirir.",
+    "Yalnız hissettiğinde {ad} yanı başında olur; {k} enerjisiyle seni sarar, korkularını yatıştırır."
+  ];
+  var FAYDA2=[
+    "Bu nitelikler senin en güçlü yanların; onları kullandıkça hayatın açılır.",
+    "Bu enerjiler doğuştan sende var; farkına vardıkça yolun kolaylaşır.",
+    "Bu armağanlar fıtratında; onlara güvendiğinde önüne bereket çıkar.",
+    "Bu güçler seninle doğdu; onları besledikçe kaderin güzelleşir.",
+    "Bu yanların hayatının pusulası; onları dinlediğinde doğru kapılar açılır."
+  ];
+  function domList(alan){var a=alan.split(' · ');if(a.length<2)return alan.toLocaleLowerCase('tr');var last=a.pop();return (a.join(', ')+' ve '+last).toLocaleLowerCase('tr');}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  var reading=document.getElementById('reading');
+  function showReading(e,ad){
+    document.getElementById('rdLead').textContent = ad?(ad+' · Koruyucu Meleğin'):'Koruyucu Meleğin';
+    document.getElementById('rdName').textContent = e[1];
+    document.getElementById('rdMeta').innerHTML = esc(rangeTR(e[2],e[3]))+'<span class="dom">'+esc(e[4])+'</span>';
+    document.getElementById('rdKim').textContent = e[5];
+    var i=(e[0]-1)%5, k1=e[4].split(' · ')[0].toLocaleLowerCase('tr');
+    document.getElementById('rdFayda').textContent = e[1]+', hayatına '+domList(e[4])+' taşır. '+FAYDA2[i];
+    document.getElementById('rdKoruma').textContent = KORUMA[i].replace(/\{ad\}/g,e[1]).replace(/\{k\}/g,k1);
+    reading.classList.add('on'); reading.scrollTop=0;
+  }
+  document.getElementById('melBul').addEventListener('click',function(){
+    var box=document.getElementById('melekResult');
+    var tarih=(document.getElementById('mTarih').value||'').trim();
+    if(!tarih){box.className='';box.innerHTML='<div class="mr-hint">Meleğini bulabilmem için önce doğum tarihini gir.</div>';box.scrollIntoView({behavior:'smooth',block:'center'});return;}
+    var p=tarih.split('-'),mo=+p[1],d=+p[2],e=bul(mo,d);
+    if(!e){box.className='';box.innerHTML='<div class="mr-hint">Tarihi okuyamadım, tekrar dener misin?</div>';return;}
+    box.className='empty';box.innerHTML='';
+    var ad=(document.getElementById('mIsim').value||'').trim();
+    showReading(e,ad);
+  });
+  document.getElementById('rdBack').addEventListener('click',function(){reading.classList.remove('on');});
+  document.getElementById('rdAgain').addEventListener('click',function(){reading.classList.remove('on');document.getElementById('finder').scrollIntoView({behavior:'smooth',block:'start'});});
+  document.getElementById('cta').addEventListener('click',function(){document.getElementById('finder').scrollIntoView({behavior:'smooth',block:'start'});});
+})();
+</script>
+</body></html>
