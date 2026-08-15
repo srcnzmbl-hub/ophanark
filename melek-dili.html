@@ -52,13 +52,13 @@
   #reading{background:#050505}
   .rd-wrap{position:relative;z-index:2;margin:0 auto;width:100%;max-width:34ch;padding:56px 28px;text-align:center}
   .rd-title{font-weight:700;letter-spacing:-0.01em;font-size:clamp(30px,10vw,42px);line-height:1.05;color:#D4AF37;text-align:center;margin:0}
-  .rd-head{display:flex;gap:14px;align-items:flex-start;margin-top:24px;text-align:left}
-  .rd-head-l{flex:0 0 116px;width:116px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .rd-head{display:flex;gap:12px;align-items:center;margin-top:24px;text-align:left}
+  .rd-head-l{flex:0 0 132px;width:132px;display:flex;flex-direction:column;align-items:center;text-align:center}
   .rd-head-r{flex:1 1 0;min-width:0}
-  .rd-name{font-weight:700;letter-spacing:-0.01em;font-size:clamp(19px,6.4vw,24px);line-height:1.06;color:#F5F0E6;text-align:center;margin:0 0 8px}
+  .rd-name{font-weight:700;letter-spacing:-0.01em;font-size:clamp(19px,6.4vw,24px);line-height:1.06;color:#D4AF37;text-align:center;margin:0 0 10px}
   .rd-sigil{display:flex;justify-content:center;margin:0 0 8px}
-  .rd-sigil img{width:112px;height:112px;object-fit:contain}
-  .rd-values{font-style:italic;font-size:12px;color:#e8dcc0;text-align:center;line-height:1.42;margin:0}
+  .rd-sigil img{width:124px;height:124px;object-fit:contain}
+  .rd-values{font-style:normal;font-size:12.5px;color:#D4AF37;text-align:center;line-height:1.5;letter-spacing:.02em;margin:10px 0 0}
   .rd-intro{font-size:13.5px;line-height:1.62;color:#e6ddcb;margin:0;text-align:left}
   .rd-block{margin-top:30px}
   .rd-sec-h{font-weight:700;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#D4AF37;margin-bottom:10px;text-align:center}
@@ -287,7 +287,7 @@
     id('rdName').textContent = name;
     var cont=id('rdSigil'); cont.innerHTML=sigil(name);
     var im=new Image(); im.alt=''; im.onload=function(){cont.innerHTML='';cont.appendChild(im);}; im.src='assets/seal-'+e[0]+'.png';
-    id('rdValues').textContent = e[4];
+    id('rdValues').innerHTML = e[4].split(' \u00b7 ').map(esc).join('<br>');
     id('rdSections').innerHTML = lifeSections(e);
   }
   id('cta').addEventListener('click',function(){show('finder');});
