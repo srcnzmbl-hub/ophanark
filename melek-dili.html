@@ -65,8 +65,6 @@
 </head>
 <body>
 <div id="page">
-  <a class="back" href="/">← Geri</a>
-
   <section class="hero" id="hero">
     <div class="hero-bg"></div>
     <div class="hero-fade"></div>
@@ -101,7 +99,6 @@
   </section>
 
   <div id="reading" aria-hidden="true">
-    <a class="back" id="rdBack" href="javascript:void(0)">← Geri</a>
     <div class="rd-wrap">
       <div class="rd-lead" id="rdLead">Koruyucu Meleğin</div>
       <div class="rd-name" id="rdName"></div>
@@ -242,7 +239,6 @@
     var ad=(document.getElementById('mIsim').value||'').trim();
     showReading(e,ad);
   });
-  document.getElementById('rdBack').addEventListener('click',function(){reading.classList.remove('on');});
   document.getElementById('rdAgain').addEventListener('click',function(){reading.classList.remove('on');document.getElementById('finder').scrollIntoView({behavior:'smooth',block:'start'});});
   document.getElementById('cta').addEventListener('click',function(){document.getElementById('finder').scrollIntoView({behavior:'smooth',block:'start'});});
   document.getElementById('ctaBack').addEventListener('click',function(){location.href='/';});
