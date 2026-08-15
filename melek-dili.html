@@ -6,70 +6,63 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;background:#050505;color:#F5F0E6;font-family:Inter,ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-  #page{position:relative;width:min(100vw, calc(100vh * 9 / 16));min-height:100vh;margin:0 auto;overflow:hidden;background:#050505}
-  .back{position:fixed;left:max(16px, calc(50vw - min(50vw, calc(50vh * 9 / 16)) + 16px));top:16px;z-index:6;color:#cfc5b3;text-decoration:none;font-size:11px;letter-spacing:.28em;text-transform:uppercase;display:inline-flex;gap:8px;align-items:center;opacity:.85;text-shadow:0 1px 8px rgba(0,0,0,.8)}
-  .back:hover{color:#D4AF37}
+  html,body{margin:0;height:100%;background:#050505;color:#F5F0E6;font-family:Inter,ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+  #page{position:fixed;top:0;bottom:0;left:0;right:0;width:min(100vw, calc(100vh * 9 / 16));margin:0 auto;background:#050505;overflow:hidden}
 
-  /* ── Karşılama ── */
-  .hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 30px;overflow:hidden}
-  .hero-bg{position:absolute;inset:0;background:url('assets/melek_dili_hero.png') center center / cover no-repeat;filter:brightness(0.83) contrast(1.04);z-index:0}
-  .hero-fade{position:absolute;inset:0;z-index:1;pointer-events:none;
+  /* Ekranlar (sayfa sayfa, kaydırma yok) */
+  .screen{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .screen.on{display:flex}
+  .scr-bg{position:absolute;inset:0;z-index:0;pointer-events:none;background:url('assets/melek_dili_hero.png') center center / cover no-repeat;filter:brightness(0.83) contrast(1.04)}
+  .scr-fade{position:absolute;inset:0;z-index:1;pointer-events:none;
     background:linear-gradient(to bottom,#050505 0%,rgba(5,5,5,.92) 5%,rgba(5,5,5,0) 26%,rgba(5,5,5,0) 72%,rgba(5,5,5,.92) 95%,#050505 100%)}
-  .hero-center{position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:radial-gradient(ellipse 74% 46% at 50% 50%, rgba(5,5,5,.6) 0%, rgba(5,5,5,.28) 42%, rgba(5,5,5,0) 72%)}
-  .hero-in{position:relative;z-index:2;max-width:34ch;animation:rise .9s ease both}
-  .tag{font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;color:#D4AF37;font-weight:500;text-shadow:0 1px 10px rgba(0,0,0,.9)}
-  .title{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:clamp(44px,14vw,62px);line-height:1.0;letter-spacing:-0.02em;margin:14px 0 16px;color:#F5F0E6;text-shadow:0 2px 26px rgba(0,0,0,.95), 0 0 12px rgba(0,0,0,.7)}
-  .lead{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:18px;line-height:1.62;color:#e9e0cd;text-shadow:0 1px 14px rgba(0,0,0,.95)}
-  .lead b{color:#D4AF37;font-weight:600}
-  .btn-row{display:flex;gap:10px;justify-content:center;align-items:stretch}
-  .hero .btn-row{margin-top:26px}
-  .btn{flex:1 1 0;min-width:0;padding:14px 8px;border:1px solid #D4AF37;border-radius:0;background:rgba(212,175,55,.08);
-    color:#D4AF37;font-family:Inter;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:.2s;text-align:center;white-space:nowrap}
-  .btn:hover{background:#D4AF37;color:#0a0a0a}
-  .hero .btn{text-shadow:0 1px 8px rgba(0,0,0,.7);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
-  .scroll-hint{position:absolute;left:0;right:0;bottom:22px;z-index:2;text-align:center;color:#cfc5b3;font-size:20px;opacity:.7;animation:bob 1.8s ease-in-out infinite}
-  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-  @keyframes fadein{from{opacity:0}to{opacity:1}}
+  .scr-dark{position:absolute;inset:0;z-index:1;pointer-events:none}
+  #hero .scr-dark{background:radial-gradient(ellipse 74% 46% at 50% 50%, rgba(5,5,5,.6) 0%, rgba(5,5,5,.28) 42%, rgba(5,5,5,0) 72%)}
+  #finder .scr-dark{background:linear-gradient(to bottom, rgba(5,5,5,.5), rgba(5,5,5,.66))}
+  .scr-in{position:relative;z-index:2;margin:auto;width:100%;max-width:34ch;padding:56px 30px;text-align:center}
 
-  /* ── Form ── */
-  .finder{position:relative;z-index:2;padding:40px 24px 60px;background:#050505;text-align:center}
-  .f-h{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:26px;color:#D4AF37;letter-spacing:-0.01em}
-  .f-desc{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-style:italic;font-size:15.5px;color:#cfc5b3;margin:9px auto 20px;line-height:1.5;max-width:32ch}
-  .f-form{display:flex;flex-direction:column;gap:11px;max-width:300px;margin:0 auto;align-items:stretch}
+  .tag{font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;color:#D4AF37;font-weight:500;text-shadow:0 1px 10px rgba(0,0,0,.9)}
+  .title{font-weight:700;font-size:clamp(44px,14vw,62px);line-height:1.0;letter-spacing:-0.02em;margin:14px 0 16px;color:#F5F0E6;text-shadow:0 2px 26px rgba(0,0,0,.95), 0 0 12px rgba(0,0,0,.7)}
+  .lead{font-size:18px;line-height:1.62;color:#e9e0cd;text-shadow:0 1px 14px rgba(0,0,0,.95)}
+  .lead b{color:#D4AF37;font-weight:600}
+
+  .f-h{font-weight:700;font-size:26px;color:#D4AF37;letter-spacing:-0.01em;text-shadow:0 1px 12px rgba(0,0,0,.9)}
+  .f-desc{font-style:italic;font-size:15.5px;color:#e0d8c6;margin:9px auto 20px;line-height:1.5;max-width:32ch;text-shadow:0 1px 12px rgba(0,0,0,.9)}
+  .f-form{display:flex;flex-direction:column;gap:11px;max-width:300px;margin:0 auto;align-items:stretch;text-align:left}
+  .f-lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#cbbf9f;margin:6px 0 -5px 2px;text-shadow:0 1px 8px rgba(0,0,0,.9)}
   .f-form input{width:100%;padding:13px 16px;border:1px solid rgba(212,175,55,.4);border-radius:0;color-scheme:dark;
-    background:rgba(15,13,20,.7);color:#f5f0e6;font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:15px;outline:none}
+    background:rgba(10,9,12,.78);color:#f5f0e6;font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:15px;outline:none}
   .f-form input::placeholder{color:#8a8477}
   .f-form input:focus{border-color:rgba(212,175,55,.8)}
-  .f-form .btn-row{margin-top:6px}
-  #melekResult{margin:18px auto 0;max-width:34ch}
+  #melekResult{margin:16px auto 0;max-width:32ch}
   #melekResult.empty{display:none}
-  .mr-hint{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-style:italic;color:#a39d8e;font-size:15px}
+  .mr-hint{font-style:italic;color:#e6b8b0;font-size:14.5px;text-shadow:0 1px 10px rgba(0,0,0,.9)}
 
-  /* ── Sonuç sayfası ── */
-  #reading{position:fixed;inset:0;z-index:30;display:none;overflow-y:auto;background:#050505;color:#F5F0E6}
-  #reading.on{display:block;animation:fadein .3s ease both}
-  .rd-wrap{width:min(100vw, calc(100vh*9/16));margin:0 auto;padding:70px 28px 64px;min-height:100vh;box-sizing:border-box}
-  .rd-lead{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#D4AF37;text-align:center}
-  .rd-name{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-weight:700;letter-spacing:-0.02em;font-size:clamp(40px,13vw,56px);line-height:1.0;color:#D4AF37;text-align:center;margin:10px 0 8px}
-  .rd-meta{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#b7ab8e;text-align:center}
+  /* Butonlar (altta, kare altın çerçeve) */
+  .btn-row{display:flex;gap:10px;justify-content:center;align-items:stretch;margin-top:26px}
+  .btn{flex:1 1 0;min-width:0;padding:14px 8px;border:1px solid #D4AF37;border-radius:0;background:rgba(212,175,55,.1);
+    color:#D4AF37;font-family:Inter;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:.2s;text-align:center;white-space:nowrap;
+    text-shadow:0 1px 8px rgba(0,0,0,.7);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  .btn:hover{background:#D4AF37;color:#0a0a0a}
+
+  /* Sonuç ekranı */
+  #reading{background:#050505}
+  .rd-wrap{position:relative;z-index:2;margin:auto;width:100%;max-width:34ch;padding:56px 28px}
+  .rd-lead{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#D4AF37;text-align:center}
+  .rd-name{font-weight:700;letter-spacing:-0.02em;font-size:clamp(40px,13vw,56px);line-height:1.0;color:#D4AF37;text-align:center;margin:10px 0 8px}
+  .rd-meta{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#b7ab8e;text-align:center}
   .rd-meta .dom{display:block;font-style:italic;font-size:16px;color:#e8dcc0;letter-spacing:0;text-transform:none;margin-top:10px}
-  .rd-block{margin-top:30px;border-top:1px solid rgba(212,175,55,.16);padding-top:20px}
-  .rd-sec-h{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#D4AF37;margin-bottom:11px}
-  .rd-p{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:16.5px;line-height:1.72;color:#efe8d8}
-  .rd-again{margin-top:38px;width:100%;padding:14px 24px;border:1px solid #D4AF37;border-radius:0;background:rgba(212,175,55,.08);color:#D4AF37;font-family:Inter;font-size:11px;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;transition:.2s}
-  .rd-again:hover{background:#D4AF37;color:#0a0a0a}
+  .rd-block{margin-top:28px;border-top:1px solid rgba(212,175,55,.16);padding-top:18px}
+  .rd-sec-h{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#D4AF37;margin-bottom:11px}
+  .rd-p{font-size:16.5px;line-height:1.72;color:#efe8d8}
 </style>
 </head>
 <body>
 <div id="page">
-  <section class="hero" id="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-fade"></div>
-    <div class="hero-center"></div>
-    <div class="hero-in">
+
+  <!-- Ekran 1: Karşılama -->
+  <section class="screen on" id="hero">
+    <div class="scr-bg"></div><div class="scr-fade"></div><div class="scr-dark"></div>
+    <div class="scr-in">
       <div class="tag">Kadim Meleklerin Kayıp Dili</div>
       <h1 class="title">Melek Dili</h1>
       <p class="lead">Kabala'nın kadim öğretisinde göğün <b>72 meleği</b> vardır; her biri Tanrı'nın gizli bir ismini taşır. Bu bölümde meleklerin dilini tanır, doğum tarihine göre bu 72 melekten hangisinin sana ait olduğunu — <b>koruyucu meleğini</b> — keşfeder; onun görev alanını ve sana fısıldadığı mesajı öğrenirsin.</p>
@@ -78,27 +71,33 @@
         <div class="btn" id="cta">Devam Et</div>
       </div>
     </div>
-    <div class="scroll-hint">⌄</div>
   </section>
 
-  <section class="finder" id="finder">
-    <div class="f-h">Koruyucu Meleğin</div>
-    <div class="f-desc">Bilgilerini gir; doğduğun an gökyüzünde sana eşlik eden meleği bulalım.</div>
-    <div class="f-form">
-      <input id="mIsim" type="text" placeholder="İsim" autocomplete="off">
-      <input id="mAnne" type="text" placeholder="Anne adı" autocomplete="off">
-      <input id="mBaba" type="text" placeholder="Baba adı" autocomplete="off">
-      <input id="mTarih" type="date" aria-label="Doğum tarihi">
-      <input id="mSaat" type="time" aria-label="Doğum saati">
+  <!-- Ekran 2: Form -->
+  <section class="screen" id="finder">
+    <div class="scr-bg"></div><div class="scr-fade"></div><div class="scr-dark"></div>
+    <div class="scr-in">
+      <div class="f-h">Koruyucu Meleğin</div>
+      <div class="f-desc">Bilgilerini gir; doğduğun an gökyüzünde sana eşlik eden meleği bulalım.</div>
+      <div class="f-form">
+        <input id="mIsim" type="text" placeholder="İsim" autocomplete="off">
+        <input id="mAnne" type="text" placeholder="Anne adı" autocomplete="off">
+        <input id="mBaba" type="text" placeholder="Baba adı" autocomplete="off">
+        <div class="f-lbl">Doğum tarihi</div>
+        <input id="mTarih" type="date" aria-label="Doğum tarihi">
+        <div class="f-lbl">Doğum saati</div>
+        <input id="mSaat" type="time" aria-label="Doğum saati">
+      </div>
+      <div id="melekResult" class="empty"></div>
       <div class="btn-row">
         <button class="btn" id="melBack" type="button">Geri Dön</button>
         <button class="btn" id="melBul" type="button">Devam Et</button>
       </div>
     </div>
-    <div id="melekResult" class="empty"></div>
   </section>
 
-  <div id="reading" aria-hidden="true">
+  <!-- Ekran 3: Sonuç -->
+  <section class="screen" id="reading">
     <div class="rd-wrap">
       <div class="rd-lead" id="rdLead">Koruyucu Meleğin</div>
       <div class="rd-name" id="rdName"></div>
@@ -115,9 +114,12 @@
         <div class="rd-sec-h">Seni nasıl korur?</div>
         <p class="rd-p" id="rdKoruma"></p>
       </div>
-      <button class="rd-again" id="rdAgain" type="button">Geri Dön</button>
+      <div class="btn-row">
+        <button class="btn" id="rdAgain" type="button">Geri Dön</button>
+      </div>
     </div>
-  </div>
+  </section>
+
 </div>
 
 <script>
@@ -218,31 +220,31 @@
   ];
   function domList(alan){var a=alan.split(' · ');if(a.length<2)return alan.toLocaleLowerCase('tr');var last=a.pop();return (a.join(', ')+' ve '+last).toLocaleLowerCase('tr');}
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-  var reading=document.getElementById('reading');
-  function showReading(e,ad){
-    document.getElementById('rdLead').textContent = ad?(ad+' · Koruyucu Meleğin'):'Koruyucu Meleğin';
-    document.getElementById('rdName').textContent = e[1];
-    document.getElementById('rdMeta').innerHTML = esc(rangeTR(e[2],e[3]))+'<span class="dom">'+esc(e[4])+'</span>';
-    document.getElementById('rdKim').textContent = e[5];
+  function id(x){return document.getElementById(x);}
+  function show(s){['hero','finder','reading'].forEach(function(x){id(x).classList.toggle('on',x===s);});var el=id(s);if(el)el.scrollTop=0;}
+  function fillReading(e,ad){
+    id('rdLead').textContent = ad?(ad+' · Koruyucu Meleğin'):'Koruyucu Meleğin';
+    id('rdName').textContent = e[1];
+    id('rdMeta').innerHTML = esc(rangeTR(e[2],e[3]))+'<span class="dom">'+esc(e[4])+'</span>';
+    id('rdKim').textContent = e[5];
     var i=(e[0]-1)%5, k1=e[4].split(' · ')[0].toLocaleLowerCase('tr');
-    document.getElementById('rdFayda').textContent = e[1]+', hayatına '+domList(e[4])+' taşır. '+FAYDA2[i];
-    document.getElementById('rdKoruma').textContent = KORUMA[i].replace(/\{ad\}/g,e[1]).replace(/\{k\}/g,k1);
-    reading.classList.add('on'); reading.scrollTop=0;
+    id('rdFayda').textContent = e[1]+', hayatına '+domList(e[4])+' taşır. '+FAYDA2[i];
+    id('rdKoruma').textContent = KORUMA[i].replace(/\{ad\}/g,e[1]).replace(/\{k\}/g,k1);
   }
-  document.getElementById('melBul').addEventListener('click',function(){
-    var box=document.getElementById('melekResult');
-    var tarih=(document.getElementById('mTarih').value||'').trim();
-    if(!tarih){box.className='';box.innerHTML='<div class="mr-hint">Meleğini bulabilmem için önce doğum tarihini gir.</div>';box.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  id('cta').addEventListener('click',function(){show('finder');});
+  id('ctaBack').addEventListener('click',function(){location.href='/';});
+  id('melBack').addEventListener('click',function(){show('hero');});
+  id('rdAgain').addEventListener('click',function(){show('finder');});
+  id('melBul').addEventListener('click',function(){
+    var box=id('melekResult');
+    var tarih=(id('mTarih').value||'').trim();
+    if(!tarih){box.className='';box.innerHTML='<div class="mr-hint">Meleğini bulabilmem için önce doğum tarihini gir.</div>';return;}
     var p=tarih.split('-'),mo=+p[1],d=+p[2],e=bul(mo,d);
     if(!e){box.className='';box.innerHTML='<div class="mr-hint">Tarihi okuyamadım, tekrar dener misin?</div>';return;}
     box.className='empty';box.innerHTML='';
-    var ad=(document.getElementById('mIsim').value||'').trim();
-    showReading(e,ad);
+    var ad=(id('mIsim').value||'').trim();
+    fillReading(e,ad); show('reading');
   });
-  document.getElementById('rdAgain').addEventListener('click',function(){reading.classList.remove('on');document.getElementById('finder').scrollIntoView({behavior:'smooth',block:'start'});});
-  document.getElementById('cta').addEventListener('click',function(){document.getElementById('finder').scrollIntoView({behavior:'smooth',block:'start'});});
-  document.getElementById('ctaBack').addEventListener('click',function(){location.href='/';});
-  document.getElementById('melBack').addEventListener('click',function(){document.getElementById('hero').scrollIntoView({behavior:'smooth',block:'start'});});
 })();
 </script>
 </body></html>
