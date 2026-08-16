@@ -120,6 +120,10 @@
         </div>
       </div>
       <div id="rdSections"></div>
+      <div class="btn-row" style="margin-top:22px">
+        <button class="btn" id="rdSpeak" type="button">&#9654; Sesli Oku</button>
+        <button class="btn" id="rdShare" type="button">Paylaş</button>
+      </div>
       <div class="btn-row">
         <button class="btn" id="rdAgain" type="button">Geri Dön</button>
       </div>
@@ -291,7 +295,13 @@
   id('cta').addEventListener('click',function(){show('finder');});
   id('ctaBack').addEventListener('click',function(){if(history.length>1){history.back();}else{location.href='/';}});
   id('melBack').addEventListener('click',function(){show('hero');});
-  id('rdAgain').addEventListener('click',function(){show('finder');});
+  var __mSpk=false;
+  function __melekText(){var nm=(id('rdName').textContent||'').trim();var intro=(id('rdIntro').textContent||'').trim();var secs=(id('rdSections').textContent||'').replace(/\s+/g,' ').trim();return (nm?('Koruyucu meleğin '+nm+'. '):'')+intro+' '+secs;}
+  function __melekSpk(){try{if(!('speechSynthesis' in window)){alert('Cihazın sesli okumayı desteklemiyor.');return;}if(__mSpk){window.speechSynthesis.cancel();__mSpk=false;id('rdSpeak').innerHTML='&#9654; Sesli Oku';return;}var u=new SpeechSynthesisUtterance(__melekText());u.lang='tr-TR';try{var vs=window.speechSynthesis.getVoices()||[];var tv=vs.find(function(v){return /tr/i.test(v.lang);});if(tv)u.voice=tv;}catch(e){}u.onend=function(){__mSpk=false;id('rdSpeak').innerHTML='&#9654; Sesli Oku';};window.speechSynthesis.cancel();window.speechSynthesis.speak(u);__mSpk=true;id('rdSpeak').innerHTML='&#9632; Durdur';}catch(e){}}
+  function __melekShare(){var nm=(id('rdName').textContent||'Melek Dili').trim();var t='Koruyucu meleğim: '+nm+'\n\n'+(id('rdIntro').textContent||'').trim()+'\n\nOPHANARK · www.ophanark.com';try{if(navigator.share){navigator.share({title:'OPHANARK · Melek Dili',text:t}).catch(function(){});return;}}catch(e){}try{navigator.clipboard.writeText(t);alert('Kopyalandı.');}catch(e){try{window.prompt('Kopyala:',t);}catch(_){}}}
+  id('rdSpeak').addEventListener('click',__melekSpk);
+  id('rdShare').addEventListener('click',__melekShare);
+  id('rdAgain').addEventListener('click',function(){try{window.speechSynthesis.cancel();}catch(e){}__mSpk=false;show('finder');});
   id('melBul').addEventListener('click',function(){
     var box=id('melekResult');
     var tarih=(id('mTarih').value||'').trim();
