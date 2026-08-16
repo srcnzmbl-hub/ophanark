@@ -132,13 +132,74 @@
     clearTimeout(window.__tt); window.__tt=setTimeout(function(){ t.classList.remove("show"); },3200);
   }
 
-  function buy(sku,name){
-    // Play Billing (Digital Goods API) ileride bağlanacak; şimdilik güvenli geri bildirim
-    if(window.getDigitalGoodsService){
-      toast(name+" — satın alma başlatılıyor…");
-      // TODO: Digital Goods + Payment Request akışı (SKU: "+sku+")
-    } else {
-      toast("Satın alma çok yakında Google Play üzerinden aktif olacak.");
+  // --- Play Billing yapılandırması ---
+  var SUPA_URL="https://lssyopqxthausyegeire.supabase.co";
+  var SUPA_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo";
+  var BILLING="https://play.google.com/billing";
+
+  // Uygulamanın Supabase oturumunu (aynı origin localStorage) oku
+  function getAccessToken(){
+    try{
+      var raw=localStorage.getItem("sb-lssyopqxthausyegeire-auth-token");
+      if(!raw) return null;
+      var j=JSON.parse(raw);
+      return j.access_token || (j.currentSession&&j.currentSession.access_token) || (j.session&&j.session.access_token) || null;
+    }catch(e){ return null; }
+  }
+
+  async function verifyPurchase(productId, purchaseToken, token){
+    var res=await fetch(SUPA_URL+"/functions/v1/play-verify",{
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "apikey":SUPA_ANON, "Authorization":"Bearer "+token },
+      body:JSON.stringify({ productId:productId, purchaseToken:purchaseToken })
+    });
+    var data={}; try{ data=await res.json(); }catch(e){}
+    return { ok:res.ok, data:data };
+  }
+
+  async function buy(sku,name){
+    if(!sku){ return; }
+    // TWA / Play Billing yoksa (masaüstü web) bilgilendir
+    if(!window.getDigitalGoodsService){
+      toast("Satın alma yalnızca Google Play uygulamasında yapılabilir.");
+      return;
+    }
+    // Oturum kontrolü — abonelik hesaba bağlanacağı için giriş şart
+    var token=getAccessToken();
+    if(!token){
+      toast("Önce giriş yapmalısın. Profil sayfasından giriş yapıp tekrar dene.");
+      setTimeout(function(){ window.location.href="/profil"; },1800);
+      return;
+    }
+    try{
+      var service=await window.getDigitalGoodsService(BILLING);
+      var details=await service.getDetails([sku]);
+      if(!details || !details.length){ toast("Ürün bulunamadı, lütfen daha sonra tekrar dene."); return; }
+      var item=details[0];
+      var pr=new PaymentRequest(
+        [{ supportedMethods:BILLING, data:{ sku:sku } }],
+        { total:{ label:item.title||name, amount:{ currency:item.price.currency, value:item.price.value } } }
+      );
+      var resp=await pr.show();
+      var purchaseToken=(resp.details&&resp.details.purchaseToken)||null;
+      if(!purchaseToken){ await resp.complete("fail"); toast("Satın alma tamamlanamadı."); return; }
+      toast("Doğrulanıyor…");
+      var v=await verifyPurchase(sku, purchaseToken, token);
+      if(v.ok && v.data && v.data.ok){
+        try{ await service.acknowledge(purchaseToken, "onetime"); }catch(e){}
+        await resp.complete("success");
+        toast(name+" aboneliğin aktif! 🎉");
+        setTimeout(function(){ window.location.href="/profil"; },1800);
+      } else {
+        await resp.complete("fail");
+        var msg=(v.data&&v.data.error)||"bilinmeyen";
+        toast("Doğrulama başarısız ("+msg+"). Ödemen alındıysa kısa süre içinde tanımlanır.");
+      }
+    }catch(e){
+      // Kullanıcı iptal ettiyse sessiz geç
+      var m=(e&&e.message)||"";
+      if(/cancel|abort|dismiss/i.test(m)){ return; }
+      toast("Bir sorun oluştu: "+m);
     }
   }
 
