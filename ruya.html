@@ -49,7 +49,7 @@
 <body>
 <div id="bg"></div>
 <div id="glow"></div>
-<a class="back" href="/">← Geri</a>
+<a class="back" href="/" id="backBtn">← Geri</a>
 <div id="app">
   <header>
     <div class="brand"><b>OPHAN</b> AI</div>
@@ -117,6 +117,10 @@
   form.addEventListener('submit',e=>{e.preventDefault();if(busy)return;
     const text=inp.value.trim();if(!text)return;
     addMe(text);inp.value='';autoGrow();yorumla(text);});
+
+  // Geri: geldiği yere dön (ana akıştaki rüya bölümü), en başa atma
+  var _back=document.getElementById('backBtn');
+  if(_back){_back.addEventListener('click',function(e){ if(history.length>1){ e.preventDefault(); history.back(); } });}
 
   // welcome
   setTimeout(()=>{addAI("Hoş geldin. Seni dinliyorum — bana rüyanı anlatabilirsin.");},250);
