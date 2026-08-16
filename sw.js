@@ -1,4 +1,4 @@
-// OPHANARK service worker — push bildirimleri + ağ-öncelikli (önbelleksiz)
+// OPHANARK service worker — push bildirimleri + ağ-öncelikli (koşullu doğrulama, v3)
 self.addEventListener('install', function () { self.skipWaiting(); });
 
 self.addEventListener('activate', function (event) {
@@ -37,10 +37,13 @@ self.addEventListener('notificationclick', function (event) {
   })());
 });
 
-// Ağ-öncelikli + sayfa yüklemelerinde önbelleksiz (F5 daima en güncel shell'i getirir)
+// Ağ-öncelikli + sayfa yüklemelerinde KOŞULLU doğrulama.
+// no-store yerine no-cache: her F5'te sunucuya sorulur (güncellik garantisi aynı, eski içerik gelmez)
+// ama içerik değişmemişse GitHub 304 döner → ~983KB tekrar inmez, önbellekten anında açılır.
+// Böylece hem güncel kalır hem de yenileme hızlanır.
 self.addEventListener('fetch', function (event) {
   var req = event.request;
   var isDoc = req.mode === 'navigate' || req.destination === 'document';
-  var opts = isDoc ? { cache: 'no-store' } : undefined;
+  var opts = isDoc ? { cache: 'no-cache' } : undefined;
   event.respondWith(fetch(req, opts).catch(function () { return new Response('', { status: 504, statusText: 'offline' }); }));
 });
