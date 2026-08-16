@@ -163,12 +163,19 @@
     try{ return new Intl.NumberFormat(navigator.language||"tr-TR",{style:"currency",currency:cur,maximumFractionDigits:2}).format(Number(val)); }
     catch(e){ return val+" "+cur; }
   }
-  var _service=null;
+  var _service=null, _svcErr="";
   async function getService(){
     if(_service) return _service;
-    if(!window.getDigitalGoodsService) return null;
-    try{ _service=await window.getDigitalGoodsService(BILLING); }catch(e){ _service=null; }
-    return _service;
+    if(!window.getDigitalGoodsService){ _svcErr="getDigitalGoodsService yok (Play sürümü değil)"; return null; }
+    for(var i=0;i<4;i++){
+      try{
+        var s=await window.getDigitalGoodsService(BILLING);
+        if(s){ _service=s; _svcErr=""; return s; }
+        _svcErr="servis null döndü (Play bağlantısı hazır değil)";
+      }catch(e){ _svcErr=(e&&e.message)?e.message:String(e); }
+      await new Promise(function(r){ setTimeout(r, 700); });
+    }
+    return null;
   }
 
   async function verifyPurchase(productId, purchaseToken, token){
@@ -208,7 +215,7 @@
     }
     try{
       var service=await getService();
-      if(!service){ toast("Ödeme servisi başlatılamadı."); return; }
+      if(!service){ toast("Ödeme servisi başlatılamadı: "+(_svcErr||"bilinmeyen")); return; }
       // Ödemesi yapılmış ama tamamlanmamış satın almayı kurtar
       try{
         var owned=await service.listPurchases();
