@@ -116,13 +116,13 @@
       free:true },
     { sku:"plus", badge:"yakut", name:"Yakut", tier:"Plus", pop:true,
       feats:["Kahve & El — günde 2","Tarot & Katina — sınırsız","Natal — günde 1","Numeroloji & Yıldızname — haftada 1"],
-      tr:"1.49", global:"4.99" },
+      tr:"1.49", global:"4.99", tl:"59,99" },
     { sku:"pro", badge:"zumrut", name:"Zümrüt", tier:"Pro",
       feats:["Kahve & El — günde 3","Tarot, Katina & Natal — sınırsız","Numeroloji & Yıldızname — günde 1"],
-      tr:"2.49", global:"14.99" },
+      tr:"2.49", global:"14.99", tl:"99,99" },
     { sku:"promax", badge:"elmas", name:"Elmas", tier:"Pro Max",
       feats:["Kahve & El — sınırsız","Tarot & Katina — sınırsız","Natal — günde 3","Numeroloji & Yıldızname — günde 3"],
-      tr:"9.99", global:"24.99" },
+      tr:"9.99", global:"24.99", tl:"149,99" },
     { sku:null, badge:"unique", name:"Unique", tier:"Hediye",
       feats:["Tüm fallar — sınırsız","Sistem tarafından özel kullanıcılara verilir"],
       gift:true, note:"Hayatta para ile alınamayan şeyler vardır." }
@@ -256,7 +256,7 @@
       if(p.note) html+='<div class="note">'+p.note+'</div>';
     } else {
       var billingAvail=!!window.getDigitalGoodsService;
-      var fb='<span class="cur">$</span>'+(isTR?p.tr:p.global);
+      var fb='<span class="cur">₺</span>'+p.tl;
       html+='<div class="price" id="price-'+p.sku+'">'+(billingAvail?'…':fb)+'</div>';
       html+='<button class="buy" data-sku="'+p.sku+'" data-name="'+p.name+'">Satın Al</button>';
     }
@@ -273,7 +273,7 @@
       Object.keys(priceEls).forEach(function(s){
         var el=priceEls[s]; if(el && el.textContent==="…"){
           var pk=PACKAGES.filter(function(x){return x.sku===s;})[0];
-          el.innerHTML='<span class="cur">$</span>'+(isTR?pk.tr:pk.global);
+          el.innerHTML='<span class="cur">₺</span>'+pk.tl;
         }
       });
     }
