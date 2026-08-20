@@ -660,7 +660,7 @@ requestAnimationFrame(()=>{fitCardText();let i=0;revealTimer=setInterval(()=>{if
 }
 // ---- sesli okuma (cumle cumle: iOS atlamasini onler, Android hizi dengeler) ----
 const cardSpeak=document.getElementById('cardSpeak'); let cardKey=null, speaking=false;
-const SPEECH_OK = ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window);
+const SPEECH_OK = true;var _au=null,_bu=null,_tok=0,_curKey=null;var _VOICE="tr-TR-Chirp3-HD-Kore",_SIL="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=",_FN="https://lssyopqxthausyegeire.supabase.co/functions/v1/seslendir",_STORE="https://lssyopqxthausyegeire.supabase.co/storage/v1/object/public/tts-cache",_AK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lvcHF4dGhhdXN5ZWdlaXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMTE4MzEsImV4cCI6MjA5OTc4NzgzMX0.WZeL9kPQmC86m747B3jOOObcNR0If4FADH12VxUpFqo";function _H(s){return crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)).then(function(bf){return Array.from(new Uint8Array(bf)).map(function(z){return z.toString(16).padStart(2,"0")}).join("")});}
 if(!SPEECH_OK && cardSpeak) cardSpeak.style.display='none';
 function pickTrVoice(){const vs=window.speechSynthesis.getVoices()||[]; return vs.find(v=>/^tr(\b|[-_])/i.test(v.lang)) || vs.find(v=>/turk/i.test(v.name)) || null;}
 // metni kisa cumle parcalarina bol (uzun tek parcada iOS sesi kesiyor/atliyor)
@@ -676,18 +676,12 @@ u.onend=()=>{ if(!speaking)return; _ci++; speakNext(); };
 u.onerror=()=>{ if(!speaking)return; _ci++; speakNext(); };
 window.speechSynthesis.speak(u);}
 // TAM DURDUR + konumu sıfırla (kart kapanınca / sayfadan çıkınca)
-function stopSpeak(){if(!SPEECH_OK)return; speaking=false; try{window.speechSynthesis.cancel();}catch(e){} _chunks=[]; _ci=0; if(cardSpeak)cardSpeak.classList.remove('on'); applyTheme();}
+function stopSpeak(){_tok++;speaking=false;if(_au){try{_au.pause()}catch(e){}try{_au.currentTime=0}catch(e){}}_curKey=null;if(cardSpeak)cardSpeak.classList.remove('on');applyTheme();}
 // DURAKLAT: sesi kes ama konumu (cümleyi) koru — Play'e basınca kaldığı yerden devam
-function pauseSpeak(){if(!SPEECH_OK)return; speaking=false; try{window.speechSynthesis.cancel();}catch(e){} if(cardSpeak)cardSpeak.classList.remove('on'); applyTheme();}
-function speakCard(){if(!SPEECH_OK||!cardKey)return;
-try{window.speechSynthesis.cancel();}catch(e){}
-const full=(NAMES[cardKey]||cardKey)+'. '+((INTERP[cardKey]||'').replace(/\s+/g,' ').trim());
-_chunks=chunkText(full); _ci=0; speaking=true; if(cardSpeak)cardSpeak.classList.add('on'); applyTheme();
-speakNext();}
+function pauseSpeak(){speaking=false;if(_au){try{_au.pause()}catch(e){}}if(cardSpeak)cardSpeak.classList.remove('on');applyTheme();}
+function speakCard(){if(!cardKey)return;var full=(NAMES[cardKey]||cardKey)+'. '+((INTERP[cardKey]||'').replace(/\s+/g,' ').trim());var tok=++_tok;speaking=true;_curKey=cardKey;if(cardSpeak)cardSpeak.classList.add('on');applyTheme();var A=_au||new Audio();_au=A;try{A.src=_SIL;var p1=A.play();p1&&p1.catch&&p1.catch(function(){})}catch(e){}(async function(){var T=full.trim(),b=null;try{if(T.length<=2800){var hh=await _H(_VOICE+'|'+T);var cr=await fetch(_STORE+'/'+_VOICE+'/'+hh+'.mp3');if(cr.ok)b=await cr.blob()}}catch(e){}if(tok!==_tok)return;if(!b){try{var fr=await fetch(_FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:_AK,Authorization:'Bearer '+_AK},body:JSON.stringify({text:T,voice:_VOICE})});if(!fr.ok)throw 0;b=await fr.blob()}catch(e){if(tok===_tok){speaking=false;if(cardSpeak)cardSpeak.classList.remove('on');applyTheme()}return}}if(tok!==_tok)return;try{if(_bu)URL.revokeObjectURL(_bu)}catch(e){}var u=URL.createObjectURL(b);_bu=u;A.src=u;A.onended=function(){if(tok===_tok){speaking=false;if(cardSpeak)cardSpeak.classList.remove('on');applyTheme()}};A.onerror=function(){if(tok===_tok){speaking=false;if(cardSpeak)cardSpeak.classList.remove('on');applyTheme()}};var p3=A.play();p3&&p3.catch&&p3.catch(function(){})})()}
 // PLAY/DEVAM: duraklatılmışsa kaldığı cümleden devam, hiç başlamadıysa baştan
-function playSpeak(){if(!SPEECH_OK||!cardKey||speaking)return;
-if(_chunks.length && _ci<_chunks.length){ speaking=true; if(cardSpeak)cardSpeak.classList.add('on'); applyTheme(); speakNext(); }
-else { speakCard(); }}
+function playSpeak(){if(speaking)return;if(_au&&_curKey===cardKey&&_au.src&&!_au.ended&&_au.currentTime>0){speaking=true;if(cardSpeak)cardSpeak.classList.add('on');applyTheme();var p=_au.play();p&&p.catch&&p.catch(function(){});}else{speakCard();}}
 // [Sesli oku/Devam] [Geri] [Duraklat] [Baştan]
 if(cardSpeak)cardSpeak.addEventListener('click',playSpeak);
 const cardStop=document.getElementById('cardStop');
